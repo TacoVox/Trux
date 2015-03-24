@@ -56,15 +56,5 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:weightSum="1">
-
-        <Spinner
-            android:layout_width="107dp"
-            android:layout_height="wrap_content"
-            android:focusable="false"
-            android:id="@+id/spinner"
-            android:layout_gravity="right"
-            android:spinnerMode="dropdown"
-            android:entries="@array/dropDownMenu"
-            android:visibility="visible" />
     </LinearLayout>
 </RelativeLayout>
