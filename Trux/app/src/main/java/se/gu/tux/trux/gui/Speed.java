@@ -1,22 +1,46 @@
 package se.gu.tux.trux.gui;
 
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.technical_services.DataController;
+import se.gu.tux.trux.technical_services.RealTimeConnector;
 import tux.gu.se.trux.R;
 
 public class Speed extends ActionBarActivity {
 
-    final TextView ds = (TextView) findViewById(R.id.display_todays_speed);
+    DataController data_conn;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speed);
-    }
+
+        final TextView ds = (TextView) findViewById(R.id.display_todays_speed);
+
+        new AsyncTask()
+        {
+            @Override
+            protected Object doInBackground(Object[] objects)
+            {
+                Fuel fuel = new Fuel(0);
+                data_conn = data_conn.getInstance();
+                fuel = (Fuel) data_conn.signalIn(fuel);
+
+                ds.setText(String.format("%.1f km/h", fuel.getValue()));
+
+                return null;
+            }
+
+        }.execute();
+
+    } // end onCreate()
 
 
     @Override

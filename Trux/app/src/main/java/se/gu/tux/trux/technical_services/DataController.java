@@ -43,9 +43,9 @@ public class DataController
      * of the signal, -1 otherwise.
      *
      * @param signalIn      The Data object.
-     * @return              Integer
+     * @return              Data object
      */
-    public Integer signalIn(Data signalIn)
+    public Data signalIn(Data signalIn)
     {
         if (signalIn.isOnServerSide())
         {
@@ -57,7 +57,7 @@ public class DataController
 
         }
 
-        return -1;
+        return null;
 
     } // end signalIn()
 
