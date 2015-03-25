@@ -61,6 +61,11 @@ public final class Logger {
         fh.appendText("DEBUG: " + message);
     }
     
+    public void addMsg(String message)
+    {
+        fh.appendText(message);
+    }
+    
     //Test purpose main method!
     public static void main(String[] args)
     {
