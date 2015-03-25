@@ -15,7 +15,6 @@ import tux.gu.se.trux.R;
 public class Speed extends ActionBarActivity {
 
     DataController data_conn;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -38,6 +37,8 @@ public class Speed extends ActionBarActivity {
             }
 
         }.execute();
+
+
 
 
 

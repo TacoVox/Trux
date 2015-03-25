@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     public void goToHome(View view){
-        Intent intent = new Intent(se.gu.tux.trux.gui.MainActivity.this, se.gu.tux.trux.gui.DriverHomeScreen.class);
+        Intent intent = new Intent(this, DriverHomeScreen.class);
         startActivity(intent);
     }
 }
