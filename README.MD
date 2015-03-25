@@ -11,7 +11,7 @@ We are working in three different main branches:
 To work with a lot of branches we need to have a "branching discipline":
 * Before starting to work on a feature run <b>git checkout devel</b> to go to the devel branch.
 * Fetch the current devel branch with <b>git pull origin devel</b>
-* After this is done merge out with your new feature branch: <b>git branch FEATURENAME</b>
+* After this is done merge out with your new feature branch: <b>git branch YOUR_BRANCHNAME</b>
 * Go to that branch and make your changes: <b>git checkout YOUR_BRANCHNAME</b>
 * Initial commit to our server with: <b>git push origin YOUR_BRANCHNAME</b>
 * Do your usual stuff: <b>git add FILES</b> and <b>git commit -m "YOUR MESSAGE"</b>
