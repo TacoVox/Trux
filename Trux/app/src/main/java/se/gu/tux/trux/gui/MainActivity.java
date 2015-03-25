@@ -1,4 +1,4 @@
-package tux.gu.se.trux;
+package se.gu.tux.trux.gui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import tux.gu.se.trux.gui.DriverHomeScreen;
+import se.gu.tux.trux.gui.DriverHomeScreen;
 
 
 public class MainActivity extends ActionBarActivity {
