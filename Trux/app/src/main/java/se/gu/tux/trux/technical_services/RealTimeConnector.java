@@ -83,9 +83,11 @@ public class RealTimeConnector
                 case AutomotiveSignalId.FMS_FUEL_RATE:
                     fuel = (SCSInteger) as.getData();
                     break;
+
                 case AutomotiveSignalId.FMS_WHEEL_BASED_SPEED:
                     speed = (SCSInteger) as.getData();
                     break;
+
                 default:
                     break;
             }
