@@ -44,3 +44,5 @@ https://intellij-support.jetbrains.com/entries/23393067)
 
 # Netbeans
 dist/
+/Trux/.nb-gradle/private/
+/Trux/.nb-gradle/profiles/private/
