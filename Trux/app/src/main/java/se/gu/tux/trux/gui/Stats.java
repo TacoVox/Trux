@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import tux.gu.se.trux.R;
+
 
 public class Stats extends ActionBarActivity {
 
