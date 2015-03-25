@@ -16,7 +16,8 @@ import com.swedspot.vil.distraction.StealthMode;
 import com.swedspot.vil.policy.AutomotiveCertificate;
 
 
-
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Fuel;
 
 
 /**
@@ -26,10 +27,10 @@ import com.swedspot.vil.policy.AutomotiveCertificate;
 public class RealTimeConnector
 {
 
-    AutomotiveManager manager;
+    private AutomotiveManager manager;
 
-    SCSInteger fuel;
-    SCSInteger speed;
+    private SCSInteger fuel;
+    private SCSInteger speed;
 
 
     /**
@@ -45,24 +46,21 @@ public class RealTimeConnector
 
 
     /**
-     * Gets the signal data for a specific signal. Takes a String with
-     * the signal name as parameter.
+     * Gets the signal data for a specific signal. Takes a Data object as parameter.
+     * Returns an Integer with the value of the signal.
      *
-     * @param signal    The name of the signal.
-     * @return          String
+     * @param signal    The Data object.
+     * @return          Integer
      */
-    public int getSignalData(String signal)
+    public Integer getSignalData(Data signal)
     {
-        switch (signal)
+        if (signal instanceof Fuel)
         {
-            case "fuel":
-                return fuel.getIntValue();
-
-            case "speed":
-                return speed.getIntValue();
-
-            default:
-                return -1;
+            return fuel.getIntValue();
+        }
+        else
+        {
+            return -1;
         }
 
     } // end getSignalData()
