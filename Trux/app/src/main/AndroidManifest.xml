@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name="se.gu.tux.trux.gui.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,6 +16,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="se.gu.tux.trux.gui.DriverHomeScreen"
+            android:label="Trux - Home" >
+            <intent-filter>
+                <action android:name="android.intent.action.PICK_ACTIVITY" />
+            </intent-filter>
+        </activity>
+        <activity android:name="se.gu.tux.trux.gui.Stats"
+                  android:label="Trux - Stats">
+            <intent-filter>
+                <action android:name="android.intent.action.PICK_ACTIVITY"></action>
+            </intent-filter>
+                  </activity>
     </application>
 
 </manifest>
