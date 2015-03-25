@@ -46,3 +46,13 @@ https://intellij-support.jetbrains.com/entries/23393067)
 dist/
 /Trux/.nb-gradle/private/
 /Trux/.nb-gradle/profiles/private/
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
