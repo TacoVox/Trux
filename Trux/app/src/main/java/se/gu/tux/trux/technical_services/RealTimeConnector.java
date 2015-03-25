@@ -5,7 +5,7 @@ package se.gu.tux.trux.technical_services;
  */
 import android.swedspot.automotiveapi.AutomotiveSignal;
 import android.swedspot.automotiveapi.AutomotiveSignalId;
-import android.swedspot.scs.data.SCSInteger;
+import android.swedspot.scs.data.SCSDouble;
 import com.swedspot.automotiveapi.AutomotiveFactory;
 import com.swedspot.automotiveapi.AutomotiveListener;
 import com.swedspot.automotiveapi.AutomotiveManager;
@@ -29,8 +29,8 @@ public class RealTimeConnector
 
     private AutomotiveManager manager;
 
-    private SCSInteger fuel;
-    private SCSInteger speed;
+    private SCSDouble fuel;
+    private SCSDouble speed;
 
 
     /**
@@ -52,15 +52,16 @@ public class RealTimeConnector
      * @param signal    The Data object.
      * @return          Integer
      */
-    public Integer getSignalData(Data signal)
+    public Data getSignalData(Data signal)
     {
         if (signal instanceof Fuel)
         {
-            return fuel.getIntValue();
+            signal.setValue(fuel.getDoubleValue());
+            return signal;
         }
         else
         {
-            return -1;
+            return null;
         }
 
     } // end getSignalData()
@@ -79,11 +80,11 @@ public class RealTimeConnector
             switch (as.getSignalId())
             {
                 case AutomotiveSignalId.FMS_FUEL_RATE:
-                    fuel = (SCSInteger) as.getData();
+                    fuel = (SCSDouble) as.getData();
                     break;
 
                 case AutomotiveSignalId.FMS_WHEEL_BASED_SPEED:
-                    speed = (SCSInteger) as.getData();
+                    speed = (SCSDouble) as.getData();
                     break;
 
                 default:

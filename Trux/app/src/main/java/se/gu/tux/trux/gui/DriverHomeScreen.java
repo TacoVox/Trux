@@ -40,6 +40,7 @@ public class DriverHomeScreen extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
     public void goToStats(View view){
         Intent intent = new Intent(DriverHomeScreen.this, Stats.class);
         startActivity(intent);

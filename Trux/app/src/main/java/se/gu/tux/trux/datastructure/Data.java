@@ -5,5 +5,6 @@ package se.gu.tux.trux.datastructure;
  */
 public interface Data <T> {
     public T getValue();
+    public void setValue(T value);
     public boolean isOnServerSide();
 }

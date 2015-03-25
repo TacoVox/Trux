@@ -3,11 +3,12 @@ package se.gu.tux.trux.datastructure;
 /**
  * Created by jonas on 3/24/15.
  */
-public abstract class MetricData implements Data{
+public class MetricData implements Data
+{
     /**
      * Private fields for value and the used timeframe
      */
-    private int value;
+    private Double value;
     private long tf;
 
     /**
@@ -21,9 +22,14 @@ public abstract class MetricData implements Data{
      * Getter for the value
      * @return the value
      */
-    public Integer getValue(){
+    @Override
+    public Double getValue(){
         return value;
     }
+
+    @Override
+    public void setValue(Object value) { this.value = (Double) value; }
+
 
     /**
      * Getter for the used timeframe
