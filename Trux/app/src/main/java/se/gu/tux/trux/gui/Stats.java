@@ -44,7 +44,7 @@ public class Stats extends ActionBarActivity {
     }
 
     public void goToSpeed(View view){
-        Intent intent = new Intent(Stats.this, Speed.class);
+        Intent intent = new Intent(this, Speed.class);
         startActivity(intent);
     }
 }

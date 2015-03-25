@@ -8,7 +8,7 @@ import se.gu.tux.trux.datastructure.Data;
 public class DataController
 {
 
-    private DataController data_instance;
+    private static DataController data_instance;
 
     private RealTimeConnector rt_conn;
 
@@ -26,7 +26,7 @@ public class DataController
      *
      * @return      instance of DataController
      */
-    public DataController getInstance()
+    public static DataController getInstance()
     {
         if (data_instance == null)
         {

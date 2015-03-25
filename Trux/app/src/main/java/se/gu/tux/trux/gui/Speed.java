@@ -24,13 +24,12 @@ public class Speed extends ActionBarActivity {
 
         final TextView ds = (TextView) findViewById(R.id.display_todays_speed);
 
-        new AsyncTask()
-        {
+        new AsyncTask()        {
             @Override
             protected Object doInBackground(Object[] objects)
             {
                 Fuel fuel = new Fuel(0);
-                data_conn = data_conn.getInstance();
+                data_conn = DataController.getInstance();
                 fuel = (Fuel) data_conn.signalIn(fuel);
 
                 ds.setText(String.format("%.1f km/h", fuel.getValue()));
@@ -39,6 +38,9 @@ public class Speed extends ActionBarActivity {
             }
 
         }.execute();
+
+
+
 
     } // end onCreate()
 
