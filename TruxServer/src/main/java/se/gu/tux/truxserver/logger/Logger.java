@@ -63,6 +63,7 @@ public final class Logger {
     
     public void addMsg(String message)
     {
+    	System.out.println(message);
         fh.appendText(message);
     }
     
