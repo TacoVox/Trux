@@ -29,14 +29,14 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:text="New Button"
+                    android:text="Speed"
                     android:id="@+id/button3"
                     android:layout_weight="1"/>
 
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:text="New Button"
+                    android:text="Fuel"
                     android:id="@+id/button4"
                     android:layout_weight="1"/>
             </LinearLayout>
@@ -51,14 +51,14 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:text="New Button"
+                    android:text="Distance Traveled"
                     android:id="@+id/button5"
                     android:layout_weight="1"/>
 
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:text="New Button"
+                    android:text="coming soon"
                     android:id="@+id/button6"
                     android:layout_weight="1"/>
             </LinearLayout>
@@ -73,14 +73,14 @@
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:text="New Button"
+                    android:text="coming soon"
                     android:id="@+id/button7"
                     android:layout_weight="1"/>
 
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:text="New Button"
+                    android:text="coming soon"
                     android:id="@+id/button8"
                     android:layout_weight="1"/>
             </LinearLayout>
@@ -89,14 +89,14 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="New Button"
+            android:text="Overall Statistics"
             android:id="@+id/button"
             android:layout_weight="1"/>
 
         <Button
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="New Button"
+            android:text="Compare Statistics"
             android:id="@+id/button2"
             android:layout_weight="1"/>
 
