@@ -21,27 +21,74 @@
         android:layout_height="wrap_content"
         android:text="@string/average_lastweek"
         android:id="@+id/avg_lastweek_fuel"
-        android:layout_below="@id/avg_today_fuel"
         android:textSize="20dp"
-        android:textColor="#ff000000" />
+        android:textColor="#ff000000"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/avg_today_fuel"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/average_lastmonth"
         android:id="@+id/avg_lastmonth_fuel"
-        android:layout_below="@id/avg_lastweek_fuel"
         android:textSize="20dp"
-        android:textColor="#ff000000" />
+        android:textColor="#ff000000"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/avg_lastweek_fuel"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/average_total"
         android:id="@+id/avg_total_fuel"
-        android:layout_below="@id/avg_lastmonth_fuel"
         android:textSize="20dp"
-        android:textColor="#ff000000" />
+        android:textColor="#ff000000"
+        android:layout_below="@+id/avg_lastmonth_fuel"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="50"
+        android:id="@+id/avg_today_fuel_value"
+        android:layout_alignBottom="@+id/avg_today_fuel"
+        android:layout_alignStart="@+id/avg_lastweek_fuel_value"
+        android:textSize="20dp"
+        android:textColor="#ff000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="50"
+        android:id="@+id/avg_lastweek_fuel_value"
+        android:layout_above="@+id/avg_lastmonth_fuel"
+        android:layout_toEndOf="@+id/avg_lastmonth_fuel"
+        android:layout_marginStart="62dp"
+        android:textSize="20dp"
+        android:textColor="#ff000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="80"
+        android:id="@+id/avg_lastmonth_fuel_value"
+        android:layout_alignTop="@+id/avg_lastmonth_fuel"
+        android:layout_alignStart="@+id/avg_lastweek_fuel_value"
+        android:textSize="20dp"
+        android:textColor="#ff000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="65"
+        android:id="@+id/avg_total_fuel_value"
+        android:layout_alignTop="@+id/avg_total_fuel"
+        android:layout_alignStart="@+id/avg_lastmonth_fuel_value"
+        android:textSize="20dp"
+        android:textColor="#ff000000"/>
 
 
 </RelativeLayout>
