@@ -7,7 +7,7 @@ import android.view.MenuItem;
 
 import tux.gu.se.trux.R;
 
-public class fuel extends ActionBarActivity {
+public class FuelWindow extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
