@@ -15,7 +15,7 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="Community"
+            android:text="@string/community_text"
             android:id="@+id/communityBtn"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
@@ -31,14 +31,14 @@
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="Profile"
+                android:text="@string/profile_text"
                 android:id="@+id/profileBtn"
                 android:layout_weight="1" />
 
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="Stats"
+                android:text="@string/statistics_text"
                 android:id="@+id/statsBtn"
                 android:layout_weight="1"
                 android:onClick="goToStats"/>

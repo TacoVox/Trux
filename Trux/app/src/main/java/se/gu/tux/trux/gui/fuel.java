@@ -1,30 +1,25 @@
 package se.gu.tux.trux.gui;
 
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import tux.gu.se.trux.R;
 
-
-public class Stats extends ActionBarActivity {
-    
+public class fuel extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stats);
+        setContentView(R.layout.activity_fuel);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_stats, menu);
+        getMenuInflater().inflate(R.menu.menu_fuel, menu);
         return true;
     }
 
@@ -41,15 +36,5 @@ public class Stats extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void goToSpeed(View view){
-        Intent intent = new Intent(this, Speed.class);
-        startActivity(intent);
-    }
-
-    public void goToFuel(View view) {
-        Intent intent = new Intent(this, fuel.class);
-        startActivity(intent);
     }
 }

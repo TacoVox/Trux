@@ -2,9 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tux.gu.se.trux" >
 
-
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
 
     <application
         android:allowBackup="true"
@@ -20,26 +19,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="se.gu.tux.trux.gui.DriverHomeScreen"
+        <activity
+            android:name="se.gu.tux.trux.gui.DriverHomeScreen"
             android:label="Trux - Home" >
             <intent-filter>
                 <action android:name="android.intent.action.PICK_ACTIVITY" />
             </intent-filter>
         </activity>
-        <activity android:name="se.gu.tux.trux.gui.Stats"
-                  android:label="Trux - Stats">
+        <activity
+            android:name="se.gu.tux.trux.gui.Stats"
+            android:label="Trux - Stats" >
             <intent-filter>
-                <action android:name="android.intent.action.PICK_ACTIVITY"></action>
+                <action android:name="android.intent.action.PICK_ACTIVITY" />
             </intent-filter>
-                  </activity>
-        <activity android:name="se.gu.tux.trux.gui.Speed"
-                    android:label="Trux - Speed">
+        </activity>
+        <activity
+            android:name="se.gu.tux.trux.gui.Speed"
+            android:label="Trux - Speed" >
             <intent-filter>
-                <action android:name="android.intent.action.PICK_ACTIVITY"></action>
+                <action android:name="android.intent.action.PICK_ACTIVITY" />
             </intent-filter>
-                    </activity>
-
-
+        </activity>
+        <activity
+            android:name="se.gu.tux.trux.gui.fuel"
+            android:label="@string/title_activity_fuel" >
+        </activity>
     </application>
 
 </manifest>
