@@ -25,11 +25,13 @@ public final class Logger {
     /**
      * Static parts of this class
      */
-    private static Logger logger;
+    private static Logger logger = null;
     
     static
     {
-        logger = new Logger();
+    	if (logger == null) {
+    		logger = new Logger();
+    	}
     }
     
     public static Logger getInstance()

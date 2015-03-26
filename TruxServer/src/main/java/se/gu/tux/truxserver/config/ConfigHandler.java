@@ -21,10 +21,12 @@ public class ConfigHandler {
     /**
      * Static part.
      */
-    private static ConfigHandler handler;
+    private static ConfigHandler handler = null;
 
     static {
-        handler = new ConfigHandler();
+    	if (handler == null) {
+    		handler = new ConfigHandler();
+    	}
     }
     
     public static ConfigHandler getInstance()
@@ -43,7 +45,7 @@ public class ConfigHandler {
     private Properties properties = null;
     private String configPath = null;
     
-    public ConfigHandler()
+    private ConfigHandler()
     {  
         this(System.getProperty("user.dir") + "/config/server.conf");
     }
