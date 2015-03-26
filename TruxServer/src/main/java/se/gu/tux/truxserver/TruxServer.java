@@ -15,6 +15,8 @@ package se.gu.tux.truxserver;
 import java.io.IOException;
 import java.util.Scanner;
 
+import se.gu.tux.truxserver.config.Config;
+import se.gu.tux.truxserver.config.ConfigHandler;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -29,11 +31,13 @@ public class TruxServer {
 	
     public static void main(String[] args) {
     	// Create instance immediately
-    	new TruxServer();
+    	new TruxServer(args);
     }
     
     
-    public TruxServer() {
+    public TruxServer(String[] args) {
+    	ConfigHandler.getInstance().setSettings(args);
+    	Logger.gI().setVerbose(Config.gI().isVerbose());
     	Logger.gI().addDebug("Main method: Starting the trux server...");
     	
     	// First create a wrapping thread here that can be interrupted

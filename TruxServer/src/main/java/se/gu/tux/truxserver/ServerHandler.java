@@ -54,18 +54,18 @@ public class ServerHandler implements Runnable {
 				
 				// NOTE later on this needs to interrupt ALL (active) pool threads
 				// Call interrupt() and wait for t to quit
-				Logger.gI().addMsg("Server Handler: Interrupting server runnable thread...");
+				Logger.gI().addDebug("Server Handler: Interrupting server runnable thread...");
 				if (sr != null) {
 					// Interrupt the "pool thread" by closing its socket
 					try {
 						sr.getCs().close();
 					} catch (IOException e1) {}
 				}				
-		    	Logger.gI().addMsg("Server Handler: Bye....");
+		    	Logger.gI().addDebug("Server Handler: Bye....");
 		    	
 			} catch (IOException e) {
 				
-				Logger.gI().addMsg("IOException in ServerHandler. Resuming...");
+				Logger.gI().addDebug("IOException in ServerHandler. Resuming...");
 				
 			}    		
     	}    
