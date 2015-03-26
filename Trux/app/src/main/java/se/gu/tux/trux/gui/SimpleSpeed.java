@@ -1,6 +1,9 @@
 package se.gu.tux.trux.gui;
 
+import android.app.Fragment;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,20 +12,19 @@ import android.view.View;
 
 import tux.gu.se.trux.R;
 
-
-public class DriverHomeScreen extends ActionBarActivity {
+public class SimpleSpeed extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_home_screen);
+        setContentView(R.layout.activity_simple_speed);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_driver_home_screen, menu);
+        getMenuInflater().inflate(R.menu.menu_simple_speed, menu);
         return true;
     }
 
@@ -41,13 +43,4 @@ public class DriverHomeScreen extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToStats(View view){
-        Intent intent = new Intent(DriverHomeScreen.this, Stats.class);
-        startActivity(intent);
-    }
-
-    public void goToSimpleStats(View view){
-        Intent intent = new Intent(DriverHomeScreen.this, SimpleSpeed.class);
-        startActivity(intent);
-    }
 }
