@@ -4,8 +4,9 @@ package se.gu.tux.trux.technical_services;
  * Created by ivryashkov on 2015-03-24.
  */
 import android.swedspot.automotiveapi.AutomotiveSignal;
-import android.swedspot.automotiveapi.AutomotiveSignalId;
+import android.swedspot.scs.data.SCSData;
 import android.swedspot.scs.data.SCSDouble;
+
 import com.swedspot.automotiveapi.AutomotiveFactory;
 import com.swedspot.automotiveapi.AutomotiveListener;
 import com.swedspot.automotiveapi.AutomotiveManager;
@@ -17,52 +18,42 @@ import com.swedspot.vil.policy.AutomotiveCertificate;
 
 
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.Fuel;
 
 
 /**
  *
  * @author ivryashkov
  */
-public class RealTimeConnector
+public class RealTimeDataHandler
 {
 
     private AutomotiveManager manager;
 
-    private SCSDouble fuel;
-    private SCSDouble speed;
+    Data data;
 
 
     /**
      * Constructor.
      */
-    public RealTimeConnector()
+    public RealTimeDataHandler(int automotiveSignalId)
     {
         manager = AutomotiveFactory.createAutomotiveManagerInstance(new AutomotiveCertificate(new byte[0]),
-                new SignalListener(), new DistractionLevel());
-        manager.register(AutomotiveSignalId.FMS_FUEL_RATE, AutomotiveSignalId.FMS_WHEEL_BASED_SPEED);
+                new SignalListener(automotiveSignalId), new DistractionLevel());
+        manager.register(automotiveSignalId);
 
     }
 
 
     /**
-     * Gets the signal data for a specific signal. Takes a Data object as parameter.
+     * Gets the signal scsData for a specific signal. Takes a Data object as parameter.
      * Returns an Integer with the value of the signal.
      *
-     * @param signal    The Data object.
-     * @return          Integer
+     * @return          Data
      */
-    public Data getSignalData(Data signal)
+    public Data getSignalData()
     {
-        if (signal instanceof Fuel)
-        {
-            signal.setValue(fuel.getDoubleValue());
-            return signal;
-        }
-        else
-        {
-            return null;
-        }
+
+        return data;
 
     } // end getSignalData()
 
@@ -73,22 +64,27 @@ public class RealTimeConnector
     private class SignalListener implements AutomotiveListener
     {
 
+        private int automotiveSignalId;
+
+        public SignalListener(int automotiveSignalId)
+        {
+            this.automotiveSignalId = automotiveSignalId;
+        }
+
         @Override
-        public void receive(AutomotiveSignal as)
+        public void receive(final AutomotiveSignal as)
         {
             // store signals in local variables for access
-            switch (as.getSignalId())
+            if (as.getSignalId() == automotiveSignalId)
             {
-                case AutomotiveSignalId.FMS_FUEL_RATE:
-                    fuel = (SCSDouble) as.getData();
-                    break;
-
-                case AutomotiveSignalId.FMS_WHEEL_BASED_SPEED:
-                    speed = (SCSDouble) as.getData();
-                    break;
-
-                default:
-                    break;
+                new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        data.setValue(((SCSDouble) as.getData()).getDoubleValue());
+                    }
+                };
             }
 
         } // end receive()
@@ -121,4 +117,4 @@ public class RealTimeConnector
 
 
 
-} // end class RealTimeConnector
+} // end class RealTimeDataHandler
