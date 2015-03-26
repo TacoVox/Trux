@@ -52,6 +52,10 @@
             android:name="se.gu.tux.trux.gui.SimpleFuel"
             android:label="@string/title_activity_simple_fuel" >
         </activity>
+        <activity
+            android:name="se.gu.tux.trux.gui.Distance_Traveled_Window"
+            android:label="@string/title_activity_distance__traveled" >
+        </activity>
     </application>
 
 </manifest>
