@@ -53,7 +53,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="50"
+        android:text="0"
         android:id="@+id/avg_today_distance_traveled_value"
         android:layout_alignBottom="@+id/avg_today_distance_traveled"
         android:layout_alignStart="@+id/avg_lastweek_distance_traveled_value"
@@ -63,7 +63,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="50"
+        android:text="0"
         android:id="@+id/avg_lastweek_distance_traveled_value"
         android:layout_above="@+id/avg_lastmonth_distance_traveled"
         android:layout_toEndOf="@+id/avg_lastmonth_distance_traveled"
@@ -74,7 +74,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="80"
+        android:text="0"
         android:id="@+id/avg_lastmonth_distance_traveled_value"
         android:layout_alignTop="@+id/avg_lastmonth_distance_traveled"
         android:layout_alignStart="@+id/avg_lastweek_distance_traveled_value"
@@ -84,8 +84,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="65"
-        android:id="@+id/avg_total_fuel_value"
+        android:text="0"
+        android:id="@+id/avg_total_distance_traveled_value"
         android:layout_alignTop="@+id/avg_total_fuel"
         android:layout_alignStart="@+id/avg_lastmonth_distance_traveled_value"
         android:textSize="20dp"

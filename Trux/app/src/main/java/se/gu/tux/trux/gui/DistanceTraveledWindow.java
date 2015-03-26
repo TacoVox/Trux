@@ -4,15 +4,21 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import tux.gu.se.trux.R;
 
 public class DistanceTraveledWindow extends ActionBarActivity {
 
+    final TextView avgTodDTV = (TextView) findViewById(R.id.avg_today_distance_traveled_value);
+    final TextView avgLwDTV = (TextView) findViewById(R.id.avg_lastweek_distance_traveled_value);
+    final TextView avgLmDTV = (TextView) findViewById(R.id.avg_lastmonth_distance_traveled_value);
+    final TextView avgTotDTV = (TextView) findViewById(R.id.avg_total_distance_traveled_value);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_distance__traveled);
+        setContentView(R.layout.activity_distance_traveled);
     }
 
 

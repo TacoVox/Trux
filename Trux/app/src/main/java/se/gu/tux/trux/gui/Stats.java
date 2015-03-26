@@ -51,4 +51,9 @@ public class Stats extends ActionBarActivity {
         Intent intent = new Intent(this, FuelWindow.class);
         startActivity(intent);
     }
+
+    public void goToDistanceTraveled(View view){
+        Intent intent = new Intent(this, DistanceTraveledWindow.class);
+        startActivity(intent);
+    }
 }
