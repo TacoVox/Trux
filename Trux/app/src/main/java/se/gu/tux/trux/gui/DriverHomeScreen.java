@@ -45,4 +45,10 @@ public class DriverHomeScreen extends ActionBarActivity {
         Intent intent = new Intent(DriverHomeScreen.this, Stats.class);
         startActivity(intent);
     }
+
+    public void goToSimpleStats(View view){
+        Intent intent = new Intent(DriverHomeScreen.this, SimpleStats.class);
+        startActivity(intent);
+    }
+
 }

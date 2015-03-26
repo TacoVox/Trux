@@ -55,7 +55,8 @@
                     android:layout_height="fill_parent"
                     android:text="@string/distance_traveled_text"
                     android:id="@+id/distance_traveled_text"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:onClick="goToDistanceTraveled"/>
 
                 <Button
                     android:layout_width="fill_parent"
