@@ -8,13 +8,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import se.gu.tux.trux.datastructure.Fuel;
-import se.gu.tux.trux.technical_services.DataController;
-import se.gu.tux.trux.technical_services.RealTimeConnector;
+import se.gu.tux.trux.technical_services.DataHandler;
 import tux.gu.se.trux.R;
 
 public class Speed extends ActionBarActivity {
 
-    DataController data_conn;
+    DataHandler data_conn;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -28,7 +27,7 @@ public class Speed extends ActionBarActivity {
             protected Object doInBackground(Object[] objects)
             {
                 Fuel fuel = new Fuel(0);
-                data_conn = DataController.getInstance();
+                data_conn = DataHandler.getInstance();
                 fuel = (Fuel) data_conn.signalIn(fuel);
 
                 ds.setText(String.format("%.1f km/h", fuel.getValue()));
