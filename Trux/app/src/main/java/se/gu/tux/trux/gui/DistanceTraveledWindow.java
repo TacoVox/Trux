@@ -7,7 +7,7 @@ import android.view.MenuItem;
 
 import tux.gu.se.trux.R;
 
-public class Distance_Traveled_Window extends ActionBarActivity {
+public class DistanceTraveledWindow extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
