@@ -10,11 +10,13 @@ import tux.gu.se.trux.R;
 
 public class FuelWindow extends ActionBarActivity {
 
+    /*
     final TextView avgTodFV = (TextView) findViewById(R.id.avg_today_fuel_value);
     final TextView avgLwFV = (TextView) findViewById(R.id.avg_lastweek_fuel_value);
     final TextView avgLmFV = (TextView) findViewById(R.id.avg_lastmonth_fuel_value);
     final TextView avgTotFV = (TextView) findViewById(R.id.avg_total_fuel_value);
-    
+    */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

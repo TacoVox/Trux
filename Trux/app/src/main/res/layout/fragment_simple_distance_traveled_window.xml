@@ -5,15 +5,15 @@
     android:layout_gravity="center"
     android:background="#3D3D3D"
     android:paddingTop="10dp"
-    tools:context="se.gu.tux.trux.gui.SimpleFuelWindow"
+    tools:context="se.gu.tux.trux.gui.SimpleDistanceTraveledWindowWindow"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fuel"
-        android:id="@+id/fuelTitle"
-        android:textSize="50dp"
+        android:text="Distance Traveled"
+        android:id="@+id/distanceTraveledTitle"
+        android:textSize="40dp"
         android:textColor="#E0E0E0"
         android:layout_gravity="center_horizontal|top" />
 
@@ -25,8 +25,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Insert fuel here!"
-        android:id="@+id/fuelSpeed"
+        android:text="Insert distance here!"
+        android:id="@+id/currentDistance"
         android:textSize="20dp"
         android:textColor="#E0E0E0"
         android:layout_gravity="center_horizontal" />
