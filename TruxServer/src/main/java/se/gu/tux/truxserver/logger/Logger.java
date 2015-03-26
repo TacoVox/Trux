@@ -20,15 +20,18 @@ package se.gu.tux.truxserver.logger;
  * @author jonas
  */
 public final class Logger {
+    private boolean isVerbose = false;
     
     /**
      * Static parts of this class
      */
-    private static Logger logger;
+    private static Logger logger = null;
     
     static
     {
-        logger = new Logger();
+    	if (logger == null) {
+    		logger = new Logger();
+    	}
     }
     
     public static Logger getInstance()
@@ -53,17 +56,25 @@ public final class Logger {
     
     public void addError(String descr)
     {
+    	if (isVerbose) {
+    		System.err.println(descr);
+    	}
         fh.appendText("ERROR: " + descr);
     }
     
     public void addDebug(String message)
     {
+    	if (isVerbose) {
+    		System.out.println(message);
+    	}
         fh.appendText("DEBUG: " + message);
     }
     
     public void addMsg(String message)
     {
-    	System.out.println(message);
+    	if (isVerbose) {
+    		System.out.println(message);
+    	}
         fh.appendText(message);
     }
     
@@ -74,4 +85,12 @@ public final class Logger {
         Logger.getInstance().addError("Suck my balls");
         Logger.gI().addDebug("Testing the debugging.");
     }
+
+	public boolean isVerbose() {
+		return isVerbose;
+	}
+
+	public void setVerbose(boolean isVerbose) {
+		this.isVerbose = isVerbose;
+	}
 }

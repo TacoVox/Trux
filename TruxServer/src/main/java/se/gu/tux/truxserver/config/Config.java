@@ -23,11 +23,15 @@ public class Config {
     /**
      * Static part.
      */
-    private static Config config;
+    private static Config config = null;
 
     static {
-        config = new Config();
+    	if (config == null) {
+    		config = new Config();
+    	}
     }
+    
+    private Config() {}
     
     public static Config getInstance()
     {
