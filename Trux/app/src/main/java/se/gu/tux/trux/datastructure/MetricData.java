@@ -3,7 +3,7 @@ package se.gu.tux.trux.datastructure;
 /**
  * Created by jonas on 3/24/15.
  */
-public class MetricData implements Data
+public class MetricData extends Data
 {
     /**
      * Private fields for value and the used timeframe
