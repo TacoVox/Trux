@@ -4,8 +4,6 @@ package se.gu.tux.truxserver;
  * TODO:
  *  - Add config file and argument parsing
  *  - Add database connection
- *  - Write test class with main method that sends empty metric object, 
- *  		gets reply and outputs the process
  *  
  *  - Later: add user and session handling
  *  - Later: multiple server threads rotated by ServerHandler
