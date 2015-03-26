@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.swedspot.automotiveapi.AutomotiveManager;
+
 import tux.gu.se.trux.R;
 
 
@@ -16,6 +18,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //This is a comment YOU FUCKIN APP
     }
 
@@ -41,7 +44,7 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     public void goToHome(View view){
-        Intent intent = new Intent(se.gu.tux.trux.gui.MainActivity.this, se.gu.tux.trux.gui.DriverHomeScreen.class);
+        Intent intent = new Intent(this, DriverHomeScreen.class);
         startActivity(intent);
     }
 }

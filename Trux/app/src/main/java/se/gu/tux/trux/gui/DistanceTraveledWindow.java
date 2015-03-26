@@ -1,29 +1,31 @@
 package se.gu.tux.trux.gui;
 
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.TextView;
 
 import tux.gu.se.trux.R;
 
+public class DistanceTraveledWindow extends ActionBarActivity {
 
-public class Stats extends ActionBarActivity {
-    
+    final TextView avgTodDTV = (TextView) findViewById(R.id.avg_today_distance_traveled_value);
+    final TextView avgLwDTV = (TextView) findViewById(R.id.avg_lastweek_distance_traveled_value);
+    final TextView avgLmDTV = (TextView) findViewById(R.id.avg_lastmonth_distance_traveled_value);
+    final TextView avgTotDTV = (TextView) findViewById(R.id.avg_total_distance_traveled_value);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stats);
+        setContentView(R.layout.activity_distance_traveled);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_stats, menu);
+        getMenuInflater().inflate(R.menu.menu_distance__traveled, menu);
         return true;
     }
 
@@ -40,20 +42,5 @@ public class Stats extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void goToSpeed(View view){
-        Intent intent = new Intent(this, SpeedWindow.class);
-        startActivity(intent);
-    }
-
-    public void goToFuel(View view) {
-        Intent intent = new Intent(this, FuelWindow.class);
-        startActivity(intent);
-    }
-
-    public void goToDistanceTraveled(View view){
-        Intent intent = new Intent(this, DistanceTraveledWindow.class);
-        startActivity(intent);
     }
 }
