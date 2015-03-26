@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.swedspot.automotiveapi.AutomotiveManager;
+
 import tux.gu.se.trux.R;
 
 
@@ -16,6 +18,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //This is a comment YOU FUCKIN APP
     }
 

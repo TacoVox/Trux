@@ -1,5 +1,7 @@
 package se.gu.tux.trux.technical_services;
 
+import android.swedspot.scs.data.SCSData;
+
 import se.gu.tux.trux.datastructure.Data;
 
 /**
@@ -43,14 +45,13 @@ public class DataHandler
      * of the signal, -1 otherwise.
      *
      * @param automotiveSignalId        The signal id to listen to.
-     * @param isOnServerSide            Is the signal on the server side or not?
      * @return                          Data object
      */
-    public Data signalIn(int automotiveSignalId, boolean isOnServerSide)
+    public Data signalIn(int automotiveSignalId, Data data)
     {
-        if (isOnServerSide)
+        if (!data.isOnServerSide())
         {
-            realTimeDataHandler = new RealTimeDataHandler(automotiveSignalId);
+            realTimeDataHandler = new RealTimeDataHandler(automotiveSignalId, data);
             return realTimeDataHandler.getSignalData();
         }
         else

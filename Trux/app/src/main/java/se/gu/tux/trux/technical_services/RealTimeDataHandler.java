@@ -3,13 +3,13 @@ package se.gu.tux.trux.technical_services;
 /**
  * Created by ivryashkov on 2015-03-24.
  */
+import android.os.AsyncTask;
 import android.swedspot.automotiveapi.AutomotiveSignal;
-import android.swedspot.scs.data.SCSData;
+import android.swedspot.automotiveapi.AutomotiveSignalId;
 import android.swedspot.scs.data.SCSDouble;
 
 import com.swedspot.automotiveapi.AutomotiveFactory;
 import com.swedspot.automotiveapi.AutomotiveListener;
-import com.swedspot.automotiveapi.AutomotiveManager;
 import com.swedspot.vil.distraction.DriverDistractionLevel;
 import com.swedspot.vil.distraction.DriverDistractionListener;
 import com.swedspot.vil.distraction.LightMode;
@@ -27,21 +27,101 @@ import se.gu.tux.trux.datastructure.Data;
 public class RealTimeDataHandler
 {
 
-    private AutomotiveManager manager;
+//    private AutomotiveManager manager;
 
     Data data;
+    int automotiveSignalId;
 
 
     /**
      * Constructor.
      */
-    public RealTimeDataHandler(int automotiveSignalId)
+    public RealTimeDataHandler(int automotiveSignalId, Data data)
     {
-        manager = AutomotiveFactory.createAutomotiveManagerInstance(new AutomotiveCertificate(new byte[0]),
-                new SignalListener(automotiveSignalId), new DistractionLevel());
-        manager.register(automotiveSignalId);
-
+        this.data = data;
+        this.automotiveSignalId = automotiveSignalId;
+        init();
     }
+
+
+    private void init()
+    {
+        System.out.println("-------------------------------------------");
+        System.out.println("in init() before async task call");
+        System.out.println("-------------------------------------------");
+
+        new AsyncTask()
+        {
+            @Override
+            protected Object doInBackground(Object[] objects)
+            {
+                System.out.println("-------------------------------------------");
+                System.out.println("in async task method");
+                System.out.println("-------------------------------------------");
+
+                AutomotiveFactory.createAutomotiveManagerInstance(
+                        new AutomotiveCertificate(new byte[0]),
+                        new AutomotiveListener()
+                        {
+                            @Override
+                            public void receive(AutomotiveSignal automotiveSignal)
+                            {
+                                System.out.println("-------------------------------------------");
+                                System.out.println("calling method receive() in listener class");
+                                System.out.println("-------------------------------------------");
+
+                                switch (automotiveSignal.getSignalId())
+                                {
+                                    case AutomotiveSignalId.FMS_WHEEL_BASED_SPEED:
+                                        System.out.println("-------------------------------------------");
+                                        System.out.println("setting value in data object");
+                                        System.out.println("-------------------------------------------");
+
+                                        Double value = ((SCSDouble) automotiveSignal.getData()).getDoubleValue();
+                                        data.setValue(value);
+
+                                        System.out.println("-------------------------------------------");
+                                        System.out.println("value set to: " + value);
+                                        System.out.println("-------------------------------------------");
+
+                                        break;
+
+                                    default:
+                                        System.out.println("-------------------------------------------");
+                                        System.out.println("no value detected");
+                                        System.out.println("-------------------------------------------");
+                                        break;
+                                }
+
+                            } // end receive()
+
+                            @Override
+                            public void timeout(int i)      {}
+
+                            @Override
+                            public void notAllowed(int i)   {}
+                        },
+                        new DriverDistractionListener()
+                        {
+                            @Override
+                            public void levelChanged(DriverDistractionLevel driverDistractionLevel) {}
+
+                            @Override
+                            public void lightModeChanged(LightMode lightMode)                       {}
+
+                            @Override
+                            public void stealthModeChanged(StealthMode stealthMode)                 {}
+                        }
+
+                ).register(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED);
+
+                return null;
+
+            } // end doInBackground()
+
+        }.execute();
+
+    } // end init()
 
 
     /**
@@ -50,17 +130,11 @@ public class RealTimeDataHandler
      *
      * @return          Data
      */
-    public Data getSignalData()
-    {
-
-        return data;
-
-    } // end getSignalData()
+    public Data getSignalData()     { return data; }
 
 
-    /**
-     * Inner class for listener.
-     */
+/*
+
     private class SignalListener implements AutomotiveListener
     {
 
@@ -74,17 +148,18 @@ public class RealTimeDataHandler
         @Override
         public void receive(final AutomotiveSignal as)
         {
+            System.out.println("-------------------------------------------");
+            System.out.println("calling method receive() in listener class");
+            System.out.println("-------------------------------------------");
+
             // store signals in local variables for access
             if (as.getSignalId() == automotiveSignalId)
             {
-                new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        data.setValue(((SCSDouble) as.getData()).getDoubleValue());
-                    }
-                };
+                System.out.println("--------------------------------------------");
+                System.out.println("value is: " + ((SCSDouble) as.getData()).getDoubleValue());
+                System.out.println("--------------------------------------------");
+
+                data.setValue(((SCSDouble) as.getData()).getDoubleValue());
             }
 
         } // end receive()
@@ -98,9 +173,7 @@ public class RealTimeDataHandler
     } // end class Listener
 
 
-    /**
-     * Inner class for distraction level.
-     */
+
     private class DistractionLevel implements DriverDistractionListener
     {
 
@@ -115,6 +188,7 @@ public class RealTimeDataHandler
 
     } // end class DistractionLevel
 
+*/
 
 
 } // end class RealTimeDataHandler

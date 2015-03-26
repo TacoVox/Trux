@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import tux.gu.se.trux.R;
 
@@ -44,7 +43,7 @@ public class Stats extends ActionBarActivity {
     }
 
     public void goToSpeed(View view){
-        Intent intent = new Intent(this, Speed.class);
+        Intent intent = new Intent(this, SpeedWindow.class);
         startActivity(intent);
     }
 
