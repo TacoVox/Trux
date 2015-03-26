@@ -12,6 +12,7 @@ package se.gu.tux.truxserver;
  *  - Later: multiple server threads rotated by ServerHandler
  **/
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import se.gu.tux.truxserver.logger.Logger;
@@ -21,10 +22,11 @@ import se.gu.tux.truxserver.logger.Logger;
  * @author tville
  */
 public class TruxServer {
-	Thread mainThread;
-	ServerHandler sh;
-	Scanner in = new Scanner(System.in);
-
+	private Thread mainThread;
+	private ServerHandler sh;
+	private Scanner in = new Scanner(System.in);
+	private boolean isRunning = true;
+	
     public static void main(String[] args) {
     	// Create instance immediately
     	new TruxServer();
@@ -44,14 +46,18 @@ public class TruxServer {
     	
     	// While thread not interrupted, 
     	// Check keyboard input for interruption or possibly options
-    	while (!mainThread.isInterrupted() && in.hasNextLine()) {
+    	while (isRunning && in.hasNextLine()) {
     		
     		// Handle keyboard input
     		String line = in.nextLine();
     		if (line.equals("q")) {
     			
-    			// Quit by interrupting main thread
-    			mainThread.interrupt();
+    			// Close the socket in ServerHandler, it will notice the 
+    			// SocketException and close server pool sockets
+    			try {
+					sh.getSs().close();
+					isRunning = false;				
+				} catch (IOException e) {}
     		}
     	}    	
     	
