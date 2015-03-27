@@ -44,6 +44,7 @@ public class DataHandler
 
     public Data signalIn(int automotiveSignalId, boolean isOnServerSide)
     {
+        Data data = null;
 
         if (isOnServerSide)
         {
@@ -51,10 +52,16 @@ public class DataHandler
         }
         else
         {
-            realTimeDataHandler = new RealTimeDataHandler(automotiveSignalId);
+            realTimeDataHandler = new RealTimeDataHandler();
+
+            System.out.println("----------------------------------------------------");
+            System.out.println("returning speed object from data handler");
+            System.out.println("----------------------------------------------------");
+
+            data = realTimeDataHandler.getSignalData(automotiveSignalId);
         }
-        
-        return null;
+
+        return data;
 
     } // end signalIn()
 

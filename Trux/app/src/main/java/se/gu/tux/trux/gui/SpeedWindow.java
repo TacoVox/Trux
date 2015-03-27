@@ -32,29 +32,27 @@ public class SpeedWindow extends ActionBarActivity
 
         dataHandler = DataHandler.getInstance();
 
-        new AsyncTask()
+        speedTextView.post(new Runnable()
         {
             @Override
-            protected Object doInBackground(Object[] objects)
+            public void run()
             {
-                final Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
+                Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
 
-                speedTextView.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        speedTextView.setText(String.format("%.1f km/h", speed.getValue()));
-                    }
-                });
+                System.out.println("------------------------------------------------");
+                System.out.println("receiving speed object from data handler");
+                System.out.println("object is null?: " + speed.equals(null));
+                System.out.println("value: " + speed.getValue());
+                System.out.println("------------------------------------------------");
+
+                speedTextView.setText(String.format("%.1f km/h", speed.getValue()));
 
 
-                return null;
             }
+        });
 
-        }.execute();
+    }
 
-    } // end onCreate()
 
 
     @Override

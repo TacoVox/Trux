@@ -27,94 +27,43 @@ import se.gu.tux.trux.datastructure.Speed;
 public class RealTimeDataHandler
 {
 
-    int automotiveSignalId;
-
-    Speed speed;
-
+    RealTimeDataParser rtdp;
 
     /**
      * Constructor.
      */
-    public RealTimeDataHandler(int automotiveSignalId)
+    public RealTimeDataHandler()
     {
-        speed = new Speed(0);
-        this.automotiveSignalId = automotiveSignalId;
-        init();
+        rtdp = RealTimeDataParser.getInstance();
     }
 
 
-    public Data getSignalData()
+    public Data getSignalData(int automotiveSignalId)
     {
-        return speed;
-    }
 
 
-    private void init()
-    {
-        new AsyncTask()
+        switch (automotiveSignalId)
         {
-            @Override
-            protected Object doInBackground(Object[] objects)
-            {
-                AutomotiveFactory.createAutomotiveManagerInstance(
-                        new AutomotiveCertificate(new byte[0]),
-                        new AutomotiveListener()
-                        {
-                            @Override
-                            public void receive(AutomotiveSignal automotiveSignal)
-                            {
-                                switch (automotiveSignal.getSignalId())
-                                {
-                                    case AutomotiveSignalId.FMS_WHEEL_BASED_SPEED:
+            case AutomotiveSignalId.FMS_WHEEL_BASED_SPEED:
 
-                                        System.out.println("-------------------------------------------");
-                                        System.out.println("in receive() in listener class");
-                                        System.out.println("-------------------------------------------");
+                Speed speed = new Speed(0);
+                speed.setValue(rtdp.getValue(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED));
 
-                                        Float value = ((SCSFloat) automotiveSignal.getData()).getFloatValue();
+                System.out.println("----------------------------------------------------");
+                System.out.println("returning speed object from real-time data handler");
+                System.out.println("object is null?: " + speed.equals(null));
+                System.out.println("value: " + speed.getValue());
+                System.out.println("----------------------------------------------------");
 
-                                        speed.setValue(value);
+                return speed;
 
-                                        System.out.println("-------------------------------------------");
-                                        System.out.println("value fetched: " + value);
-                                        System.out.println("-------------------------------------------");
-
-                                        break;
-
-                                    default:
-                                        break;
-
-                                }
-
-                            } // end receive()
-
-                            @Override
-                            public void timeout(int i)      {}
-
-                            @Override
-                            public void notAllowed(int i)   {}
-                        },
-                        new DriverDistractionListener()
-                        {
-                            @Override
-                            public void levelChanged(DriverDistractionLevel driverDistractionLevel) {}
-
-                            @Override
-                            public void lightModeChanged(LightMode lightMode)                       {}
-
-                            @Override
-                            public void stealthModeChanged(StealthMode stealthMode)                 {}
-                        }
-
-                ).register(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED);
-
+            default:
                 return null;
 
-            } // end doInBackground()
+        }
 
-        }.execute();
+    } // end getSignalData()
 
-    } // end init()
 
 
 } // end class RealTimeDataHandler

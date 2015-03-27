@@ -43,9 +43,20 @@ public class Stats extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToSpeed(View view){
-        Intent intent = new Intent(this, SpeedWindow.class);
-        startActivity(intent);
+    public void goToSpeed(View view)
+    {
+        final Intent intent = new Intent(this, SpeedWindow.class);
+
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                startActivity(intent);
+            }
+
+        }).start();
+
     }
 
     public void goToFuel(View view) {
