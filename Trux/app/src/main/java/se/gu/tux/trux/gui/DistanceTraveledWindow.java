@@ -10,10 +10,12 @@ import tux.gu.se.trux.R;
 
 public class DistanceTraveledWindow extends ActionBarActivity {
 
+    /*
     final TextView avgTodDTV = (TextView) findViewById(R.id.avg_today_distance_traveled_value);
     final TextView avgLwDTV = (TextView) findViewById(R.id.avg_lastweek_distance_traveled_value);
     final TextView avgLmDTV = (TextView) findViewById(R.id.avg_lastmonth_distance_traveled_value);
     final TextView avgTotDTV = (TextView) findViewById(R.id.avg_total_distance_traveled_value);
+    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +27,7 @@ public class DistanceTraveledWindow extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_distance__traveled, menu);
+        getMenuInflater().inflate(R.menu.menu_distance_traveled, menu);
         return true;
     }
 

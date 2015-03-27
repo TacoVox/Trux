@@ -20,6 +20,8 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
                 return new SimpleSpeedWindow();
             case 1:
                 return new SimpleFuelWindow();
+            case 2:
+                return new SimpleDistanceTraveledWindow();
             default:
                 break;
         }
@@ -29,6 +31,6 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 }
