@@ -8,7 +8,7 @@ public class MetricData extends Data
     /**
      * Private fields for value and the used timeframe
      */
-    private Double value;
+    private Float value;
     private long tf;
 
     /**
@@ -23,12 +23,12 @@ public class MetricData extends Data
      * @return the value
      */
     @Override
-    public Double getValue(){
+    public Float getValue(){
         return value;
     }
 
     @Override
-    public void setValue(Object value) { this.value = (Double) value; }
+    public void setValue(Object value) { this.value = (Float) value; }
 
 
     /**

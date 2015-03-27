@@ -37,7 +37,7 @@ public class SpeedWindow extends ActionBarActivity
             {
                 Speed speed = new Speed(0);
                 speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, speed);
-                Double value = speed.getValue();
+                Float value = speed.getValue();
 
                 System.out.println("------------------------------------------");
                 System.out.println("value in speed object is: " + value);

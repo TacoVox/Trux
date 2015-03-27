@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.swedspot.automotiveapi.AutomotiveSignal;
 import android.swedspot.automotiveapi.AutomotiveSignalId;
 import android.swedspot.scs.data.SCSDouble;
+import android.swedspot.scs.data.SCSFloat;
 
 import com.swedspot.automotiveapi.AutomotiveFactory;
 import com.swedspot.automotiveapi.AutomotiveListener;
@@ -77,7 +78,7 @@ public class RealTimeDataHandler
                                         System.out.println("setting value in data object");
                                         System.out.println("-------------------------------------------");
 
-                                        Double value = ((SCSDouble) automotiveSignal.getData()).getDoubleValue();
+                                        Float value = ((SCSFloat) automotiveSignal.getData()).getFloatValue();
                                         data.setValue(value);
 
                                         System.out.println("-------------------------------------------");
