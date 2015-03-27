@@ -1,6 +1,7 @@
 package se.gu.tux.trux.technical_services;
 
 import android.swedspot.scs.data.SCSData;
+import android.widget.TextView;
 
 import se.gu.tux.trux.datastructure.Data;
 
@@ -40,25 +41,19 @@ public class DataHandler
     } // end getInstance()
 
 
-    /**
-     * Gets the scsData for the signal. Takes a Data object as parameter. Returns the scsData value
-     * of the signal, -1 otherwise.
-     *
-     * @param automotiveSignalId        The signal id to listen to.
-     * @return                          Data object
-     */
-    public Data signalIn(int automotiveSignalId, Data data)
+
+    public Data signalIn(int automotiveSignalId, boolean isOnServerSide)
     {
-        if (!data.isOnServerSide())
+
+        if (isOnServerSide)
         {
-            realTimeDataHandler = new RealTimeDataHandler(automotiveSignalId, data);
-            return realTimeDataHandler.getSignalData();
+
         }
         else
         {
-
+            realTimeDataHandler = new RealTimeDataHandler(automotiveSignalId);
         }
-
+        
         return null;
 
     } // end signalIn()

@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui;
 
 
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.swedspot.automotiveapi.AutomotiveSignalId;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.technical_services.DataHandler;
 import tux.gu.se.trux.R;
@@ -26,26 +28,31 @@ public class SpeedWindow extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speed);
 
-        final TextView ds = (TextView) findViewById(R.id.display_todays_speed);
+        final TextView speedTextView = (TextView) findViewById(R.id.display_todays_speed);
 
         dataHandler = DataHandler.getInstance();
 
-        ds.post(new Runnable()
+        new AsyncTask()
         {
             @Override
-            public void run()
+            protected Object doInBackground(Object[] objects)
             {
-                Speed speed = new Speed(0);
-                speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, speed);
-                Float value = speed.getValue();
+                final Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
 
-                System.out.println("------------------------------------------");
-                System.out.println("value in speed object is: " + value);
-                System.out.println("------------------------------------------");
+                speedTextView.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        speedTextView.setText(String.format("%.1f km/h", speed.getValue()));
+                    }
+                });
 
-                ds.setText(String.format("%.1f km/h", value));
+
+                return null;
             }
-        });
+
+        }.execute();
 
     } // end onCreate()
 

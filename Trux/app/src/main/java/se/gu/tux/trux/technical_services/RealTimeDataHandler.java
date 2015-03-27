@@ -6,7 +6,6 @@ package se.gu.tux.trux.technical_services;
 import android.os.AsyncTask;
 import android.swedspot.automotiveapi.AutomotiveSignal;
 import android.swedspot.automotiveapi.AutomotiveSignalId;
-import android.swedspot.scs.data.SCSDouble;
 import android.swedspot.scs.data.SCSFloat;
 
 import com.swedspot.automotiveapi.AutomotiveFactory;
@@ -17,8 +16,8 @@ import com.swedspot.vil.distraction.LightMode;
 import com.swedspot.vil.distraction.StealthMode;
 import com.swedspot.vil.policy.AutomotiveCertificate;
 
-
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Speed;
 
 
 /**
@@ -28,38 +27,35 @@ import se.gu.tux.trux.datastructure.Data;
 public class RealTimeDataHandler
 {
 
-//    private AutomotiveManager manager;
-
-    Data data;
     int automotiveSignalId;
+
+    Speed speed;
 
 
     /**
      * Constructor.
      */
-    public RealTimeDataHandler(int automotiveSignalId, Data data)
+    public RealTimeDataHandler(int automotiveSignalId)
     {
-        this.data = data;
+        speed = new Speed(0);
         this.automotiveSignalId = automotiveSignalId;
         init();
     }
 
 
+    public Data getSignalData()
+    {
+        return speed;
+    }
+
+
     private void init()
     {
-        System.out.println("-------------------------------------------");
-        System.out.println("in init() before async task call");
-        System.out.println("-------------------------------------------");
-
         new AsyncTask()
         {
             @Override
             protected Object doInBackground(Object[] objects)
             {
-                System.out.println("-------------------------------------------");
-                System.out.println("in async task method");
-                System.out.println("-------------------------------------------");
-
                 AutomotiveFactory.createAutomotiveManagerInstance(
                         new AutomotiveCertificate(new byte[0]),
                         new AutomotiveListener()
@@ -67,31 +63,27 @@ public class RealTimeDataHandler
                             @Override
                             public void receive(AutomotiveSignal automotiveSignal)
                             {
-                                System.out.println("-------------------------------------------");
-                                System.out.println("calling method receive() in listener class");
-                                System.out.println("-------------------------------------------");
-
                                 switch (automotiveSignal.getSignalId())
                                 {
                                     case AutomotiveSignalId.FMS_WHEEL_BASED_SPEED:
+
                                         System.out.println("-------------------------------------------");
-                                        System.out.println("setting value in data object");
+                                        System.out.println("in receive() in listener class");
                                         System.out.println("-------------------------------------------");
 
                                         Float value = ((SCSFloat) automotiveSignal.getData()).getFloatValue();
-                                        data.setValue(value);
+
+                                        speed.setValue(value);
 
                                         System.out.println("-------------------------------------------");
-                                        System.out.println("value set to: " + value);
+                                        System.out.println("value fetched: " + value);
                                         System.out.println("-------------------------------------------");
 
                                         break;
 
                                     default:
-                                        System.out.println("-------------------------------------------");
-                                        System.out.println("no value detected");
-                                        System.out.println("-------------------------------------------");
                                         break;
+
                                 }
 
                             } // end receive()
@@ -123,73 +115,6 @@ public class RealTimeDataHandler
         }.execute();
 
     } // end init()
-
-
-    /**
-     * Gets the signal scsData for a specific signal. Takes a Data object as parameter.
-     * Returns an Integer with the value of the signal.
-     *
-     * @return          Data
-     */
-    public Data getSignalData()     { return data; }
-
-
-/*
-
-    private class SignalListener implements AutomotiveListener
-    {
-
-        private int automotiveSignalId;
-
-        public SignalListener(int automotiveSignalId)
-        {
-            this.automotiveSignalId = automotiveSignalId;
-        }
-
-        @Override
-        public void receive(final AutomotiveSignal as)
-        {
-            System.out.println("-------------------------------------------");
-            System.out.println("calling method receive() in listener class");
-            System.out.println("-------------------------------------------");
-
-            // store signals in local variables for access
-            if (as.getSignalId() == automotiveSignalId)
-            {
-                System.out.println("--------------------------------------------");
-                System.out.println("value is: " + ((SCSDouble) as.getData()).getDoubleValue());
-                System.out.println("--------------------------------------------");
-
-                data.setValue(((SCSDouble) as.getData()).getDoubleValue());
-            }
-
-        } // end receive()
-
-        @Override
-        public void timeout(int i) {}
-
-        @Override
-        public void notAllowed(int i) {}
-
-    } // end class Listener
-
-
-
-    private class DistractionLevel implements DriverDistractionListener
-    {
-
-        @Override
-        public void levelChanged(DriverDistractionLevel ddl) {}
-
-        @Override
-        public void lightModeChanged(LightMode lm) {}
-
-        @Override
-        public void stealthModeChanged(StealthMode sm) {}
-
-    } // end class DistractionLevel
-
-*/
 
 
 } // end class RealTimeDataHandler
