@@ -117,7 +117,8 @@
             android:layout_weight="1"
             android:background="#3D3D3D"
             android:textColor="#E0E0E0"
-            android:layout_margin="5dp"/>
+            android:layout_margin="5dp"
+            android:onClick="goToOverallStats"/>
 
         <Button
             android:layout_width="fill_parent"

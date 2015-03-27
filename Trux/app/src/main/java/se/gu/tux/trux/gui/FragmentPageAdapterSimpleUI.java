@@ -7,9 +7,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 /**
  * Created by dennis on 2015-03-26.
  */
-public class FragmentPageAdapter extends FragmentPagerAdapter {
+public class FragmentPageAdapterSimpleUI extends FragmentPagerAdapter {
 
-    public FragmentPageAdapter(FragmentManager fm) {
+    public FragmentPageAdapterSimpleUI(FragmentManager fm) {
         super(fm);
     }
 

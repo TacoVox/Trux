@@ -5,18 +5,11 @@
     android:padding="10dp"
     android:background="#E0E0E0">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:weightSum="2">
-
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:weightSum="4"
-            android:layout_weight="1">
+            android:weightSum="3">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -27,8 +20,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/average_today"
-                    android:id="@+id/avg_today_distance_traveled"
+                    android:text="@string/average_speed"
+                    android:id="@+id/avg_speed"
                     android:textSize="20dp"
                     android:textColor="#3D3D3D"/>
 
@@ -36,7 +29,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:id="@+id/avg_today_distance_traveled_value"
+                    android:id="@+id/avg_speed_value"
                     android:textSize="20dp"
                     android:textColor="#3D3D3D"
                     android:layout_marginLeft="10dp"/>
@@ -51,8 +44,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/average_lastweek"
-                    android:id="@+id/avg_lastweek_distance_traveled"
+                    android:text="@string/average_fuel"
+                    android:id="@+id/avg_fuel"
                     android:textSize="20dp"
                     android:textColor="#3D3D3D"/>
 
@@ -60,7 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:id="@+id/avg_lastweek_distance_traveled_value"
+                    android:id="@+id/avg_fuel_value"
                     android:textSize="20dp"
                     android:textColor="#3D3D3D"
                     android:layout_marginLeft="10dp"/>
@@ -75,8 +68,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/average_lastmonth"
-                    android:id="@+id/avg_lastmonth_distance_traveled"
+                    android:text="@string/average_distance_traveled"
+                    android:id="@+id/avg_distance_traveled"
                     android:textSize="20dp"
                     android:textColor="#3D3D3D"/>
 
@@ -84,45 +77,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:id="@+id/avg_lastmonth_distance_traveled_value"
-                    android:textSize="20dp"
-                    android:textColor="#3D3D3D"
-                    android:layout_marginLeft="10dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/average_total"
-                    android:id="@+id/avg_total_distance_traveled"
-                    android:textSize="20dp"
-                    android:textColor="#3D3D3D"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:id="@+id/avg_total_distance_traveled_value"
+                    android:id="@+id/avg_distance_traveled_value"
                     android:textSize="20dp"
                     android:textColor="#3D3D3D"
                     android:layout_marginLeft="10dp"/>
             </LinearLayout>
 
         </LinearLayout>
-
-        <com.jjoe64.graphview.GraphView
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/distanceGraph"
-            android:layout_weight="1"/>
-
-    </LinearLayout>
 
 
 </RelativeLayout>
