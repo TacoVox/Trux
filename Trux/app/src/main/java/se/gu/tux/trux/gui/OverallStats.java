@@ -6,10 +6,10 @@ import android.os.Bundle;
 
 import tux.gu.se.trux.R;
 
-public class SimpleStats extends FragmentActivity {
+public class OverallStats extends FragmentActivity {
 
     ViewPager viewpager;
-    FragmentPageAdapterSimpleUI ft;
+    FragmentPageAdapterOverall ft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +18,7 @@ public class SimpleStats extends FragmentActivity {
         viewpager = new ViewPager(this);
         viewpager.setId(R.id.pager);
         setContentView(viewpager);
-        ft = new FragmentPageAdapterSimpleUI(getSupportFragmentManager());
+        ft = new FragmentPageAdapterOverall(getSupportFragmentManager());
         viewpager.setAdapter(ft);
 
         viewpager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {

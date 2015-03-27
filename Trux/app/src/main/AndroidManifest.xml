@@ -48,8 +48,11 @@
             android:name="se.gu.tux.trux.gui.DistanceTraveledWindow"
             android:label="Trux - Distance Traveled" >
         </activity>
+        <activity android:name="se.gu.tux.trux.gui.SimpleStats" >
+        </activity>
         <activity
-            android:name="se.gu.tux.trux.gui.SimpleStats">
+            android:name="se.gu.tux.trux.gui.OverallStats"
+            android:label="@string/title_activity_overall_stats" >
         </activity>
     </application>
 
