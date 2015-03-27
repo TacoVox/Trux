@@ -37,21 +37,25 @@ public class SpeedWindow extends ActionBarActivity
             @Override
             public void run()
             {
-                Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
 
-                System.out.println("------------------------------------------------");
-                System.out.println("receiving speed object from data handler");
-                System.out.println("object is null?: " + speed.equals(null));
-                System.out.println("value: " + speed.getValue());
-                System.out.println("------------------------------------------------");
+                    Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
 
-                speedTextView.setText(String.format("%.1f km/h", speed.getValue()));
+                    System.out.println("------------------------------------------------");
+                    System.out.println("receiving speed object from data handler");
+                    System.out.println("object is null?: " + speed.equals(null));
+                    System.out.println("value: " + speed.getValue());
+                    System.out.println("------------------------------------------------");
 
+                    speedTextView.setText(String.format("%.1f km/h", speed.getValue()));
 
             }
         });
 
-    }
+
+
+
+
+    } // end onCreate()
 
 
 

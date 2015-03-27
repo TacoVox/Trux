@@ -43,7 +43,7 @@ public class Stats extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToSpeed(View view)
+    public void goToSpeed(final View view)
     {
         final Intent intent = new Intent(this, SpeedWindow.class);
 
@@ -52,7 +52,14 @@ public class Stats extends ActionBarActivity {
             @Override
             public void run()
             {
-                startActivity(intent);
+                view.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        startActivity(intent);
+                    }
+                });
             }
 
         }).start();

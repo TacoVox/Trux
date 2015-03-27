@@ -15,6 +15,8 @@ import com.swedspot.vil.policy.AutomotiveCertificate;
 
 import java.util.HashMap;
 
+import se.gu.tux.trux.datastructure.Data;
+
 /**
  *
  * Handles the real-time data received from AGA.
@@ -123,8 +125,7 @@ public class RealTimeDataParser
                             public void stealthModeChanged(StealthMode stealthMode) {}
                         }
 
-                ).register(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED,
-                            AutomotiveSignalId.FMS_FUEL_RATE);
+                ).register(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED);
 
                 return null;
 
