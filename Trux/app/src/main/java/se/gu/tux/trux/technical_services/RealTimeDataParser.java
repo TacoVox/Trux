@@ -31,14 +31,7 @@ public class RealTimeDataParser
     private HashMap<Integer, Float> hashMap;
 
 
-    /**
-     * Constructor. Private, we keep an instance instead.
-     */
-    private RealTimeDataParser()
-    {
-        hashMap = new HashMap<>();
-        init();
-    }
+    static  { rtdp = new RealTimeDataParser(); }
 
 
     /**
@@ -48,14 +41,20 @@ public class RealTimeDataParser
      */
     public static RealTimeDataParser getInstance()
     {
-        if (rtdp == null)
-        {
-            rtdp = new RealTimeDataParser();
-        }
-
         return rtdp;
 
     } // end getInstance()
+
+
+
+    /**
+     * Constructor. Private, we keep an instance instead.
+     */
+    private RealTimeDataParser()
+    {
+        hashMap = new HashMap<>();
+        init();
+    }
 
 
     /**
@@ -75,6 +74,20 @@ public class RealTimeDataParser
         System.out.println("------------------------------------------------");
 
         return value;
+    }
+
+
+    /**
+     * Gets the data map for the registered signal. Returns a hash map with
+     * the values.
+     *
+     * @return      HashMap
+     */
+    public HashMap getDataMap()
+    {
+        HashMap<Integer, Float> copy = new HashMap<>(hashMap);
+
+        return copy;
     }
 
 

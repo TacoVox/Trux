@@ -40,8 +40,6 @@ public class RealTimeDataHandler
 
     public Data getSignalData(int automotiveSignalId)
     {
-
-
         switch (automotiveSignalId)
         {
             case AutomotiveSignalId.FMS_WHEEL_BASED_SPEED:
