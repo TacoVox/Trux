@@ -66,7 +66,9 @@ public class RealTimeDataParser
      */
     public Float getValue(Integer automotiveSignalId)
     {
-        Float value = hashMap.remove(automotiveSignalId);
+        // get the value for the specified signal and return it
+        // do not remove it!
+        Float value = hashMap.get(automotiveSignalId);
 
         System.out.println("------------------------------------------------");
         System.out.println("returning requested value from real-time parser");
@@ -83,7 +85,7 @@ public class RealTimeDataParser
      *
      * @return      HashMap
      */
-    public HashMap getDataMap()
+    public HashMap<Integer, Float> getDataMap()
     {
         HashMap<Integer, Float> copy = new HashMap<>(hashMap);
 
@@ -108,7 +110,9 @@ public class RealTimeDataParser
                             @Override
                             public void receive(AutomotiveSignal automotiveSignal)
                             {
+                                // get the signal id
                                 Integer asId = automotiveSignal.getSignalId();
+                                // get the signal value
                                 Float value = ((SCSFloat) automotiveSignal.getData()).getFloatValue();
 
                                 System.out.println("------------------------------------------------");
@@ -116,6 +120,7 @@ public class RealTimeDataParser
                                 System.out.println("signal id: " + asId + ", value: " + value);
                                 System.out.println("------------------------------------------------");
 
+                                // put into hash map
                                 hashMap.put(asId, value);
 
                             } // end receive()
