@@ -29,22 +29,22 @@ public class MetricHandler {
     /**
      * Static part.
      */
-    private static MetricHandler dh;
+    private static MetricHandler mh;
     
     static
     {
-        if(dh !=  null)
-            dh = new MetricHandler();
+        if(mh ==  null)
+            mh = new MetricHandler();
     }
     
     public static MetricHandler getInstance()
     {
-        return dh;
+        return mh;
     }
     
     public static MetricHandler gI()
     {
-        return dh;
+        return mh;
     }
     
     /**
@@ -56,6 +56,8 @@ public class MetricHandler {
     {
         try
         {
+            DBConnector.gI().openConnection();
+            
             PreparedStatement pst = DBConnector.gI().getConnection().prepareStatement(
                     "INSERT INTO metric(value, timestamp, type, userid) " + 
                             "VALUES(?, ?, ?, ?);");
@@ -67,13 +69,14 @@ public class MetricHandler {
 		
             pst.executeUpdate();
 		
+            DBConnector.gI().closeConnection();
             return true;
         }
         catch (Exception e)
         {
             Logger.gI().addError(e.toString());
         }
-        
+
 	return false;
     }
     
@@ -81,25 +84,31 @@ public class MetricHandler {
     {
         try
 	{
-	    String select = "SELECT AVG(value) FROM Admin WHERE timestamp " +
-                    "BETWEEN ? AND ? AND type = ? AND userid = ?;";
+            DBConnector.gI().openConnection();
 
+            String selectStmnt = "SELECT AVG(value) AS avg FROM metric WHERE timestamp " +
+                    "BETWEEN ? AND ? AND type = ? AND userid = ?;";
+            
             PreparedStatement pst = DBConnector.gI().getConnection().prepareStatement(
-                    "INSERT INTO metric(value, timestamp, type, userid) " + 
-                            "VALUES(?, ?, ?, ?);");
+                    selectStmnt);
 	    
 	    pst.setLong(1, md.getTimeStamp() - md.getTimeFrame());
             pst.setLong(2, md.getTimeStamp());
             pst.setString(3, md.getClass().getSimpleName());
             pst.setLong(4, 0);
+            
+            System.out.println(pst.getParameterMetaData().toString());
+            Logger.gI().addDebug(pst.toString());
 	    
-	    ResultSet rs = pst.executeQuery();
+	    ResultSet rs = pst.executeQuery(selectStmnt);
 	    
 	    while (rs.next())
 	    {
-		md.setValue(rs.getString("AVG(value)"));
+		md.setValue(rs.getDouble("avg"));
 		break;
 	    }
+            
+            DBConnector.gI().closeConnection();
 	}
 	catch (Exception e)
 	{
