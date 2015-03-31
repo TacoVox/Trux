@@ -14,6 +14,10 @@ import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Fuel;
 
 /**
+ * TODO: Make this reconnect after a short dealy if disconnected or connection failed!
+ * TODO: Skip the idea below, instead synchronize around the socket and have one method
+ * callable from other threads to handle queries!
+ *
  * We need to be able to send both a continuous stream of metric data AND occasionally also queries
  * and the easiest (but not most neat) way to do this right now feels like having separate
  * connections (sockets)! Because otherwise it will be complicated to return the responses correctly
@@ -109,7 +113,7 @@ public class ServerConnector {
                     // NOTE this is totally for testing, otherwise queue will naturally block
                     // thread execution when it is empty
                     Thread.sleep(10000);
-
+                    System.out.println("Slept for a while.");
                 } catch (IOException e) {
                    // Socket closed
                    isRunning = false;

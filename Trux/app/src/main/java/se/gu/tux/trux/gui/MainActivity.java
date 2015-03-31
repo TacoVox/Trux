@@ -30,8 +30,8 @@ public class MainActivity extends ActionBarActivity
         System.out.println("Connecting to server...");
         System.out.println("------------------------------------------------");
         System.out.println("------------------------------------------------");
-        //ServerConnector.gI().connect("10.0.2.2");
-        //ServerConnector.gI().send(new Fuel(0));
+        ServerConnector.gI().connect("10.0.2.2");
+        ServerConnector.gI().send(new Fuel(0));
         //This is a comment YOU FUCKIN APP
     }
 

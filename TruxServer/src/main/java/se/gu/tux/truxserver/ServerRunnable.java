@@ -34,9 +34,13 @@ public class ServerRunnable implements Runnable {
 			try {
 				// Log/display the objects toString() and then return it
 				Fuel f = (Fuel)in.readObject();
-				Logger.gI().addMsg(f.getValue().toString());
-				f.setValue(new Double(2.0));
-				out.writeObject(f);
+				if (f != null) {
+					Logger.gI().addMsg(f.getValue().toString());
+					f.setValue(new Double(2.0));
+					out.writeObject(f);
+				} else {
+					Logger.gI().addMsg("Received null object from " + cs.getInetAddress());
+				}
 				
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -52,3 +56,4 @@ public class ServerRunnable implements Runnable {
 		return cs;
 	}
 }
+ 
