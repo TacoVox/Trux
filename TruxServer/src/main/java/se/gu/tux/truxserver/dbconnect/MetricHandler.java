@@ -37,12 +37,12 @@ public class MetricHandler {
             mh = new MetricHandler();
     }
     
-    public static MetricHandler getInstance()
+    protected static MetricHandler getInstance()
     {
         return mh;
     }
     
-    public static MetricHandler gI()
+    protected static MetricHandler gI()
     {
         return mh;
     }
@@ -55,10 +55,8 @@ public class MetricHandler {
     public boolean insertMetric(MetricData md)
     {
         try
-        {
-            DBConnector.gI().openConnection();
-            
-            PreparedStatement pst = DBConnector.gI().getConnection().prepareStatement(
+        {   
+            PreparedStatement pst = DBConnector.gS().getConnection().prepareStatement(
                     "INSERT INTO metric(value, timestamp, type, userid) " + 
                             "VALUES(?, ?, ?, ?);");
 		
@@ -68,8 +66,7 @@ public class MetricHandler {
             pst.setLong(4, 0);
 		
             pst.executeUpdate();
-		
-            DBConnector.gI().closeConnection();
+            
             return true;
         }
         catch (Exception e)
@@ -84,12 +81,12 @@ public class MetricHandler {
     {
         try
 	{
-            DBConnector.gI().openConnection();
-
             String selectStmnt = "SELECT AVG(value) AS avg FROM metric WHERE timestamp " +
                     "BETWEEN ? AND ? AND type = ? AND userid = ?;";
             
-            PreparedStatement pst = DBConnector.gI().getConnection().prepareStatement(
+            Logger.getInstance().addDebug(selectStmnt);
+            
+            PreparedStatement pst = DBConnector.gR().getConnection().prepareStatement(
                     selectStmnt);
 	    
 	    pst.setLong(1, md.getTimeStamp() - md.getTimeFrame());
@@ -98,6 +95,7 @@ public class MetricHandler {
             pst.setLong(4, 0);
             
             System.out.println(pst.getParameterMetaData().toString());
+            
             Logger.gI().addDebug(pst.toString());
 	    
 	    ResultSet rs = pst.executeQuery(selectStmnt);
@@ -107,8 +105,6 @@ public class MetricHandler {
 		md.setValue(rs.getDouble("avg"));
 		break;
 	    }
-            
-            DBConnector.gI().closeConnection();
 	}
 	catch (Exception e)
 	{
