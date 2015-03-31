@@ -45,21 +45,36 @@ public class DBConnector
     /**
      * Static part.
      */
-    private static DBConnector dbc;
+    private static DBConnector dbRetriever;
+    private static DBConnector dbSender;
     
     static
     {
-        dbc = new DBConnector();
+        if(dbRetriever == null)
+            dbRetriever = new DBConnector();
+        
+        if(dbSender == null)
+            dbSender = new DBConnector();
     }
     
-    public static DBConnector getInstance()
+    protected static DBConnector getRetriever()
     {
-        return dbc;
+        return dbRetriever;
     }
     
-    public static DBConnector gI()
+    protected static DBConnector gR()
     {
-        return dbc;
+        return dbRetriever;
+    }
+    
+    protected static DBConnector getSender()
+    {
+        return dbSender;
+    }
+    
+    protected static DBConnector gS()
+    {
+        return dbSender;
     }
     
     /**
