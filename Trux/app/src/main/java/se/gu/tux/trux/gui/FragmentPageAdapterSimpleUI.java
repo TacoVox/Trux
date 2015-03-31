@@ -7,9 +7,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 /**
  * Created by dennis on 2015-03-26.
  */
-public class FragmentPageAdapter extends FragmentPagerAdapter {
+public class FragmentPageAdapterSimpleUI extends FragmentPagerAdapter {
 
-    public FragmentPageAdapter(FragmentManager fm) {
+    public FragmentPageAdapterSimpleUI(FragmentManager fm) {
         super(fm);
     }
 
@@ -20,6 +20,8 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
                 return new SimpleSpeedWindow();
             case 1:
                 return new SimpleFuelWindow();
+            case 2:
+                return new SimpleDistanceTraveledWindow();
             default:
                 break;
         }
@@ -29,6 +31,6 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 }

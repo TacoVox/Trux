@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui;
 
 
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.swedspot.automotiveapi.AutomotiveSignalId;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.technical_services.DataHandler;
 import tux.gu.se.trux.R;
@@ -17,7 +19,10 @@ import tux.gu.se.trux.R;
 public class SpeedWindow extends ActionBarActivity
 {
 
-    DataHandler dataHandler;
+    private DataHandler dataHandler;
+
+    // controls the thread
+    private volatile boolean running = true;
 
 
     @Override
@@ -26,28 +31,66 @@ public class SpeedWindow extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speed);
 
-        final TextView ds = (TextView) findViewById(R.id.display_todays_speed);
+        final TextView speedTextView = (TextView) findViewById(R.id.display_todays_speed);
 
         dataHandler = DataHandler.getInstance();
 
-        ds.post(new Runnable()
+        new Thread(new Runnable()
         {
             @Override
             public void run()
             {
-                Speed speed = new Speed(0);
-                speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, speed);
-                Double value = speed.getValue();
+                while (running)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
 
-                System.out.println("------------------------------------------");
-                System.out.println("value in speed object is: " + value);
-                System.out.println("------------------------------------------");
+                            speedTextView.setText(String.format("%.1f km/h", speed.getValue()));
+                        }
+                    });
 
-                ds.setText(String.format("%.1f km/h", value));
+                    // pause for 1 second
+                    try
+                    {
+                        Thread.sleep(1000);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                } // end while
+
             }
-        });
+
+        }).start();
 
     } // end onCreate()
+
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+
+        // activity is not active, stop the thread from execution
+        // reduce memory usage
+        running = false;
+    }
+
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+
+        // activity is active, resume thread
+        running = true;
+    }
 
 
     @Override
@@ -57,6 +100,7 @@ public class SpeedWindow extends ActionBarActivity
         getMenuInflater().inflate(R.menu.menu_speed, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -75,5 +119,6 @@ public class SpeedWindow extends ActionBarActivity
         return super.onOptionsItemSelected(item);
 
     }
+
 
 } // end class

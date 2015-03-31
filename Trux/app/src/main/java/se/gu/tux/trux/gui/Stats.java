@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import tux.gu.se.trux.R;
 
@@ -42,9 +43,27 @@ public class Stats extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToSpeed(View view){
-        Intent intent = new Intent(this, SpeedWindow.class);
-        startActivity(intent);
+    public void goToSpeed(final View view)
+    {
+        final Intent intent = new Intent(this, SpeedWindow.class);
+
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                view.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        startActivity(intent);
+                    }
+                });
+            }
+
+        }).start();
+
     }
 
     public void goToFuel(View view) {
@@ -54,6 +73,11 @@ public class Stats extends ActionBarActivity {
 
     public void goToDistanceTraveled(View view){
         Intent intent = new Intent(this, DistanceTraveledWindow.class);
+        startActivity(intent);
+    }
+
+    public void goToOverallStats(View view){
+        Intent intent = new Intent(this, OverallStats.class);
         startActivity(intent);
     }
 }

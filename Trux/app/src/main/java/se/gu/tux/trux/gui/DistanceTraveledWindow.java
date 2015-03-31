@@ -6,26 +6,42 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import tux.gu.se.trux.R;
 
 public class DistanceTraveledWindow extends ActionBarActivity {
 
+    /*
     final TextView avgTodDTV = (TextView) findViewById(R.id.avg_today_distance_traveled_value);
     final TextView avgLwDTV = (TextView) findViewById(R.id.avg_lastweek_distance_traveled_value);
     final TextView avgLmDTV = (TextView) findViewById(R.id.avg_lastmonth_distance_traveled_value);
     final TextView avgTotDTV = (TextView) findViewById(R.id.avg_total_distance_traveled_value);
+    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_distance_traveled);
+
+        GraphView graph = (GraphView) findViewById(R.id.distanceGraph);
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
+                new DataPoint(0, 1),
+                new DataPoint(1, 5),
+                new DataPoint(2, 3),
+                new DataPoint(3, 2),
+                new DataPoint(4, 6)
+        });
+        graph.addSeries(series);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_distance__traveled, menu);
+        getMenuInflater().inflate(R.menu.menu_distance_traveled, menu);
         return true;
     }
 

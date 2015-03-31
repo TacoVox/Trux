@@ -9,15 +9,21 @@ import android.view.View;
 
 import com.swedspot.automotiveapi.AutomotiveManager;
 
+import se.gu.tux.trux.technical_services.RealTimeDataParser;
 import tux.gu.se.trux.R;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity
+{
+
+    RealTimeDataParser rtdp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        rtdp = RealTimeDataParser.getInstance();
 
         //This is a comment YOU FUCKIN APP
     }
