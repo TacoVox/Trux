@@ -151,7 +151,7 @@ public class ConfigHandler {
         
         Config.gI().setDbaddress(properties.getProperty("address"));
         Config.gI().setPort(Integer.parseInt(properties.getProperty("port")));
-        Config.gI().setDbname(properties.getProperty("dbnameconfig"));
+        Config.gI().setDbname(properties.getProperty("dbname"));
         Config.gI().setDbuser(properties.getProperty("user"));
         Config.gI().setDbpass(properties.getProperty("password"));
     }
