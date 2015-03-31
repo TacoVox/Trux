@@ -31,7 +31,13 @@ public class RealTimeDataParser
     private HashMap<Integer, Float> hashMap;
 
 
-    static  { rtdp = new RealTimeDataParser(); }
+    static
+    {
+        if (rtdp == null)
+        {
+            rtdp = new RealTimeDataParser();
+        }
+    }
 
 
     /**

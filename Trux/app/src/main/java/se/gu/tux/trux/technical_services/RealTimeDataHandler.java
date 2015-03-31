@@ -17,6 +17,7 @@ import com.swedspot.vil.distraction.StealthMode;
 import com.swedspot.vil.policy.AutomotiveCertificate;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Speed;
 
 
@@ -42,6 +43,7 @@ public class RealTimeDataHandler
     {
         switch (automotiveSignalId)
         {
+            // speed signal case
             case AutomotiveSignalId.FMS_WHEEL_BASED_SPEED:
 
                 Speed speed = new Speed(0);
@@ -54,6 +56,20 @@ public class RealTimeDataHandler
                 System.out.println("----------------------------------------------------");
 
                 return speed;
+            
+            // fuel signal case
+            case AutomotiveSignalId.FMS_FUEL_RATE:
+
+                Fuel fuel = new Fuel(0);
+                fuel.setValue(rtdp.getValue(AutomotiveSignalId.FMS_FUEL_RATE));
+
+                System.out.println("----------------------------------------------------");
+                System.out.println("returning fuel object from real-time data handler");
+                System.out.println("object is null?: " + fuel.equals(null));
+                System.out.println("value: " + fuel.getValue());
+                System.out.println("----------------------------------------------------");
+
+                return fuel;
 
             default:
                 return null;

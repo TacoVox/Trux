@@ -1,7 +1,6 @@
 package se.gu.tux.trux.gui;
 
 
-import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.swedspot.automotiveapi.AutomotiveSignalId;
@@ -9,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.technical_services.DataHandler;
 import tux.gu.se.trux.R;
@@ -65,7 +63,7 @@ public class SpeedWindow extends ActionBarActivity
 
                 } // end while
 
-            }
+            } // end run()
 
         }).start();
 
