@@ -86,8 +86,7 @@ public class ServerConnector {
         @Override
         public void run() {
             try {
-                //cs = new Socket(serverAddress, 12000);
-                cs = new Socket("127.0.0.1", 12000);
+                cs = new Socket(serverAddress, 12000);
                 out = new ObjectOutputStream(cs.getOutputStream());
                 in = new ObjectInputStream(cs.getInputStream());
             } catch (IOException e) {

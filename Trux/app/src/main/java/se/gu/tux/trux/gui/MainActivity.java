@@ -9,7 +9,10 @@ import android.view.View;
 
 import com.swedspot.automotiveapi.AutomotiveManager;
 
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.technical_services.RealTimeDataParser;
+import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 
@@ -24,7 +27,11 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
 
         rtdp = RealTimeDataParser.getInstance();
-
+        System.out.println("Connecting to server...");
+        System.out.println("------------------------------------------------");
+        System.out.println("------------------------------------------------");
+        //ServerConnector.gI().connect("10.0.2.2");
+        //ServerConnector.gI().send(new Fuel(0));
         //This is a comment YOU FUCKIN APP
     }
 
