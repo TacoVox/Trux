@@ -4,6 +4,7 @@ import android.swedspot.scs.data.SCSData;
 import android.widget.TextView;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.MetricData;
 
 /**
  * Created by ivryashkov on 2015-03-25.
@@ -39,6 +40,32 @@ public class DataHandler
         return dataHandler;
 
     } // end getInstance()
+
+    /**
+     * Ivo, this is how i envisioned it - ask for data, get data.
+     * So we don't need to keep logic about what signal id is needed everywhere.
+     * Each metric datatype knows about their own signal id.
+     * Using class can just do Data d = [...].getData(new Speed(0)); for example.'
+     * I think this is a neat way for the GUI to get data
+     * @param request
+     * @return
+     */
+    public Data getData(Data request) {
+        if (request.isOnServerSide()) {
+            // Ask the server for query...
+        } else {
+
+            if (request instanceof MetricData){
+                // Ask the real time data handler
+                realTimeDataHandler = new RealTimeDataHandler();
+                System.out.println("----------------------------------------------------");
+                System.out.println("returning metric object from data handler");
+                System.out.println("----------------------------------------------------");
+                request = realTimeDataHandler.getSignalData(((MetricData)request).getSignalId());
+            }
+        }
+        return request;
+    }
 
 
 

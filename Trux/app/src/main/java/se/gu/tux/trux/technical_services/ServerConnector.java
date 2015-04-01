@@ -14,6 +14,10 @@ import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Fuel;
 
 /**
+ * TODO: Make this reconnect after a short dealy if disconnected or connection failed!
+ * TODO: Skip the idea below, instead synchronize around the socket and have one method
+ * callable from other threads to handle queries!
+ *
  * We need to be able to send both a continuous stream of metric data AND occasionally also queries
  * and the easiest (but not most neat) way to do this right now feels like having separate
  * connections (sockets)! Because otherwise it will be complicated to return the responses correctly
@@ -85,31 +89,33 @@ public class ServerConnector {
 
         @Override
         public void run() {
-            try {
-                //cs = new Socket(serverAddress, 12000);
-                cs = new Socket("127.0.0.1", 12000);
-                out = new ObjectOutputStream(cs.getOutputStream());
-                in = new ObjectInputStream(cs.getInputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
+
 
             while (isRunning) {
-                System.out.println("------------------------------------------------");
+
+                // Connect if not already connected.
+                // If we ever lose connection, try reconnecting at regular intervals
+                while (cs == null || !cs.isConnected()) {
+                    try {
+                        cs = new Socket(serverAddress, 12000);
+                        out = new ObjectOutputStream(cs.getOutputStream());
+                        in = new ObjectInputStream(cs.getInputStream());
+                    } catch (IOException e) {
+                        // Problem connecting.
+                        System.err.println("Could not connect to " + serverAddress +
+                                ". Retrying in 10s...");
+                        try {
+                            Thread.sleep(10000);
+                        } catch (InterruptedException e1) {}
+                    }
+                }
+
                 try {
 
                     // Testing: put arbitrary object in queue, then poll queue and send object
-                    Fuel f = new Fuel(0);
-                    f.setValue(new Double(2.0));
-                    queue.add(f);
                     out.writeObject(queue.take());
-                    Fuel f2 = (Fuel)in.readObject();
-                    System.out.println("Received f2: " + f2.getValue().toString());
-
-                    // NOTE this is totally for testing, otherwise queue will naturally block
-                    // thread execution when it is empty
-                    Thread.sleep(10000);
+                    Data d = (Data)in.readObject();
+                    System.out.println("Received data: " + d.getValue().toString());
 
                 } catch (IOException e) {
                    // Socket closed

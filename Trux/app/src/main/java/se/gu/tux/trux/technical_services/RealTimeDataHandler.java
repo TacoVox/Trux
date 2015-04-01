@@ -3,20 +3,11 @@ package se.gu.tux.trux.technical_services;
 /**
  * Created by ivryashkov on 2015-03-24.
  */
-import android.os.AsyncTask;
-import android.swedspot.automotiveapi.AutomotiveSignal;
-import android.swedspot.automotiveapi.AutomotiveSignalId;
-import android.swedspot.scs.data.SCSFloat;
 
-import com.swedspot.automotiveapi.AutomotiveFactory;
-import com.swedspot.automotiveapi.AutomotiveListener;
-import com.swedspot.vil.distraction.DriverDistractionLevel;
-import com.swedspot.vil.distraction.DriverDistractionListener;
-import com.swedspot.vil.distraction.LightMode;
-import com.swedspot.vil.distraction.StealthMode;
-import com.swedspot.vil.policy.AutomotiveCertificate;
+import android.swedspot.automotiveapi.AutomotiveSignalId;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Speed;
 
@@ -38,6 +29,19 @@ public class RealTimeDataHandler
         rtdp = RealTimeDataParser.getInstance();
     }
 
+
+    /**
+     * Proposing this as a clean way to not have to have any logic around what metrics to use
+     * in DataPoller. Instead here we decide what we see as relevant to send to the server
+     * @return
+     */
+    public Data[] getCurrentMetrics() {
+        Data metricArray[] = new Data[3];
+        metricArray[0] = getSignalData(Fuel.getSignalId());
+        metricArray[1] = getSignalData(Speed.getSignalId());
+        metricArray[2] = getSignalData(Distance.getSignalId());
+        return metricArray;
+    }
 
     public Data getSignalData(int automotiveSignalId)
     {
