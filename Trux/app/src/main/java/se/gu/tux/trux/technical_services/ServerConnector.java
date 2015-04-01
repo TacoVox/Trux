@@ -89,31 +89,34 @@ public class ServerConnector {
 
         @Override
         public void run() {
-            try {
-                cs = new Socket(serverAddress, 12000);
-                out = new ObjectOutputStream(cs.getOutputStream());
-                in = new ObjectInputStream(cs.getInputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
+
 
             while (isRunning) {
-                System.out.println("------------------------------------------------");
+
+                // Connect if not already connected.
+                // If we ever lose connection, try reconnecting at regular intervals
+                while (cs == null || !cs.isConnected()) {
+                    try {
+                        cs = new Socket(serverAddress, 12000);
+                        out = new ObjectOutputStream(cs.getOutputStream());
+                        in = new ObjectInputStream(cs.getInputStream());
+                    } catch (IOException e) {
+                        // Problem connecting.
+                        System.err.println("Could not connect to " + serverAddress +
+                                ". Retrying in 10s...");
+                        try {
+                            Thread.sleep(10000);
+                        } catch (InterruptedException e1) {}
+                    }
+                }
+
                 try {
 
                     // Testing: put arbitrary object in queue, then poll queue and send object
-                    Fuel f = new Fuel(0);
-                    f.setValue(new Double(2.0));
-                    queue.add(f);
                     out.writeObject(queue.take());
-                    Fuel f2 = (Fuel)in.readObject();
-                    System.out.println("Received f2: " + f2.getValue().toString());
+                    Data d = (Data)in.readObject();
+                    System.out.println("Received data: " + d.getValue().toString());
 
-                    // NOTE this is totally for testing, otherwise queue will naturally block
-                    // thread execution when it is empty
-                    Thread.sleep(10000);
-                    System.out.println("Slept for a while.");
                 } catch (IOException e) {
                    // Socket closed
                    isRunning = false;

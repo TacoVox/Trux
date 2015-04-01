@@ -17,6 +17,8 @@ import com.swedspot.vil.distraction.StealthMode;
 import com.swedspot.vil.policy.AutomotiveCertificate;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Distance;
+import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Speed;
 
 
@@ -37,6 +39,19 @@ public class RealTimeDataHandler
         rtdp = RealTimeDataParser.getInstance();
     }
 
+
+    /**
+     * Proposing this as a clean way to not have to have any logic around what metrics to use
+     * in DataPoller. Instead here we decide what we see as relevant to send to the server
+     * @return
+     */
+    public Data[] getCurrentMetrics() {
+        Data metricArray[] = new Data[3];
+        metricArray[0] = getSignalData(Fuel.getSignalId());
+        metricArray[1] = getSignalData(Speed.getSignalId());
+        metricArray[2] = getSignalData(Distance.getSignalId());
+        return metricArray;
+    }
 
     public Data getSignalData(int automotiveSignalId)
     {

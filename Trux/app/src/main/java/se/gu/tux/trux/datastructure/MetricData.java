@@ -10,6 +10,7 @@ public class MetricData extends Data
      */
     private Double value;
     private long tf;
+    private static int signalId;
 
     /**
      * Constructor.
@@ -30,6 +31,9 @@ public class MetricData extends Data
     @Override
     public void setValue(Object value) { this.value = (Double) value; }
 
+    public static int getSignalId() {
+        return signalId;
+    }
 
     /**
      * Getter for the used timeframe

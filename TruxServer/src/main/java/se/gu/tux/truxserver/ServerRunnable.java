@@ -5,7 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.truxserver.logger.Logger;
 
 public class ServerRunnable implements Runnable {
@@ -32,15 +34,23 @@ public class ServerRunnable implements Runnable {
 		
 		while (isRunning) {
 			try {
-				// Log/display the objects toString() and then return it
-				Fuel f = (Fuel)in.readObject();
-				if (f != null) {
-					Logger.gI().addMsg(f.getValue().toString());
-					f.setValue(new Double(2.0));
-					out.writeObject(f);
+				
+				// TODO: Here we should send objects to some data handling class
+				// that checks wheter it's a metric or something else that goes into
+				// the database, OR if its some query that should be responded to
+				// Just let that class respond with some empty ACK data object if it's
+				// just metric for the DB. 				
+				
+				// For now, just display the tostring and then return the object
+				Data d = (Data)in.readObject();
+				if (d.getValue() != null) {
+					Logger.gI().addMsg(d.getValue().toString());
+					d.setValue(new Double(2.0));
+					out.writeObject(d);
 				} else {
-					Logger.gI().addMsg("Received null object from " + cs.getInetAddress());
+					Logger.gI().addMsg("Received object with null value from " + cs.getInetAddress());
 				}
+				
 				
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
