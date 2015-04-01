@@ -6,16 +6,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import se.gu.tux.trux.technical_services.DataHandler;
 import tux.gu.se.trux.R;
 
-public class SimpleSpeedWindow extends Fragment {
+public class SimpleSpeedWindow extends Fragment
+{
 
-    View myFragmentView;
+    private View myFragmentView;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
     }
 
 
