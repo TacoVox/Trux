@@ -9,23 +9,12 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Fuel;
 
 /**
- * TODO: Make this reconnect after a short dealy if disconnected or connection failed!
- * TODO: Skip the idea below, instead synchronize around the socket and have one method
- * callable from other threads to handle queries!
- *
- * We need to be able to send both a continuous stream of metric data AND occasionally also queries
- * and the easiest (but not most neat) way to do this right now feels like having separate
- * connections (sockets)! Because otherwise it will be complicated to return the responses correctly
- * to the method that made the query request - so right now we try this;
- * - One thread runs all the time and sends metric data etc, this is done
- *  by putting the data in the queue in this class
- * - Asynctasks are used for quick questions - so this class will return
- *  an asynctask object initialized the right way upon request
  *
  *
  *
@@ -52,6 +41,10 @@ public class ServerConnector {
 
     public void send(Data d) {
         queue.add(d);
+    }
+
+    public Data answerQuery(Data d) {
+        return connector.sendQuery(d);
     }
 
     public void connect(String address) {
@@ -87,9 +80,27 @@ public class ServerConnector {
             }
         }
 
+
+        /**
+         * Synchronized, which means if the thread is busy sending/receiving,
+         * this will have to wait, and vice versa
+         * @param query
+         * @return
+         */
+        public synchronized Data sendQuery(Data query) {
+            try {
+                out.writeObject(query);
+                return (Data)in.readObject();
+            } catch (IOException e) {
+                return null;
+            } catch (ClassNotFoundException e) {
+                return null;
+            }
+        }
+
+
         @Override
         public void run() {
-
 
             while (isRunning) {
 
@@ -97,46 +108,58 @@ public class ServerConnector {
                 // If we ever lose connection, try reconnecting at regular intervals
                 while (cs == null || !cs.isConnected()) {
                     try {
+                        System.out.println("Connecting to " + serverAddress);
                         cs = new Socket(serverAddress, 12000);
                         out = new ObjectOutputStream(cs.getOutputStream());
                         in = new ObjectInputStream(cs.getInputStream());
+
                     } catch (IOException e) {
                         // Problem connecting.
                         System.err.println("Could not connect to " + serverAddress +
                                 ". Retrying in 10s...");
                         try {
                             Thread.sleep(10000);
-                        } catch (InterruptedException e1) {}
+                        } catch (InterruptedException e1) {
+                            System.out.println("Interrupted!");
+                        }
                     }
                 }
 
+                // Connected. Send anything in the queue.
                 try {
+                    Object o = null;
+                    // Wait for queue to have objects
+                    System.out.println("Server connector: waiting.");
+                    o = queue.take();
 
-                    // Testing: put arbitrary object in queue, then poll queue and send object
-                    out.writeObject(queue.take());
-                    Data d = (Data)in.readObject();
-                    System.out.println("Received data: " + d.getValue().toString());
+                    // Then STOP ANYTHING ELSE from using this object (most importantly
+                    // the in and out streams) while sending and receiving data
+                    System.out.println("Server connector: Found object in queue.");
+                    if (o != null) {
+                        System.out.println("Server connector: Sending...");
+                        synchronized (this) {
+                            out.writeObject(o);
+                            Data d = (Data) in.readObject();
+                            System.out.println("Server connector: Received data " + d.getValue().toString());
+                        }
+                    }
+
 
                 } catch (IOException e) {
-                   // Socket closed
+                   // Socket probably closed
                    isRunning = false;
+                    System.out.println("Socket closed!");
+                    // TOOD we need to distinguish between this happening because app is shutting
+                    // down and close being called on the socket by us, as opposed to this happening
+                    // because we lost contact with server or similar!?
+
                 } catch (ClassNotFoundException e) {
                     isRunning = false;
                  } catch (InterruptedException e) {
                     isRunning = false;
+                    System.out.println("Interrupted!");
                 }
             }
-        }
-    }
-
-    class QueryTask extends AsyncTask {
-
-        public QueryTask() {
-
-        }
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            return null;
         }
     }
 }

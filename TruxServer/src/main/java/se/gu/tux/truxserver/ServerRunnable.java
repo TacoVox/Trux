@@ -24,8 +24,8 @@ public class ServerRunnable implements Runnable {
 	public void run() {		
 		Logger.gI().addDebug("Inner Server Runnable: Starting server thread...");
 		try {
-			in = new ObjectInputStream(cs.getInputStream());
 			out = new ObjectOutputStream(cs.getOutputStream());
+			in = new ObjectInputStream(cs.getInputStream());			
 		} catch (IOException e) {
 			Logger.gI().addDebug("Fatal on stream creation in ServerRunnable: "
 					+ e.getMessage());
@@ -45,21 +45,21 @@ public class ServerRunnable implements Runnable {
 				Data d = (Data)in.readObject();
 				if (d.getValue() != null) {
 					Logger.gI().addMsg(d.getValue().toString());
-					d.setValue(new Double(2.0));
-					out.writeObject(d);
 				} else {
 					Logger.gI().addMsg("Received object with null value from " + cs.getInetAddress());
 				}
-				
+				d.setValue(new Double(2.0));
+				out.writeObject(d);
 				
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
+				Logger.gI().addError("Class not found!");
 				isRunning = false;
 			} catch (IOException e) {
 				Logger.gI().addMsg("Closing ServerRunnable socket...");
 				isRunning = false;
 			}
-		}
+		}	
 	}
 
 	public Socket getCs() {
