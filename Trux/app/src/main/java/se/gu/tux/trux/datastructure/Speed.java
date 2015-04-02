@@ -10,7 +10,7 @@ public class Speed extends MetricData {
         super(tf);
     }
 
-    public static int getSignalId() {
+    public Integer getSignalId() {
         return AutomotiveSignalId.FMS_WHEEL_BASED_SPEED;
     }
 }

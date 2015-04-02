@@ -11,7 +11,7 @@ public class Distance extends MetricData {
     }
     private Long distance;
 
-    public static int getSignalId() {
+    public Integer getSignalId() {
         return AutomotiveSignalId.FMS_HIGH_RESOLUTION_TOTAL_VEHICLE_DISTANCE;
     }
 

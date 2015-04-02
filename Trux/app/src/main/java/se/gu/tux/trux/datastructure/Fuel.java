@@ -10,7 +10,7 @@ public class Fuel extends MetricData {
         super(tf);
     }
 
-    public static int getSignalId() {
+    public Integer getSignalId() {
         return AutomotiveSignalId.FMS_FUEL_RATE;
     }
 }

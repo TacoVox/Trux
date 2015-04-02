@@ -52,7 +52,6 @@ public class RealTimeDataHandler
 
     public MetricData getSignalData(MetricData md) {
         md.setValue(rtdp.getValue(md.getSignalId()));
-        System.out.println(rtdp.getValue(md.getSignalId()));
         return md;
     }
 

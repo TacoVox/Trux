@@ -76,7 +76,6 @@ public class RealTimeDataParser
         // get the value for the specified signal and return it
         // do not remove it!
         Object value = hashMap.get(automotiveSignalId);
-        System.out.println("Map: " + hashMap.values());
         return value;
     }
 
@@ -125,7 +124,6 @@ public class RealTimeDataParser
                                 }
 
                                 // put into hash map
-                                System.out.println("Listener: " + value);
                                 hashMap.put(asId, value);
 
 
