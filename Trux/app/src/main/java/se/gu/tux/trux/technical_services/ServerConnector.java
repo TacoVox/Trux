@@ -145,7 +145,11 @@ public class ServerConnector {
                         synchronized (this) {
                             out.writeObject(o);
                             Data d = (Data) in.readObject();
-                            System.out.println("Server connector: Received data " + d.getValue().toString());
+                            if (d.getValue() == null) {
+                                System.out.println("Server connector: Received data with null value");
+                            } else {
+                                System.out.println("Server connector: Received data " + d.getValue().toString());
+                            }
                         }
                     }
 

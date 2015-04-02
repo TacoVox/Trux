@@ -7,6 +7,7 @@ import java.net.Socket;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -48,7 +49,18 @@ public class ServerRunnable implements Runnable {
 				} else {
 					Logger.gI().addMsg("Received object with null value from " + cs.getInetAddress());
 				}
-				d.setValue(new Double(2.0));
+				// FOR THIS CURRENT ITERATION, We only have a metric switcher, no main switch,
+				// so we need to cast it to metricdata
+				d = MetricSwitcher.gI().parseData((MetricData)d);
+				
+				// TEMPORARY ERROR CHECK
+				if (d == null) {
+					System.out.println("Object returned from MetricSwitcher was null : ((");
+					d = new Fuel(0);
+				} else {
+					System.out.println("Non-null response from MetricSwitcher w/ timestamp: " + d.getTimeStamp());
+				}
+				
 				out.writeObject(d);
 				
 			} catch (ClassNotFoundException e) {
@@ -57,6 +69,16 @@ public class ServerRunnable implements Runnable {
 				isRunning = false;
 			} catch (IOException e) {
 				Logger.gI().addMsg("Closing ServerRunnable socket...");
+				// Could be called by closing socket from the outside, but also
+				// from the stream input being interrupted
+				if (cs != null && cs.isConnected()) {
+					try {
+						cs.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
 				isRunning = false;
 			}
 		}	

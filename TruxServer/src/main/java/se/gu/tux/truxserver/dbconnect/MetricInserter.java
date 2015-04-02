@@ -61,9 +61,14 @@ public class MetricInserter implements Runnable {
     public void run() {
         Logger.gI().addMsg("InsertionHandler is running and waiting for input");
         
-        while(true) {
+        boolean running = true;
+        while(running) {
             try {
                 insertMetric((MetricData)queue.take());
+            }
+            catch (InterruptedException e) {
+            	// Received interrupt() call from managing thread
+            	running = false;
             }
             catch (Exception e) {
                 Logger.gI().addError(e.getMessage());
@@ -78,6 +83,11 @@ public class MetricInserter implements Runnable {
     
     private boolean insertMetric(MetricData md)
     {
+    	// TEMPORARY::::::::::: Do nothing if value not present
+    	if (md.getValue() == null) {
+    		return false;
+    	}
+    	
         DBConnector dbc = ConnectionPool.gI().getDBC();
         try
         {   

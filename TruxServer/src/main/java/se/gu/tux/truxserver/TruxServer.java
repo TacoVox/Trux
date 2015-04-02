@@ -14,6 +14,7 @@ import java.util.Scanner;
 
 import se.gu.tux.truxserver.config.Config;
 import se.gu.tux.truxserver.config.ConfigHandler;
+import se.gu.tux.truxserver.dbconnect.MetricInserter;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -33,16 +34,21 @@ public class TruxServer {
     
     
     public TruxServer(String[] args) {
+    	// Initialize config
     	ConfigHandler.getInstance().setSettings(args);
+    	// Initialize logger with correct verbosity settings
     	Logger.gI().setVerbose(Config.gI().isVerbose());
     	Logger.gI().addDebug("Main method: Starting the trux server...");
     	
-    	// First create a wrapping thread here that can be interrupted
-    	// by keyboard input
+    	// TEMPORARY: For now, we manage the metric insertion thread from here
+    	Thread mi = new Thread(MetricInserter.gI());
+        mi.start();
+    	
+    	// Start the server pool - start it in a wrapping thread so we can
+    	// interrupt it with keyboard input from the main thread.
     	sh = new ServerHandler();
     	mainThread = new Thread(sh);
     	mainThread.start();
-    	
     	Logger.gI().addMsg("Trux Server started.\nq followed by enter quits.");
     	
     	// While thread not interrupted, 
@@ -57,7 +63,8 @@ public class TruxServer {
     			// SocketException and close server pool sockets
     			try {
 					sh.getSs().close();
-					isRunning = false;				
+					isRunning = false;
+					mi.interrupt();
 				} catch (IOException e) {}
     		}
     	}    	
