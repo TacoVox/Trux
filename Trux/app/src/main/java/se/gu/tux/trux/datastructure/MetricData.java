@@ -1,5 +1,7 @@
 package se.gu.tux.trux.datastructure;
 
+import android.swedspot.scs.data.SCSFloat;
+
 /**
  * Created by jonas on 3/24/15.
  */
@@ -34,7 +36,9 @@ public class MetricData extends Data
     }
 
     @Override
-    public void setValue(Object value) { this.value = (Double) value; }
+    public void setValue(Object value) {
+        this.value = (Double) value;
+    }
 
     public static int getSignalId() {
         return signalId;

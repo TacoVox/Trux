@@ -38,15 +38,21 @@ public class RealTimeDataHandler
      */
     public Data[] getCurrentMetrics() {
         Data metricArray[] = new Data[3];
-        metricArray[0] = getSignalData(Fuel.getSignalId());
-        metricArray[1] = getSignalData(Speed.getSignalId());
-        metricArray[2] = getSignalData(Distance.getSignalId());
+        metricArray[0] = getSignalData(new Fuel(0));
+        metricArray[1] = getSignalData(new Speed(0));
+        metricArray[2] = getSignalData(new Distance(0));
+
+        // Set timestamp for all data
+        for (Data d : metricArray) {
+            d.setTimeStamp(System.currentTimeMillis());
+        }
         return metricArray;
     }
 
 
     public MetricData getSignalData(MetricData md) {
         md.setValue(rtdp.getValue(md.getSignalId()));
+        System.out.println(rtdp.getValue(md.getSignalId()));
         return md;
     }
 

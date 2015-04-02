@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.swedspot.automotiveapi.AutomotiveSignal;
 import android.swedspot.automotiveapi.AutomotiveSignalId;
 import android.swedspot.scs.data.SCSFloat;
+import android.swedspot.scs.data.SCSLong;
 
 import com.swedspot.automotiveapi.AutomotiveFactory;
 import com.swedspot.automotiveapi.AutomotiveListener;
@@ -16,6 +17,8 @@ import com.swedspot.vil.policy.AutomotiveCertificate;
 import java.util.HashMap;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.MetricData;
 
 /**
  *
@@ -28,7 +31,7 @@ public class RealTimeDataParser
 
     private static RealTimeDataParser rtdp;
 
-    private HashMap<Integer, Float> hashMap;
+    private HashMap<Integer, MetricData> hashMap;
 
 
     static
@@ -65,22 +68,17 @@ public class RealTimeDataParser
 
     /**
      * Gets the value for a signal. Takes an Integer with the signal id
-     * as parameter. Returns a Float with the value of the signal.
+     * as parameter. Returns a Double with the value of the signal.
      *
      * @param automotiveSignalId    The signal id.
-     * @return                      Float
+     * @return                      Double
      */
-    public Float getValue(Integer automotiveSignalId)
+    public MetricData getValue(Integer automotiveSignalId)
     {
         // get the value for the specified signal and return it
         // do not remove it!
-        Float value = hashMap.get(automotiveSignalId);
-
-        System.out.println("------------------------------------------------");
-        System.out.println("returning requested value from real-time parser");
-        System.out.println("value: " + value);
-        System.out.println("------------------------------------------------");
-
+        MetricData value = hashMap.get(automotiveSignalId);
+        System.out.println(hashMap.values());
         return value;
     }
 
@@ -91,9 +89,9 @@ public class RealTimeDataParser
      *
      * @return      HashMap
      */
-    public HashMap<Integer, Float> getDataMap()
+    public HashMap<Integer, MetricData> getDataMap()
     {
-        HashMap<Integer, Float> copy = new HashMap<>(hashMap);
+        HashMap<Integer, MetricData> copy = new HashMap<>(hashMap);
 
         return copy;
     }
@@ -119,15 +117,19 @@ public class RealTimeDataParser
                                 // get the signal id
                                 Integer asId = automotiveSignal.getSignalId();
                                 // get the signal value
-                                Float value = ((SCSFloat) automotiveSignal.getData()).getFloatValue();
+                                Object value = automotiveSignal.getData();
 
-                                System.out.println("------------------------------------------------");
-                                System.out.println("receiving signals from AGA...");
-                                System.out.println("signal id: " + asId + ", value: " + value);
-                                System.out.println("------------------------------------------------");
-
+                                // Store values wrapped in Double or Long java types...
+                                if (value instanceof SCSFloat) {
+                                    value = new Double(((Float)((SCSFloat) value).getFloatValue()).doubleValue());
+                                } else if (value instanceof SCSLong) {
+                                    value = new Long(((SCSLong) value).getLongValue());
+                                }
+                                MetricData f = new Fuel(0);
+                                f.setValue(2.0);
                                 // put into hash map
-                                hashMap.put(asId, value);
+                                hashMap.put(asId, f);
+
 
                             } // end receive()
 
@@ -149,7 +151,9 @@ public class RealTimeDataParser
                             public void stealthModeChanged(StealthMode stealthMode) {}
                         }
 
-                ).register(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED);
+                ).register(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED,
+                        AutomotiveSignalId.FMS_FUEL_RATE,
+                        AutomotiveSignalId.FMS_HIGH_RESOLUTION_TOTAL_VEHICLE_DISTANCE);
 
                 return null;
 
