@@ -43,6 +43,11 @@ public class ServerConnector {
         queue.add(d);
     }
 
+    /**
+     * Forwards a data query to the server and returns the reply
+     * @param d
+     * @return
+     */
     public Data answerQuery(Data d) {
         return connector.sendQuery(d);
     }
