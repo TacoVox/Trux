@@ -5,6 +5,11 @@ package se.gu.tux.trux.datastructure;
  */
 public class MetricData extends Data
 {
+    public final static int HOUR = 60 * 60 * 1000;
+    public final static int DAY =  HOUR * 24;
+    public final static int WEEK = DAY * 7;
+    public final static int THIRTYDAYS = DAY * 30;
+
     /**
      * Private fields for value and the used timeframe
      */
