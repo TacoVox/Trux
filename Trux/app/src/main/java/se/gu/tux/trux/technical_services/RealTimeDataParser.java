@@ -17,8 +17,6 @@ import com.swedspot.vil.policy.AutomotiveCertificate;
 import java.util.HashMap;
 
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.Fuel;
-import se.gu.tux.trux.datastructure.MetricData;
 
 /**
  *
@@ -31,7 +29,7 @@ public class RealTimeDataParser
 
     private static RealTimeDataParser rtdp;
 
-    private HashMap<Integer, MetricData> hashMap;
+    private HashMap<Integer, Object> hashMap;
 
 
     static
@@ -73,12 +71,12 @@ public class RealTimeDataParser
      * @param automotiveSignalId    The signal id.
      * @return                      Double
      */
-    public MetricData getValue(Integer automotiveSignalId)
+    public Object getValue(Integer automotiveSignalId)
     {
         // get the value for the specified signal and return it
         // do not remove it!
-        MetricData value = hashMap.get(automotiveSignalId);
-        System.out.println(hashMap.values());
+        Object value = hashMap.get(automotiveSignalId);
+        System.out.println("Map: " + hashMap.values());
         return value;
     }
 
@@ -89,9 +87,9 @@ public class RealTimeDataParser
      *
      * @return      HashMap
      */
-    public HashMap<Integer, MetricData> getDataMap()
+    public HashMap<Integer, Object> getDataMap()
     {
-        HashMap<Integer, MetricData> copy = new HashMap<>(hashMap);
+        HashMap<Integer, Object> copy = new HashMap<>(hashMap);
 
         return copy;
     }
@@ -125,10 +123,10 @@ public class RealTimeDataParser
                                 } else if (value instanceof SCSLong) {
                                     value = new Long(((SCSLong) value).getLongValue());
                                 }
-                                MetricData f = new Fuel(0);
-                                f.setValue(2.0);
+
                                 // put into hash map
-                                hashMap.put(asId, f);
+                                System.out.println("Listener: " + value);
+                                hashMap.put(asId, value);
 
 
                             } // end receive()
