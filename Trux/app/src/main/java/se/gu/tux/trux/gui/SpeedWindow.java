@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import se.gu.tux.trux.datastructure.Speed;
-import se.gu.tux.trux.technical_services.DataHandler;
+import se.gu.tux.trux.appplication.DataHandler;
 import tux.gu.se.trux.R;
 
 

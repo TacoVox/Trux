@@ -1,0 +1,107 @@
+/*
+ * Copyright 2015 jonas.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package se.gu.tux.truxserver.dbconnect;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import se.gu.tux.trux.datastructure.MetricData;
+
+import se.gu.tux.truxserver.logger.Logger;
+/**
+ *
+ * @author jonas
+ */
+public class MetricInserter implements Runnable {
+    /**
+     * Static part.
+     */
+    private static MetricInserter mi;
+    
+    static
+    {
+        if(mi ==  null)
+            mi = new MetricInserter();
+    }
+    
+    protected static MetricInserter getInstance()
+    {
+        return mi;
+    }
+    
+    protected static MetricInserter gI()
+    {
+        return mi;
+    }
+    
+    /**
+     * Non-static part.
+     */
+    private LinkedBlockingQueue queue;
+    
+    private MetricInserter() {
+        queue = new LinkedBlockingQueue();
+    }
+    
+    @Override
+    public void run() {
+        Logger.gI().addMsg("InsertionHandler is running and waiting for input");
+        
+        while(true) {
+            try {
+                insertMetric((MetricData)queue.take());
+            }
+            catch (Exception e) {
+                Logger.gI().addError(e.getMessage());
+            }
+        }
+        
+    }
+    
+    public synchronized void addToDB(MetricData md) {
+        queue.add(md);
+    }
+    
+    private boolean insertMetric(MetricData md)
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "INSERT INTO metric(value, timestamp, type, userid) " + 
+                            "VALUES(?, ?, ?, ?);");
+		
+            pst.setDouble(1, md.getValue());
+            pst.setLong(2, md.getTimeStamp());
+            pst.setString(3, md.getClass().getSimpleName());
+            pst.setLong(4, 0);
+		
+            pst.executeUpdate();
+            
+            return true;
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.toString());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+	return false;
+    }
+}

@@ -1,10 +1,9 @@
-package se.gu.tux.trux.technical_services;
-
-import android.swedspot.scs.data.SCSData;
-import android.widget.TextView;
+package se.gu.tux.trux.appplication;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.technical_services.RealTimeDataHandler;
+import se.gu.tux.trux.technical_services.ServerConnector;
 
 /**
  * Created by ivryashkov on 2015-03-25.
@@ -52,7 +51,7 @@ public class DataHandler
      */
     public Data getData(Data request) {
         if (request.isOnServerSide()) {
-            // Ask the server for query...
+            request = ServerConnector.gI().answerQuery(request);
         } else {
 
             if (request instanceof MetricData){
@@ -61,7 +60,7 @@ public class DataHandler
                 System.out.println("----------------------------------------------------");
                 System.out.println("returning metric object from data handler");
                 System.out.println("----------------------------------------------------");
-                request = realTimeDataHandler.getSignalData(((MetricData)request).getSignalId());
+                request = realTimeDataHandler.getSignalData(((MetricData)request));
             }
         }
         return request;

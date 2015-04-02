@@ -42,38 +42,16 @@ import se.gu.tux.truxserver.logger.Logger;
 
 public class DBConnector
 {
-    /**
-     * Static part.
-     */
-    private static DBConnector dbc;
-    
-    static
-    {
-        dbc = new DBConnector();
-    }
-    
-    public static DBConnector getInstance()
-    {
-        return dbc;
-    }
-    
-    public static DBConnector gI()
-    {
-        return dbc;
-    }
-    
-    /**
-     * Non-static part.
-     */
     private Connection connection = null;
     
     private DatabaseMetaData dbmd = null;
+    
     /**
      * Constructor
      * 
      * Loads the driver and catches a possible exception
      */
-    private DBConnector()
+    protected DBConnector()
     {       
         try
 	{
@@ -90,7 +68,7 @@ public class DBConnector
      * Method to open the connection. The created connection is saved in a private field of the this class.
      * Uses the connection details assigned to the private variables of this class.
      */
-    public void openConnection()
+    protected void openConnection()
     {
         try
         {
@@ -116,7 +94,7 @@ public class DBConnector
      *
      * @return connection created by openConnection()
      */
-    public Connection getConnection()
+    protected Connection getConnection()
     {
         return connection;
     }
@@ -124,7 +102,7 @@ public class DBConnector
     /**
      * Method to close the connection.
      */
-    public void closeConnection()
+    protected void closeConnection()
     {
         try
 	{

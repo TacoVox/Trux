@@ -9,6 +9,7 @@ import android.swedspot.automotiveapi.AutomotiveSignalId;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
 
 
@@ -42,6 +43,17 @@ public class RealTimeDataHandler
         metricArray[2] = getSignalData(Distance.getSignalId());
         return metricArray;
     }
+
+
+    public MetricData getSignalData(MetricData md) {
+        md.setValue(rtdp.getValue(md.getSignalId()));
+        return md;
+    }
+
+
+
+
+
 
     public Data getSignalData(int automotiveSignalId)
     {
