@@ -29,6 +29,9 @@ public class DBTester {
     {
         ConfigHandler.getInstance().setSettings(args);
         
+        Thread mi = new Thread(MetricInserter.gI());
+        mi.start();
+        
         Logger.gI().setVerbose(true);
         
         Random rand = new Random(20);
@@ -38,14 +41,24 @@ public class DBTester {
             Fuel f = new Fuel(0);
             f.setValue(rand.nextDouble());
             f.setTimeStamp(System.currentTimeMillis());       
-            MetricHandler.gI().insertMetric(f);
+            
+            MetricInserter.gI().addToDB(f);
+            
+            try {
+                Thread.sleep(100);
+            }
+            catch (Exception e) {
+                Logger.gI().addError(e.getMessage());
+            }
         }
+        
+        mi.interrupt();
         
         Fuel f = new Fuel(60000);
         f.setTimeStamp(System.currentTimeMillis());
         
-        MetricHandler.gI().getMetric(f);
-        
+        MetricReceiver.gI().getMetric(f);
+ 
         System.out.println(f.getValue());
     }
 }
