@@ -10,6 +10,7 @@ public abstract class Data <T> implements Serializable {
     private long timestamp;
     public abstract T getValue();
     public long getTimeStamp() {return timestamp;};
+    public void setTimeStamp(long timestamp) {this.timestamp = timestamp;}
     public abstract void setValue(T value);
     public abstract boolean isOnServerSide();
 }

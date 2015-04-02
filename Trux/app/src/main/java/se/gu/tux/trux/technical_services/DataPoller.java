@@ -55,7 +55,6 @@ public class DataPoller {
                     // Send all metric objects to server if they are not null.
                     for (Data d : metrics) {
                         if (d != null) {
-                            System.out.println("Putting metric in queue...");
                             ServerConnector.gI().send(d);
                         }
                     }

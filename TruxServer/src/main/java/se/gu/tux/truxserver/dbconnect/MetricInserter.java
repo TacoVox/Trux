@@ -16,7 +16,6 @@
 package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import se.gu.tux.trux.datastructure.MetricData;
@@ -38,12 +37,12 @@ public class MetricInserter implements Runnable {
             mi = new MetricInserter();
     }
     
-    protected static MetricInserter getInstance()
+    public static MetricInserter getInstance()
     {
         return mi;
     }
     
-    protected static MetricInserter gI()
+    public static MetricInserter gI()
     {
         return mi;
     }
@@ -61,9 +60,15 @@ public class MetricInserter implements Runnable {
     public void run() {
         Logger.gI().addMsg("InsertionHandler is running and waiting for input");
         
-        while(true) {
+        boolean running = true;
+        
+        while(running) {
             try {
                 insertMetric((MetricData)queue.take());
+            }
+            catch (InterruptedException e) {
+            	// Received interrupt() call from managing thread
+            	running = false;
             }
             catch (Exception e) {
                 Logger.gI().addError(e.getMessage());
@@ -78,6 +83,11 @@ public class MetricInserter implements Runnable {
     
     private boolean insertMetric(MetricData md)
     {
+    	if (md.getValue() == null) {
+            Logger.getInstance().addError("Somebody tried to insert an empty data object.");
+    		return false; 
+        }
+    	
         DBConnector dbc = ConnectionPool.gI().getDBC();
         try
         {   

@@ -1,13 +1,17 @@
 package se.gu.tux.truxserver;
 
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
 public class ServerRunnable implements Runnable {
@@ -33,13 +37,7 @@ public class ServerRunnable implements Runnable {
 		}
 		
 		while (isRunning) {
-			try {
-				
-				// TODO: Here we should send objects to some data handling class
-				// that checks wheter it's a metric or something else that goes into
-				// the database, OR if its some query that should be responded to
-				// Just let that class respond with some empty ACK data object if it's
-				// just metric for the DB. 				
+			try {	
 				
 				// For now, just display the tostring and then return the object
 				Data d = (Data)in.readObject();
@@ -48,15 +46,36 @@ public class ServerRunnable implements Runnable {
 				} else {
 					Logger.gI().addMsg("Received object with null value from " + cs.getInetAddress());
 				}
-				d.setValue(new Double(2.0));
+				
+				System.out.println("O: " + d.getClass());
+				if (d.getValue() != null) System.out.println("v: " + d.getValue().toString());
+				
+				if (!(d instanceof Distance)) {
+					d = DataSwitcher.gI().handleData(d);
+				} else {
+					Logger.gI().addError("Skipping distance object until datatype decisions are resolved!");			
+				}
+				
 				out.writeObject(d);
 				
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				Logger.gI().addError("Class not found!");
 				isRunning = false;
+			} catch (InvalidClassException e) {
+				Logger.gI().addError("Client sent invalid class: " + e.getMessage());
 			} catch (IOException e) {
-				Logger.gI().addMsg("Closing ServerRunnable socket...");
+				Logger.gI().addMsg("Closing ServerRunnable socket... (" + e.getClass() + ")");
+				// Could be called by closing socket from the outside, but also
+				// from the stream input being interrupted
+				if (cs != null && cs.isConnected()) {
+					try {
+						cs.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
 				isRunning = false;
 			}
 		}	

@@ -55,13 +55,28 @@ public class ConfigHandler {
         loadConfig(path);
     }
     
-    public void setSettings(String args[])
+    public boolean setSettings(String args[])
     {
         for(String s : args)
         {
-            if(s.equals("-v"))
+            if(s.equals("-v") || s.equals("--verbose"))
                 Config.gI().setVerbose(true);
+            else if(s.equals("-h") || s.equals("--help")) {
+                printHelpScreen();
+                return false;
+            }
         }
+        
+        return true;
+    }
+    
+    private void printHelpScreen()
+    {
+        System.out.println("TruxServer v0.1");
+        System.out.println("Helpscreen; The following commands for the TruxServer are available:");
+        System.out.println("");
+        System.out.println("-h or --help: prints this help screen.");
+        System.out.println("-v or --verbose: prints out each logger output on the command line.");
     }
     
     private void loadConfig(String path)

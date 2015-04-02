@@ -132,28 +132,39 @@ public class ServerConnector {
 
                 // Connected. Send anything in the queue.
                 try {
-                    Object o = null;
+                    Data d = null;
                     // Wait for queue to have objects
-                    System.out.println("Server connector: waiting.");
-                    o = queue.take();
+                    //System.out.println("Server connector: waiting.");
+                    d = queue.take();
 
                     // Then STOP ANYTHING ELSE from using this object (most importantly
                     // the in and out streams) while sending and receiving data
-                    System.out.println("Server connector: Found object in queue.");
-                    if (o != null) {
+                    //System.out.println("Server connector: Found object in queue.");
+                    if (d != null) {
                         System.out.println("Server connector: Sending...");
                         synchronized (this) {
-                            out.writeObject(o);
-                            Data d = (Data) in.readObject();
-                            System.out.println("Server connector: Received data " + d.getValue().toString());
+                            out.writeObject(d);
+                            Data inD = (Data) in.readObject();
+                            if (inD.getValue() == null) {
+                                System.out.println("Server connector: Received data with null value");
+                            } else {
+                                System.out.println("Server connector: Received data " + inD.getValue().toString());
+                            }
                         }
                     }
 
 
                 } catch (IOException e) {
                    // Socket probably closed
-                   isRunning = false;
-                    System.out.println("Socket closed!");
+                    isRunning = false;
+                    System.out.println("Socket closed! " + e.getMessage());
+                    if (cs != null && cs.isConnected()) {
+                        try {
+                            cs.close();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
                     // TOOD we need to distinguish between this happening because app is shutting
                     // down and close being called on the socket by us, as opposed to this happening
                     // because we lost contact with server or similar!?

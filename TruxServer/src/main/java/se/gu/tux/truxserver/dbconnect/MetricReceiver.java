@@ -17,7 +17,10 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import se.gu.tux.trux.datastructure.Distance;
+import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -50,6 +53,16 @@ public class MetricReceiver {
     
     public MetricData getMetric(MetricData md)
     {
+        if(md instanceof Fuel || md instanceof Speed)
+            return getAverage(md);
+        else if(md instanceof Distance)
+            return getDiff(md);
+        else
+            return null;
+    }
+    
+    private MetricData getAverage(MetricData md)
+    {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
@@ -66,10 +79,6 @@ public class MetricReceiver {
             pst.setLong(2, 0);
 	    pst.setLong(3, md.getTimeStamp() - md.getTimeFrame());
             pst.setLong(4, md.getTimeStamp()); 
-            
-            System.out.println(pst.getParameterMetaData().toString());
-            
-            Logger.gI().addDebug(pst.toString());
 	    
 	    ResultSet rs = pst.executeQuery();
 	    
@@ -90,4 +99,83 @@ public class MetricReceiver {
         return md;
     }
     
+    private MetricData getSum(MetricData md)
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "SELECT SUM(value) AS sum FROM metric WHERE " +
+                    "type = ? AND userid = ? AND timestamp BETWEEN ? AND ?;";
+            
+            Logger.getInstance().addDebug(selectStmnt);
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setString(1, md.getClass().getSimpleName());
+            pst.setLong(2, 0);
+	    pst.setLong(3, md.getTimeStamp() - md.getTimeFrame());
+            pst.setLong(4, md.getTimeStamp()); 
+	    
+	    ResultSet rs = pst.executeQuery();
+	    
+	    while (rs.next())
+	    {
+		md.setValue(rs.getDouble("sum"));
+		break;
+	    }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.toString());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        return md;
+    }
+    
+    private MetricData getDiff(MetricData md)
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "(SELECT value FROM metric WHERE type = ? " +
+                    "AND userid = ? ORDER BY ABS(value - ?) LIMIT 1;) - " +
+                    "(SELECT value FROM metric WHERE type = ? " +
+                    "AND userid = ? ORDER BY ABS(value - ?) LIMIT 1;);";
+            
+            Logger.getInstance().addDebug(selectStmnt);
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setString(1, md.getClass().getSimpleName());
+            pst.setLong(2, 0);
+            pst.setLong(3, md.getTimeStamp());
+            pst.setString(4, md.getClass().getSimpleName());
+            pst.setLong(5, 0);
+            pst.setLong(6, md.getTimeStamp() - md.getTimeFrame());          
+	    
+	    ResultSet rs = pst.executeQuery();
+	    
+	    while (rs.next())
+	    {
+		md.setValue(rs.getDouble("sum"));
+		break;
+	    }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.toString());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        return md;
+    }
 }
