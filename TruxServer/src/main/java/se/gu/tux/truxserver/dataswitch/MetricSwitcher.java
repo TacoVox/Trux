@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package se.gu.tux.truxserver;
+package se.gu.tux.truxserver.dataswitch;
 
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.truxserver.dbconnect.MetricInserter;
@@ -34,11 +34,11 @@ public class MetricSwitcher {
             ms = new MetricSwitcher();
     }
     
-    public static MetricSwitcher getInstance() {
+    protected static MetricSwitcher getInstance() {
         return ms;
     }
     
-    public static MetricSwitcher gI() {
+    protected static MetricSwitcher gI() {
         return ms;
     }
     
@@ -47,7 +47,7 @@ public class MetricSwitcher {
      */
     private MetricSwitcher() {}
     
-    public MetricData parseData(MetricData md) {
+    protected MetricData handleMetricData(MetricData md) {
     	if(md.getTimeFrame() == 0) {
             MetricInserter.gI().addToDB(md);
             
