@@ -38,12 +38,12 @@ public class MetricInserter implements Runnable {
             mi = new MetricInserter();
     }
     
-    protected static MetricInserter getInstance()
+    public static MetricInserter getInstance()
     {
         return mi;
     }
     
-    protected static MetricInserter gI()
+    public static MetricInserter gI()
     {
         return mi;
     }
