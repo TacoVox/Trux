@@ -52,6 +52,7 @@ public class RealTimeDataHandler
 
     public MetricData getSignalData(MetricData md) {
         md.setValue(rtdp.getValue(md.getSignalId()));
+        md.setTimeStamp(System.currentTimeMillis());
         return md;
     }
 
