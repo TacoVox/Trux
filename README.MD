@@ -5,6 +5,7 @@ Our Project - We will rock this course.
 * Serverconnector should ignore null objects OR DataPoller should not send them. We need to know if connection to AGA is interrupted. Worst-case solution just let DataPoller check if current set of metrics is identical to last set, then don't send it.
 * Fragments for speed, distance, fuel
 * A way to determine if moving (display simple interface) or not
+* Client should reconnect if for example server is restarted or connection temporarily interrupted
 
 ## TODO - Server
 * Main server thread pool
