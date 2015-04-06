@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -12,6 +14,14 @@ public class ServerHandler implements Runnable {
 	private boolean isRunning = true;
 	// Server socket waits for connections
 	private ServerSocket ss;
+	private TruxServer truxServer;
+	private ExecutorService threadPool =
+	        Executors.newFixedThreadPool(10);
+	private long nextConnectionId = 0;
+	
+	public ServerHandler(TruxServer truxServer) {
+		this.truxServer = truxServer;
+	}
 	
 	
 	@Override
@@ -25,17 +35,18 @@ public class ServerHandler implements Runnable {
 			Logger.gI().addError("Fatal error on server socket initialization: "
 					+ e2.getMessage());
 			isRunning = false;
+			truxServer.terminate();
 		}
 		
 		
     	// As long as the server is running - wait for connections, on connection
 		// let the next server thread available handle the connection		
-    	while(isRunning) {
+    	while(isRunning()) {
     		
     		// An accepted incoming connection is handled by a socket that is sent
     		// to the next available server thread
     		Thread t = null;
-    		ServerRunnable sr = null;
+    		
     		try {
     			Logger.gI().addDebug("Waiting for next connection...");
 				Socket cs = ss.accept();
@@ -43,25 +54,18 @@ public class ServerHandler implements Runnable {
 	        	Logger.gI().addDebug("Connection from " + cs.getInetAddress() + 
 	        			". Creating ServerRunnable instance...");
 				
-	    	  	sr = new ServerRunnable(cs);
-	        	t = new Thread(sr);	        	
-	        	t.start();
-			
+	        	threadPool.execute(new ServerRunnable(cs, nextConnectionId));
+	        	nextConnectionId++;
+	    	  
     		} catch (SocketException e){
-    			// Switch flag so loop exits next time
-				isRunning = false;		
-				
-				// NOTE later on this needs to interrupt ALL (active) pool threads
-				// Call interrupt() and wait for t to quit
-				Logger.gI().addDebug("Server Handler: Interrupting server runnable thread...");
-				if (sr != null) {
-					// Interrupt the "pool thread" by closing its socket
-					try {
-						sr.getCs().close();
-					} catch (IOException e1) {}
-				}				
-		    	Logger.gI().addDebug("Server Handler: Bye....");
-		    	
+    			
+    			// This can happen naturally when using stopServer() to shut down 
+    			// server. If so, isRunning is false. So if isRunning is true here,
+    			// socket was closed some other way and we need to make a nice shutdown
+    			if (isRunning()) {
+    				stopServer();
+    			}
+    			
 			} catch (IOException e) {
 				
 				Logger.gI().addDebug("IOException in ServerHandler. Resuming...");
@@ -70,8 +74,25 @@ public class ServerHandler implements Runnable {
     	}    
 	}
 
+	public synchronized void stopServer() {
+		// Switch flag so loop exits next time
+		isRunning = false;
+		
+		// Stop all threads
+		threadPool.shutdown();
+		
+		// Close server socket
+		if (ss != null) {
+			try {
+				ss.close();
+			} catch (IOException e) {
+				Logger.gI().addError("Trouble shutting down server: " + e.getMessage());
+			}
+		}
+		Logger.gI().addDebug("Server Handler shut down.");
+	}
 
-	public ServerSocket getSs() {
-		return ss;
+	public synchronized boolean isRunning() {
+		return isRunning;
 	}
 }

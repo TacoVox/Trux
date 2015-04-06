@@ -16,6 +16,7 @@ public class DataPoller {
     private final static int POLL_INTERVAL = 10;
     private Thread t;
     private PollRunnable pr;
+    private Data[] lastMetrics = null;
 
     static {
         if (instance == null) {
@@ -52,11 +53,33 @@ public class DataPoller {
                     // Get the current metric data from RTDH.
                     Data[] metrics = rtdh.getCurrentMetrics();
 
-                    // Send all metric objects to server if they are not null.
-                    for (Data d : metrics) {
-                        if (d != null) {
-                            ServerConnector.gI().send(d);
+                    // Compare with latest received metrics - yes, we compare the whole array
+                    // (We only transmit if some value has changed, otherwise there may be a
+                    // problem with aga connection + the information is just redundant)
+                    boolean send = true;
+                    if (lastMetrics == null) {
+                        // Nothing previously known
+                        send = true;
+                    } else {
+                        // Loop through and see if there is a difference
+                        for (int i = 0; i < metrics.length; i++) {
+                            // Compare with last sent
+                            System.out.println("Comparing " + metrics[i] + " with " + lastMetrics[i]);
+                            if (metrics[i] != null && metrics[i].getValue() != null &&
+                                    !metrics[i].equals(lastMetrics[i])) {
+                                // Difference detected
+                                send = false;
+                                System.out.println("(not equal)");
+                            }
                         }
+                    }
+
+                    // Send and update the lastMetrics array
+                    if (send) {
+                        for (Data thisMetric : metrics) {
+                            ServerConnector.gI().send(thisMetric);
+                        }
+                        lastMetrics = metrics;
                     }
 
                     // Wait POLL_INTERVAL seconds before continuing.

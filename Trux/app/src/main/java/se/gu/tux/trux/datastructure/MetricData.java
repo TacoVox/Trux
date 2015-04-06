@@ -30,7 +30,7 @@ public class MetricData extends Data
      * @return the value
      */
     @Override
-    public Double getValue(){
+    public Object getValue(){
         return value;
     }
 
@@ -53,5 +53,9 @@ public class MetricData extends Data
 
     public boolean isOnServerSide(){
         return tf != 0;
+    }
+
+    public boolean equals(MetricData d) {
+        return d.getValue().equals(value);
     }
 }

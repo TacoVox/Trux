@@ -24,6 +24,7 @@ import se.gu.tux.truxserver.logger.Logger;
  * @author tville
  */
 public class TruxServer {
+	private Thread serverHandlerThread;
 	private Thread mainThread;
 	private ServerHandler sh;
 	private Scanner in = new Scanner(System.in);
@@ -34,45 +35,89 @@ public class TruxServer {
     	new TruxServer(args);
     }
     
+    /**
+     * Called by ServerHandler if for example port was not available
+     * to shut down the whole application.
+     */
+    public synchronized void terminate() {
+    	// Interrupt the main thread waiting for keyboard input.
+    	// It will handle the interrupt properly.
+    	mainThread.interrupt();
+    }
+    
+    private void stopServer() {
+    	// Stop the server
+    	mainThread.interrupt();
+		isRunning = false;
+		sh.stopServer();
+		DataSwitcher.gI().stop();
+    }
     
     public TruxServer(String[] args) {
+    	mainThread = Thread.currentThread();
     	
     	// Initialize config. Returns false on invalid arguments or on show help screen
 	    if (ConfigHandler.getInstance().setSettings(args)) {
 	    	
 	    	// Initialize logger with correct verbosity settings
 	    	Logger.gI().setVerbose(Config.gI().isVerbose());
-	    	Logger.gI().addDebug("Main method: Starting the trux server...");
+	    	Logger.gI().addDebug("Main thread: Starting the trux server...");
 	    	
 	    	// Start the data manager thread
 	    	DataSwitcher.gI().start();
 	    	
 	    	// Start the server pool - start it in a wrapping thread so we can
 	    	// interrupt it with keyboard input from the main thread.
-	    	sh = new ServerHandler();
-	    	mainThread = new Thread(sh);
-	    	mainThread.start();
+	    	sh = new ServerHandler(this);
+	    	serverHandlerThread = new Thread(sh);
+	    	serverHandlerThread.start();
 	    	Logger.gI().addMsg("Trux Server started.\nq followed by enter quits.");
 	    	
+	    
 	    	// While thread not interrupted, 
 	    	// Check keyboard input for interruption or possibly options
-	    	while (isRunning && in.hasNextLine()) {
-	    		
-	    		// Handle keyboard input
-	    		String line = in.nextLine();
-	    		if (line.equals("q")) {
-	    			
-	    			// Close the socket in ServerHandler, it will notice the 
-	    			// SocketException and close server pool sockets
-	    			try {
-						sh.getSs().close();
-						isRunning = false;
-						DataSwitcher.gI().stop();
-					} catch (IOException e) {}
-	    		}
-	    	}    	
+	    	try {
+		    	while (isRunning && hasNextLine()) {
+		    		
+		    		// Handle keyboard input
+		    		String line = in.nextLine();
+		    		if (line.equals("q")) {
+		    			
+		    			// Manual shutdown
+		    			stopServer();
+						
+		    		}
+		    	}    
+	    	} catch (InterruptedException e) {
+	    		Logger.gI().addDebug("Main thread: Interrupted! Exiting...");  
+	    		// Interrupted - shut down
+	    		stopServer();
 	    	
-	    	Logger.gI().addDebug("Main method: Bye!");  
+	    	}
+	    	
+	    	Logger.gI().addDebug("Main thread: Bye!");  
 	    }
+    }
+    
+    
+    
+    
+    /**
+     * Need a way to be able to interrupt the thread waiting for keyboard input
+     * if the server startup should be aborted.
+     * @return
+     * @throws IOException
+     */    
+    private boolean hasNextLine() throws InterruptedException {
+    	// Check if input is available every 100 ms. Throw InterruptedException
+    	// if interrupted.
+        try {
+			while (System.in.available() == 0) {
+			    Thread.sleep(100);
+			}
+		} catch (IOException e) {
+			Logger.gI().addError("Main thread: Trouble reading System.in.");
+		}
+        return in.hasNextLine();
     }
 }

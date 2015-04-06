@@ -20,4 +20,12 @@ public class Distance extends MetricData {
         System.out.println("Setting value...");
         distance = (Long) value;
     }
+
+    public Object getValue() {
+        return distance;
+    }
+
+    public boolean equals(Distance d) {
+        return d.getValue().equals(distance);
+    }
 }
