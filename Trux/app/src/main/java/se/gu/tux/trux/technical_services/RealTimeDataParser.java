@@ -32,14 +32,6 @@ public class RealTimeDataParser
     private HashMap<Integer, Object> hashMap;
 
 
-    static
-    {
-        if (rtdp == null)
-        {
-            rtdp = new RealTimeDataParser();
-        }
-    }
-
 
     /**
      * Returns an instance of RealTimeDataParser.
@@ -48,6 +40,11 @@ public class RealTimeDataParser
      */
     public static RealTimeDataParser getInstance()
     {
+        if (rtdp == null)
+        {
+            rtdp = new RealTimeDataParser();
+        }
+
         return rtdp;
 
     } // end getInstance()

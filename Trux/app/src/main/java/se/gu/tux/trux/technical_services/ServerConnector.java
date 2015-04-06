@@ -25,19 +25,29 @@ public class ServerConnector {
 
     private Thread transmitThread = null;
     private ConnectorRunnable connector = null;
-    private LinkedBlockingQueue<Data> queue = new LinkedBlockingQueue<Data>();
+    private static LinkedBlockingQueue<Data> queue;
 
     /**
      * Some more singleton....!
      */
-    static {
+
+    private ServerConnector() { queue = new LinkedBlockingQueue<>(); }
+
+    public static ServerConnector getInstance()
+    {
         if (instance == null) {
             instance = new ServerConnector();
         }
+        return instance;
     }
-    private ServerConnector() { }
-    public static ServerConnector getInstance() { return instance; }
-    public static ServerConnector gI() { return instance; }
+
+    public static ServerConnector gI()
+    {
+        if (instance == null) {
+            instance = new ServerConnector();
+        }
+        return instance;
+    }
 
     public void send(Data d) {
         queue.add(d);

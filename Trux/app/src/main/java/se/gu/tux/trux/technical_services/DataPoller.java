@@ -17,15 +17,23 @@ public class DataPoller {
     private Thread t;
     private PollRunnable pr;
 
-    static {
+    private DataPoller() {}
+
+    public static DataPoller getInstance()
+    {
         if (instance == null) {
             instance = new DataPoller();
         }
+        return instance;
     }
-    private DataPoller() {}
 
-    public static DataPoller getInstance() { return instance; }
-    public static DataPoller gI() { return instance; }
+    public static DataPoller gI()
+    {
+        if (instance == null) {
+            instance = new DataPoller();
+        }
+        return instance;
+    }
 
     public void start() {
         pr = new PollRunnable();
@@ -56,6 +64,7 @@ public class DataPoller {
                     for (Data d : metrics) {
                         if (d != null) {
                             ServerConnector.gI().send(d);
+                            //IServerConnector.getInstance().receiveData(d);
                         }
                     }
 
