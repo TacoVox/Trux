@@ -54,6 +54,10 @@
             android:name="se.gu.tux.trux.gui.OverallStats"
             android:label="@string/title_activity_overall_stats" >
         </activity>
+        <activity
+            android:name="se.gu.tux.trux.gui.ChooseStatScreen"
+            android:label="@string/title_activity_choose_stat_screen" >
+        </activity>
     </application>
 
 </manifest>
