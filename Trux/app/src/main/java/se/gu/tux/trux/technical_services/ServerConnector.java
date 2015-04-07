@@ -102,6 +102,8 @@ public class ServerConnector {
          * @return
          */
         public synchronized Data sendQuery(Data query) {
+
+
             try {
                 System.out.println("Sending query...");
                 if (cs == null || cs.isClosed()) {
@@ -109,32 +111,41 @@ public class ServerConnector {
                     connect();
                 }
 
+
+
                 out.writeObject(query);
                 return (Data) in.readObject();
 
             } catch (IOException e) {
-                return null;
+                // TODO: FIX THIS!!! NOT OPTIMAL. CHECK WHY IT PASSES THE CS CLOSED / NULL CHECK ABOVE
+                System.out.println("IOEXception in sendQuery.");
+                connect();
+                return sendQuery(query);
+
             } catch (ClassNotFoundException e) {
+                System.out.println("Class not found in sendQuery.");
                 return null;
             }
         }
 
 
         private synchronized void connect() {
-            try {
-                System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
-                cs = new Socket(serverAddress, 12000);
-                out = new ObjectOutputStream(cs.getOutputStream());
-                in = new ObjectInputStream(cs.getInputStream());
-
-            } catch (IOException e) {
-                // Problem connecting.
-                System.err.println("Could not connect to " + serverAddress +
-                        ". Retrying in 10s...");
+            while (cs == null || cs.isClosed()) {
                 try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e1) {
-                    System.out.println("Interrupted!");
+                    System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
+                    cs = new Socket(serverAddress, 12000);
+                    out = new ObjectOutputStream(cs.getOutputStream());
+                    in = new ObjectInputStream(cs.getInputStream());
+
+                } catch (IOException e) {
+                    // Problem connecting.
+                    System.err.println("Could not connect to " + serverAddress +
+                            ". Retrying in 10s...");
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e1) {
+                        System.out.println("Interrupted!");
+                    }
                 }
             }
         }
