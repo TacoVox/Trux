@@ -4,9 +4,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import se.gu.tux.trux.gui.OverallGraphWindow;
-import se.gu.tux.trux.gui.OverallTextWindow;
-
 /**
  * Created by dennis on 2015-03-26.
  */

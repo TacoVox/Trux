@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import se.gu.tux.trux.gui.detailedStats.Stats;
+import se.gu.tux.trux.gui.simpleStats.SimpleStats;
 import tux.gu.se.trux.R;
 
 public class ChooseStatScreen extends ActionBarActivity {

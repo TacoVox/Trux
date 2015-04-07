@@ -5,7 +5,7 @@
     android:layout_gravity="center"
     android:background="#3D3D3D"
     android:paddingTop="10dp"
-    tools:context="se.gu.tux.trux.gui.SimpleFuelWindow"
+    tools:context="se.gu.tux.trux.gui.simpleStats.SimpleFuelWindow"
     android:orientation="vertical">
 
     <TextView
