@@ -29,7 +29,7 @@ public class DataHandler
      *
      * @return      instance of DataHandler
      */
-    public static DataHandler getInstance()
+    public synchronized static DataHandler getInstance()
     {
         if (dataHandler == null)
         {

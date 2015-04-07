@@ -17,7 +17,6 @@ public class Distance extends MetricData {
 
     @Override
     public void setValue (Object value) {
-        System.out.println("Setting value...");
         distance = (Long) value;
     }
 
@@ -25,7 +24,11 @@ public class Distance extends MetricData {
         return distance;
     }
 
-    public boolean equals(Distance d) {
-        return d.getValue().equals(distance);
+    public boolean equals(Object o) {
+        if (o instanceof Distance) {
+            return ((Distance) o).getValue().equals(distance);
+        } else {
+            return false;
+        }
     }
 }

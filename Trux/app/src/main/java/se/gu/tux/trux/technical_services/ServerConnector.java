@@ -2,11 +2,13 @@ package se.gu.tux.trux.technical_services;
 
 import android.os.AsyncTask;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +35,7 @@ public class ServerConnector {
 
     private ServerConnector() { queue = new LinkedBlockingQueue<>(); }
 
-    public static ServerConnector getInstance()
+    public synchronized static ServerConnector getInstance()
     {
         if (instance == null) {
             instance = new ServerConnector();
@@ -41,12 +43,9 @@ public class ServerConnector {
         return instance;
     }
 
-    public static ServerConnector gI()
+    public synchronized static ServerConnector gI()
     {
-        if (instance == null) {
-            instance = new ServerConnector();
-        }
-        return instance;
+        return getInstance();
     }
 
     public void send(Data d) {
@@ -104,8 +103,15 @@ public class ServerConnector {
          */
         public synchronized Data sendQuery(Data query) {
             try {
+                System.out.println("Sending query...");
+                if (cs == null || cs.isClosed()) {
+                    // Reconnect
+                    connect();
+                }
+
                 out.writeObject(query);
-                return (Data)in.readObject();
+                return (Data) in.readObject();
+
             } catch (IOException e) {
                 return null;
             } catch (ClassNotFoundException e) {
@@ -114,37 +120,37 @@ public class ServerConnector {
         }
 
 
+        private synchronized void connect() {
+            try {
+                System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
+                cs = new Socket(serverAddress, 12000);
+                out = new ObjectOutputStream(cs.getOutputStream());
+                in = new ObjectInputStream(cs.getInputStream());
+
+            } catch (IOException e) {
+                // Problem connecting.
+                System.err.println("Could not connect to " + serverAddress +
+                        ". Retrying in 10s...");
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e1) {
+                    System.out.println("Interrupted!");
+                }
+            }
+        }
+
+
+
         @Override
         public void run() {
 
             while (isRunning) {
 
-                // Connect if not already connected.
-                // If we ever lose connection, try reconnecting at regular intervals
-                while (cs == null || !cs.isConnected()) {
-                    try {
-                        System.out.println("Connecting to " + serverAddress);
-                        cs = new Socket(serverAddress, 12000);
-                        out = new ObjectOutputStream(cs.getOutputStream());
-                        in = new ObjectInputStream(cs.getInputStream());
-
-                    } catch (IOException e) {
-                        // Problem connecting.
-                        System.err.println("Could not connect to " + serverAddress +
-                                ". Retrying in 10s...");
-                        try {
-                            Thread.sleep(10000);
-                        } catch (InterruptedException e1) {
-                            System.out.println("Interrupted!");
-                        }
-                    }
-                }
-
                 // Connected. Send anything in the queue.
                 try {
                     Data d = null;
                     // Wait for queue to have objects
-                    //System.out.println("Server connector: waiting.");
+                    System.out.println("Server connector: waiting  at queue...");
                     d = queue.take();
 
                     // Then STOP ANYTHING ELSE from using this object (most importantly
@@ -153,6 +159,13 @@ public class ServerConnector {
                     if (d != null) {
                         System.out.println("Server connector: Sending...");
                         synchronized (this) {
+                            // Connect if not already connected.
+                            // If we ever lose connection, try reconnecting at regular intervals
+                            while (cs == null || cs.isClosed()) {
+                                connect();
+                            }
+
+
                             out.writeObject(d);
                             Data inD = (Data) in.readObject();
                             if (inD.getValue() == null) {
@@ -163,10 +176,16 @@ public class ServerConnector {
                         }
                     }
 
+                } catch (EOFException e) {
+                    // Reconnect in next iteration of outer while loop
+                    System.out.println("EOFException...");
 
                 } catch (IOException e) {
-                   // Socket probably closed
+                    // Socket probably closed by this application shuttting down
+
                     isRunning = false;
+
+
                     System.out.println("Socket closed! " + e.getMessage());
                     if (cs != null && cs.isConnected()) {
                         try {
