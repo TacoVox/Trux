@@ -31,8 +31,11 @@ public class MainActivity extends ActionBarActivity
         rtdp = RealTimeDataParser.getInstance();
 
         System.out.println("Main activity calling ServerConnector connect...");
+
         ServerConnector.gI().connect("10.0.2.2");
+
         //IServerConnector.getInstance().connectTo("10.0.2.2");
+
         DataPoller.gI().start();
         //This is a comment YOU FUCKIN APP
     }

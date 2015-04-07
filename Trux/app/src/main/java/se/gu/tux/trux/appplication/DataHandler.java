@@ -2,6 +2,7 @@ package se.gu.tux.trux.appplication;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.technical_services.IServerConnector;
 import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
 
@@ -51,7 +52,11 @@ public class DataHandler
      */
     public Data getData(Data request) {
         if (request.isOnServerSide()) {
+
             request = ServerConnector.gI().answerQuery(request);
+
+            //request = IServerConnector.getInstance().answerQuery(request);
+
         } else {
 
             if (request instanceof MetricData){

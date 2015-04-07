@@ -103,7 +103,10 @@ public class DataPoller {
                         // Send and update the lastMetrics array
                         if (send) {
                             for (Data thisMetric : metrics) {
+
                                 ServerConnector.gI().send(thisMetric);
+                                
+                                //IServerConnector.getInstance().receiveData(thisMetric);
                             }
                             lastMetrics = metrics;
                         }
@@ -120,13 +123,15 @@ public class DataPoller {
                      *
                      */
 
+                /*
                     Data myData = DataHandler.getInstance().getData(new Speed(MetricData.WEEK));
+
                     if (myData != null) {
                         System.out.println("\n\nThe average speed for the last week is: " + myData.getValue()
                                 + "\n\n");
                     }
 
-
+*/
 
 
 

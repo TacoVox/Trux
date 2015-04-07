@@ -79,37 +79,27 @@ public class IServerConnector
         queue.add(data);
     }
 
-/*
+
     public Data answerQuery(Data data)
     {
-        //return connector.sendQuery(data);
+        return connector.sendQuery(data);
     }
-*/
 
 
-    // to implement
-    class QueryRunnable implements Runnable
-    {
 
-        @Override
-        public void run()
-        {
-
-        }
-
-    } // end nested class
 
 
 
     private static class ConnectorRunnable implements Runnable
     {
 
-        private String serverAddress;
+        private static String serverAddress;
 
         private Socket cs = null;
         private ObjectInputStream in = null;
         private ObjectOutputStream out = null;
 
+        // controls the main thread
         private volatile boolean isRunning;
 
 
@@ -122,7 +112,7 @@ public class IServerConnector
 
         public void stopRun()
         {
-            if (cs != null)
+            if (cs != null || !cs.isClosed())
             {
                 try
                 {
@@ -135,11 +125,18 @@ public class IServerConnector
         }
 
 
-        // maybe have this method in a separate thread
 
-/*
         public synchronized Data sendQuery(Data data)
         {
+
+            // check if the out and in streams are open, if not return null
+            // we don't care here if there is a problem in the main thread
+            // we just want to send a query and for that we need the input and
+            // output streams, in case there is a problem with main thread it
+            // should be fixed there, not here!
+            if (out == null || in == null || data == null)
+            { return null; }
+
             try
             {
                 out.writeObject(data);
@@ -148,17 +145,66 @@ public class IServerConnector
             }
             catch (IOException e)
             {
+                System.out.println("\nIOException in ConnectorRunnable sendQuery()\n");
                 e.printStackTrace();
             }
             catch (ClassNotFoundException e)
             {
+                System.out.println("\nClassNotFoundException in ConnectorRunnable sendQuery()\n");
                 e.printStackTrace();
             }
 
             return null;
 
         }
-*/
+
+
+        private synchronized void reconnect()
+        {
+
+            while (cs == null || cs.isClosed() || out == null || in == null)
+            {
+                try
+                {
+                    System.out.println("Connecting to " + serverAddress);
+
+                    cs = new Socket(serverAddress, 12000);
+                    out = new ObjectOutputStream(cs.getOutputStream());
+                    in = new ObjectInputStream(cs.getInputStream());
+
+                }
+                catch (StreamCorruptedException e)
+                {
+                    System.out.println("\nStreamCorruptException in ConnectorRunnable reconnect()\n");
+                    e.printStackTrace();
+                }
+                catch (UnknownHostException e)
+                {
+                    System.out.println("\nUnknownHostException in ConnectorRunnable reconnect()\n");
+                    e.printStackTrace();
+                }
+                catch (IOException e)
+                {
+                    // Problem connecting.
+                    System.err.println("Could not connect to " + serverAddress +
+                            ". Retrying in 10s...");
+                    e.printStackTrace();
+                }
+
+                try
+                {
+                    Thread.sleep(10000);
+                }
+                catch (InterruptedException e)
+                {
+                    System.out.println("\nInterrupted!\n");
+                    e.printStackTrace();
+                }
+
+            } // end while
+
+        } // end reconnect()
+
 
         @Override
         public void run()
@@ -167,51 +213,26 @@ public class IServerConnector
             while (isRunning)
             {
 
-                while (cs == null)
+                // each iteration first check if the socket is open and we have
+                // connection to server
+                if (cs == null || cs.isClosed() || out == null || in == null)
                 {
-                    try
-                    {
-                        System.out.println("Connecting to " + serverAddress);
+                    reconnect();
+                }
 
-                        cs = new Socket(serverAddress, 12000);
-                        out = new ObjectOutputStream(cs.getOutputStream());
-                        in = new ObjectInputStream(cs.getInputStream());
-
-                    }
-                    catch (StreamCorruptedException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    catch (UnknownHostException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    catch (IOException e)
-                    {
-                        // Problem connecting.
-                        System.err.println("Could not connect to " + serverAddress +
-                                ". Retrying in 10s...");
-                        e.printStackTrace();
-                    }
-
-                    try
-                    {
-                        Thread.sleep(10000);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        System.out.println("Interrupted!");
-                        e.printStackTrace();
-                    }
-
-                } // end while (cs == null)
-
-
+                // we connected
                 try
                 {
+                    Data data = null;
 
-                    Data data = queue.take();
+                    // if the queue is not empty, take the next available element
+                    if (!queue.isEmpty())
+                    {
+                        data = queue.take();
+                    }
 
+
+                    // if the element is not null, do stuff...
                     if (data != null)
                     {
                         System.out.println("Server connector: Sending...");
@@ -220,9 +241,12 @@ public class IServerConnector
 
                         Data dataIn = (Data) in.readObject();
 
-                        if (dataIn.getValue() == null) {
+                        if (dataIn.getValue() == null)
+                        {
                             System.out.println("Server connector: Received data with null value");
-                        } else {
+                        }
+                        else
+                        {
                             System.out.println("Server connector: Received data " + dataIn.getValue().toString());
                         }
 
@@ -231,14 +255,28 @@ public class IServerConnector
                 }
                 catch (InterruptedException e)
                 {
+                    System.out.println("\nInterruptedException in ConnectorRunnable run()\n");
                     e.printStackTrace();
                 }
                 catch (IOException e)
                 {
+                    try
+                    {
+                        cs.close();
+                        in.close();
+                        out.close();
+                    }
+                    catch (IOException e1)
+                    {
+                        e1.printStackTrace();
+                    }
+
+                    System.out.println("\nIOException in ConnectorRunnable run()\n");
                     e.printStackTrace();
                 }
                 catch (ClassNotFoundException e)
                 {
+                    System.out.println("\nClassNotFoundException in ConnectorRunnable run()\n");
                     e.printStackTrace();
                 }
 
