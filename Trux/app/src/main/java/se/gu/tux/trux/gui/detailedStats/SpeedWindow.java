@@ -1,4 +1,4 @@
-package se.gu.tux.trux.gui;
+package se.gu.tux.trux.gui.detailedStats;
 
 
 import android.support.v7.app.ActionBarActivity;

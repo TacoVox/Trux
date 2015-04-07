@@ -1,15 +1,18 @@
-package se.gu.tux.trux.gui;
+package se.gu.tux.trux.gui.detailedStats;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import se.gu.tux.trux.gui.OverallGraphWindow;
+import se.gu.tux.trux.gui.OverallTextWindow;
+
 /**
  * Created by dennis on 2015-03-26.
  */
-public class FragmentPageAdapterSimpleUI extends FragmentPagerAdapter {
+public class FragmentPageAdapterOverall extends FragmentPagerAdapter {
 
-    public FragmentPageAdapterSimpleUI(FragmentManager fm) {
+    public FragmentPageAdapterOverall(FragmentManager fm) {
         super(fm);
     }
 
@@ -17,11 +20,9 @@ public class FragmentPageAdapterSimpleUI extends FragmentPagerAdapter {
 
         switch(arg0) {
             case 0:
-                return new SimpleSpeedWindow();
+                return new OverallTextWindow();
             case 1:
-                return new SimpleFuelWindow();
-            case 2:
-                return new SimpleDistanceTraveledWindow();
+                return new OverallGraphWindow();
             default:
                 break;
         }
@@ -31,6 +32,6 @@ public class FragmentPageAdapterSimpleUI extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 }

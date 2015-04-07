@@ -1,4 +1,4 @@
-package se.gu.tux.trux.gui;
+package se.gu.tux.trux.gui.detailedStats;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
+import se.gu.tux.trux.gui.detailedStats.DistanceTraveledWindow;
+import se.gu.tux.trux.gui.detailedStats.FuelWindow;
+import se.gu.tux.trux.gui.detailedStats.OverallStats;
+import se.gu.tux.trux.gui.detailedStats.SpeedWindow;
 import tux.gu.se.trux.R;
 
 
