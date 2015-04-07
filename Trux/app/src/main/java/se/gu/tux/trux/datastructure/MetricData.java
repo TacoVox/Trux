@@ -47,7 +47,7 @@ public class MetricData extends Data
      * Getter for the used timeframe
      * @return the timeframe
      */
-    public long getTimeFrame(){
+    public long getTimeFrame() {
         return tf;
     }
 
@@ -55,7 +55,11 @@ public class MetricData extends Data
         return tf != 0;
     }
 
-    public boolean equals(MetricData d) {
-        return d.getValue().equals(value);
+    public boolean equals(Object o) {
+        if (o instanceof MetricData) {
+            return ((MetricData)o).getValue().equals(value);
+        } else {
+            return false;
+        }
     }
 }

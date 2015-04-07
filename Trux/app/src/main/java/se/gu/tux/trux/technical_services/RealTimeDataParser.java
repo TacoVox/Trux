@@ -38,7 +38,7 @@ public class RealTimeDataParser
      *
      * @return      RealTimeDataParser instance
      */
-    public static RealTimeDataParser getInstance()
+    public synchronized static RealTimeDataParser getInstance()
     {
         if (rtdp == null)
         {
