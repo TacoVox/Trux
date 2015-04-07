@@ -7,22 +7,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import se.gu.tux.trux.gui.detailedStats.Stats;
+import se.gu.tux.trux.gui.simpleStats.SimpleStats;
 import tux.gu.se.trux.R;
 
-
-public class DriverHomeScreen extends ActionBarActivity {
+public class ChooseStatScreen extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_home_screen);
+        setContentView(R.layout.activity_choose_stat_screen);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_driver_home_screen, menu);
+        getMenuInflater().inflate(R.menu.menu_choose_stat_screen, menu);
         return true;
     }
 
@@ -42,8 +43,12 @@ public class DriverHomeScreen extends ActionBarActivity {
     }
 
     public void goToStats(View view){
-        Intent intent = new Intent(DriverHomeScreen.this, ChooseStatScreen.class);
+        Intent intent = new Intent(this, Stats.class);
         startActivity(intent);
     }
 
+    public void goToSimpleStats(View view){
+        Intent intent = new Intent(this, SimpleStats.class);
+        startActivity(intent);
+    }
 }

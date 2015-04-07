@@ -1,4 +1,4 @@
-package se.gu.tux.trux.gui;
+package se.gu.tux.trux.gui.simpleStats;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,17 +8,14 @@ import android.view.ViewGroup;
 
 import tux.gu.se.trux.R;
 
-public class SimpleSpeedWindow extends Fragment
-{
+public class SimpleFuelWindow extends Fragment {
 
-    private View myFragmentView;
-
+    View myFragmentView;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
     }
 
 
@@ -27,7 +24,7 @@ public class SimpleSpeedWindow extends Fragment
                              Bundle savedInstanceState)
     {
 
-        myFragmentView = inflater.inflate(R.layout.fragment_simple_speed_window, container, false);
+        myFragmentView = inflater.inflate(R.layout.fragment_simple_fuel_window, container, false);
 
         return myFragmentView;
     }

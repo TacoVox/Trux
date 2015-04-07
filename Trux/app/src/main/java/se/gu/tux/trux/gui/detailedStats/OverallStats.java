@@ -1,15 +1,16 @@
-package se.gu.tux.trux.gui;
+package se.gu.tux.trux.gui.detailedStats;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 
+import se.gu.tux.trux.gui.detailedStats.FragmentPageAdapterOverall;
 import tux.gu.se.trux.R;
 
-public class SimpleStats extends FragmentActivity {
+public class OverallStats extends FragmentActivity {
 
     ViewPager viewpager;
-    FragmentPageAdapterSimpleUI ft;
+    FragmentPageAdapterOverall ft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +19,7 @@ public class SimpleStats extends FragmentActivity {
         viewpager = new ViewPager(this);
         viewpager.setId(R.id.pager);
         setContentView(viewpager);
-        ft = new FragmentPageAdapterSimpleUI(getSupportFragmentManager());
+        ft = new FragmentPageAdapterOverall(getSupportFragmentManager());
         viewpager.setAdapter(ft);
 
         viewpager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {

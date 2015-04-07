@@ -1,8 +1,11 @@
-package se.gu.tux.trux.gui;
+package se.gu.tux.trux.gui.simpleStats;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import se.gu.tux.trux.gui.simpleStats.SimpleFuelWindow;
+import se.gu.tux.trux.gui.simpleStats.SimpleSpeedWindow;
 
 /**
  * Created by dennis on 2015-03-26.
