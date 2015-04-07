@@ -34,6 +34,10 @@ public class DistanceTraveledWindow extends ActionBarActivity {
                 new DataPoint(3, 2),
                 new DataPoint(4, 6)
         });
+        graph.setTitle("Distance Traveled");
+        graph.setTitleTextSize(40);
+        graph.getGridLabelRenderer().setVerticalAxisTitle("Avg Distance");
+        graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
         graph.addSeries(series);
     }
 

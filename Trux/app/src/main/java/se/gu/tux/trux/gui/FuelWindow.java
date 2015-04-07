@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -34,6 +35,10 @@ public class FuelWindow extends ActionBarActivity {
                 new DataPoint(3, 2),
                 new DataPoint(4, 6)
         });
+        graph.setTitle("Fuel Consumption");
+        graph.setTitleTextSize(40);
+        graph.getGridLabelRenderer().setVerticalAxisTitle("Avg Consumption");
+        graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
         graph.addSeries(series);
     }
 

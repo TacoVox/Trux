@@ -116,12 +116,12 @@
 
         </LinearLayout>
 
-        <com.jjoe64.graphview.GraphView
+            <com.jjoe64.graphview.GraphView
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:id="@+id/distanceGraph"
-            android:layout_weight="1"/>
-
+            android:layout_weight="1"
+            />
     </LinearLayout>
 
 
