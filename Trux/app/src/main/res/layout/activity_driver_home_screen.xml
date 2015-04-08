@@ -41,7 +41,6 @@
                 android:background="#3D3D3D"
                 android:textColor="#E0E0E0"
                 android:layout_weight="1"
-                android:onClick="goToSimpleStats"
                 android:layout_margin="5dp"/>
 
             <Button
