@@ -2,6 +2,7 @@ package se.gu.tux.truxserver;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -22,6 +23,7 @@ public class ServerRunnable implements Runnable {
 	private ObjectInputStream in = null;
 	private ObjectOutputStream out = null;
 	private long connectionId;
+	
 	
 	public ServerRunnable(Socket cs, long connectionId) {
 		this.cs = cs;
@@ -52,6 +54,7 @@ public class ServerRunnable implements Runnable {
 				}
 				
 				System.out.println("O: " + d.getClass());
+				
 				if (d.getValue() != null) System.out.println("v: " + d.getValue().toString());
 				
 				if (!(d instanceof Distance)) {
@@ -62,15 +65,21 @@ public class ServerRunnable implements Runnable {
 				
 				out.writeObject(d);
 				
+			} catch (InterruptedIOException e) {
+				
+				// Threadpool
+				Logger.gI().addMsg(connectionId + ": Thread interrupted, shutting down...");
+				shutDown();
+				
 			} catch (ClassNotFoundException e) {
 				
-				// TODO Auto-generated catch block
-				Logger.gI().addError(connectionId + ": Class not found!");
+				Logger.gI().addError(connectionId + ": Class not found! Exiting.");
 				isRunning = false;
 				
 			} catch (InvalidClassException e) {
 				
 				Logger.gI().addError(connectionId + ": Client sent invalid class: " + e.getMessage());
+				
 				
 			} catch (EOFException e) {
 				
