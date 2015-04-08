@@ -95,4 +95,5 @@ public class ServerHandler implements Runnable {
 	public synchronized boolean isRunning() {
 		return isRunning;
 	}
+
 }
