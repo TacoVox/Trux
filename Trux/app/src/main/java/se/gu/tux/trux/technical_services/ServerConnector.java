@@ -27,13 +27,13 @@ public class ServerConnector {
 
     private Thread transmitThread = null;
     private ConnectorRunnable connector = null;
-    private static LinkedBlockingQueue<Data> queue;
+    private static LinkedBlockingDeque<Data> queue;
 
     /**
      * Some more singleton....!
      */
 
-    private ServerConnector() { queue = new LinkedBlockingQueue<>(); }
+    private ServerConnector() { queue = new LinkedBlockingDeque<>(); }
 
     public synchronized static ServerConnector getInstance()
     {
@@ -48,8 +48,8 @@ public class ServerConnector {
         return getInstance();
     }
 
-    public void send(Data d) {
-        queue.add(d);
+    public void send(Data d) throws InterruptedException {
+        queue.putLast(d);
     }
 
     /**
@@ -70,7 +70,7 @@ public class ServerConnector {
     public void disconnect() {
         // transmitThread will exit naturally on socket close
         if (connector != null) {
-            connector.closeSocket();
+            connector.shutDown();
         }
     }
 
@@ -80,18 +80,22 @@ public class ServerConnector {
         private String serverAddress;
         private ObjectInputStream in = null;
         private ObjectOutputStream out = null;
+
+
+
         private boolean isRunning = true;
 
         public ConnectorRunnable(String address) {
             serverAddress = address;
         }
 
-        public void closeSocket() {
+        public void shutDown() {
             if (cs != null) try {
                 cs.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            isRunning = false;
         }
 
 
@@ -101,42 +105,70 @@ public class ServerConnector {
          * @param query
          * @return
          */
-        public synchronized Data sendQuery(Data query) {
+        public Data sendQuery(Data query) {
+            boolean dataSent = false;
+            Data answer = null;
 
+            while (!dataSent) {
+                // If data is null, return null
+                if (query == null) {
+                    return null;
+                }
 
-            try {
-                System.out.println("Sending query...");
-                if (cs == null || cs.isClosed()) {
-                    // Reconnect
+                if (cs != null) {
+                    System.out.println("isConnected: " + cs.isConnected());
+                }
+
+                // Check if socket is not closed and the out and in streams are open, if not, connect
+                if (cs == null || cs.isClosed() || out == null || in == null) {
+                    System.out.println("SendQuery requesting reconnect...");
                     connect();
                 }
 
+                // Make sure no other thread uses the stream resources here
+                synchronized (this) {
+                    try {
 
+                        // Send and receive
+                        System.out.println("Sending query...");
+                        out.writeObject(query);
+                        answer = (Data)in.readObject();
+                        dataSent = true;
 
-                out.writeObject(query);
-                return (Data) in.readObject();
+                    } catch (IOException e) {
 
-            } catch (IOException e) {
-                // TODO: FIX THIS!!! NOT OPTIMAL. CHECK WHY IT PASSES THE CS CLOSED / NULL CHECK ABOVE
-                System.out.println("IOEXception in sendQuery.");
-                connect();
-                return sendQuery(query);
+                        // Server probably shut down or we lost connection. Close sockets so we are sure
+                        // to try to reconnect in the next iteration of while loop
+                        System.out.println("IOEXception in sendQuery.");
+                        try {
+                            cs.close();
+                            in.close();
+                            out.close();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
 
-            } catch (ClassNotFoundException e) {
-                System.out.println("Class not found in sendQuery.");
-                return null;
+                    } catch (ClassNotFoundException e) {
+                        System.out.println("Class not found in sendQuery.");
+                        return null;
+                    }
+                }
             }
+
+            return answer;
         }
 
 
-        private synchronized void connect() {
+        private void connect() {
             while (cs == null || cs.isClosed()) {
                 try {
-                    System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
-                    cs = new Socket(serverAddress, 12000);
-                    out = new ObjectOutputStream(cs.getOutputStream());
-                    in = new ObjectInputStream(cs.getInputStream());
-
+                    // Make sure no other thread uses the stream resources here
+                    synchronized(this) {
+                        System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
+                        cs = new Socket(serverAddress, 12000);
+                        out = new ObjectOutputStream(cs.getOutputStream());
+                        in = new ObjectInputStream(cs.getInputStream());
+                    }
                 } catch (IOException e) {
                     // Problem connecting.
                     System.err.println("Could not connect to " + serverAddress +
@@ -157,28 +189,34 @@ public class ServerConnector {
 
             while (isRunning) {
 
+                Data d = null;
+
                 // Connected. Send anything in the queue.
                 try {
-                    Data d = null;
+
+
                     // Wait for queue to have objects
                     System.out.println("Server connector: waiting  at queue...");
-                    d = queue.take();
+                    d = queue.takeFirst();
 
                     // Then STOP ANYTHING ELSE from using this object (most importantly
                     // the in and out streams) while sending and receiving data
                     //System.out.println("Server connector: Found object in queue.");
                     if (d != null) {
                         System.out.println("Server connector: Sending...");
-                        synchronized (this) {
-                            // Connect if not already connected.
-                            // If we ever lose connection, try reconnecting at regular intervals
-                            while (cs == null || cs.isClosed()) {
-                                connect();
-                            }
 
+
+                        // Connect if not already connected.
+                        // If we ever lose connection, try reconnecting at regular intervals
+                        if (cs == null || cs.isClosed() || out == null || in == null) {
+                            connect();
+                        }
+
+                        synchronized (this) {
 
                             out.writeObject(d);
                             Data inD = (Data) in.readObject();
+
                             if (inD.getValue() == null) {
                                 System.out.println("Server connector: Received data with null value");
                             } else {
@@ -187,33 +225,35 @@ public class ServerConnector {
                         }
                     }
 
-                } catch (EOFException e) {
-                    // Reconnect in next iteration of outer while loop
-                    System.out.println("EOFException...");
+                } catch (InterruptedException e) {
+
+                    // Thread is being interrupted by this application shutting down. Break while loop
+                    isRunning = false;
+                    System.out.println("ServerConnector interrupted: " + e.getMessage());
 
                 } catch (IOException e) {
-                    // Socket probably closed by this application shuttting down
 
-                    isRunning = false;
+                    // Error on sending to server, close sockets so we reconnect next iteration of while loop
+                    System.out.println("IOException in ServerConnector thread: " + e.getMessage());
+                    try {
+                        queue.putFirst(d);
+                    } catch (InterruptedException e1) {
+                        isRunning = false;
+                    }
 
-
-                    System.out.println("Socket closed! " + e.getMessage());
-                    if (cs != null && cs.isConnected()) {
+                    if (cs != null) {
                         try {
                             cs.close();
+                            in.close();
+                            out.close();
+
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
                     }
-                    // TOOD we need to distinguish between this happening because app is shutting
-                    // down and close being called on the socket by us, as opposed to this happening
-                    // because we lost contact with server or similar!?
 
                 } catch (ClassNotFoundException e) {
                     isRunning = false;
-                 } catch (InterruptedException e) {
-                    isRunning = false;
-                    System.out.println("Interrupted!");
                 }
             }
         }

@@ -121,17 +121,15 @@ public class DataPoller {
                      * TEMPORARY testing of the answerQuery implementation
                      *
                      *
-                     */
-
-                /*
-                    Data myData = DataHandler.getInstance().getData(new Speed(MetricData.WEEK));
+                     *//*
+                    Data myData = DataHandler.getInstance().getData(new Speed(MetricData.WEEK, MetricData.Mode.PER_DAY));
 
                     if (myData != null) {
                         System.out.println("\n\nThe average speed for the last week is: " + myData.getValue()
                                 + "\n\n");
-                    }
+                    }*/
 
-*/
+
 
 
 
