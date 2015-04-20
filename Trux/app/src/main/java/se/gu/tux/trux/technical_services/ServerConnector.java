@@ -58,6 +58,7 @@ public class ServerConnector {
      * @return
      */
     public Data answerQuery(Data d) {
+        d.setTimeStamp(System.currentTimeMillis());
         return connector.sendQuery(d);
     }
 
