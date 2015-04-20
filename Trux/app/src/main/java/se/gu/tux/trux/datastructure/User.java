@@ -5,7 +5,6 @@ package se.gu.tux.trux.datastructure;
  */
 public class User extends Data
 {
-	private long userId;
 	private String username;
 	private String passwordHash;
 	private String firstName;
@@ -29,15 +28,6 @@ public class User extends Data
 	public boolean isOnServerSide() {
 		// TODO Auto-generated method stub
 		return false;
-	}
-	
-	
-	public long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(long userId) {
-		this.userId = userId;
 	}
 
 	public String getUsername() {
