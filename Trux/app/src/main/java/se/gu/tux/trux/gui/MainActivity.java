@@ -6,9 +6,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.swedspot.automotiveapi.AutomotiveManager;
 
+import se.gu.tux.trux.appplication.LoginService;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.technical_services.DataPoller;
@@ -21,7 +23,12 @@ import tux.gu.se.trux.R;
 public class MainActivity extends ActionBarActivity
 {
 
+    LoginService ls;
+
     RealTimeDataParser rtdp;
+
+    TextView userField = (TextView) findViewById(R.id.username);
+    TextView passField = (TextView) findViewById(R.id.password);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +37,11 @@ public class MainActivity extends ActionBarActivity
 
         rtdp = RealTimeDataParser.getInstance();
 
+        ls = new LoginService();
+
         System.out.println("Main activity calling ServerConnector connect...");
 
-        ServerConnector.gI().connect("10.0.2.2");
+        ServerConnector.gI().connect("www.derkahler.de");
 
         //IServerConnector.getInstance().connectTo("10.0.2.2");
 
@@ -61,8 +70,31 @@ public class MainActivity extends ActionBarActivity
         
         return super.onOptionsItemSelected(item);
     }
-    public void goToHome(View view){
+
+
+    public void goToHome(View view)
+    {
+        /*
+        String username = (String) userField.getText();
+        String password = (String) passField.getText();
+
+        if (username.isEmpty() || password.isEmpty())
+        {
+            return;
+        }
+
+        boolean isAllowed = ls.isAllowed(username, password);
+
+        if (isAllowed)
+        {
+            Intent intent = new Intent(this, DriverHomeScreen.class);
+            startActivity(intent);
+        }
+        */
+
         Intent intent = new Intent(this, DriverHomeScreen.class);
         startActivity(intent);
+        
     }
-}
+
+} // end class
