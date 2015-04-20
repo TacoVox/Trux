@@ -95,7 +95,7 @@ public class MetricInserter implements Runnable {
                     "INSERT INTO metric(value, timestamp, type, userid) " + 
                             "VALUES(?, ?, ?, ?);");
 		
-            pst.setDouble(1, md.getValue());
+            pst.setDouble(1, (Double)md.getValue());
             pst.setLong(2, md.getTimeStamp());
             pst.setString(3, md.getClass().getSimpleName());
             pst.setLong(4, 0);
