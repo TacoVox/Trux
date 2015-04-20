@@ -1,0 +1,181 @@
+/*
+ * Copyright 2015 jonas.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package se.gu.tux.truxserver.dbconnect;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import se.gu.tux.trux.datastructure.Distance;
+import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.truxserver.logger.Logger;
+
+/**
+ *
+ * @author jonas
+ */
+public class MetricReceiver {
+    /**
+     * Static part.
+     */
+    private static MetricReceiver mr = null;
+    
+    static {
+        if (mr == null)
+            mr = new MetricReceiver();
+    }
+    
+    public static MetricReceiver getInstance() {
+        return mr;
+    }
+    
+    public static MetricReceiver gI() {
+        return mr;
+    }
+    
+    /**
+     * Non-static part.
+     */
+    private MetricReceiver() {}
+    
+    public MetricData getMetric(MetricData md)
+    {
+        if(md instanceof Fuel || md instanceof Speed)
+            return getAverage(md);
+        else if(md instanceof Distance)
+            return getDiff(md);
+        else
+            return null;
+    }
+    
+    private MetricData getAverage(MetricData md)
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "SELECT AVG(value) AS avg FROM metric WHERE " +
+                    "type = ? AND userid = ? AND timestamp BETWEEN ? AND ?;";
+            
+            Logger.getInstance().addDebug(selectStmnt);
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setString(1, md.getClass().getSimpleName());
+            pst.setLong(2, 0);
+	    pst.setLong(3, md.getTimeStamp() - md.getTimeFrame());
+            pst.setLong(4, md.getTimeStamp()); 
+	    
+	    ResultSet rs = pst.executeQuery();
+	    
+	    while (rs.next())
+	    {
+		md.setValue(rs.getDouble("avg"));
+		break;
+	    }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.toString());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        return md;
+    }
+    
+    private MetricData getSum(MetricData md)
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "SELECT SUM(value) AS sum FROM metric WHERE " +
+                    "type = ? AND userid = ? AND timestamp BETWEEN ? AND ?;";
+            
+            Logger.getInstance().addDebug(selectStmnt);
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setString(1, md.getClass().getSimpleName());
+            pst.setLong(2, 0);
+	    pst.setLong(3, md.getTimeStamp() - md.getTimeFrame());
+            pst.setLong(4, md.getTimeStamp()); 
+	    
+	    ResultSet rs = pst.executeQuery();
+	    
+	    while (rs.next())
+	    {
+		md.setValue(rs.getDouble("sum"));
+		break;
+	    }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.toString());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        return md;
+    }
+    
+    private MetricData getDiff(MetricData md)
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "(SELECT value FROM metric WHERE type = ? " +
+                    "AND userid = ? ORDER BY ABS(value - ?) LIMIT 1;) - " +
+                    "(SELECT value FROM metric WHERE type = ? " +
+                    "AND userid = ? ORDER BY ABS(value - ?) LIMIT 1;);";
+            
+            Logger.getInstance().addDebug(selectStmnt);
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setString(1, md.getClass().getSimpleName());
+            pst.setLong(2, 0);
+            pst.setLong(3, md.getTimeStamp());
+            pst.setString(4, md.getClass().getSimpleName());
+            pst.setLong(5, 0);
+            pst.setLong(6, md.getTimeStamp() - md.getTimeFrame());          
+	    
+	    ResultSet rs = pst.executeQuery();
+	    
+	    while (rs.next())
+	    {
+		md.setValue(rs.getDouble("sum"));
+		break;
+	    }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.toString());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        return md;
+    }
+}
