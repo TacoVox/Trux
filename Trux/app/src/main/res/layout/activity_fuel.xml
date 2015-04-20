@@ -122,7 +122,7 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/FuelGraph"
+            android:id="@+id/fuel_Graph"
             android:layout_weight="1">
         </LinearLayout>
     </LinearLayout>

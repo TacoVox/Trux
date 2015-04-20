@@ -27,6 +27,7 @@ public class SpeedWindow extends ActionBarActivity
     // controls the thread
     private volatile boolean running = true;
 
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

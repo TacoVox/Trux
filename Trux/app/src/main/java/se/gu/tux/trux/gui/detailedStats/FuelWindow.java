@@ -27,7 +27,7 @@ public class FuelWindow extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fuel);
 
-        GraphView graph = (GraphView) findViewById(R.id.fuelGraph);
+        GraphView graph = (GraphView) findViewById(R.id.fuel_Graph);
         LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
                 new DataPoint(0, 1),
                 new DataPoint(1, 5),
