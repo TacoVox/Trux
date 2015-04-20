@@ -86,11 +86,7 @@ public class ServerRunnable implements Runnable {
 				if (d.getValue() != null) System.out.println("v: " + d.getValue().toString());
 				
 				// Send data to DataSwitcher
-				if (!(d instanceof Distance)) {
-					d = DataSwitcher.gI().handleData(d);
-				} else {
-					Logger.gI().addError(connectionId + ": Skipping distance object until datatype decisions are resolved!");			
-				}
+				d = DataSwitcher.gI().handleData(d);
 				
 				// Send data back to acknowledge.
 				out.writeObject(d);
