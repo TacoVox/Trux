@@ -22,18 +22,23 @@ import tux.gu.se.trux.R;
 
 public class MainActivity extends ActionBarActivity
 {
+    TextView userField;
+    TextView passField;
 
     LoginService ls;
 
     RealTimeDataParser rtdp;
 
-    TextView userField = (TextView) findViewById(R.id.username);
-    TextView passField = (TextView) findViewById(R.id.password);
+  //  TextView userField = (TextView) findViewById(R.id.username);
+  //  TextView passField = (TextView) findViewById(R.id.password);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        userField = (TextView) findViewById(R.id.username);
+        passField = (TextView) findViewById(R.id.password);
 
         rtdp = RealTimeDataParser.getInstance();
 
@@ -74,9 +79,9 @@ public class MainActivity extends ActionBarActivity
 
     public void goToHome(View view)
     {
-        /*
-        String username = (String) userField.getText();
-        String password = (String) passField.getText();
+
+        String username = userField.getText().toString();
+        String password = passField.getText().toString();
 
         if (username.isEmpty() || password.isEmpty())
         {
@@ -90,10 +95,10 @@ public class MainActivity extends ActionBarActivity
             Intent intent = new Intent(this, DriverHomeScreen.class);
             startActivity(intent);
         }
-        */
 
-        Intent intent = new Intent(this, DriverHomeScreen.class);
-        startActivity(intent);
+
+       // Intent intent = new Intent(this, DriverHomeScreen.class);
+       // startActivity(intent);
 
     }
 
