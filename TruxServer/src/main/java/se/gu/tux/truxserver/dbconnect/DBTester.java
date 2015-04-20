@@ -16,7 +16,7 @@
 package se.gu.tux.truxserver.dbconnect;
 
 import java.util.Random;
-import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.truxserver.config.ConfigHandler;
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -34,15 +34,15 @@ public class DBTester {
         
         Logger.gI().setVerbose(true);
         
-        Random rand = new Random(20);
+        Random rand = new Random(1245);
         
         for(int i = 0; i < 100; i++)
         { 
-            Fuel f = new Fuel(0);
-            f.setValue(rand.nextDouble());
-            f.setTimeStamp(System.currentTimeMillis());       
+            Distance d = new Distance(0);
+            d.setValue(rand.nextLong());
+            d.setTimeStamp(System.currentTimeMillis());       
             
-            MetricInserter.gI().addToDB(f);
+            MetricInserter.gI().addToDB(d);
             
             try {
                 Thread.sleep(100);
@@ -54,11 +54,11 @@ public class DBTester {
         
         mi.interrupt();
         
-        Fuel f = new Fuel(60000);
-        f.setTimeStamp(System.currentTimeMillis());
+        Distance d = new Distance(60000);
+        d.setTimeStamp(System.currentTimeMillis());
         
-        MetricReceiver.gI().getMetric(f);
+        MetricReceiver.gI().getMetric(d);
  
-        System.out.println(f.getValue());
+        System.out.println(d.getValue());
     }
 }

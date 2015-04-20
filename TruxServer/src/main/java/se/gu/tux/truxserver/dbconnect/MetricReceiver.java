@@ -63,28 +63,29 @@ public class MetricReceiver {
     
     private MetricData getAverage(MetricData md)
     {
+        String type = md.getClass().getSimpleName().toLowerCase();
+        
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
 	{
-            String selectStmnt = "SELECT AVG(value) AS avg FROM metric WHERE " +
-                    "type = ? AND userid = ? AND timestamp BETWEEN ? AND ?;";
+            String selectStmnt = "SELECT AVG(value) AS avg FROM " + type +
+                    " WHERE userid = ? AND timestamp BETWEEN ? AND ?;";
             
             Logger.getInstance().addDebug(selectStmnt);
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setString(1, md.getClass().getSimpleName());
-            pst.setLong(2, 0);
-	    pst.setLong(3, md.getTimeStamp() - md.getTimeFrame());
-            pst.setLong(4, md.getTimeStamp()); 
+            pst.setLong(1, 0);
+	    pst.setLong(2, md.getTimeStamp() - md.getTimeFrame());
+            pst.setLong(3, md.getTimeStamp()); 
 	    
 	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())
 	    {
-		md.setValue(rs.getDouble("avg"));
+		md.setValue(rs.getObject("avg"));
 		break;
 	    }
 	}
@@ -101,28 +102,29 @@ public class MetricReceiver {
     
     private MetricData getSum(MetricData md)
     {
+        String type = md.getClass().getSimpleName().toLowerCase();
+        
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
 	{
-            String selectStmnt = "SELECT SUM(value) AS sum FROM metric WHERE " +
-                    "type = ? AND userid = ? AND timestamp BETWEEN ? AND ?;";
+            String selectStmnt = "SELECT SUM(value) AS sum FROM " + type +
+                    " WHERE userid = ? AND timestamp BETWEEN ? AND ?;";
             
             Logger.getInstance().addDebug(selectStmnt);
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setString(1, md.getClass().getSimpleName());
-            pst.setLong(2, 0);
-	    pst.setLong(3, md.getTimeStamp() - md.getTimeFrame());
-            pst.setLong(4, md.getTimeStamp()); 
+            pst.setLong(1, 0);
+	    pst.setLong(2, md.getTimeStamp() - md.getTimeFrame());
+            pst.setLong(3, md.getTimeStamp()); 
 	    
 	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())
 	    {
-		md.setValue(rs.getDouble("sum"));
+		md.setValue(rs.getObject("sum"));
 		break;
 	    }
 	}
@@ -139,26 +141,26 @@ public class MetricReceiver {
     
     private MetricData getDiff(MetricData md)
     {
+        String type = md.getClass().getSimpleName().toLowerCase();
+        
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
 	{
-            String selectStmnt = "(SELECT value FROM metric WHERE type = ? " +
-                    "AND userid = ? ORDER BY ABS(value - ?) LIMIT 1;) - " +
-                    "(SELECT value FROM metric WHERE type = ? " +
-                    "AND userid = ? ORDER BY ABS(value - ?) LIMIT 1;);";
+            String selectStmnt = "(SELECT value FROM " + type + " WHERE " +
+                    "userid = ? ORDER BY ABS(value - ?) LIMIT 1;) - " +
+                    "(SELECT value FROM " + type + " WHERE " +
+                    "userid = ? ORDER BY ABS(value - ?) LIMIT 1;);";
             
             Logger.getInstance().addDebug(selectStmnt);
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setString(1, md.getClass().getSimpleName());
-            pst.setLong(2, 0);
-            pst.setLong(3, md.getTimeStamp());
-            pst.setString(4, md.getClass().getSimpleName());
-            pst.setLong(5, 0);
-            pst.setLong(6, md.getTimeStamp() - md.getTimeFrame());          
+            pst.setLong(1, 0);
+            pst.setLong(2, md.getTimeStamp());
+            pst.setLong(3, 0);
+            pst.setLong(4, md.getTimeStamp() - md.getTimeFrame());          
 	    
 	    ResultSet rs = pst.executeQuery();
 	    
