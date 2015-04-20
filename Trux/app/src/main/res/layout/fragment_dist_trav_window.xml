@@ -1,9 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="se.gu.tux.trux.gui.detailedStats.DistanceTraveledWindow"
     android:padding="10dp"
-    android:background="#E0E0E0">
+    tools:context="se.gu.tux.trux.gui.detailedStatistics.DistTravWindow">
 
     <LinearLayout
         android:orientation="vertical"
@@ -28,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/average_today"
-                android:id="@+id/avg_today_fuel"
+                android:id="@+id/avg_today_distance_traveled"
                 android:textSize="20dp"
                 android:textColor="#3D3D3D"/>
 
@@ -36,9 +35,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:id="@+id/avg_today_fuel_value"
+                android:id="@+id/avg_today_distance_traveled_value"
                 android:layout_alignBottom="@+id/avg_today_fuel"
-                android:layout_alignStart="@+id/avg_lastweek_fuel_value"
+                android:layout_alignStart="@+id/avg_lastweek_distance_traveled_value"
                 android:textSize="20dp"
                 android:textColor="#3D3D3D"
                 android:layout_marginLeft="10dp"/>
@@ -54,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/average_lastweek"
-                android:id="@+id/avg_lastweek_fuel"
+                android:id="@+id/avg_lastweek_distance_traveled"
                 android:textSize="20dp"
                 android:textColor="#3D3D3D"/>
 
@@ -62,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:id="@+id/avg_lastweek_fuel_value"
+                android:id="@+id/avg_lastweek_distance_traveled_value"
                 android:textSize="20dp"
                 android:textColor="#3D3D3D"
                 android:layout_marginLeft="10dp"/>
@@ -78,7 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/average_lastmonth"
-                android:id="@+id/avg_lastmonth_fuel"
+                android:id="@+id/avg_lastmonth_distance_traveled"
                 android:textSize="20dp"
                 android:textColor="#3D3D3D"/>
 
@@ -86,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:id="@+id/avg_lastmonth_fuel_value"
+                android:id="@+id/avg_lastmonth_distance_traveled_value"
                 android:textSize="20dp"
                 android:textColor="#3D3D3D"
                 android:layout_marginLeft="10dp"/>
@@ -102,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/average_total"
-                android:id="@+id/avg_total_fuel"
+                android:id="@+id/avg_total_distance_traveled"
                 android:textSize="20dp"
                 android:textColor="#3D3D3D"/>
 
@@ -110,7 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:id="@+id/avg_total_fuel_value"
+                android:id="@+id/avg_total_distance_traveled_value"
                 android:textSize="20dp"
                 android:textColor="#3D3D3D"
                 android:layout_marginLeft="10dp"/>
@@ -118,14 +117,13 @@
 
     </LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/FuelGraph"
-            android:layout_weight="1">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/DistanceGraph"
+        android:layout_weight="1">
         </LinearLayout>
     </LinearLayout>
 
-
-</RelativeLayout>
+</FrameLayout>
