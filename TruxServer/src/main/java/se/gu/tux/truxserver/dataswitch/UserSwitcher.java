@@ -16,57 +16,43 @@
 package se.gu.tux.truxserver.dataswitch;
 
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.User;
-import se.gu.tux.truxserver.dbconnect.MetricInserter;
+import se.gu.tux.truxserver.dbconnect.UserHandler;
 
 /**
  *
  * @author jonas
  */
-public class DataSwitcher {
-    /**
+public class UserSwitcher {
+        /**
      * Static part.
      */
-    private static DataSwitcher ds = null;
+    private static UserSwitcher us = null;
     
     static {
-        if(ds == null)
-            ds = new DataSwitcher();
+        if(us == null)
+            us = new UserSwitcher();
     }
     
-    public static DataSwitcher getInstance() {
-        return ds;
+    protected static UserSwitcher getInstance() {
+        return us;
     }
     
-    public static DataSwitcher gI() {
-        return ds;
+    protected static UserSwitcher gI() {
+        return us;
     }
     
     /**
      * Non-static part.
      */
-    private Thread mi = null;
+    private UserSwitcher() {}
     
-    private DataSwitcher() {
-        if (mi == null)
-            mi = new Thread(MetricInserter.gI());
-    }
-    
-    public void start() {
-        mi.start();
-    }
-    
-    public void stop() {
-        mi.interrupt();
-    }
-    
-    public Data handleData(Data d) {
-        if (d instanceof MetricData)
-            return MetricSwitcher.gI().handleMetricData((MetricData)d);
-        else if (d instanceof User)
-            return UserSwitcher.gI().handleUser((User) d);
+    protected Data handleUser(User ud) {
+    	//Do something.
+        //Session null
+        if(ud.getSessionId() == -1)
+            return UserHandler.gI().login(ud);
         else
             return null;
     }
-} 
+}
