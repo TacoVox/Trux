@@ -33,7 +33,7 @@ public class FuelWindow extends ActionBarActivity {
                 new DataPoint(1, 5),
                 new DataPoint(2, 3),
                 new DataPoint(3, 2),
-                new DataPoint(4, 6)
+                new DataPoint(30, 12)
         });
         graph.setTitle("Fuel Consumption");
         graph.setTitleTextSize(40);
