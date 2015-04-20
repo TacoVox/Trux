@@ -83,22 +83,29 @@ public class MetricInserter implements Runnable {
     
     private boolean insertMetric(MetricData md)
     {
+        String type = md.getClass().getSimpleName().toLowerCase();
+        
     	if (md.getValue() == null) {
             Logger.getInstance().addError("Somebody tried to insert an empty data object.");
     		return false; 
         }
-    	
+        
         DBConnector dbc = ConnectionPool.gI().getDBC();
         try
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO metric(value, timestamp, type, userid) " + 
-                            "VALUES(?, ?, ?, ?);");
-		
-            pst.setDouble(1, md.getValue());
+                    "INSERT INTO " + type + "(value, timestamp, userid) " + 
+                            "VALUES(?, ?, ?);");
+            
+            //Checking for the type
+            //if(type.equals("distance"))
+              //  pst.setLong(2, (Long)md.getValue());
+            //else
+                //pst.setDouble(2, (Double)md.getValue());
+            pst.setObject(1, md.getValue());
+            
             pst.setLong(2, md.getTimeStamp());
-            pst.setString(3, md.getClass().getSimpleName());
-            pst.setLong(4, 0);
+            pst.setLong(3, 0);
 		
             pst.executeUpdate();
             
