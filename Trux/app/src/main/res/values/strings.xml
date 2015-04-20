@@ -40,5 +40,10 @@
     <string name="average_fuel">Average Fuel:</string>
     <string name="average_distance_traveled">Average Distance Traveled:</string>
     <string name="title_activity_choose_stat_screen">ChooseStatScreen</string>
+    <string name="title_activity_stats_windows">StatsWindows</string>
+    <string name="hello_world">Hello world!</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

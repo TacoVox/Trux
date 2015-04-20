@@ -37,6 +37,7 @@ public class SpeedWindow extends ActionBarActivity
         final TextView speedTextViewToday = (TextView) findViewById(R.id.avg_today_speed_value);
         final TextView speedTextViewWeek = (TextView) findViewById(R.id.avg_lastweek_speed_value);
         final TextView speedTextViewMonth = (TextView) findViewById(R.id.avg_lastmonth_speed_value);
+        final TextView speedTextViewTotal = (TextView) findViewById(R.id.avg_total_speed_value);
         //dataHandler = DataHandler.getInstance();
 
         new Thread(new Runnable()
@@ -52,6 +53,7 @@ public class SpeedWindow extends ActionBarActivity
                     final Speed speedWeek = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.WEEK));
                     //Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
                     final Speed speedMonth = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.THIRTYDAYS));
+                    final Speed speedTotal = (Speed) DataHandler.getInstance().getData(new Speed(Long.MAX_VALUE));
                     runOnUiThread(new Runnable()
                     {
                         @Override
@@ -62,6 +64,7 @@ public class SpeedWindow extends ActionBarActivity
                             speedTextViewToday.setText(String.format("%.1f km/h", speedToday.getValue()));
                             speedTextViewWeek.setText(String.format("%.1f km/h", speedWeek.getValue()));
                             speedTextViewMonth.setText(String.format("%.1f km/h", speedMonth.getValue()));
+                            speedTextViewTotal.setText(String.format("%.1f km/h", speedTotal.getValue()));
                         }
                     });
 
