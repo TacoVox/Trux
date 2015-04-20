@@ -79,7 +79,7 @@ public class ServerHandler implements Runnable {
 		isRunning = false;
 		
 		// Stop all threads
-		threadPool.shutdown();
+		threadPool.shutdownNow();
 		
 		// Close server socket
 		if (ss != null) {
@@ -95,4 +95,5 @@ public class ServerHandler implements Runnable {
 	public synchronized boolean isRunning() {
 		return isRunning;
 	}
+
 }
