@@ -31,7 +31,7 @@ public class SpeedWindow extends ActionBarActivity
 
         final TextView speedTextView = (TextView) findViewById(R.id.display_todays_speed);
 
-        dataHandler = DataHandler.getInstance();
+        //dataHandler = DataHandler.getInstance();
 
         new Thread(new Runnable()
         {
@@ -45,8 +45,8 @@ public class SpeedWindow extends ActionBarActivity
                         @Override
                         public void run()
                         {
-                            Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
-
+                            //Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
+                            Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
                             speedTextView.setText(String.format("%.1f km/h", speed.getValue()));
                         }
                     });
@@ -58,6 +58,7 @@ public class SpeedWindow extends ActionBarActivity
                     }
                     catch (InterruptedException e)
                     {
+                        // TODO: assume app is shutting down, do any cleanup
                         e.printStackTrace();
                     }
 
