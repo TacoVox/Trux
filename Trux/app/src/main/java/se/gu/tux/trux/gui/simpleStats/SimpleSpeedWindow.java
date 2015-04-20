@@ -19,13 +19,12 @@ public class SimpleSpeedWindow extends Fragment
 
     private View myFragmentView;
 
-    private volatile boolean running = true;
+    private TextView currentSpeed;
+    private Timer t;
 
-    TextView currentSpeed;
+    TimerTask timer;
 
-    Timer t;
-
-    TimerTask timer = new TimerTask() {
+    class myTask extends TimerTask {
 
         public void run() {
 
@@ -34,14 +33,12 @@ public class SimpleSpeedWindow extends Fragment
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
-
-                        currentSpeed.setText(String.format("%.1f km/h", speed.getValue()));
+                        currentSpeed.setText(String.format("%f km/h", speed.getValue()));
                     }
                 });
 
         }
-    };
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,9 +49,16 @@ public class SimpleSpeedWindow extends Fragment
         currentSpeed = (TextView) myFragmentView.findViewById(R.id.currentSpeed);
 
         t = new Timer();
-        t.schedule(timer , 1000 , 1000);
+        timer = new myTask();
+        t.schedule(timer , 0 , 1000);
 
         return myFragmentView;
+    }
+
+    public void onStop(){
+        super.onStop();
+
+        t.cancel();
     }
 
 }
