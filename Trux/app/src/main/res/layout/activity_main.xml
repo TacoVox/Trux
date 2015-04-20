@@ -37,7 +37,7 @@
             android:ems="10"
             android:id="@+id/username"
             android:layout_gravity="center_horizontal"
-            android:layout_above="@+id/username"
+            android:layout_above="@+id/password"
             android:layout_alignParentStart="true"
             android:hint="Username"/>
 
