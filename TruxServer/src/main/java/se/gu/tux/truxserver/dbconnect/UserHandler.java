@@ -92,8 +92,10 @@ public class UserHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
         
-        if(u.passwordMatch(passwd))
+        if(u.passwordMatch(passwd)) {
+            SessionHandler.gI().startSession(u);
             return new Response(Response.Type.LOGIN_SUCCESS);
+        }
         else
             return new Response(Response.Type.LOGIN_FAILED);
     }
