@@ -19,7 +19,7 @@ import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
-public class ServerRunnable implements Runnable, ShutDownable {
+public class ServerRunnable implements Runnable {
 	private boolean isRunning = true;
 	private Socket cs = null;
 	private ObjectInputStream in = null;
