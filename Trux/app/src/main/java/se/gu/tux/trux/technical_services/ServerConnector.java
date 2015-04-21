@@ -116,6 +116,14 @@ public class ServerConnector {
             boolean dataSent = false;
             Data answer = null;
 
+            // If not logged in, throw exception so the using code may take approperiate action
+            // TODO: Note that login attempts must of course be an exception to this check!
+            if (DataHandler.getInstance().getUser() != null &&
+                    (DataHandler.getInstance().getUser().getSessionId() == -1 ||
+                     DataHandler.getInstance().getUser().getUserId() == 0)) {
+                //throw new Exception("Not logged in!");
+            }
+
             while (!dataSent) {
                 // If data is null, return null
                 if (query == null) {
@@ -224,18 +232,29 @@ public class ServerConnector {
                             connect();
                         }
 
-                        synchronized (this) {
-                            d.setSessionId(DataHandler.getInstance().getUser().getSessionId());
-                            d.setUserId(DataHandler.getInstance().getUser().getUserId());
+                        // If not logged in - put back into the queue, sleep for a while,
+                        // and instead try send on next iteration of while loop
+                        if (DataHandler.getInstance().getUser() != null &&
+                                (DataHandler.getInstance().getUser().getSessionId() == -1 ||
+                                DataHandler.getInstance().getUser().getUserId() == 0)) {
+                            System.out.println("Want to send queued data but is not logged in. Sleeping...");
+                            Thread.sleep(10000);
+                        } else {
+                            // Send the data
+                            synchronized (this) {
+                                // Mark data with session and user
+                                d.setSessionId(DataHandler.getInstance().getUser().getSessionId());
+                                d.setUserId(DataHandler.getInstance().getUser().getUserId());
 
-                            out.writeObject(d);
-                            Data inD = (Data) in.readObject();
+                                out.writeObject(d);
+                                Data inD = (Data) in.readObject();
 
-                            if (inD.getValue() == null) {
-                                System.out.println("Server connector: Received data with null value");
-                            } else {
-                                System.out.println("Server connector: Received data " + inD.getValue().toString());
-                                System.out.println("returned values: " + inD.getSessionId() + " : " + inD.getUserId());
+                                if (inD.getValue() == null) {
+                                    System.out.println("Server connector: Received data with null value");
+                                } else {
+                                    System.out.println("Server connector: Received data " + inD.getValue().toString());
+                                    System.out.println("returned values: " + inD.getSessionId() + " : " + inD.getUserId());
+                                }
                             }
                         }
                     }

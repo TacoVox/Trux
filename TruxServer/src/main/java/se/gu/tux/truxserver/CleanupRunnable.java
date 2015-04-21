@@ -34,7 +34,7 @@ public class CleanupRunnable implements Runnable {
     			Logger.gI().addDebug("Cleanup thread performing tasks...");
     			
     			// Do any cleanup here below:
-    			// UserHandler.gI().purgeSessions();
+    			UserHandler.gI().purgeSessions();
     			
     			// Sleep for a while
     			Thread.sleep(interval);

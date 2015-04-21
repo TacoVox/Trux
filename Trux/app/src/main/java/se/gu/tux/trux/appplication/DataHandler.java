@@ -7,6 +7,18 @@ import se.gu.tux.trux.technical_services.IServerConnector;
 import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
 
+// TODO: possibly add a session handler class or whatever BUT anyway - it would be nice
+// to have a centralized method so we only implement once the logic to decide whether
+// we are logged in or not - right now in serverconnector we have this check:
+/*
+if (DataHandler.getInstance().getUser() != null &&
+    (DataHandler.getInstance().getUser().getSessionId() == -1 ||
+    DataHandler.getInstance().getUser().getUserId() == 0)) {
+    System.out.println("Want to send queued data but is not logged in. Sleeping...");
+    Thread.sleep(10000);
+    }
+*/
+
 /**
  * Created by ivryashkov on 2015-03-25.
  */
