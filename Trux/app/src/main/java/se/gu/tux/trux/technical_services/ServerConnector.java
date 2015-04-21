@@ -238,6 +238,7 @@ public class ServerConnector {
                                 (DataHandler.getInstance().getUser().getSessionId() == -1 ||
                                 DataHandler.getInstance().getUser().getUserId() == 0)) {
                             System.out.println("Want to send queued data but is not logged in. Sleeping...");
+                            queue.putFirst(d);
                             Thread.sleep(10000);
                         } else {
                             // Send the data
