@@ -33,7 +33,7 @@ public class SimpleSpeedWindow extends Fragment
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        currentSpeed.setText(String.format("%f km/h", speed.getValue()));
+                        currentSpeed.setText(String.format("%.lf km/h", speed.getValue()));
                     }
                 });
 
