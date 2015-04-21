@@ -18,6 +18,7 @@ package se.gu.tux.truxserver.dbconnect;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 
@@ -58,16 +59,20 @@ public class UserHandler {
         return true;
     }
     
-    public ProtocolMessage login(User u)
+    public Data login(User u)
     {
+        int userid = -1;
         String passwd = null;
+        String firstname = null;
+        String lastname = null;
+        int sessionid = -1;
         
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
 	{
-            String selectStmnt = "SELECT password FROM user" +
-                    " WHERE userid = ?;";
+            String selectStmnt = "SELECT userid, password, firstname, lastname" +
+                    " FROM user WHERE userid = ?;";
             
             Logger.getInstance().addDebug(selectStmnt);
             
@@ -80,7 +85,11 @@ public class UserHandler {
 	    
 	    while (rs.next())
 	    {
+                u.setUserId(rs.getInt("userid"));
                 passwd = rs.getString("password");
+                u.setFirstName(rs.getString("firstname"));
+                u.setLastName(rs.getString("lastname"));
+                
 		break;
 	    }
 	}
@@ -93,10 +102,16 @@ public class UserHandler {
         }
         
         if(u.passwordMatch(passwd)) {
-            SessionHandler.gI().startSession(u);
-            return new ProtocolMessage(ProtocolMessage.Type.LOGIN_SUCCESS);
+            u.setSessionId(SessionHandler.gI().startSession(u));
+            
+            return u;
         }
         else
             return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
+    }
+    
+    public void purgeSessions()
+    {
+        //Code follows
     }
 }
