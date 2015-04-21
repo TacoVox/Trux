@@ -8,6 +8,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
+import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.appplication.DataHandler;
 import tux.gu.se.trux.R;
@@ -22,6 +27,7 @@ public class SpeedWindow extends ActionBarActivity
     // controls the thread
     private volatile boolean running = true;
 
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -29,9 +35,11 @@ public class SpeedWindow extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speed);
 
-        final TextView speedTextView = (TextView) findViewById(R.id.display_todays_speed);
-
-        dataHandler = DataHandler.getInstance();
+        final TextView speedTextViewToday = (TextView) findViewById(R.id.avg_today_speed_value);
+        final TextView speedTextViewWeek = (TextView) findViewById(R.id.avg_lastweek_speed_value);
+        final TextView speedTextViewMonth = (TextView) findViewById(R.id.avg_lastmonth_speed_value);
+        final TextView speedTextViewTotal = (TextView) findViewById(R.id.avg_total_speed_value);
+        //dataHandler = DataHandler.getInstance();
 
         new Thread(new Runnable()
         {
@@ -40,24 +48,41 @@ public class SpeedWindow extends ActionBarActivity
             {
                 while (running)
                 {
+                    //Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
+                    final Speed speedToday = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.DAY));
+                    //Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
+                    final Speed speedWeek = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.WEEK));
+                    //Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
+                    final Speed speedMonth = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.THIRTYDAYS));
+                    final Speed speedTotal = (Speed) DataHandler.getInstance().getData(new Speed(Long.MAX_VALUE));
                     runOnUiThread(new Runnable()
                     {
                         @Override
                         public void run()
                         {
-                            Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
 
-                            speedTextView.setText(String.format("%.1f km/h", speed.getValue()));
+                            //setting the TextView Strings to the correct value
+                            speedTextViewToday.setText(String.format("%.1f km/h", speedToday.getValue()));
+                            if(speedToday.getValue() != null) System.out.println("Today recevied");
+                            else System.out.println("Today NULL");
+                            speedTextViewWeek.setText(String.format("%.1f km/h", speedWeek.getValue()));
+                            if(speedWeek.getValue() != null) System.out.println("Week recevied");
+                            else System.out.println("Week NULL");
+                            speedTextViewMonth.setText(String.format("%.1f km/h", speedMonth.getValue()));
+                            if(speedMonth.getValue() != null) System.out.println("Month recevied");
+                            else System.out.print("Month Value: " + speedMonth.getValue());
+                            speedTextViewTotal.setText(String.format("%.1f km/h", speedTotal.getValue()));
                         }
                     });
 
                     // pause for 1 second
                     try
                     {
-                        Thread.sleep(1000);
+                        Thread.sleep(10000);
                     }
                     catch (InterruptedException e)
                     {
+                        // TODO: assume app is shutting down, do any cleanup
                         e.printStackTrace();
                     }
 
@@ -66,6 +91,20 @@ public class SpeedWindow extends ActionBarActivity
             } // end run()
 
         }).start();
+
+        GraphView graph = (GraphView) findViewById(R.id.speedGraph);
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
+                new DataPoint(0, 1),
+                new DataPoint(1, 5),
+                new DataPoint(2, 3),
+                new DataPoint(3, 2),
+                new DataPoint(30, 12)
+        });
+        graph.setTitle("Speed");
+        graph.setTitleTextSize(40);
+        graph.getGridLabelRenderer().setVerticalAxisTitle("Avg Speed");
+        graph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
+        graph.addSeries(series);
 
     } // end onCreate()
 

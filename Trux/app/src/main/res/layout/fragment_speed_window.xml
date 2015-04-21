@@ -1,9 +1,9 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    android:background="#E0E0E0"
-    tools:context="se.gu.tux.trux.gui.Speed">
+    tools:context="se.gu.tux.trux.gui.detailedStatistics.SpeedWindow">
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -117,12 +117,14 @@
 
         </LinearLayout>
 
-        <com.jjoe64.graphview.GraphView
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/speedGraph"
-            android:layout_weight="1"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/SpeedGraph"
+        android:layout_weight="1">
+    </LinearLayout>
 
     </LinearLayout>
 
-</RelativeLayout>
+</FrameLayout>

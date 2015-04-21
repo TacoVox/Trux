@@ -1,6 +1,16 @@
 # Trux - [Documentation Here](https://github.com/TacoVox/Tux/tree/master/DIT524_Project)
 Our Project - We will rock this course.
 
+## TODO - Client
+* Serverconnector should ignore null objects OR DataPoller should not send them. We need to know if connection to AGA is interrupted. Worst-case solution just let DataPoller check if current set of metrics is identical to last set, then don't send it.
+* Fragments for speed, distance, fuel
+* A way to determine if moving (display simple interface) or not
+* Client should reconnect if for example server is restarted or connection temporarily interrupted
+
+## TODO - Server
+* Main server thread pool
+* Different tables for different metrics since for example distance is long, not double
+
 ## Short description how this repository works.
 We are working in three different main branches:
 * Master --> NO CHANGES IN THIS BRANCH
