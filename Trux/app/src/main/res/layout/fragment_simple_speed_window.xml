@@ -2,33 +2,57 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
+    android:layout_gravity="center_horizontal"
     android:background="#3D3D3D"
     android:paddingTop="10dp"
     tools:context="se.gu.tux.trux.gui.simpleStats.SimpleSpeedWindow"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="3">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Speed"
+        android:text="SPEED"
         android:id="@+id/speedTitle"
-        android:textSize="50dp"
+        android:textSize="50sp"
         android:textColor="#E0E0E0"
-        android:layout_gravity="center_horizontal|top" />
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="0"
+            android:id="@+id/currentSpeed"
+            android:textSize="100sp"
+            android:textColor="#E0E0E0"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="20sp"
+            android:text="KM/H"
+            android:id="@+id/speedMetric"
+            android:textColor="#E0E0E0"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_weight="1" />
+
+    </LinearLayout>
 
     <Space
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_gravity="center_horizontal" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Insert speed here!"
-        android:id="@+id/currentSpeed"
-        android:textSize="20dp"
-        android:textColor="#E0E0E0"
-        android:layout_gravity="center_horizontal" />
+        android:layout_weight="1" />
 
 </LinearLayout>
