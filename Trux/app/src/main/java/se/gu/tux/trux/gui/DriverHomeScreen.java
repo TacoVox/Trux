@@ -54,13 +54,14 @@ public class DriverHomeScreen extends ActionBarActivity {
         startActivity(intent);
 
         /**
+        Intent rich = new Intent(DriverHomeScreen.this, Stats.class);
+        Intent simple = new Intent(DriverHomeScreen.this, SimpleStats.class);
+
         if (speed.getValue() == null) {
-            Intent intent = new Intent(DriverHomeScreen.this, Stats.class);
-            startActivity(intent);
+            startActivity(rich);
         }
         else {
-            Intent intent = new Intent(DriverHomeScreen.this, SimpleStats.class);
-            startActivity(intent);
+            startActivity(simple);
         }
         **/
     }
