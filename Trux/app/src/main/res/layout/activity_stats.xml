@@ -4,13 +4,14 @@
     tools:context="se.gu.tux.trux.Stats"
     android:padding="5dp"
     android:background="#E0E0E0"
-    android:id="@+id/Stats">
+    >
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:weightSum="3">
+        android:weightSum="3"
+        android:id="@+id/StatsView">
 
 
         <LinearLayout
@@ -35,7 +36,6 @@
                     android:text="@string/speed_button_text"
                     android:id="@+id/speed_button"
                     android:layout_weight="1"
-                    android:onClick="goToSpeed"
                     android:background="#3D3D3D"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
@@ -46,7 +46,6 @@
                     android:text="@string/fuel_button_text"
                     android:id="@+id/fuel_button"
                     android:layout_weight="1"
-                    android:onClick="goToFuel"
                     android:background="#3D3D3D"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
@@ -65,7 +64,6 @@
                     android:text="@string/distance_traveled_text"
                     android:id="@+id/distance_traveled"
                     android:layout_weight="1"
-                    android:onClick="goToDistanceTraveled"
                     android:background="#3D3D3D"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
@@ -114,12 +112,12 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:text="@string/overall_statistics_text"
-            android:id="@+id/overall_statistics"
+            android:id="@+id/overall_button"
             android:layout_weight="1"
             android:background="#3D3D3D"
             android:textColor="#E0E0E0"
-            android:layout_margin="5dp"
-            android:onClick="goToOverallStats"/>
+            android:onClick="goToOverall"
+            android:layout_margin="5dp"/>
 
         <Button
             android:layout_width="fill_parent"
