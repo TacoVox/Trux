@@ -3,11 +3,11 @@ package se.gu.tux.trux.datastructure;
 /**
  * Created by jonas on 3/24/15.
  */
-public class Response extends Data {
-	public enum Type {LOGIN_SUCCESS, LOGIN_FAILED, DATA_RECEIVED};
+public class ProtocolMessage extends Data {
+	public enum Type {LOGIN_SUCCESS, LOGIN_FAILED, LOGOUT_REQUEST, DATA_RECEIVED, SUCCESS, ERROR};
 	private Type responseType;
 	
-	public Response(Type response) {
+	public ProtocolMessage(Type response) {
 		this.responseType = response;
 	}
 	

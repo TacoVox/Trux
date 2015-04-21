@@ -18,7 +18,7 @@ package se.gu.tux.truxserver.dbconnect;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import se.gu.tux.trux.datastructure.Response;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 
 import se.gu.tux.truxserver.logger.Logger;

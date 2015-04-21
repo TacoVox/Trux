@@ -63,7 +63,7 @@ public class ServerConnector {
     }
 
     public void connect(String address) {
-        connector = new ConnectorRunnable(address);
+        connector = new ConnectorRunnable(address, this);
         transmitThread = new Thread(connector);
         transmitThread.start();
     }
@@ -81,13 +81,18 @@ public class ServerConnector {
         private String serverAddress;
         private ObjectInputStream in = null;
         private ObjectOutputStream out = null;
-
-
-
         private boolean isRunning = true;
+        // For debugging, checking the instance
+        private ServerConnector sc = null;
+
 
         public ConnectorRunnable(String address) {
             serverAddress = address;
+        }
+
+        public ConnectorRunnable(String address, ServerConnector sc) {
+            serverAddress = address;
+            this.sc = sc;
         }
 
         public void shutDown() {
@@ -197,7 +202,7 @@ public class ServerConnector {
 
 
                     // Wait for queue to have objects
-                    System.out.println("Server connector: waiting  at queue...");
+                    System.out.println("Server connector: waiting  at queue... (" + sc.toString() + ")");
                     d = queue.takeFirst();
 
                     // Then STOP ANYTHING ELSE from using this object (most importantly

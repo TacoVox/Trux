@@ -19,7 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import se.gu.tux.trux.datastructure.User;
-import se.gu.tux.trux.datastructure.Response;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -58,7 +58,7 @@ public class UserHandler {
         return true;
     }
     
-    public Response login(User u)
+    public ProtocolMessage login(User u)
     {
         String passwd = null;
         
@@ -94,9 +94,9 @@ public class UserHandler {
         
         if(u.passwordMatch(passwd)) {
             SessionHandler.gI().startSession(u);
-            return new Response(Response.Type.LOGIN_SUCCESS);
+            return new ProtocolMessage(ProtocolMessage.Type.LOGIN_SUCCESS);
         }
         else
-            return new Response(Response.Type.LOGIN_FAILED);
+            return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
     }
 }
