@@ -63,8 +63,14 @@ public class SpeedWindow extends ActionBarActivity
 
                             //setting the TextView Strings to the correct value
                             speedTextViewToday.setText(String.format("%.1f km/h", speedToday.getValue()));
+                            if(speedToday.getValue() != null) System.out.println("Today recevied");
+                            else System.out.println("Today NULL");
                             speedTextViewWeek.setText(String.format("%.1f km/h", speedWeek.getValue()));
+                            if(speedWeek.getValue() != null) System.out.println("Week recevied");
+                            else System.out.println("Week NULL");
                             speedTextViewMonth.setText(String.format("%.1f km/h", speedMonth.getValue()));
+                            if(speedMonth.getValue() != null) System.out.println("Month recevied");
+                            else System.out.print("Month Value: " + speedMonth.getValue());
                             speedTextViewTotal.setText(String.format("%.1f km/h", speedTotal.getValue()));
                         }
                     });
@@ -72,7 +78,7 @@ public class SpeedWindow extends ActionBarActivity
                     // pause for 1 second
                     try
                     {
-                        Thread.sleep(1000);
+                        Thread.sleep(10000);
                     }
                     catch (InterruptedException e)
                     {

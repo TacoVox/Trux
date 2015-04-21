@@ -33,4 +33,9 @@ public class StatsWindows extends ActionBarActivity {
 
     }
 
+
+    public void onPageSelected(int arg0) {
+
+    }
+
 }
