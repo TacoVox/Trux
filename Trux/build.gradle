@@ -19,3 +19,12 @@ allprojects {
 }
 
 apply plugin: "sonar-runner"
+sonarRunner {
+    sonarProperties {
+        property "sonar.host.url", "http://www.derkahler.de:9000"
+        property "sonar.jdbc.url", "jdbc:mysql://derkahler.de:3306/sonar"
+        property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
+        property "sonar.jdbc.username", "sonar"
+        property "sonar.jdbc.password", "2MXLX4yVE7DFzTFS"
+    }
+}
