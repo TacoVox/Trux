@@ -1,10 +1,10 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="se.gu.tux.trux.Stats"
+    tools:context="se.gu.tux.trux.gui.detailedStatistics.StatsScreen"
     android:padding="5dp"
-    android:background="#E0E0E0"
-    android:id="@+id/Stats">
+    android:id="@+id/StatsScreen"
+    android:background="#E0E0E0">
 
     <LinearLayout
         android:orientation="vertical"
@@ -35,7 +35,6 @@
                     android:text="@string/speed_button_text"
                     android:id="@+id/speed_button"
                     android:layout_weight="1"
-                    android:onClick="goToSpeed"
                     android:background="#3D3D3D"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
@@ -46,7 +45,6 @@
                     android:text="@string/fuel_button_text"
                     android:id="@+id/fuel_button"
                     android:layout_weight="1"
-                    android:onClick="goToFuel"
                     android:background="#3D3D3D"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
@@ -63,9 +61,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:text="@string/distance_traveled_text"
-                    android:id="@+id/distance_traveled"
+                    android:id="@+id/distance_traveled_button"
                     android:layout_weight="1"
-                    android:onClick="goToDistanceTraveled"
                     android:background="#3D3D3D"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
@@ -118,8 +115,7 @@
             android:layout_weight="1"
             android:background="#3D3D3D"
             android:textColor="#E0E0E0"
-            android:layout_margin="5dp"
-            android:onClick="goToOverallStats"/>
+            android:layout_margin="5dp"/>
 
         <Button
             android:layout_width="fill_parent"
@@ -133,4 +129,5 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+
+</FrameLayout>

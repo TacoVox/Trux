@@ -20,10 +20,12 @@ public class FragmentPageAdapterDetailedUI extends FragmentPagerAdapter {
 
         switch(arg0) {
             case 0:
-                return new SpeedWindow();
+                return new StatsScreen();
             case 1:
-                return new FuelWindow();
+                return new SpeedWindow();
             case 2:
+                return new FuelWindow();
+            case 3:
                 return new DistTravWindow();
             default:
                 break;
@@ -35,7 +37,7 @@ public class FragmentPageAdapterDetailedUI extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 1;
+        return 3;
     }
 
 }

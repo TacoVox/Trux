@@ -1,12 +1,20 @@
 package se.gu.tux.trux.gui.detailedStats;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 
+import se.gu.tux.trux.gui.detailedStatistics.DistTravWindow;
+import se.gu.tux.trux.gui.detailedStatistics.StatsScreen;
 import se.gu.tux.trux.gui.detailedStats.DistanceTraveledWindow;
 import se.gu.tux.trux.gui.detailedStats.FuelWindow;
 import se.gu.tux.trux.gui.detailedStats.OverallStats;
@@ -15,13 +23,56 @@ import tux.gu.se.trux.R;
 
 
 public class Stats extends ActionBarActivity {
-    
+    Fragment fragment;
+    View myFragmentView;
+    Button speedBtn, fuelBtn, distanceBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
+
+
+        speedBtn = (Button) findViewById(R.id.speed_button);
+        fuelBtn = (Button) findViewById(R.id.fuel_button);
+        distanceBtn = (Button) findViewById(R.id.distance_traveled_button);
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        Stats myStatsScreen = new Stats();
+        //  ft.add(R.id.Stats, myStatsScreen);
+        ft.commit();
+
+        speedBtn.setOnClickListener(btnOnClickListener);
+        fuelBtn.setOnClickListener(btnOnClickListener);
+        distanceBtn.setOnClickListener(btnOnClickListener);
+
+
     }
+
+    Button.OnClickListener btnOnClickListener = new Button.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Fragment newFragment;
+
+            if (v == speedBtn) {
+                newFragment = new se.gu.tux.trux.gui.detailedStatistics.SpeedWindow();
+            } else if (v == fuelBtn) {
+                newFragment = new se.gu.tux.trux.gui.detailedStatistics.FuelWindow();
+            } else if (v == distanceBtn) {
+                newFragment = new DistTravWindow();
+            }
+            else newFragment = new StatsScreen();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.Stats, newFragment);
+            ft.addToBackStack(null);
+            ft.commit();
+
+        }
+    };
+
+
 
 
     @Override
@@ -46,6 +97,7 @@ public class Stats extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+/*
     public void goToSpeed(final View view)
     {
         final Intent intent = new Intent(this, SpeedWindow.class);
@@ -82,5 +134,5 @@ public class Stats extends ActionBarActivity {
     public void goToOverallStats(View view){
         Intent intent = new Intent(this, OverallStats.class);
         startActivity(intent);
-    }
+    }*/
 }
