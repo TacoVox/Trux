@@ -2,6 +2,7 @@ package se.gu.tux.trux.appplication;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.technical_services.IServerConnector;
 import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
@@ -16,7 +17,7 @@ public class DataHandler
 
     private RealTimeDataHandler realTimeDataHandler;
 
-
+    private User user;
 
     /**
      * Constructor. Declared private and not instantiated. We keep an
@@ -72,30 +73,16 @@ public class DataHandler
     }
 
 
-
-    public Data signalIn(int automotiveSignalId, boolean isOnServerSide)
+    public void setUser(User user)
     {
-        Data data = null;
+        this.user = user;
+    }
 
-        if (isOnServerSide)
-        {
 
-        }
-        else
-        {
-            realTimeDataHandler = new RealTimeDataHandler();
-
-            System.out.println("----------------------------------------------------");
-            System.out.println("returning speed object from data handler");
-            System.out.println("----------------------------------------------------");
-
-            data = realTimeDataHandler.getSignalData(automotiveSignalId);
-        }
-
-        return data;
-
-    } // end signalIn()
-
+    public User getUser()
+    {
+        return user;
+    }
 
 
 } // end class DataHandler

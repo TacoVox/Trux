@@ -13,6 +13,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Fuel;
 
@@ -137,8 +138,13 @@ public class ServerConnector {
 
                         // Send and receive
                         System.out.println("Sending query...");
+                        query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
+                        query.setUserId(DataHandler.getInstance().getUser().getUserId());
                         out.writeObject(query);
                         answer = (Data)in.readObject();
+
+                        System.out.println("returned values: " + answer.getSessionId() + " : " + answer.getUserId());
+
                         dataSent = true;
 
                     } catch (IOException e) {
@@ -219,6 +225,8 @@ public class ServerConnector {
                         }
 
                         synchronized (this) {
+                            d.setSessionId(DataHandler.getInstance().getUser().getSessionId());
+                            d.setUserId(DataHandler.getInstance().getUser().getUserId());
 
                             out.writeObject(d);
                             Data inD = (Data) in.readObject();
@@ -227,6 +235,7 @@ public class ServerConnector {
                                 System.out.println("Server connector: Received data with null value");
                             } else {
                                 System.out.println("Server connector: Received data " + inD.getValue().toString());
+                                System.out.println("returned values: " + inD.getSessionId() + " : " + inD.getUserId());
                             }
                         }
                     }
