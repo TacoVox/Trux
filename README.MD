@@ -1,8 +1,8 @@
 # Trux - [Documentation Here](https://github.com/TacoVox/Tux/tree/master/DIT524_Project)
 Our Project - We will rock this course.
 
-[Jenkins Trux Server](http://derkahler.de:8080/job/TruxServer/)
-[SonarQube Trux Server](http://www.derkahler.de:9000/dashboard/index/1)
+* [Jenkins Trux Server](http://derkahler.de:8080/job/TruxServer/)
+* [SonarQube Trux Server](http://www.derkahler.de:9000/dashboard/index/1)
 
 ##Build - Status on devel
 TruxServer <img src="http://derkahler.de:8080/job/TruxServer/1/badge/icon">
