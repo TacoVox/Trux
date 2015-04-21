@@ -26,6 +26,7 @@ import se.gu.tux.truxserver.logger.Logger;
 public class TruxServer {
 	private Thread serverHandlerThread;
 	private Thread mainThread;
+	private Thread cleanupThread;
 	private ServerHandler sh;
 	private Scanner in = new Scanner(System.in);
 	private boolean isRunning = true;
@@ -48,6 +49,7 @@ public class TruxServer {
     private void stopServer() {
     	// Stop the server
     	mainThread.interrupt();
+    	cleanupThread.interrupt();
 		isRunning = false;
 		sh.stopServer();
 		DataSwitcher.gI().stop();
@@ -66,12 +68,17 @@ public class TruxServer {
 	    	// Start the data manager thread
 	    	DataSwitcher.gI().start();
 	    	
+	    	// Start cleanup thread
+	    	cleanupThread = new Thread(new CleanupRunnable(60));
+	    	cleanupThread.start();
+	    	
 	    	// Start the server pool - start it in a wrapping thread so we can
 	    	// interrupt it with keyboard input from the main thread.
 	    	sh = new ServerHandler(this);
 	    	serverHandlerThread = new Thread(sh);
 	    	serverHandlerThread.start();
 	    	Logger.gI().addMsg("Trux Server started.\nq followed by enter quits.");
+	    	
 	    	
 	    
 	    	// While thread not interrupted, 
