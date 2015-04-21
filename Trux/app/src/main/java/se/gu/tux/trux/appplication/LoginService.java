@@ -63,6 +63,8 @@ public class LoginService
         String hashPass = createHash(password);
         user.setPasswordHash(hashPass);
 
+        user.setSessionId(-1);
+
         Response response = (Response) ServerConnector.getInstance().answerQuery(user);
 
         if (response.getValue() == Response.Type.LOGIN_SUCCESS)
