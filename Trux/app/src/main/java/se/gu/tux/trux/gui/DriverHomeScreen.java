@@ -7,10 +7,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.datastructure.Distance;
+import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.gui.detailedStats.Stats;
+import se.gu.tux.trux.gui.simpleStats.SimpleStats;
 import tux.gu.se.trux.R;
 
 
 public class DriverHomeScreen extends ActionBarActivity {
+
+    final Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +49,20 @@ public class DriverHomeScreen extends ActionBarActivity {
     }
 
     public void goToStats(View view){
+
         Intent intent = new Intent(DriverHomeScreen.this, ChooseStatScreen.class);
         startActivity(intent);
+
+        /**
+        if (speed.getValue() == null) {
+            Intent intent = new Intent(DriverHomeScreen.this, Stats.class);
+            startActivity(intent);
+        }
+        else {
+            Intent intent = new Intent(DriverHomeScreen.this, SimpleStats.class);
+            startActivity(intent);
+        }
+        **/
     }
 
 }

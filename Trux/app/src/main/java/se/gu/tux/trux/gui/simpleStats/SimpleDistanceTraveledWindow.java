@@ -33,7 +33,7 @@ public class SimpleDistanceTraveledWindow extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    currentDistance.setText(String.format("%,d km", dist.getValue()));
+                    currentDistance.setText(String.format("%,d m", dist.getValue()));
                 }
             });
 
