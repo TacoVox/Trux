@@ -123,7 +123,7 @@ public class SessionHandler {
         return -1;
     }
     
-    public void endSession(User u)
+    public ProtocolMessage endSession(ProtocolMessage pm)
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
@@ -138,12 +138,12 @@ public class SessionHandler {
                     updateStmnt);
 	    
             pst.setLong(1, System.currentTimeMillis());
-            pst.setLong(2, u.getUserId());
-            pst.setLong(3, u.getSessionId());
+            pst.setLong(2, pm.getUserId());
+            pst.setLong(3, pm.getSessionId());
 	    
 	    pst.executeUpdate();
             
-            //return new Response(Response.Type.DATA_RECEIVED);
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
 	}
 	catch (Exception e)
 	{
@@ -152,5 +152,7 @@ public class SessionHandler {
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
+        
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
 }
