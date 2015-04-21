@@ -43,9 +43,7 @@ public class ServerHandler implements Runnable {
 		// let the next server thread available handle the connection		
     	while(isRunning()) {
     		
-    		// An accepted incoming connection is handled by a socket that is sent
-    		// to the next available server thread
-    		Thread t = null;
+    		// An accepted incoming connection is handled in the thread pool
     		
     		try {
     			Logger.gI().addDebug("Waiting for next connection...");

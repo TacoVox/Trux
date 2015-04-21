@@ -28,16 +28,11 @@ package se.gu.tux.trux.appplication;
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-
-import se.gu.tux.trux.datastructure.Response;
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.technical_services.ServerConnector;
 
@@ -64,11 +59,13 @@ public class LoginService
         user.setPasswordHash(hashPass);
 
         user.setSessionId(-1);
+        DataHandler.getInstance().setUser(user);
 
-        Response response = (Response) ServerConnector.getInstance().answerQuery(user);
+        Data response = (Data) ServerConnector.getInstance().answerQuery(user);
 
-        if (response.getValue() == Response.Type.LOGIN_SUCCESS)
+        if (response instanceof User)
         {
+            DataHandler.getInstance().setUser((User) response);
             return true;
         }
         else
@@ -77,6 +74,12 @@ public class LoginService
         }
 
     } // end isAllowed()
+
+
+    public void logout()
+    {
+        ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.LOGOUT_REQUEST));
+    }
 
 
     private String createHash(String password)
