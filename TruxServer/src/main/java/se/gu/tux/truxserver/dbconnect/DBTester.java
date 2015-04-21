@@ -16,8 +16,9 @@
 package se.gu.tux.truxserver.dbconnect;
 
 import java.util.Random;
-import se.gu.tux.trux.datastructure.Distance;
+import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.truxserver.config.ConfigHandler;
+import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -38,11 +39,11 @@ public class DBTester {
         
         for(int i = 0; i < 100; i++)
         { 
-            Distance d = new Distance(0);
-            d.setValue(rand.nextLong());
-            d.setTimeStamp(System.currentTimeMillis());       
+            Speed s = new Speed(0);
+            s.setValue(rand.nextDouble());
+            s.setTimeStamp(System.currentTimeMillis());       
             
-            MetricInserter.gI().addToDB(d);
+            DataSwitcher.gI().handleData(s);
             
             try {
                 Thread.sleep(100);
@@ -54,11 +55,13 @@ public class DBTester {
         
         mi.interrupt();
         
-        Distance d = new Distance(60000);
-        d.setTimeStamp(System.currentTimeMillis());
+        Speed s = new Speed(60000);
+        s.setTimeStamp(System.currentTimeMillis());
         
-        MetricReceiver.gI().getMetric(d);
+        //MetricReceiver.gI().getMetric(d);
+        
+        s = (Speed)DataSwitcher.gI().handleData(s);
  
-        System.out.println(d.getValue());
+        System.out.println(s.getValue());
     }
 }
