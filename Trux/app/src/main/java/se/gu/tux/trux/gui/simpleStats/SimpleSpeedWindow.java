@@ -29,14 +29,14 @@ public class SimpleSpeedWindow extends Fragment
         public void run() {
 
                 final Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        currentSpeed.setText(String.format("%.lf km/h", speed.getValue()));
-                    }
-                });
-
+                if (speed.getValue() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            currentSpeed.setText(new Long(Math.round((Double) speed.getValue())).toString());
+                        }
+                    });
+                }
         }
     }
 
