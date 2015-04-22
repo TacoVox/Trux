@@ -9,8 +9,8 @@ public class User extends Data
 	 * To try to log in or to register a new user, set the session id 
 	 * to one of the following:
 	 */
-	public final int LOGIN_REQUEST = -1;
-	public final int REGISTER_REQUEST = -2;
+	public static final int LOGIN_REQUEST = -1;
+	public static final int REGISTER_REQUEST = -2;
 	private String username;
 	private String passwordHash;
 	private String firstName;

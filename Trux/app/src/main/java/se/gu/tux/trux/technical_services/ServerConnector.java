@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.User;
 
 /**
  *
@@ -24,18 +25,17 @@ import se.gu.tux.trux.datastructure.Fuel;
  * Created by jerker on 2015-03-27.
  */
 public class ServerConnector {
-    private static ServerConnector instance = null;
 
     private Thread transmitThread = null;
     private ConnectorRunnable connector = null;
     private static LinkedBlockingDeque<Data> queue;
 
+
     /**
      * Some more singleton....!
      */
-
+    private static ServerConnector instance = null;
     private ServerConnector() { queue = new LinkedBlockingDeque<>(); }
-
     public synchronized static ServerConnector getInstance()
     {
         if (instance == null) {
@@ -43,37 +43,65 @@ public class ServerConnector {
         }
         return instance;
     }
-
     public synchronized static ServerConnector gI()
     {
         return getInstance();
     }
 
-    public void send(Data d) throws InterruptedException {
-        queue.putLast(d);
-    }
 
     /**
-     * Forwards a data query to the server and returns the reply
-     * @param d
-     * @return
+     * Define the address to connect to - the actual connection is not made until something
+     * needs to be sent - so TODO: maybe rename this method later
+     * @param address
      */
-    public Data answerQuery(Data d) {
-        d.setTimeStamp(System.currentTimeMillis());
-        return connector.sendQuery(d);
-    }
-
     public void connect(String address) {
         connector = new ConnectorRunnable(address, this);
         transmitThread = new Thread(connector);
         transmitThread.start();
     }
 
+
+    /**
+     * Disconnect from the server.
+     */
     public void disconnect() {
         // transmitThread will exit naturally on socket close
         if (connector != null) {
             connector.shutDown();
         }
+    }
+
+
+    /**
+     * Sends data to the server, like metric data, by putting it into the queue.
+     * @param d
+     */
+    public void send(Data d) throws InterruptedException {
+        queue.putLast(d);
+    }
+
+
+    /**
+     * Used by DataPoller to manage the queue size - keeping that logic outside of this class
+     * so this class can focus on the technical details of transmisison
+     * */
+    public int getQueueSize() { return queue.size(); }
+
+    /**
+     * Used by DataPoller to manage the queue size - keeping that logic outside of this class
+     * so this class can focus on the technical details of transmisison.
+     * Note that we throw away the data here.
+     * */
+    public void removeFirst() { queue.removeFirst(); }
+
+    /**
+     * Forwards a data query to the server and returns the reply.
+     * @param d
+     * @return
+     */
+    public Data answerQuery(Data d) {
+        d.setTimeStamp(System.currentTimeMillis());
+        return connector.sendQuery(d);
     }
 
 
@@ -119,8 +147,9 @@ public class ServerConnector {
             // If not logged in, throw exception so the using code may take approperiate action
             // TODO: Note that login attempts must of course be an exception to this check!
             if (DataHandler.getInstance().getUser() != null &&
-                    (DataHandler.getInstance().getUser().getSessionId() == -1 ||
-                     DataHandler.getInstance().getUser().getUserId() == 0)) {
+                    (DataHandler.getInstance().getUser().getSessionId() == User.LOGIN_REQUEST ||
+                            DataHandler.getInstance().getUser().getSessionId() == User.REGISTER_REQUEST ||
+                            DataHandler.getInstance().getUser().getUserId() == 0)) {
                 //throw new Exception("Not logged in!");
             }
 
@@ -235,7 +264,8 @@ public class ServerConnector {
                         // If not logged in - put back into the queue, sleep for a while,
                         // and instead try send on next iteration of while loop
                         if (DataHandler.getInstance().getUser() != null &&
-                                (DataHandler.getInstance().getUser().getSessionId() == -1 ||
+                                (DataHandler.getInstance().getUser().getSessionId() == User.LOGIN_REQUEST ||
+                                DataHandler.getInstance().getUser().getSessionId() == User.REGISTER_REQUEST ||
                                 DataHandler.getInstance().getUser().getUserId() == 0)) {
                             System.out.println("Want to send queued data but is not logged in. Sleeping...");
                             queue.putFirst(d);
