@@ -7,10 +7,11 @@ import android.swedspot.scs.data.SCSFloat;
  */
 public class MetricData extends Data
 {
-    public final static int HOUR = 60 * 60 * 1000;
-    public final static int DAY =  HOUR * 24;
-    public final static int WEEK = DAY * 7;
-    public final static int THIRTYDAYS = DAY * 30;
+    public final static long HOUR = 60 * 60 * 1000;
+    public final static long DAY =  HOUR * 24;
+    public final static long WEEK = DAY * 7;
+    public final static long THIRTYDAYS = DAY * 30;
+    public final static long FOREVER = -1;
 
     /**
      * For the average or sum - should we sum it up over the whole time period or return results
