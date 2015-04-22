@@ -11,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
 import tux.gu.se.trux.R;
 
@@ -29,14 +30,14 @@ public class SimpleSpeedWindow extends Fragment
         public void run() {
 
                 final Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        currentSpeed.setText(String.format("%f km/h", speed.getValue()));
-                    }
-                });
-
+                if (speed.getValue() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            currentSpeed.setText(new Long(Math.round((Double) speed.getValue())).toString());
+                        }
+                    });
+                }
         }
     }
 

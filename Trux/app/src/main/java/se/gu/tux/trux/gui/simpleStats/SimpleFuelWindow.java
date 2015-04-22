@@ -30,12 +30,14 @@ public class SimpleFuelWindow extends Fragment {
 
             final Fuel fuel = (Fuel) DataHandler.getInstance().getData(new Fuel(0));
 
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    currentFuel.setText(String.format("%f litres/h", fuel.getValue()));
-                }
-            });
+            if (fuel.getValue() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        currentFuel.setText(new Long(Math.round((Double) fuel.getValue())).toString());
+                    }
+                });
+            }
 
         }
     };

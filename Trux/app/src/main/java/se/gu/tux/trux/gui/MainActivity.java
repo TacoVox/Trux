@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.swedspot.automotiveapi.AutomotiveManager;
+
+import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.LoginService;
 import se.gu.tux.trux.datastructure.Data;
@@ -28,9 +31,6 @@ public class MainActivity extends ActionBarActivity
     LoginService ls;
 
     RealTimeDataParser rtdp;
-
-  //  TextView userField = (TextView) findViewById(R.id.username);
-  //  TextView passField = (TextView) findViewById(R.id.password);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,27 +79,55 @@ public class MainActivity extends ActionBarActivity
 
     public void goToHome(View view)
     {
-
-        String username = userField.getText().toString();
-        String password = passField.getText().toString();
+        /*
+        final String username = userField.getText().toString();
+        final String password = passField.getText().toString();
 
         if (username.isEmpty() || password.isEmpty())
         {
             return;
         }
 
-        boolean isAllowed = ls.isAllowed(username, password);
+        AsyncTask<String, Void, Boolean> check = new LoginCheck().execute(username, password);
+
+        boolean isAllowed = false;
+
+        try
+        {
+            isAllowed = check.get();
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        catch (ExecutionException e)
+        {
+            e.printStackTrace();
+        }
 
         if (isAllowed)
         {
             Intent intent = new Intent(this, DriverHomeScreen.class);
             startActivity(intent);
         }
+        */
+
+        Intent intent = new Intent(this, DriverHomeScreen.class);
+        startActivity(intent);
+
+    } // end goToHome()
 
 
-       // Intent intent = new Intent(this, DriverHomeScreen.class);
-       // startActivity(intent);
+    private class LoginCheck extends AsyncTask<String, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(String... strings)
+        {
+            boolean isAllowed = ls.isAllowed(strings[0], strings[1]);
+            return isAllowed;
+        }
 
-    }
+    } // end inner class
+
 
 } // end class

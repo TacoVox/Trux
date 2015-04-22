@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context="se.gu.tux.trux.gui.detailedStatistics.FuelWindow">
+    tools:context="se.gu.tux.trux.gui.detailedStats.FuelWindow">
 
     <LinearLayout
         android:orientation="vertical"
@@ -35,7 +35,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:id="@+id/avg_today_distance_traveled_value"
+                    android:id="@+id/avg_today_fuel_value"
                     android:layout_alignBottom="@+id/avg_today_fuel"
                     android:layout_alignStart="@+id/avg_lastweek_fuel_value"
                     android:textSize="20dp"

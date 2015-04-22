@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context="se.gu.tux.trux.gui.detailedStatistics.SpeedWindow">
+    tools:context="se.gu.tux.trux.gui.detailedStats.SpeedWindow">
 
     <LinearLayout
         android:orientation="vertical"

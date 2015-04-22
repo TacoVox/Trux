@@ -30,12 +30,15 @@ public class SimpleDistanceTraveledWindow extends Fragment {
 
             final Distance dist = (Distance) DataHandler.getInstance().getData(new Distance(0));
 
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    currentDistance.setText(String.format("%,d km", dist.getValue()));
-                }
-            });
+            if (dist.getValue() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Long distance = (Long)dist.getValue()/ 1000;
+                        currentDistance.setText(distance.toString());
+                    }
+                });
+            }
 
         }
     };
