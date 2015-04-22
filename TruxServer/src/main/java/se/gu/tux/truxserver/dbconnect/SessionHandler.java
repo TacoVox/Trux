@@ -169,7 +169,7 @@ public class SessionHandler {
                     updateStmnt);
 	    
             pst.setLong(1, System.currentTimeMillis());
-            pst.setLong(2, (Config.gI().getCleanUpInterval() * 60000));
+            pst.setLong(2, (Config.gI().getCleanupInterval() * 60000));
 	    
 	    pst.executeUpdate();
             
