@@ -53,7 +53,7 @@ public class Config {
     private String dbname;
     private String dbuser;
     private String dbpass;
-    private int cleanUpInterval;
+    private int cleanupInterval;
     private short maxNoDBConnections;
 
     public String getDbaddress() {
@@ -104,12 +104,12 @@ public class Config {
         this.verbose = verbose;
     }
     
-    public int getCleanUpInterval() {
-        return cleanUpInterval;
+    public int getCleanupInterval() {
+        return cleanupInterval;
     }
 
-    public void setCleanUpInterval(int cleanUpInterval) {
-        this.cleanUpInterval = cleanUpInterval;
+    public void setCleanupInterval(int cleanUpInterval) {
+        this.cleanupInterval = cleanUpInterval;
     }
     
     public short getMaxNoDBConnections() {

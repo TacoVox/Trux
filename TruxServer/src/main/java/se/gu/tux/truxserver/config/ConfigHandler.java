@@ -158,10 +158,9 @@ public class ConfigHandler {
         }
     }
     
+    
     /**
-     * Method to get a ready-to-use config String.
-     * 
-     * @return String which has a ready-to-use for the database connector
+     * Initiate the Config instance with the correct settings
      */
     private void parseConfiguration()
     {
@@ -175,7 +174,7 @@ public class ConfigHandler {
         Config.gI().setDbname(properties.getProperty("dbname"));
         Config.gI().setDbuser(properties.getProperty("user"));
         Config.gI().setDbpass(properties.getProperty("password"));
-        Config.gI().setCleanUpInterval(Integer.parseInt(properties.getProperty("cleanupinterval")));
+        Config.gI().setCleanupInterval(Integer.parseInt(properties.getProperty("cleanupinterval")));
         Config.gI().setMaxNoDBConnections(Short.parseShort(properties.getProperty("maxdbconnections")));
     }
 }
