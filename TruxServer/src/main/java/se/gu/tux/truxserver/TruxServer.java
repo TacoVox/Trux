@@ -69,7 +69,7 @@ public class TruxServer {
 	    	DataSwitcher.gI().start();
 	    	
 	    	// Start cleanup thread
-	    	cleanupThread = new Thread(new CleanupRunnable(60));
+	    	cleanupThread = new Thread(new CleanupRunnable(Config.gI().getCleanupInterval()));
 	    	cleanupThread.start();
 	    	
 	    	// Start the server pool - start it in a wrapping thread so we can
