@@ -28,20 +28,20 @@ import se.gu.tux.truxserver.logger.Logger;
  *
  * @author jonas
  */
-public class UserTransactor {
+public class UserHandler {
     /**
      * Static part.
      */
-    private static UserTransactor uh = null;
+    private static UserHandler uh = null;
     
-    public static UserTransactor getInstance()
+    public static UserHandler getInstance()
     {
         if (uh == null)
-            uh = new UserTransactor();
+            uh = new UserHandler();
         return uh;
     }
     
-    public static UserTransactor gI()
+    public static UserHandler gI()
     {
         return getInstance();
     }
@@ -49,12 +49,7 @@ public class UserTransactor {
     /**
      * Non-static part.
      */
-    private UserTransactor() {}
-    
-    public boolean addUser()
-    {
-        return true;
-    }
+    private UserHandler() {}
     
     public Data login(User u)
     {
@@ -78,6 +73,7 @@ public class UserTransactor {
 	    
             pst.setLong(1, 0);
 	    
+            
 	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())
@@ -99,12 +95,39 @@ public class UserTransactor {
         }
         
         if(u.passwordMatch(passwd)) {
-            u.setSessionId(SessionTransactor.gI().startSession(u));
+            u.setSessionId(SessionHandler.gI().startSession(u));
             
             return u;
         }
         else
             return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
+    }
+    
+    public ProtocolMessage register(User u)
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "INSERT INTO user(username, password, firstname, lastname) " + 
+                            "VALUES(?, ?, ?, ?);");
+            
+            pst.setString(1, u.getUsername());
+            pst.setString(2, u.getPasswordHash());
+            pst.setString(3, 0);
+		
+            pst.executeUpdate();
+            
+            return true;
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.toString());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
     }
     
     public void purgeSessions()

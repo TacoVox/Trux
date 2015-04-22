@@ -17,7 +17,7 @@ package se.gu.tux.truxserver.dataswitch;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.User;
-import se.gu.tux.truxserver.dbconnect.UserTransactor;
+import se.gu.tux.truxserver.dbconnect.UserHandler;
 
 /**
  *
@@ -48,7 +48,7 @@ public class UserSwitcher {
     	//Do something.
         //Session null
         if(ud.getSessionId() == -1)
-            return UserTransactor.gI().login(ud);
+            return UserHandler.gI().login(ud);
         else
             return null;
     }

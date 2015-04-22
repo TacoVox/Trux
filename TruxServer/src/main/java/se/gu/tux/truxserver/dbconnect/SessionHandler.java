@@ -28,20 +28,20 @@ import se.gu.tux.truxserver.logger.Logger;
  *
  * @author jonas
  */
-public class SessionTransactor {
+public class SessionHandler {
     /**
      * Static part.
      */
-    private static SessionTransactor sh = null;
+    private static SessionHandler sh = null;
     
-    public static SessionTransactor getInstance()
+    public static SessionHandler getInstance()
     {
         if (sh == null)
-            sh = new SessionTransactor();
+            sh = new SessionHandler();
         return sh;
     }
     
-    public static SessionTransactor gI()
+    public static SessionHandler gI()
     {
         return getInstance();
     }
@@ -49,7 +49,7 @@ public class SessionTransactor {
     /**
      * Non-static part.
      */
-    private SessionTransactor() {}
+    private SessionHandler() {}
     
     public void updateActive(User u)
     {

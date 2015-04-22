@@ -27,6 +27,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.DriverManager;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.truxserver.SessionHandler;
 
 import se.gu.tux.truxserver.config.Config;
 
@@ -115,5 +119,22 @@ public class DBConnector
             Logger.gI().addError(ex.toString());
 	}
     }
-
+    
+    protected ResultSet execQuery(PreparedStatement pst, Data d) throws SQLException
+    {
+//        IF ((SELECT endtime FROM session WHERE sessionid = 1 and userid = 0) IS NULL AND
+//          EXISTS(SELECT FROM session WHERE sessionid = 1 AND userid = 0)) THEN
+//   
+//          SELECT * FROM speed;
+   
+        if (SessionHandler.gI().isValid(d.getUserId(), d.getSessionId()))
+            return pst.executeQuery();
+        
+        return null;
+    }
+    
+    protected ResultSet execUpdate(PreparedStatement pst, Data d) throws SQLException
+    {
+        
+    }
 }
