@@ -13,6 +13,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Fuel;
 
@@ -115,6 +116,14 @@ public class ServerConnector {
             boolean dataSent = false;
             Data answer = null;
 
+            // If not logged in, throw exception so the using code may take approperiate action
+            // TODO: Note that login attempts must of course be an exception to this check!
+            if (DataHandler.getInstance().getUser() != null &&
+                    (DataHandler.getInstance().getUser().getSessionId() == -1 ||
+                     DataHandler.getInstance().getUser().getUserId() == 0)) {
+                //throw new Exception("Not logged in!");
+            }
+
             while (!dataSent) {
                 // If data is null, return null
                 if (query == null) {
@@ -137,8 +146,13 @@ public class ServerConnector {
 
                         // Send and receive
                         System.out.println("Sending query...");
+                        query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
+                        query.setUserId(DataHandler.getInstance().getUser().getUserId());
                         out.writeObject(query);
                         answer = (Data)in.readObject();
+
+                        System.out.println("returned values: " + answer.getSessionId() + " : " + answer.getUserId());
+
                         dataSent = true;
 
                     } catch (IOException e) {
@@ -218,15 +232,30 @@ public class ServerConnector {
                             connect();
                         }
 
-                        synchronized (this) {
+                        // If not logged in - put back into the queue, sleep for a while,
+                        // and instead try send on next iteration of while loop
+                        if (DataHandler.getInstance().getUser() != null &&
+                                (DataHandler.getInstance().getUser().getSessionId() == -1 ||
+                                DataHandler.getInstance().getUser().getUserId() == 0)) {
+                            System.out.println("Want to send queued data but is not logged in. Sleeping...");
+                            queue.putFirst(d);
+                            Thread.sleep(10000);
+                        } else {
+                            // Send the data
+                            synchronized (this) {
+                                // Mark data with session and user
+                                d.setSessionId(DataHandler.getInstance().getUser().getSessionId());
+                                d.setUserId(DataHandler.getInstance().getUser().getUserId());
 
-                            out.writeObject(d);
-                            Data inD = (Data) in.readObject();
+                                out.writeObject(d);
+                                Data inD = (Data) in.readObject();
 
-                            if (inD.getValue() == null) {
-                                System.out.println("Server connector: Received data with null value");
-                            } else {
-                                System.out.println("Server connector: Received data " + inD.getValue().toString());
+                                if (inD.getValue() == null) {
+                                    System.out.println("Server connector: Received data with null value");
+                                } else {
+                                    System.out.println("Server connector: Received data " + inD.getValue().toString());
+                                    System.out.println("returned values: " + inD.getSessionId() + " : " + inD.getUserId());
+                                }
                             }
                         }
                     }

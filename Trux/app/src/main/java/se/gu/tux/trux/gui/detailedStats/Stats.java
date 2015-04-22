@@ -1,26 +1,71 @@
 package se.gu.tux.trux.gui.detailedStats;
 
+
+import android.app.FragmentTransaction;
+import android.app.Fragment;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
-import se.gu.tux.trux.gui.detailedStats.DistanceTraveledWindow;
-import se.gu.tux.trux.gui.detailedStats.FuelWindow;
-import se.gu.tux.trux.gui.detailedStats.OverallStats;
-import se.gu.tux.trux.gui.detailedStats.SpeedWindow;
+
 import tux.gu.se.trux.R;
 
 
 public class Stats extends ActionBarActivity {
-    
 
+    Fragment newFragment;
+    Button speedBtn, fuelBtn, distanceBtn, overallBtn;
+    FragmentTransaction transaction;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
+
+
+        speedBtn = (Button) findViewById(R.id.speed_button);
+        fuelBtn = (Button) findViewById(R.id.fuel_button);
+        distanceBtn = (Button) findViewById(R.id.distance_traveled);
+
+
+
+        speedBtn.setOnClickListener(btnOnClick);
+        fuelBtn.setOnClickListener(btnOnClick);
+        distanceBtn.setOnClickListener(btnOnClick);
+
+        }
+
+    Button.OnClickListener btnOnClick = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            if(v == speedBtn){
+                newFragment = new SpeedWindow();
+            }
+            if(v == fuelBtn){
+                newFragment = new FuelWindow();
+            }
+            if(v == distanceBtn){
+                newFragment = new DistTravWindow();
+            }
+
+            transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.StatsView, newFragment);
+            transaction.addToBackStack(null);
+            transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+            transaction.commit();
+        }
+    };
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            this.finish();
+        } else {
+            getFragmentManager().popBackStack();
+        }
     }
 
 
@@ -46,41 +91,11 @@ public class Stats extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToSpeed(final View view)
-    {
-        final Intent intent = new Intent(this, SpeedWindow.class);
-
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                view.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        startActivity(intent);
-                    }
-                });
-            }
-
-        }).start();
-
-    }
-
-    public void goToFuel(View view) {
-        Intent intent = new Intent(this, FuelWindow.class);
-        startActivity(intent);
-    }
-
-    public void goToDistanceTraveled(View view){
-        Intent intent = new Intent(this, DistanceTraveledWindow.class);
-        startActivity(intent);
-    }
-
-    public void goToOverallStats(View view){
+    public void goToOverall(View view){
         Intent intent = new Intent(this, OverallStats.class);
         startActivity(intent);
+
     }
+
+
 }
