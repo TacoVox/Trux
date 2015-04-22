@@ -12,6 +12,9 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
@@ -19,34 +22,34 @@ import tux.gu.se.trux.R;
 
 public class SpeedWindow extends Fragment {
 
+    TimerTask timer;
+    private Timer t;
+
     View myFragmentView;
     TextView speedTextViewToday, speedTextViewWeek, speedTextViewMonth, speedTextViewTotal;
 
-    public void run() {
+    class MyTask extends TimerTask {
+        public void run() {
+            
+            final Speed speedToday = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.DAY));
+            final Speed speedWeek = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.WEEK));
+            final Speed speedMonth = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.THIRTYDAYS));
+            final Speed speedTotal = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.FOREVER));
 
-        final Speed speedToday = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.DAY));
-        final Speed speedWeek = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.WEEK));
-        final Speed speedMonth = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.THIRTYDAYS));
-       // final Speed speedTotal = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.LIFETIME));
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //Speed speed = (Speed) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED, false);
+            if (speedToday.getValue() != null && speedWeek.getValue() != null && speedMonth.getValue() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        speedTextViewToday.setText(new Long(Math.round((Double) speedToday.getValue())).toString());
+                        speedTextViewWeek.setText(new Long(Math.round((Double) speedWeek.getValue())).toString());
+                        speedTextViewMonth.setText(new Long(Math.round((Double) speedMonth.getValue())).toString());
+                        speedTextViewTotal.setText(new Long(Math.round((Double) speedTotal.getValue())).toString());
+                    }
+                });
 
-                speedTextViewToday.setText(String.format("%.1f km/h", speedToday.getValue()));
-                speedTextViewWeek.setText(String.format("%.1f km/h", speedWeek.getValue()));
-                speedTextViewMonth.setText(String.format("%.1f km/h", speedMonth.getValue()));
-             //   speedTextViewTotal.setText(String.format("%.1f km/h", speedTotal.getValue()));
             }
-        });
-
+        }
     }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,6 +61,11 @@ public class SpeedWindow extends Fragment {
         speedTextViewWeek = (TextView) myFragmentView.findViewById(R.id.avg_lastweek_speed_value);
         speedTextViewMonth = (TextView) myFragmentView.findViewById(R.id.avg_lastmonth_speed_value);
         speedTextViewTotal = (TextView) myFragmentView.findViewById(R.id.avg_total_speed_value);
+
+        t = new Timer();
+        timer = new MyTask();
+        t.schedule(timer , 0 , 1000000);
+
         return myFragmentView;
 
 
@@ -68,12 +76,12 @@ public class SpeedWindow extends Fragment {
         LineGraphSeries speedValues = new LineGraphSeries(new DataPoint[]
 
                 {
-                        new DataPoint(0, 1),
-                        new DataPoint(1, 5),
-                        new DataPoint(2, 3),
-                        new DataPoint(3, 2),
-                        new DataPoint(4, 6)
-                });
+                    new DataPoint(0, 1),
+                    new DataPoint(1, 5),
+                    new DataPoint(2, 3),
+                    new DataPoint(3, 2),
+                    new DataPoint(4, 6)
+         });
         GraphView fuelGraph = new GraphView(getActivity());
         fuelGraph.setTitle("Speed");
         fuelGraph.setTitleTextSize(40);
