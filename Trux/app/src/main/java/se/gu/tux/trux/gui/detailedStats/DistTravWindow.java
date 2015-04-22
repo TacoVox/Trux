@@ -14,9 +14,13 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.Speed;
 import tux.gu.se.trux.R;
 
 
@@ -25,24 +29,36 @@ public class DistTravWindow extends Fragment {
     View myFragmentView;
     TextView distanceTextViewToday, distanceTextViewWeek, distanceTextViewMonth, distanceTextViewTotal;
 
-    public void run() {
+    TimerTask timer;
+    private Timer t;
 
-        final Distance distanceToday = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.DAY));
-        final Distance distanceWeek = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.WEEK));
-        final Distance distanceMonth = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.THIRTYDAYS));
-        // final Distance distanceTotal = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.LIFETIME));
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //Distance distance = (Distance) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_DISTANCE, false);
+    class MyTask extends TimerTask {
+        public void run() {
 
-                distanceTextViewToday.setText(String.format("%.1f km", distanceToday.getValue()));
-                distanceTextViewWeek.setText(String.format("%.1f km", distanceWeek.getValue()));
-                distanceTextViewMonth.setText(String.format("%.1f km", distanceMonth.getValue()));
-                //   distanceTextViewTotal.setText(String.format("%.1f km", distanceTotal.getValue()));
+            final Distance distanceToday = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.DAY));
+            final Distance distanceWeek = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.WEEK));
+            final Distance distanceMonth = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.THIRTYDAYS));
+            final Distance distanceTotal = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.FOREVER));
+
+            if (distanceToday.getValue() != null && distanceWeek.getValue() != null && distanceMonth.getValue() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Long distToday = (Long)distanceToday.getValue()/ 1000;
+                        Long distWeek = (Long)distanceWeek.getValue()/ 1000;
+                        Long distMonth = (Long)distanceMonth.getValue()/ 1000;
+                        Long distTotal = (Long)distanceTotal.getValue()/ 1000;
+
+                        distanceTextViewToday.setText(distToday.toString());
+                        distanceTextViewWeek.setText(distWeek.toString());
+                        distanceTextViewMonth.setText(distMonth.toString());
+                        distanceTextViewTotal.setText(distTotal.toString());
+                    }
+                });
+
             }
-        });
-
+        }
     }
 
     @Override
