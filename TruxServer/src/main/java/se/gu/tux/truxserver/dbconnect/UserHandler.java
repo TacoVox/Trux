@@ -130,9 +130,4 @@ public class UserHandler {
         }
         return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
-    
-    public void purgeSessions()
-    {
-        //Code follows
-    }
 }

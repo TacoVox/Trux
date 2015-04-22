@@ -21,6 +21,7 @@ import java.sql.Statement;
 
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.truxserver.config.Config;
 
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -137,6 +138,38 @@ public class SessionHandler {
             pst.setLong(1, System.currentTimeMillis());
             pst.setLong(2, pm.getUserId());
             pst.setLong(3, pm.getSessionId());
+	    
+	    pst.executeUpdate();
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.toString());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+    }
+    
+    public ProtocolMessage purgeSessions()
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String updateStmnt = "UPDATE session SET endtime = ?" +
+                    "WHERE lastactive < ?;";
+            
+            Logger.getInstance().addDebug(updateStmnt);
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+	    
+            pst.setLong(1, System.currentTimeMillis());
+            pst.setLong(2, (Config.gI().getCleanUpInterval() * 60000));
 	    
 	    pst.executeUpdate();
             
