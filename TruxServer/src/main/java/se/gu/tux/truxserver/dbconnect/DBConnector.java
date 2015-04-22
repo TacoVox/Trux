@@ -29,8 +29,9 @@ import java.sql.DriverManager;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.truxserver.SessionHandler;
+import java.sql.Statement;
+
+import se.gu.tux.trux.datastructure.User;
 
 import se.gu.tux.truxserver.config.Config;
 
@@ -120,21 +121,48 @@ public class DBConnector
 	}
     }
     
-    protected ResultSet execQuery(PreparedStatement pst, Data d) throws SQLException
+    protected ResultSet execSelect(User u, PreparedStatement pst) throws SQLException
     {
-//        IF ((SELECT endtime FROM session WHERE sessionid = 1 and userid = 0) IS NULL AND
-//          EXISTS(SELECT FROM session WHERE sessionid = 1 AND userid = 0)) THEN
-//   
-//          SELECT * FROM speed;
-   
-        if (SessionHandler.gI().isValid(d.getUserId(), d.getSessionId()))
-            return pst.executeQuery();
+        //This is porpably not a correct SQL Select - i will improve that
+        PreparedStatement finalpst = this.connection.prepareStatement(
+        "IF ((SELECT endtime FROM session WHERE sessionid = ?" +
+                " AND userid = ? IS NULL AND " +
+                "EXISTS(SELECT FROM session WHERE sessionid = ?"
+                + " AND userid = ?)) THEN ");
         
-        return null;
+        finalpst.setLong(1, u.getSessionId());
+        finalpst.setLong(2, u.getUserId());
+        finalpst.setLong(3, u.getSessionId());
+        finalpst.setLong(4, u.getUserId());
+        
+        finalpst.addBatch(pst.toString());
+        
+        Logger.gI().addDebug(finalpst.toString());
+        
+        return finalpst.executeQuery();
     }
     
-    protected ResultSet execUpdate(PreparedStatement pst, Data d) throws SQLException
+    protected ResultSet execUpdate(User u, PreparedStatement pst) throws SQLException
     {
+        String sessioncheck = "IF ((SELECT endtime FROM session WHERE sessionid = ?" +
+                " AND userid = ? IS NULL AND " +
+                "EXISTS(SELECT FROM session WHERE sessionid = ?"
+                + " AND userid = ?)) THEN ";
         
+        PreparedStatement finalpst = this.connection.prepareStatement(
+        sessioncheck, Statement.RETURN_GENERATED_KEYS);
+        
+        finalpst.setLong(1, u.getSessionId());
+        finalpst.setLong(2, u.getUserId());
+        finalpst.setLong(3, u.getSessionId());
+        finalpst.setLong(4, u.getUserId());
+        
+        finalpst.addBatch(pst.toString());
+        
+        Logger.gI().addDebug(finalpst.toString());
+        
+        finalpst.executeUpdate();
+        
+        return finalpst.getGeneratedKeys();
     }
 }

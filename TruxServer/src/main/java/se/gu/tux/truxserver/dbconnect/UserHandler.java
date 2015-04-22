@@ -114,11 +114,12 @@ public class UserHandler {
             
             pst.setString(1, u.getUsername());
             pst.setString(2, u.getPasswordHash());
-            pst.setString(3, 0);
-		
-            pst.executeUpdate();
+            pst.setString(3, u.getFirstName());
+            pst.setString(4, u.getLastName());
+	
+            dbc.execUpdate(u, pst);
             
-            return true;
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         }
         catch (Exception e)
         {
@@ -127,7 +128,7 @@ public class UserHandler {
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
-        return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
     
     public void purgeSessions()
