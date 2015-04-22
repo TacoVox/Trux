@@ -29,17 +29,14 @@ public class MetricSwitcher {
      */
     private static MetricSwitcher ms = null;
     
-    static {
+    protected static MetricSwitcher getInstance() {
         if(ms == null)
             ms = new MetricSwitcher();
-    }
-    
-    protected static MetricSwitcher getInstance() {
         return ms;
     }
     
     protected static MetricSwitcher gI() {
-        return ms;
+        return getInstance();
     }
     
     /**

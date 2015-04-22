@@ -34,30 +34,22 @@ public class UserHandler {
      */
     private static UserHandler uh = null;
     
-    static {
-        if (uh == null)
-            uh = new UserHandler();
-    }
-    
     public static UserHandler getInstance()
     {
+        if (uh == null)
+            uh = new UserHandler();
         return uh;
     }
     
     public static UserHandler gI()
     {
-        return uh;
+        return getInstance();
     }
     
     /**
      * Non-static part.
      */
     private UserHandler() {}
-    
-    public boolean addUser()
-    {
-        return true;
-    }
     
     public Data login(User u)
     {
@@ -81,6 +73,7 @@ public class UserHandler {
 	    
             pst.setLong(1, 0);
 	    
+            
 	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())
@@ -108,6 +101,34 @@ public class UserHandler {
         }
         else
             return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
+    }
+    
+    public ProtocolMessage register(User u)
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "INSERT INTO user(username, password, firstname, lastname) " + 
+                            "VALUES(?, ?, ?, ?);");
+            
+            pst.setString(1, u.getUsername());
+            pst.setString(2, u.getPasswordHash());
+            pst.setString(3, u.getFirstName());
+            pst.setString(4, u.getLastName());
+	
+            dbc.execUpdate(u, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.toString());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
     
     public void purgeSessions()

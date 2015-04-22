@@ -34,19 +34,16 @@ public class SessionHandler {
      */
     private static SessionHandler sh = null;
     
-    static {
-        if (sh == null)
-            sh = new SessionHandler();
-    }
-    
     public static SessionHandler getInstance()
     {
+        if (sh == null)
+            sh = new SessionHandler();
         return sh;
     }
     
     public static SessionHandler gI()
     {
-        return sh;
+        return getInstance();
     }
     
     /**

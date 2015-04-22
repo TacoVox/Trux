@@ -11,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
 import tux.gu.se.trux.R;
 

@@ -74,6 +74,9 @@ public class DataPoller {
 
             while (isRunning) {
                 try {
+                    // Make sure the queue doesn't grow to big by removing some things
+                    // if it's really big
+                    checkQueueSize();
 
                     // Get the current metric data from RTDH.
                     Data[] metrics = rtdh.getCurrentMetrics();
@@ -115,35 +118,24 @@ public class DataPoller {
                     // Wait POLL_INTERVAL seconds before continuing.
                     Thread.sleep(1000 * POLL_INTERVAL);
 
-
-                    /**
-                     *
-                     * TEMPORARY testing of the answerQuery implementation
-                     *
-                     *
-                     *//*
-                    Data myData = DataHandler.getInstance().getData(new Speed(MetricData.WEEK, MetricData.Mode.PER_DAY));
-
-                    if (myData != null) {
-                        System.out.println("\n\nThe average speed for the last week is: " + myData.getValue()
-                                + "\n\n");
-                    }*/
-
-
-
-
-
-
-
-
-
-
-
-
                 } catch (InterruptedException e) {
                     // Interrupted - exit thread
                     isRunning = false;
                 }
+            }
+        }
+    }
+
+
+    /**
+     * If we loose connection to the server but still get values continously, the queue may grow
+     * unreasonably big. Here we make sure to thin out the data in that case.
+     */
+    private void checkQueueSize() {
+        // TODO: let treshold values be configurable or at least not hard coded here
+        if (ServerConnector.gI().getQueueSize() > 5000) {
+            for (int i = 0; i < 20; i++) {
+                ServerConnector.gI().removeFirst();
             }
         }
     }

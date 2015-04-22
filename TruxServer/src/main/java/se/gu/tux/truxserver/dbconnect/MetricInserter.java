@@ -31,20 +31,16 @@ public class MetricInserter implements Runnable {
      */
     private static MetricInserter mi;
     
-    static
+    public static MetricInserter getInstance()
     {
         if(mi ==  null)
             mi = new MetricInserter();
-    }
-    
-    public static MetricInserter getInstance()
-    {
         return mi;
     }
     
     public static MetricInserter gI()
     {
-        return mi;
+        return getInstance();
     }
     
     /**
@@ -97,11 +93,6 @@ public class MetricInserter implements Runnable {
                     "INSERT INTO " + type + "(value, timestamp, userid) " + 
                             "VALUES(?, ?, ?);");
             
-            //Checking for the type
-            //if(type.equals("distance"))
-              //  pst.setLong(2, (Long)md.getValue());
-            //else
-                //pst.setDouble(2, (Double)md.getValue());
             pst.setObject(1, md.getValue());
             
             pst.setLong(2, md.getTimeStamp());

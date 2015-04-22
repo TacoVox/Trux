@@ -28,17 +28,14 @@ public class ConnectionPool {
      */
     private static ConnectionPool cp = null;
     
-    static {
+    public static ConnectionPool getInstance() {
         if(cp == null)
             cp = new ConnectionPool();
-    }
-    
-    public static ConnectionPool getInstance() {
         return cp;
     }
     
     public static ConnectionPool gI() {
-        return cp;
+        return getInstance();
     }
     
     /**

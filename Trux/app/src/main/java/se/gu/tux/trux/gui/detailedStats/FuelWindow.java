@@ -14,35 +14,45 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.Speed;
 import tux.gu.se.trux.R;
 
 
 public class FuelWindow extends Fragment {
 
+    TimerTask timer;
+    private Timer t;
+
     View myFragmentView;
     TextView fuelTextViewToday, fuelTextViewWeek, fuelTextViewMonth, fuelTextViewTotal;
 
-    public void run() {
+    class MyTask extends TimerTask {
+        public void run() {
 
-        final Fuel fuelToday = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.DAY));
-        final Fuel fuelWeek = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.WEEK));
-        final Fuel fuelMonth = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.THIRTYDAYS));
-        // final Fuel fuelTotal = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.LIFETIME));
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //Fuel fuel = (fuel) dataHandler.signalIn(AutomotiveSignalId.FMS_WHEEL_BASED_fuel, false);
+            final Fuel fuelToday = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.DAY));
+            final Fuel fuelWeek = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.WEEK));
+            final Fuel fuelMonth = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.THIRTYDAYS));
+            final Fuel fuelTotal = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.FOREVER));
 
-                fuelTextViewToday.setText(String.format("%.1f l", fuelToday.getValue()));
-                fuelTextViewWeek.setText(String.format("%.1f l", fuelWeek.getValue()));
-                fuelTextViewMonth.setText(String.format("%.1f l", fuelMonth.getValue()));
-                //   fuelTextViewTotal.setText(String.format("%.1f km/h", fuelTotal.getValue()));
+            if (fuelToday.getValue() != null && fuelWeek.getValue() != null && fuelMonth.getValue() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        fuelTextViewToday.setText(new Long(Math.round((Double) fuelToday.getValue())).toString());
+                        fuelTextViewWeek.setText(new Long(Math.round((Double) fuelWeek.getValue())).toString());
+                        fuelTextViewMonth.setText(new Long(Math.round((Double) fuelMonth.getValue())).toString());
+                        fuelTextViewTotal.setText(new Long(Math.round((Double) fuelTotal.getValue())).toString());
+                    }
+                });
+
             }
-        });
-
+        }
     }
 
     @Override
