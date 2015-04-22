@@ -26,6 +26,14 @@ public abstract class Data <T> implements Serializable {
 	public long getSessionId() {
 		return sessionId;
 	}
+	
+	/**
+	 * Set the session id of this data package. Everything must have a session
+	 * id and a user id of a valid login session EXCEPT if you're trying to login
+	 * or trying to register a new user - then use the corresponding constants
+	 * in the User class.
+	 * @param sessionId
+	 */
 	public void setSessionId(long sessionId) {
 		this.sessionId = sessionId;
 	}
