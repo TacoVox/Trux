@@ -25,18 +25,17 @@ import se.gu.tux.trux.datastructure.User;
  * Created by jerker on 2015-03-27.
  */
 public class ServerConnector {
-    private static ServerConnector instance = null;
 
     private Thread transmitThread = null;
     private ConnectorRunnable connector = null;
     private static LinkedBlockingDeque<Data> queue;
 
+
     /**
      * Some more singleton....!
      */
-
+    private static ServerConnector instance = null;
     private ServerConnector() { queue = new LinkedBlockingDeque<>(); }
-
     public synchronized static ServerConnector getInstance()
     {
         if (instance == null) {
@@ -44,37 +43,65 @@ public class ServerConnector {
         }
         return instance;
     }
-
     public synchronized static ServerConnector gI()
     {
         return getInstance();
     }
 
-    public void send(Data d) throws InterruptedException {
-        queue.putLast(d);
-    }
 
     /**
-     * Forwards a data query to the server and returns the reply
-     * @param d
-     * @return
+     * Define the address to connect to - the actual connection is not made until something
+     * needs to be sent - so TODO: maybe rename this method later
+     * @param address
      */
-    public Data answerQuery(Data d) {
-        d.setTimeStamp(System.currentTimeMillis());
-        return connector.sendQuery(d);
-    }
-
     public void connect(String address) {
         connector = new ConnectorRunnable(address, this);
         transmitThread = new Thread(connector);
         transmitThread.start();
     }
 
+
+    /**
+     * Disconnect from the server.
+     */
     public void disconnect() {
         // transmitThread will exit naturally on socket close
         if (connector != null) {
             connector.shutDown();
         }
+    }
+
+
+    /**
+     * Sends data to the server, like metric data, by putting it into the queue.
+     * @param d
+     */
+    public void send(Data d) throws InterruptedException {
+        queue.putLast(d);
+    }
+
+
+    /**
+     * Used by DataPoller to manage the queue size - keeping that logic outside of this class
+     * so this class can focus on the technical details of transmisison
+     * */
+    public int getQueueSize() { return queue.size(); }
+
+    /**
+     * Used by DataPoller to manage the queue size - keeping that logic outside of this class
+     * so this class can focus on the technical details of transmisison.
+     * Note that we throw away the data here.
+     * */
+    public void removeFirst() { queue.removeFirst(); }
+
+    /**
+     * Forwards a data query to the server and returns the reply.
+     * @param d
+     * @return
+     */
+    public Data answerQuery(Data d) {
+        d.setTimeStamp(System.currentTimeMillis());
+        return connector.sendQuery(d);
     }
 
 
