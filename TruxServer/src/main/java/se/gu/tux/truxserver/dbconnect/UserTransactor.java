@@ -28,20 +28,20 @@ import se.gu.tux.truxserver.logger.Logger;
  *
  * @author jonas
  */
-public class UserHandler {
+public class UserTransactor {
     /**
      * Static part.
      */
-    private static UserHandler uh = null;
+    private static UserTransactor uh = null;
     
-    public static UserHandler getInstance()
+    public static UserTransactor getInstance()
     {
         if (uh == null)
-            uh = new UserHandler();
+            uh = new UserTransactor();
         return uh;
     }
     
-    public static UserHandler gI()
+    public static UserTransactor gI()
     {
         return getInstance();
     }
@@ -49,7 +49,7 @@ public class UserHandler {
     /**
      * Non-static part.
      */
-    private UserHandler() {}
+    private UserTransactor() {}
     
     public boolean addUser()
     {
@@ -99,7 +99,7 @@ public class UserHandler {
         }
         
         if(u.passwordMatch(passwd)) {
-            u.setSessionId(SessionHandler.gI().startSession(u));
+            u.setSessionId(SessionTransactor.gI().startSession(u));
             
             return u;
         }

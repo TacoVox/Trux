@@ -7,7 +7,7 @@ import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import se.gu.tux.truxserver.dbconnect.UserHandler;
+import se.gu.tux.truxserver.dbconnect.UserTransactor;
 import se.gu.tux.truxserver.logger.Logger;
 
 public class CleanupRunnable implements Runnable {
@@ -34,7 +34,7 @@ public class CleanupRunnable implements Runnable {
     			Logger.gI().addDebug("Cleanup thread performing tasks...");
     			
     			// Do any cleanup here below:
-    			UserHandler.gI().purgeSessions();
+    			UserTransactor.gI().purgeSessions();
     			
     			// Sleep for a while
     			Thread.sleep(interval);
