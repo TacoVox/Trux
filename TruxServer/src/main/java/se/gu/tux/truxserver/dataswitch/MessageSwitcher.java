@@ -28,19 +28,16 @@ public class MessageSwitcher {
      */
     private static MessageSwitcher ms = null;
     
-    static {
-        if(ms == null)
-            ms = new MessageSwitcher();
-    }
-    
     public static MessageSwitcher getInstance()
     {
+        if(ms == null)
+            ms = new MessageSwitcher();
         return ms;
     }
     
     public static MessageSwitcher gI()
     {
-        return ms;
+        return getInstance();
     }
     
     /**

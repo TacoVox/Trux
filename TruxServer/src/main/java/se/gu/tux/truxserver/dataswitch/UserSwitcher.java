@@ -29,17 +29,14 @@ public class UserSwitcher {
      */
     private static UserSwitcher us = null;
     
-    static {
+    protected static UserSwitcher getInstance() {
         if(us == null)
             us = new UserSwitcher();
-    }
-    
-    protected static UserSwitcher getInstance() {
         return us;
     }
     
     protected static UserSwitcher gI() {
-        return us;
+        return getInstance();
     }
     
     /**

@@ -32,17 +32,14 @@ public class DataSwitcher {
      */
     private static DataSwitcher ds = null;
     
-    static {
+    public static DataSwitcher getInstance() {
         if(ds == null)
             ds = new DataSwitcher();
-    }
-    
-    public static DataSwitcher getInstance() {
         return ds;
     }
     
     public static DataSwitcher gI() {
-        return ds;
+        return getInstance();
     }
     
     /**
