@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.User;
 
 /**
  *
@@ -119,8 +120,9 @@ public class ServerConnector {
             // If not logged in, throw exception so the using code may take approperiate action
             // TODO: Note that login attempts must of course be an exception to this check!
             if (DataHandler.getInstance().getUser() != null &&
-                    (DataHandler.getInstance().getUser().getSessionId() == -1 ||
-                     DataHandler.getInstance().getUser().getUserId() == 0)) {
+                    (DataHandler.getInstance().getUser().getSessionId() == User.LOGIN_REQUEST ||
+                            DataHandler.getInstance().getUser().getSessionId() == User.REGISTER_REQUEST ||
+                            DataHandler.getInstance().getUser().getUserId() == 0)) {
                 //throw new Exception("Not logged in!");
             }
 
@@ -235,7 +237,8 @@ public class ServerConnector {
                         // If not logged in - put back into the queue, sleep for a while,
                         // and instead try send on next iteration of while loop
                         if (DataHandler.getInstance().getUser() != null &&
-                                (DataHandler.getInstance().getUser().getSessionId() == -1 ||
+                                (DataHandler.getInstance().getUser().getSessionId() == User.LOGIN_REQUEST ||
+                                DataHandler.getInstance().getUser().getSessionId() == User.REGISTER_REQUEST ||
                                 DataHandler.getInstance().getUser().getUserId() == 0)) {
                             System.out.println("Want to send queued data but is not logged in. Sleeping...");
                             queue.putFirst(d);
