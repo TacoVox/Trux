@@ -47,8 +47,10 @@ public class UserSwitcher {
     protected Data handleUser(User ud) {
     	//Do something.
         //Session null
-        if(ud.getSessionId() == -1)
+        if(ud.getSessionId() == User.LOGIN_REQUEST)
             return UserHandler.gI().login(ud);
+        else if(ud.getSessionId() == User.REGISTER_REQUEST)
+            return UserHandler.gI().register(ud);
         else
             return null;
     }
