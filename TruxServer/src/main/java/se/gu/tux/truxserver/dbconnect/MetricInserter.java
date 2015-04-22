@@ -31,20 +31,16 @@ public class MetricInserter implements Runnable {
      */
     private static MetricInserter mi;
     
-    static
+    public static MetricInserter getInstance()
     {
         if(mi ==  null)
             mi = new MetricInserter();
-    }
-    
-    public static MetricInserter getInstance()
-    {
         return mi;
     }
     
     public static MetricInserter gI()
     {
-        return mi;
+        return getInstance();
     }
     
     /**

@@ -34,19 +34,16 @@ public class UserHandler {
      */
     private static UserHandler uh = null;
     
-    static {
-        if (uh == null)
-            uh = new UserHandler();
-    }
-    
     public static UserHandler getInstance()
     {
+        if (uh == null)
+            uh = new UserHandler();
         return uh;
     }
     
     public static UserHandler gI()
     {
-        return uh;
+        return getInstance();
     }
     
     /**

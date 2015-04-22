@@ -33,17 +33,14 @@ public class MetricReceiver {
      */
     private static MetricReceiver mr = null;
     
-    static {
+    public static MetricReceiver getInstance() {
         if (mr == null)
             mr = new MetricReceiver();
-    }
-    
-    public static MetricReceiver getInstance() {
         return mr;
     }
     
     public static MetricReceiver gI() {
-        return mr;
+        return getInstance();
     }
     
     /**
