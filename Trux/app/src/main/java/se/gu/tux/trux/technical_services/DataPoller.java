@@ -132,6 +132,7 @@ public class DataPoller {
      * unreasonably big. Here we make sure to thin out the data in that case.
      */
     private void checkQueueSize() {
+        // TODO: let treshold values be configurable or at least not hard coded here
         if (ServerConnector.gI().getQueueSize() > 5000) {
             for (int i = 0; i < 20; i++) {
                 ServerConnector.gI().removeFirst();
