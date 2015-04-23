@@ -76,7 +76,7 @@ public class UserHandler {
 	    
 	    while (rs.next())
 	    {
-                u.setUserId(rs.getInt("userid"));
+                u.setUserId(rs.getLong("userid"));
                 passwd = rs.getString("password");
                 u.setFirstName(rs.getString("firstname"));
                 u.setLastName(rs.getString("lastname"));
@@ -94,6 +94,8 @@ public class UserHandler {
         
         if(u.passwordMatch(passwd)) {
             u.setSessionId(SessionHandler.gI().startSession(u));
+            
+            SessionHandler.gI().startSession(u);
             
             return u;
         }

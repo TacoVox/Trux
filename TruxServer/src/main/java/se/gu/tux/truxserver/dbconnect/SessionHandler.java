@@ -103,11 +103,11 @@ public class SessionHandler {
             
             ResultSet keys = pst.getGeneratedKeys();
             
-            ServerSessions.gI().startSession(u);
-            
             while(keys.next())
                 return keys.getInt(1);
-            return -1;
+            
+            return - 1;
+            
 	}
 	catch (Exception e)
 	{

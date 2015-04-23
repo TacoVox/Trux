@@ -82,7 +82,8 @@ public class MetricInserter implements Runnable {
         String type = md.getClass().getSimpleName().toLowerCase();
         
     	if (md.getValue() == null) {
-            Logger.getInstance().addError("Somebody tried to insert an empty data object.");
+            Logger.getInstance().addError("Somebody tried to insert an empty data object. " +
+                    "Type :" + md.getClass().getSimpleName());
     		return false; 
         }
         
