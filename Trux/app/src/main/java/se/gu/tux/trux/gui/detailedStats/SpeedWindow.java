@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.detailedStats;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,6 +19,9 @@ import java.util.TimerTask;
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.gui.ChooseStatScreen;
+import se.gu.tux.trux.gui.MainActivity;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 public class SpeedWindow extends Fragment {
@@ -30,23 +34,32 @@ public class SpeedWindow extends Fragment {
 
     class MyTask extends TimerTask {
         public void run() {
-            
-            final Speed speedToday = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.DAY));
-            final Speed speedWeek = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.WEEK));
-            final Speed speedMonth = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.THIRTYDAYS));
-            final Speed speedTotal = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.FOREVER));
+            try {
+                final Speed speedToday = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.DAY));
+                final Speed speedWeek = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.WEEK));
+                final Speed speedMonth = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.THIRTYDAYS));
+                final Speed speedTotal = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.FOREVER));
 
-            if (speedToday.getValue() != null && speedWeek.getValue() != null && speedMonth.getValue() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        speedTextViewToday.setText(new Long(Math.round((Double) speedToday.getValue())).toString());
-                        speedTextViewWeek.setText(new Long(Math.round((Double) speedWeek.getValue())).toString());
-                        speedTextViewMonth.setText(new Long(Math.round((Double) speedMonth.getValue())).toString());
-                        speedTextViewTotal.setText(new Long(Math.round((Double) speedTotal.getValue())).toString());
-                    }
-                });
 
+                if (speedToday.getValue() != null && speedWeek.getValue() != null
+                        && speedMonth.getValue() != null && speedTotal.getValue() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            speedTextViewToday.setText(new Long(Math.round((Double) speedToday.getValue())).toString());
+                            speedTextViewWeek.setText(new Long(Math.round((Double) speedWeek.getValue())).toString());
+                            speedTextViewMonth.setText(new Long(Math.round((Double) speedMonth.getValue())).toString());
+                            speedTextViewTotal.setText(new Long(Math.round((Double) speedTotal.getValue())).toString());
+                        }
+                    });
+
+                }
+            }
+            catch(NotLoggedInException nLIE){
+                System.out.println("NotLoggedInException: " + nLIE.getMessage());
+
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
             }
         }
     }

@@ -32,48 +32,38 @@ import tux.gu.se.trux.R;
 
 public class MainActivity extends ActionBarActivity
 {
-
     Fragment newFragment;
     FragmentTransaction transaction;
 
     TextView userField;
     TextView passField;
-
     Button btnRegister;
 
     LoginService ls;
-
-    //RealTimeDataParser rtdp;
-
-
-    AGADataParser rtdp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Add login form
         userField = (TextView) findViewById(R.id.username);
         passField = (TextView) findViewById(R.id.password);
 
         btnRegister = (Button) findViewById(R.id.register);
-
         btnRegister.setOnClickListener(btnOnClick);
 
-        //rtdp = RealTimeDataParser.getInstance();
-
-        rtdp = AGADataParser.getInstance();
-
+        // Create login service
         ls = new LoginService();
 
-        System.out.println("Main activity calling ServerConnector connect...");
-
         ServerConnector.gI().connect("www.derkahler.de");
-
         //IServerConnector.getInstance().connectTo("10.0.2.2");
 
+        // Just make sure a AGA data parser is created
+        AGADataParser.getInstance();
+
+        // Start the DataPoller that will send AGA metrics to the server with regular interavals
         DataPoller.gI().start();
-        //This is a comment YOU FUCKIN APP
     }
 
     @Override
@@ -174,4 +164,7 @@ public class MainActivity extends ActionBarActivity
     } // end inner class
 
 
+    public void onStop() {
+        System.out.println("ONSTOP....!");
+    }
 } // end class
