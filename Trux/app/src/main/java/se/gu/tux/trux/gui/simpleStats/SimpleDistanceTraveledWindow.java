@@ -13,6 +13,7 @@ import java.util.TimerTask;
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 public class SimpleDistanceTraveledWindow extends Fragment {
@@ -27,17 +28,21 @@ public class SimpleDistanceTraveledWindow extends Fragment {
     class myTask extends TimerTask {
 
         public void run() {
+            try {
+                final Distance dist = (Distance) DataHandler.getInstance().getData(new Distance(0));
 
-            final Distance dist = (Distance) DataHandler.getInstance().getData(new Distance(0));
-
-            if (dist.getValue() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Long distance = (Long)dist.getValue()/ 1000;
-                        currentDistance.setText(distance.toString());
-                    }
-                });
+                if (dist.getValue() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Long distance = (Long) dist.getValue() / 1000;
+                            currentDistance.setText(distance.toString());
+                        }
+                    });
+                }
+            }
+            catch (NotLoggedInException nLIE){
+                System.out.println("NotLoggedInException: " + nLIE.getMessage());
             }
 
         }
