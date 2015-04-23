@@ -15,6 +15,7 @@ public class User extends Data
 	private String passwordHash;
 	private String firstName;
 	private String lastName;
+    private boolean stayLoggedIn;
 
 	public boolean passwordMatch(String hash) {
 		return hash.equals(passwordHash);
@@ -67,4 +68,12 @@ public class User extends Data
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+
+    public boolean getStayLoggedIn() {
+        return stayLoggedIn;
+    }
+
+    public void setStayLoggedIn(boolean stayLoggedIn) {
+        this.stayLoggedIn = stayLoggedIn;
+    }
 }
