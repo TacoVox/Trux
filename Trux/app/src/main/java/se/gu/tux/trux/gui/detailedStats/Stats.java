@@ -11,7 +11,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 
+import java.lang.reflect.Array;
+import java.util.Calendar;
+import java.util.Date;
+
+import se.gu.tux.trux.datastructure.MetricData;
 import tux.gu.se.trux.R;
 
 
@@ -20,6 +27,7 @@ public class Stats extends ActionBarActivity {
     Fragment newFragment;
     Button speedBtn, fuelBtn, distanceBtn, overallBtn;
     FragmentTransaction transaction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,23 +39,22 @@ public class Stats extends ActionBarActivity {
         distanceBtn = (Button) findViewById(R.id.distance_traveled);
 
 
-
         speedBtn.setOnClickListener(btnOnClick);
         fuelBtn.setOnClickListener(btnOnClick);
         distanceBtn.setOnClickListener(btnOnClick);
 
-        }
+    }
 
-    Button.OnClickListener btnOnClick = new Button.OnClickListener(){
+    Button.OnClickListener btnOnClick = new Button.OnClickListener() {
         @Override
-        public void onClick(View v){
-            if(v == speedBtn){
+        public void onClick(View v) {
+            if (v == speedBtn) {
                 newFragment = new SpeedWindow();
             }
-            if(v == fuelBtn){
+            if (v == fuelBtn) {
                 newFragment = new FuelWindow();
             }
-            if(v == distanceBtn){
+            if (v == distanceBtn) {
                 newFragment = new DistTravWindow();
             }
 
@@ -91,11 +98,47 @@ public class Stats extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToOverall(View view){
+    public void goToOverall(View view) {
         Intent intent = new Intent(this, OverallStats.class);
         startActivity(intent);
 
     }
 
+    public void ligga(long startTime, MetricData.Mode mode, int days) {
+
+        Object[] dayValue = new Object[30];
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTimeInMillis(startTime);
+        cal.add(Calendar.DATE, -days);
+
+        for(int i = 0; i < days; i++){
+            GregorianCalendar calBeginning = new GregorianCalendar(
+                    cal.get(Calendar.YEAR),
+                    cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DATE),
+                    0,
+                    0
+                );
+            GregorianCalendar calEnd = new GregorianCalendar(
+                    cal.get(Calendar.YEAR),
+                    cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DATE),
+                    23,
+                    59, 59
+            );
+
+            // Jonas:  Here you have start and end times of each day
+            // So get the average value and put it in the dayValue array on index i
+            System.out.println(calBeginning.getTimeInMillis());
+            System.out.println(calEnd.getTimeInMillis());
+            cal.add(Calendar.DATE, +i);
+        }
+
+    }
+
+
+
 
 }
+
+
