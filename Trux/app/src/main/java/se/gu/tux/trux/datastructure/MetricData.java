@@ -25,6 +25,7 @@ public class MetricData extends Data
      * Private fields for value and the used timeframe
      */
     private Double value;
+    private Object[] valueArray = null;
     private long tf;
     private Mode mode;
 
@@ -54,6 +55,15 @@ public class MetricData extends Data
     public void setValue(Object value) {
         this.value = (Double) value;
     }
+
+    public Object[] getValueArray() {
+        return valueArray;
+    }
+
+    public void setValueArray(Object[] value) {
+        this.valueArray = value;
+    }
+
 
     public Integer getSignalId() {
         return 0;
