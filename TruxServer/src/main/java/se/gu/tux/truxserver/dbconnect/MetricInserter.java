@@ -67,7 +67,7 @@ public class MetricInserter implements Runnable {
             	running = false;
             }
             catch (Exception e) {
-                Logger.gI().addError(e.getMessage());
+                Logger.gI().addError(e.getLocalizedMessage());
             }
         }
         
@@ -105,7 +105,7 @@ public class MetricInserter implements Runnable {
         }
         catch (Exception e)
         {
-            Logger.gI().addError(e.toString());
+            Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
