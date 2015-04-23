@@ -54,6 +54,7 @@ public class Config {
     private String dbuser;
     private String dbpass;
     private int cleanupInterval;
+    private int sessionTimeout;
     private short maxNoDBConnections;
 
     public String getDbaddress() {
@@ -118,5 +119,13 @@ public class Config {
 
     public void setMaxNoDBConnections(short maxNoDBConnections) {
         this.maxNoDBConnections = maxNoDBConnections;
+    }
+    
+    public int getSessionTimeout() {
+        return sessionTimeout;
+    }
+
+    public void setSessionTimeout(int sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
     }
 }
