@@ -28,12 +28,23 @@ package se.gu.tux.trux.appplication;
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+import android.content.Context;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.gui.MainActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.ServerConnector;
 
@@ -45,10 +56,20 @@ public class LoginService
 
     private User user;
 
+    private Context context;
 
-    public LoginService()
+    private File file;
+
+    private static final String fileName = "trux_user_config";
+
+
+    public LoginService(Context context)
     {
         user = new User();
+        this.context = context;
+
+        file = new File(context.getFilesDir(), fileName);
+
     }
 
 
@@ -82,6 +103,13 @@ public class LoginService
         if (response instanceof User)
         {
             DataHandler.getInstance().setUser((User) response);
+
+            String userInfo = DataHandler.getInstance().getUser().getUsername() + ":" +
+                            DataHandler.getInstance().getUser().getPasswordHash() + ":" +
+                            DataHandler.getInstance().getUser().getSessionId();
+
+            writeToFile(userInfo);
+
             return true;
         }
         else
@@ -141,184 +169,77 @@ public class LoginService
     } // end createHash()
 
 
-// ************************************************************************** //
-// commented out until we figure out how to implement it
 
-/*
-    public static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA1";
-
-    // The following constants may be changed without breaking existing hashes.
-    private static final int SALT_BYTE_SIZE = 24;
-    private static final int HASH_BYTE_SIZE = 24;
-    private static final int PBKDF2_ITERATIONS = 1000;
-
-    private static final int ITERATION_INDEX = 0;
-    private static final int SALT_INDEX = 1;
-    private static final int PBKDF2_INDEX = 2;
-*/
-
-    /**
-     * Returns a salted PBKDF2 hash of the password.
-     *
-     * @param   password    the password to hash
-     * @return              a salted PBKDF2 hash of the password
-     */
-/*
-    private String createHash(String password)
-            throws NoSuchAlgorithmException, InvalidKeySpecException
+    public void writeToFile(String data)
     {
-        return createHash(password.toCharArray());
-    }
-*/
 
-    /**
-     * Returns a salted PBKDF2 hash of the password.
-     *
-     * @param   password    the password to hash
-     * @return              a salted PBKDF2 hash of the password
-     */
-/*
-    private String createHash(char[] password)
-            throws NoSuchAlgorithmException, InvalidKeySpecException
-    {
-        // Generate a random salt
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[SALT_BYTE_SIZE];
-        random.nextBytes(salt);
-
-        // Hash the password
-        byte[] hash = pbkdf2(password, salt, PBKDF2_ITERATIONS, HASH_BYTE_SIZE);
-
-        // format iterations:salt:hash
-        return PBKDF2_ITERATIONS + ":" + toHex(salt) + ":" +  toHex(hash);
-    }
-*/
-
-
-    /**
-     * Validates a password using a hash.
-     *
-     * @param   password        the password to check
-     * @param   correctHash     the hash of the valid password
-     * @return                  true if the password is correct, false if not
-     */
-/*
-    public boolean validatePassword(String password, String correctHash)
-            throws NoSuchAlgorithmException, InvalidKeySpecException
-    {
-        return validatePassword(password.toCharArray(), correctHash);
-    }
-*/
-
-    /**
-     * Validates a password using a hash.
-     *
-     * @param   password        the password to check
-     * @param   correctHash     the hash of the valid password
-     * @return                  true if the password is correct, false if not
-     */
-/*
-    public boolean validatePassword(char[] password, String correctHash)
-            throws NoSuchAlgorithmException, InvalidKeySpecException
-    {
-        // Decode the hash into its parameters
-        String[] params = correctHash.split(":");
-        int iterations = Integer.parseInt(params[ITERATION_INDEX]);
-        byte[] salt = fromHex(params[SALT_INDEX]);
-        byte[] hash = fromHex(params[PBKDF2_INDEX]);
-
-        // Compute the hash of the provided password, using the same salt,
-        // iteration count, and hash length
-        byte[] testHash = pbkdf2(password, salt, iterations, hash.length);
-
-        // Compare the hashes in constant time. The password is correct if
-        // both hashes match.
-        return slowEquals(hash, testHash);
-    }
-*/
-
-    /**
-     * Compares two byte arrays in length-constant time. This comparison method
-     * is used so that password hashes cannot be extracted from an on-line
-     * system using a timing attack and then attacked off-line.
-     *
-     * @param   a       the first byte array
-     * @param   b       the second byte array
-     * @return          true if both byte arrays are the same, false if not
-     */
-/*
-    private static boolean slowEquals(byte[] a, byte[] b)
-    {
-        int diff = a.length ^ b.length;
-
-        for(int i = 0; i < a.length && i < b.length; i++)
-            diff |= a[i] ^ b[i];
-
-        return diff == 0;
-    }
-*/
-
-    /**
-     *  Computes the PBKDF2 hash of a password.
-     *
-     * @param   password    the password to hash.
-     * @param   salt        the salt
-     * @param   iterations  the iteration count (slowness factor)
-     * @param   bytes       the length of the hash to compute in bytes
-     * @return              the PBDKF2 hash of the password
-     */
-/*
-    private static byte[] pbkdf2(char[] password, byte[] salt, int iterations, int bytes)
-            throws NoSuchAlgorithmException, InvalidKeySpecException
-    {
-        PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, bytes * 8);
-        SecretKeyFactory skf = SecretKeyFactory.getInstance(PBKDF2_ALGORITHM);
-        return skf.generateSecret(spec).getEncoded();
-    }
-*/
-
-    /**
-     * Converts a string of hexadecimal characters into a byte array.
-     *
-     * @param   hex         the hex string
-     * @return              the hex string decoded into a byte array
-     */
-/*
-    private byte[] fromHex(String hex)
-    {
-        byte[] binary = new byte[hex.length() / 2];
-
-        for(int i = 0; i < binary.length; i++)
+        try
         {
-            binary[i] = (byte)Integer.parseInt(hex.substring(2*i, 2*i+2), 16);
+            OutputStreamWriter outputStreamWriter =
+                    new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
+
+            outputStreamWriter.write(data);
+
+            System.out.println("-------- writing to file ----------");
+
+            outputStreamWriter.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public String[] readFromFile()
+    {
+        String[] ret = null;
+
+        try
+        {
+            InputStream inputStream = context.openFileInput(fileName);
+
+            if ( inputStream != null )
+            {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                String receiveString = "";
+
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null )
+                {
+                    stringBuilder.append(receiveString);
+                }
+
+                System.out.println("-------- reading from file ----------");
+
+                inputStream.close();
+
+                ret = stringBuilder.toString().split(":");
+
+                System.out.println("-------- user info in file -------------");
+                System.out.println("username: " + ret[0]);
+                System.out.println("password hash: " + ret[1]);
+                System.out.println("session ID: " + ret[2]);
+                System.out.println("----------------------------------------");
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
 
-        return binary;
+        return ret;
     }
-*/
 
-    /**
-     * Converts a byte array into a hexadecimal string.
-     *
-     * @param   array       the byte array to convert
-     * @return              a length*2 character string encoding the byte array
-     */
-/*
-    private String toHex(byte[] array)
-    {
-        BigInteger bi = new BigInteger(1, array);
-
-        String hex = bi.toString(16);
-
-        int paddingLength = (array.length * 2) - hex.length();
-
-        if(paddingLength > 0)
-            return String.format("%0" + paddingLength + "d", 0) + hex;
-        else
-            return hex;
-
-    }
-*/
 
 
 } // end class

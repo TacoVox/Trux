@@ -152,15 +152,15 @@ public class ServerConnector {
 
                 // Check if socket is not closed and the out and in streams are open, if not, connect
                 if (cs == null || cs.isClosed() || out == null || in == null) {
-                    System.out.println("SendQuery requesting reconnect...");
+                    System.out.println("SendQuery requesting connect...");
                     connect();
                 }
 
                 // If not logged in, throw exception so the using code may take approperiate action
                 // Login attempts and register requests are allowed regardless
                 if (!DataHandler.getInstance().isLoggedIn() &&
-                        query.getSessionId() != User.LOGIN_REQUEST ||
-                        query.getSessionId() != User.REGISTER_REQUEST) {
+                        !(query.getSessionId() == User.LOGIN_REQUEST ||
+                        query.getSessionId() == User.REGISTER_REQUEST)) {
                     throw new NotLoggedInException();
                 }
 
