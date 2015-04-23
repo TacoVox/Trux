@@ -52,6 +52,6 @@ public class UserSwitcher {
         else if(ud.getSessionId() == User.REGISTER_REQUEST)
             return UserHandler.gI().register(ud);
         else
-            return null;
+            return UserHandler.gI().getUser(ud);
     }
 }

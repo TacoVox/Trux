@@ -130,4 +130,53 @@ public class UserHandler {
         }
         return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
+    
+    public Data getUser(User u)
+    {
+        int userid = -1;
+        String passwd = null;
+        String firstname = null;
+        String lastname = null;
+        int sessionid = -1;
+        
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "SELECT userid, password, firstname, lastname" +
+                    " FROM user WHERE username = ?;";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setString(1, u.getUsername());
+	    
+            
+	    ResultSet rs = dbc.execSelect(u, pst);
+	    
+            if(rs == null)
+                return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+            
+	    while (rs.next())
+	    {
+                u.setUserId(rs.getLong("userid"));
+                passwd = rs.getString("password");
+                u.setFirstName(rs.getString("firstname"));
+                u.setLastName(rs.getString("lastname"));
+                
+		break;
+	    }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        if(u.passwordMatch(passwd))
+            return u;
+        else
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+    }
 }
