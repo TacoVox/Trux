@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui.detailedStats;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -21,6 +22,8 @@ import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.gui.MainActivity;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 
@@ -34,23 +37,30 @@ public class FuelWindow extends Fragment {
 
     class MyTask extends TimerTask {
         public void run() {
+            try {
+                final Fuel fuelToday = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.DAY));
+                final Fuel fuelWeek = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.WEEK));
+                final Fuel fuelMonth = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.THIRTYDAYS));
+                final Fuel fuelTotal = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.FOREVER));
 
-            final Fuel fuelToday = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.DAY));
-            final Fuel fuelWeek = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.WEEK));
-            final Fuel fuelMonth = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.THIRTYDAYS));
-            final Fuel fuelTotal = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.FOREVER));
+                if (fuelToday.getValue() != null && fuelWeek.getValue() != null
+                        && fuelMonth.getValue() != null && fuelTotal != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            fuelTextViewToday.setText(new Long(Math.round((Double) fuelToday.getValue())).toString());
+                            fuelTextViewWeek.setText(new Long(Math.round((Double) fuelWeek.getValue())).toString());
+                            fuelTextViewMonth.setText(new Long(Math.round((Double) fuelMonth.getValue())).toString());
+                            fuelTextViewTotal.setText(new Long(Math.round((Double) fuelTotal.getValue())).toString());
+                        }
+                    });
 
-            if (fuelToday.getValue() != null && fuelWeek.getValue() != null && fuelMonth.getValue() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        fuelTextViewToday.setText(new Long(Math.round((Double) fuelToday.getValue())).toString());
-                        fuelTextViewWeek.setText(new Long(Math.round((Double) fuelWeek.getValue())).toString());
-                        fuelTextViewMonth.setText(new Long(Math.round((Double) fuelMonth.getValue())).toString());
-                        fuelTextViewTotal.setText(new Long(Math.round((Double) fuelTotal.getValue())).toString());
-                    }
-                });
-
+                }
+            }
+            catch(NotLoggedInException nLIE){
+                System.out.println("NotLoggedInException: " + nLIE.getMessage());
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
             }
         }
     }
