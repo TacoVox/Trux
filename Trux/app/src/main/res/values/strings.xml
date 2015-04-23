@@ -9,6 +9,7 @@
     <string name="action_logout">Logout</string>
 
     <string name="login">Login</string>
+    <string name="autoLogin">Keep me logged in</string>
 
     <string name="speed_button_text">Speed</string>
     <string name="fuel_button_text">Fuel</string>
@@ -24,6 +25,15 @@
     <string name="profile_text">Profile</string>
 
     <string name="title_activity_fuel">Fuel</string>
+
+    <string name="user_name_title">Username:</string>
+    <string name="first_name_title">First Name:</string>
+    <string name="last_name_title">Last Name:</string>
+    <string name="email_title">E-Mail:</string>
+    <string name="password_title">Password:</string>
+    <string name="ver_password_title">Repeat Password:</string>
+    <string name="agree_button_title">Do you agree you our terms and services?</string>
+    <string name="register_button_title">Register</string>
 
     <string name="average_today">Average Today:</string>
     <string name="average_lastweek">Average Last Week:</string>
