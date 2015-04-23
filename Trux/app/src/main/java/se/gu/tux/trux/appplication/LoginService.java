@@ -63,6 +63,11 @@ public class LoginService
 
         Data response = (Data) ServerConnector.getInstance().answerQuery(user);
 
+        System.out.println("-------user login info----------------");
+        System.out.println("user is null? " + response == null);
+        System.out.println("session ID: " + response.getSessionId());
+        System.out.println("user ID: " + response.getUserId());
+
         if (response instanceof User)
         {
             DataHandler.getInstance().setUser((User) response);

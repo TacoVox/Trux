@@ -32,7 +32,7 @@ public class AGADataParser
     private AGADataParser()
     {
         dataMap = new HashMap<>();
-        init();
+        initAGA();
     }
 
 
