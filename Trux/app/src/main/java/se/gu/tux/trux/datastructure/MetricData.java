@@ -51,6 +51,9 @@ public class MetricData extends Data
     public long getTimeFrame() {
         return tf;
     }
+    public void settTimeFrame(long tf) {
+        this.tf = tf;
+    }
 
     public boolean isOnServerSide(){
         return tf != 0;

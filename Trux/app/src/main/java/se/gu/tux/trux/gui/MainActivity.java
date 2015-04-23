@@ -164,4 +164,7 @@ public class MainActivity extends ActionBarActivity
     } // end inner class
 
 
+    public void onStop() {
+        System.out.println("ONSTOP....!");
+    }
 } // end class
