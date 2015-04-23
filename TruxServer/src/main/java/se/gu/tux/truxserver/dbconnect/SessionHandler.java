@@ -17,8 +17,9 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
-import se.gu.tux.trux.datastructure.Response;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 
 import se.gu.tux.truxserver.logger.Logger;
@@ -33,19 +34,16 @@ public class SessionHandler {
      */
     private static SessionHandler sh = null;
     
-    static {
-        if (sh == null)
-            sh = new SessionHandler();
-    }
-    
     public static SessionHandler getInstance()
     {
+        if (sh == null)
+            sh = new SessionHandler();
         return sh;
     }
     
     public static SessionHandler gI()
     {
-        return sh;
+        return getInstance();
     }
     
     /**
@@ -70,7 +68,7 @@ public class SessionHandler {
             pst.setLong(1, System.currentTimeMillis());
             pst.setLong(2, u.getUserId());
 	    
-	    ResultSet rs = pst.executeQuery();
+	    pst.executeUpdate();
             
             //return new Response(Response.Type.DATA_RECEIVED);
 	}
@@ -85,7 +83,7 @@ public class SessionHandler {
         //return null;
     }
     
-    public void startSession(User u)
+    public int startSession(User u)
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
@@ -94,18 +92,22 @@ public class SessionHandler {
             String insertStmnt = "INSERT INTO session(starttime, userid, lastactive)" +
                     " VALUES(?, ?, ?);";
             
-            Logger.getInstance().addDebug(insertStmnt);
-            
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    insertStmnt);
+                    insertStmnt, Statement.RETURN_GENERATED_KEYS);
 	    
             pst.setLong(1, System.currentTimeMillis());
             pst.setLong(2, u.getUserId());
             pst.setLong(3, System.currentTimeMillis());
 	    
-	    ResultSet rs = pst.executeQuery();
+            Logger.getInstance().addDebug(pst.toString());
             
-            //return new Response(Response.Type.DATA_RECEIVED);
+	    pst.executeUpdate();
+            
+            ResultSet keys = pst.getGeneratedKeys();
+            
+            while(keys.next())
+                return keys.getInt(1);
+            return -1;
 	}
 	catch (Exception e)
 	{
@@ -114,16 +116,18 @@ public class SessionHandler {
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
+        
+        return -1;
     }
     
-    public void endSession(User u)
+    public ProtocolMessage endSession(ProtocolMessage pm)
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
 	{
             String updateStmnt = "UPDATE session SET endtime = ?" +
-                    "WHERE userid = ? AND ISNULL(endtime);";
+                    "WHERE userid = ? AND sessionid = ?;";
             
             Logger.getInstance().addDebug(updateStmnt);
             
@@ -131,11 +135,12 @@ public class SessionHandler {
                     updateStmnt);
 	    
             pst.setLong(1, System.currentTimeMillis());
-            pst.setLong(2, u.getUserId());
+            pst.setLong(2, pm.getUserId());
+            pst.setLong(3, pm.getSessionId());
 	    
-	    ResultSet rs = pst.executeQuery();
+	    pst.executeUpdate();
             
-            //return new Response(Response.Type.DATA_RECEIVED);
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
 	}
 	catch (Exception e)
 	{
@@ -144,5 +149,7 @@ public class SessionHandler {
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
+        
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
 }

@@ -33,17 +33,14 @@ public class MetricReceiver {
      */
     private static MetricReceiver mr = null;
     
-    static {
+    public static MetricReceiver getInstance() {
         if (mr == null)
             mr = new MetricReceiver();
-    }
-    
-    public static MetricReceiver getInstance() {
         return mr;
     }
     
     public static MetricReceiver gI() {
-        return mr;
+        return getInstance();
     }
     
     /**
@@ -72,8 +69,6 @@ public class MetricReceiver {
             String selectStmnt = "SELECT AVG(value) AS avg FROM " + type +
                     " WHERE userid = ? AND timestamp BETWEEN ? AND ?;";
             
-            Logger.getInstance().addDebug(selectStmnt);
-            
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
@@ -81,6 +76,8 @@ public class MetricReceiver {
 	    pst.setLong(2, md.getTimeStamp() - md.getTimeFrame());
             pst.setLong(3, md.getTimeStamp()); 
 	    
+            Logger.getInstance().addDebug(pst.toString());
+            
 	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())

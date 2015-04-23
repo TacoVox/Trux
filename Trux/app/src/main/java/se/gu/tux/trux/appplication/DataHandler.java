@@ -2,9 +2,22 @@ package se.gu.tux.trux.appplication;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.technical_services.IServerConnector;
 import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
+
+// TODO: possibly add a session handler class or whatever BUT anyway - it would be nice
+// to have a centralized method so we only implement once the logic to decide whether
+// we are logged in or not - right now in serverconnector we have this check:
+/*
+if (DataHandler.getInstance().getUser() != null &&
+    (DataHandler.getInstance().getUser().getSessionId() == -1 ||
+    DataHandler.getInstance().getUser().getUserId() == 0)) {
+    System.out.println("Want to send queued data but is not logged in. Sleeping...");
+    Thread.sleep(10000);
+    }
+*/
 
 /**
  * Created by ivryashkov on 2015-03-25.
@@ -16,7 +29,7 @@ public class DataHandler
 
     private RealTimeDataHandler realTimeDataHandler;
 
-
+    private User user;
 
     /**
      * Constructor. Declared private and not instantiated. We keep an
@@ -72,30 +85,16 @@ public class DataHandler
     }
 
 
-
-    public Data signalIn(int automotiveSignalId, boolean isOnServerSide)
+    public void setUser(User user)
     {
-        Data data = null;
+        this.user = user;
+    }
 
-        if (isOnServerSide)
-        {
 
-        }
-        else
-        {
-            realTimeDataHandler = new RealTimeDataHandler();
-
-            System.out.println("----------------------------------------------------");
-            System.out.println("returning speed object from data handler");
-            System.out.println("----------------------------------------------------");
-
-            data = realTimeDataHandler.getSignalData(automotiveSignalId);
-        }
-
-        return data;
-
-    } // end signalIn()
-
+    public User getUser()
+    {
+        return user;
+    }
 
 
 } // end class DataHandler

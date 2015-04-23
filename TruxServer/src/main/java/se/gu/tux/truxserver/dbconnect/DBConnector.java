@@ -27,6 +27,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.DriverManager;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import se.gu.tux.trux.datastructure.User;
 
 import se.gu.tux.truxserver.config.Config;
 
@@ -115,5 +120,49 @@ public class DBConnector
             Logger.gI().addError(ex.toString());
 	}
     }
-
+    
+    protected ResultSet execSelect(User u, PreparedStatement pst) throws SQLException
+    {
+        //This is porpably not a correct SQL Select - i will improve that
+        PreparedStatement finalpst = this.connection.prepareStatement(
+        "IF ((SELECT endtime FROM session WHERE sessionid = ?" +
+                " AND userid = ? IS NULL AND " +
+                "EXISTS(SELECT FROM session WHERE sessionid = ?"
+                + " AND userid = ?)) THEN ");
+        
+        finalpst.setLong(1, u.getSessionId());
+        finalpst.setLong(2, u.getUserId());
+        finalpst.setLong(3, u.getSessionId());
+        finalpst.setLong(4, u.getUserId());
+        
+        finalpst.addBatch(pst.toString());
+        
+        Logger.gI().addDebug(finalpst.toString());
+        
+        return finalpst.executeQuery();
+    }
+    
+    protected ResultSet execUpdate(User u, PreparedStatement pst) throws SQLException
+    {
+        String sessioncheck = "IF ((SELECT endtime FROM session WHERE sessionid = ?" +
+                " AND userid = ? IS NULL AND " +
+                "EXISTS(SELECT FROM session WHERE sessionid = ?"
+                + " AND userid = ?)) THEN ";
+        
+        PreparedStatement finalpst = this.connection.prepareStatement(
+        sessioncheck, Statement.RETURN_GENERATED_KEYS);
+        
+        finalpst.setLong(1, u.getSessionId());
+        finalpst.setLong(2, u.getUserId());
+        finalpst.setLong(3, u.getSessionId());
+        finalpst.setLong(4, u.getUserId());
+        
+        finalpst.addBatch(pst.toString());
+        
+        Logger.gI().addDebug(finalpst.toString());
+        
+        finalpst.executeUpdate();
+        
+        return finalpst.getGeneratedKeys();
+    }
 }
