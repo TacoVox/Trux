@@ -101,7 +101,6 @@ public class Stats extends ActionBarActivity {
     public void goToOverall(View view) {
         Intent intent = new Intent(this, OverallStats.class);
         startActivity(intent);
-
     }
 
 }

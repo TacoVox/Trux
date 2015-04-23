@@ -14,6 +14,10 @@ import android.widget.TextView;
 
 import com.swedspot.automotiveapi.AutomotiveManager;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.LoginService;
@@ -41,6 +45,9 @@ public class MainActivity extends ActionBarActivity
 
     LoginService ls;
 
+
+    private static final String fileName = "trux_user_info";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +61,7 @@ public class MainActivity extends ActionBarActivity
         btnRegister.setOnClickListener(btnOnClick);
 
         // Create login service
-        ls = new LoginService();
+        ls = new LoginService(this.getBaseContext());
 
         ServerConnector.gI().connect("www.derkahler.de");
         //IServerConnector.getInstance().connectTo("10.0.2.2");
@@ -64,6 +71,7 @@ public class MainActivity extends ActionBarActivity
 
         // Start the DataPoller that will send AGA metrics to the server with regular interavals
         DataPoller.gI().start();
+
     }
 
     @Override
@@ -129,6 +137,27 @@ public class MainActivity extends ActionBarActivity
 
     } // end goToHome()
 
+
+    private boolean keepLoggedIn() {
+        boolean keep = false;
+
+        if (true)
+        {
+            try {
+                FileInputStream input = openFileInput(fileName);
+                int data = input.read();
+            }
+            catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return keep;
+    }
+
     Button.OnClickListener btnOnClick = new Button.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -164,7 +193,10 @@ public class MainActivity extends ActionBarActivity
     } // end inner class
 
 
+    /*
     public void onStop() {
         System.out.println("ONSTOP....!");
     }
+    */
+
 } // end class
