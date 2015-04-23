@@ -152,7 +152,7 @@ public class ServerConnector {
 
                 // Check if socket is not closed and the out and in streams are open, if not, connect
                 if (cs == null || cs.isClosed() || out == null || in == null) {
-                    System.out.println("SendQuery requesting reconnect...");
+                    System.out.println("SendQuery requesting connect...");
                     connect();
                 }
 
