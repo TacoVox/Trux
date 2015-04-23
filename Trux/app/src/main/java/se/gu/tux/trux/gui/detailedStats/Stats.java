@@ -104,7 +104,7 @@ public class Stats extends ActionBarActivity {
 
     }
 
-    public void ligga(long startTime, MetricData.Mode mode, int days) {
+    public void ligga(long startTime, MetricData mode, int days) {
 
         Object[] dayValue = new Object[30];
         GregorianCalendar cal = new GregorianCalendar();

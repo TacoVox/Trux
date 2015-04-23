@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui.detailedStats;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -21,6 +22,8 @@ import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.gui.MainActivity;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 
@@ -34,29 +37,37 @@ public class DistTravWindow extends Fragment {
 
     class MyTask extends TimerTask {
         public void run() {
+            try {
+                final Distance distanceToday = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.DAY));
+                final Distance distanceWeek = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.WEEK));
+                final Distance distanceMonth = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.THIRTYDAYS));
+                final Distance distanceTotal = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.FOREVER));
 
-            final Distance distanceToday = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.DAY));
-            final Distance distanceWeek = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.WEEK));
-            final Distance distanceMonth = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.THIRTYDAYS));
-            final Distance distanceTotal = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.FOREVER));
+                if (distanceToday.getValue() != null && distanceWeek.getValue() != null
+                        && distanceMonth.getValue() != null && distanceTotal.getValue() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
 
-            if (distanceToday.getValue() != null && distanceWeek.getValue() != null && distanceMonth.getValue() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                            Long distToday = (Long) distanceToday.getValue() / 1000;
+                            Long distWeek = (Long) distanceWeek.getValue() / 1000;
+                            Long distMonth = (Long) distanceMonth.getValue() / 1000;
+                            Long distTotal = (Long) distanceTotal.getValue() / 1000;
 
-                        Long distToday = (Long)distanceToday.getValue()/ 1000;
-                        Long distWeek = (Long)distanceWeek.getValue()/ 1000;
-                        Long distMonth = (Long)distanceMonth.getValue()/ 1000;
-                        Long distTotal = (Long)distanceTotal.getValue()/ 1000;
+                            distanceTextViewToday.setText(distToday.toString());
+                            distanceTextViewWeek.setText(distWeek.toString());
+                            distanceTextViewMonth.setText(distMonth.toString());
+                            distanceTextViewTotal.setText(distTotal.toString());
+                        }
+                    });
 
-                        distanceTextViewToday.setText(distToday.toString());
-                        distanceTextViewWeek.setText(distWeek.toString());
-                        distanceTextViewMonth.setText(distMonth.toString());
-                        distanceTextViewTotal.setText(distTotal.toString());
-                    }
-                });
-
+                }
+            }
+            catch(NotLoggedInException nLIE){
+                System.out.println("NotLoggedInException: " + nLIE.getMessage());
+                //Goes back to MainActivity
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
             }
         }
     }
