@@ -89,8 +89,8 @@ public class SessionHandler {
         
         try
 	{
-            String insertStmnt = "INSERT INTO session(starttime, userid, lastactive)" +
-                    " VALUES(?, ?, ?);";
+            String insertStmnt = "INSERT INTO session(starttime, userid, "
+                    + "lastactive, keepalive) VALUES(?, ?, ?, ?);";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     insertStmnt, Statement.RETURN_GENERATED_KEYS);
@@ -98,6 +98,7 @@ public class SessionHandler {
             pst.setLong(1, System.currentTimeMillis());
             pst.setLong(2, u.getUserId());
             pst.setLong(3, System.currentTimeMillis());
+            pst.setBoolean(4, u.getStayLoggedIn());
             
             pst.executeUpdate();
             
@@ -188,7 +189,7 @@ public class SessionHandler {
         try
 	{
             String updateStmnt = "UPDATE session SET endtime = ? " +
-                    "WHERE lastactive < ?;";
+                    "WHERE lastactive < ? AND keepalive = FALSE;";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
