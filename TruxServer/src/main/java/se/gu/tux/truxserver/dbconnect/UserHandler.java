@@ -64,15 +64,15 @@ public class UserHandler {
         try
 	{
             String selectStmnt = "SELECT userid, password, firstname, lastname" +
-                    " FROM user WHERE userid = ?;";
+                    " FROM user WHERE username = ?;";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, 0);
+            pst.setString(1, u.getUsername());
 	    
             
-	    ResultSet rs = dbc.execSelect(u, pst);
+	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())
 	    {
@@ -115,7 +115,7 @@ public class UserHandler {
             pst.setString(3, u.getFirstName());
             pst.setString(4, u.getLastName());
 	
-            dbc.execInsert(u, pst);
+            pst.executeUpdate();
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         }

@@ -72,7 +72,7 @@ public class MetricReceiver {
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, 0);
+            pst.setLong(1, md.getUserId());
 	    pst.setLong(2, md.getTimeStamp() - md.getTimeFrame());
             pst.setLong(3, md.getTimeStamp()); 
             
@@ -109,7 +109,7 @@ public class MetricReceiver {
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, 0);
+            pst.setLong(1, md.getUserId());
 	    pst.setLong(2, md.getTimeStamp() - md.getTimeFrame());
             pst.setLong(3, md.getTimeStamp()); 
 	    
@@ -148,9 +148,9 @@ public class MetricReceiver {
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, 0);
+            pst.setLong(1, md.getUserId());
             pst.setLong(2, md.getTimeStamp());
-            pst.setLong(3, 0);
+            pst.setLong(3, md.getUserId());
             pst.setLong(4, md.getTimeStamp() - md.getTimeFrame());          
 	    
 	    ResultSet rs = dbc.execSelect(md, pst);

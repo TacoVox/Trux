@@ -99,7 +99,9 @@ public class SessionHandler {
             pst.setLong(2, u.getUserId());
             pst.setLong(3, System.currentTimeMillis());
             
-            ResultSet keys = dbc.execInsert(u, pst);
+            pst.executeUpdate();
+            
+            ResultSet keys = pst.getGeneratedKeys();
             
             ServerSessions.gI().startSession(u);
             
@@ -185,7 +187,7 @@ public class SessionHandler {
         
         try
 	{
-            String updateStmnt = "UPDATE session SET endtime = ?" +
+            String updateStmnt = "UPDATE session SET endtime = ? " +
                     "WHERE lastactive < ?;";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
@@ -195,7 +197,7 @@ public class SessionHandler {
             pst.setLong(2, System.currentTimeMillis() -
                     Config.gI().getSessionTimeout() * 60000);
 	    
-	    dbc.execUpdate(null, pst);
+            pst.executeUpdate();
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
 	}

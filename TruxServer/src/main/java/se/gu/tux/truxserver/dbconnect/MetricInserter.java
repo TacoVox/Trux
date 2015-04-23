@@ -96,7 +96,7 @@ public class MetricInserter implements Runnable {
             pst.setObject(1, md.getValue());
             
             pst.setLong(2, md.getTimeStamp());
-            pst.setLong(3, 0);
+            pst.setLong(3, md.getUserId());
 		
             dbc.execInsert(md, pst);
             
