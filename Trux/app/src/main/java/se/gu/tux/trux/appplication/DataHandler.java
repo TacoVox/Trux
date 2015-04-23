@@ -39,7 +39,9 @@ public class DataHandler
      * Constructor. Declared private and not instantiated. We keep an
      * instance of DataHandler instead.
      */
-    private DataHandler()    {}
+    private DataHandler()    {
+        realTimeDataHandler = new RealTimeDataHandler();
+    }
 
 
     /**
@@ -90,7 +92,7 @@ public class DataHandler
 
             if (request instanceof MetricData){
                 // Ask the real time data handler
-                request = realTimeDataHandler.getSignalData(((MetricData)request));
+                request = realTimeDataHandler.getSignalData(((MetricData) request));
             }
         }
         return request;
