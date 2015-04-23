@@ -18,8 +18,9 @@ package se.gu.tux.truxserver.dbconnect;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.User;
-import se.gu.tux.trux.datastructure.Response;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -33,19 +34,16 @@ public class UserHandler {
      */
     private static UserHandler uh = null;
     
-    static {
-        if (uh == null)
-            uh = new UserHandler();
-    }
-    
     public static UserHandler getInstance()
     {
+        if (uh == null)
+            uh = new UserHandler();
         return uh;
     }
     
     public static UserHandler gI()
     {
-        return uh;
+        return getInstance();
     }
     
     /**
@@ -53,34 +51,36 @@ public class UserHandler {
      */
     private UserHandler() {}
     
-    public boolean addUser()
+    public Data login(User u)
     {
-        return true;
-    }
-    
-    public Response login(User u)
-    {
+        int userid = -1;
         String passwd = null;
+        String firstname = null;
+        String lastname = null;
+        int sessionid = -1;
         
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
 	{
-            String selectStmnt = "SELECT password FROM user" +
-                    " WHERE userid = ?;";
-            
-            Logger.getInstance().addDebug(selectStmnt);
+            String selectStmnt = "SELECT userid, password, firstname, lastname" +
+                    " FROM user WHERE username = ?;";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, 0);
+            pst.setString(1, u.getUsername());
 	    
+            
 	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())
 	    {
+                u.setUserId(rs.getLong("userid"));
                 passwd = rs.getString("password");
+                u.setFirstName(rs.getString("firstname"));
+                u.setLastName(rs.getString("lastname"));
+                
 		break;
 	    }
 	}
@@ -93,10 +93,41 @@ public class UserHandler {
         }
         
         if(u.passwordMatch(passwd)) {
+            u.setSessionId(SessionHandler.gI().startSession(u));
+            
             SessionHandler.gI().startSession(u);
-            return new Response(Response.Type.LOGIN_SUCCESS);
+            
+            return u;
         }
         else
-            return new Response(Response.Type.LOGIN_FAILED);
+            return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
+    }
+    
+    public ProtocolMessage register(User u)
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "INSERT INTO user(username, password, firstname, lastname) " + 
+                            "VALUES(?, ?, ?, ?);");
+            
+            pst.setString(1, u.getUsername());
+            pst.setString(2, u.getPasswordHash());
+            pst.setString(3, u.getFirstName());
+            pst.setString(4, u.getLastName());
+	
+            pst.executeUpdate();
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.toString());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
 }

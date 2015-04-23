@@ -29,17 +29,14 @@ public class UserSwitcher {
      */
     private static UserSwitcher us = null;
     
-    static {
+    protected static UserSwitcher getInstance() {
         if(us == null)
             us = new UserSwitcher();
-    }
-    
-    protected static UserSwitcher getInstance() {
         return us;
     }
     
     protected static UserSwitcher gI() {
-        return us;
+        return getInstance();
     }
     
     /**
@@ -50,8 +47,10 @@ public class UserSwitcher {
     protected Data handleUser(User ud) {
     	//Do something.
         //Session null
-        if(ud.getSessionId() == -1)
+        if(ud.getSessionId() == User.LOGIN_REQUEST)
             return UserHandler.gI().login(ud);
+        else if(ud.getSessionId() == User.REGISTER_REQUEST)
+            return UserHandler.gI().register(ud);
         else
             return null;
     }

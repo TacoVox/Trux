@@ -15,43 +15,41 @@
  */
 package se.gu.tux.truxserver.dataswitch;
 
-import se.gu.tux.trux.datastructure.MetricData;
-import se.gu.tux.truxserver.dbconnect.MetricInserter;
-import se.gu.tux.truxserver.dbconnect.MetricReceiver;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.truxserver.dbconnect.SessionHandler;
 
 /**
  *
  * @author jonas
  */
-public class MetricSwitcher {
+public class MessageSwitcher {
     /**
      * Static part.
      */
-    private static MetricSwitcher ms = null;
+    private static MessageSwitcher ms = null;
     
-    protected static MetricSwitcher getInstance() {
+    public static MessageSwitcher getInstance()
+    {
         if(ms == null)
-            ms = new MetricSwitcher();
+            ms = new MessageSwitcher();
         return ms;
     }
     
-    protected static MetricSwitcher gI() {
+    public static MessageSwitcher gI()
+    {
         return getInstance();
     }
     
     /**
      * Non-static part.
      */
-    private MetricSwitcher() {}
+    private MessageSwitcher() {}
     
-    protected MetricData handleMetricData(MetricData md) {
-    	if(md.getTimeFrame() == 0) {
-            MetricInserter.gI().addToDB(md);
-            
-            return md;
-        }
-        else {
-            return MetricReceiver.gI().getMetric(md);
-        }
+    public ProtocolMessage handleMessage(ProtocolMessage pm)
+    {
+        if(pm.getValue().equals(ProtocolMessage.Type.LOGOUT_REQUEST))
+            return SessionHandler.gI().endSession(pm);
+        
+        return pm;
     }
 }

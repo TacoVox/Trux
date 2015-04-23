@@ -27,6 +27,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.DriverManager;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.truxserver.ServerSessions;
 
 import se.gu.tux.truxserver.config.Config;
 
@@ -98,6 +104,23 @@ public class DBConnector
     {
         return connection;
     }
+    
+    /**
+     * Method to check if the connection is still a proper connection to the db.
+     * 
+     * @return boolean if the correction is proper or not
+     */
+    protected boolean isValid()
+    {
+        try {
+            return connection.isValid(1);
+        }
+        catch (SQLException e) {
+            Logger.gI().addError(e.getMessage());
+        }
+        
+        return false;
+    }
 
     /**
      * Method to close the connection.
@@ -115,5 +138,35 @@ public class DBConnector
             Logger.gI().addError(ex.toString());
 	}
     }
-
+    
+    protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
+    {  
+        Logger.gI().addDebug(pst.toString());
+        
+        if(ServerSessions.gI().isValid(d))
+            return pst.executeQuery();
+        else
+            return null;
+    }
+    
+    protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
+    {
+        Logger.gI().addDebug(pst.toString());
+        
+        if(ServerSessions.gI().isValid(d))
+        {
+            pst.executeUpdate();
+            return pst.getGeneratedKeys();
+        }
+        else
+            return null;
+    }
+    
+    protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
+    {
+        Logger.gI().addDebug(pst.toString());
+        
+        if(ServerSessions.gI().isValid(d))
+            pst.executeUpdate();
+    }
 }

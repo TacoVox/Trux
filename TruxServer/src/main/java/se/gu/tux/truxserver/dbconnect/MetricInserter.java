@@ -31,20 +31,16 @@ public class MetricInserter implements Runnable {
      */
     private static MetricInserter mi;
     
-    static
+    public static MetricInserter getInstance()
     {
         if(mi ==  null)
             mi = new MetricInserter();
-    }
-    
-    public static MetricInserter getInstance()
-    {
         return mi;
     }
     
     public static MetricInserter gI()
     {
-        return mi;
+        return getInstance();
     }
     
     /**
@@ -86,7 +82,8 @@ public class MetricInserter implements Runnable {
         String type = md.getClass().getSimpleName().toLowerCase();
         
     	if (md.getValue() == null) {
-            Logger.getInstance().addError("Somebody tried to insert an empty data object.");
+            Logger.getInstance().addError("Somebody tried to insert an empty data object. " +
+                    "Type :" + md.getClass().getSimpleName());
     		return false; 
         }
         
@@ -97,17 +94,12 @@ public class MetricInserter implements Runnable {
                     "INSERT INTO " + type + "(value, timestamp, userid) " + 
                             "VALUES(?, ?, ?);");
             
-            //Checking for the type
-            //if(type.equals("distance"))
-              //  pst.setLong(2, (Long)md.getValue());
-            //else
-                //pst.setDouble(2, (Double)md.getValue());
             pst.setObject(1, md.getValue());
             
             pst.setLong(2, md.getTimeStamp());
-            pst.setLong(3, 0);
+            pst.setLong(3, md.getUserId());
 		
-            pst.executeUpdate();
+            dbc.execInsert(md, pst);
             
             return true;
         }

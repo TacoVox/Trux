@@ -20,14 +20,20 @@ import se.gu.tux.trux.datastructure.Speed;
 public class RealTimeDataHandler
 {
 
-    RealTimeDataParser rtdp;
+    //RealTimeDataParser rtdp;
+
+    AGADataParser rtdp;
+
 
     /**
      * Constructor.
      */
     public RealTimeDataHandler()
     {
-        rtdp = RealTimeDataParser.getInstance();
+        //rtdp = RealTimeDataParser.getInstance();
+
+        rtdp = AGADataParser.getInstance();
+
     }
 
 

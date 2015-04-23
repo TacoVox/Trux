@@ -17,8 +17,10 @@ package se.gu.tux.truxserver.dataswitch;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.truxserver.dbconnect.MetricInserter;
+import se.gu.tux.truxserver.dbconnect.SessionHandler;
 
 /**
  *
@@ -30,17 +32,14 @@ public class DataSwitcher {
      */
     private static DataSwitcher ds = null;
     
-    static {
+    public static DataSwitcher getInstance() {
         if(ds == null)
             ds = new DataSwitcher();
-    }
-    
-    public static DataSwitcher getInstance() {
         return ds;
     }
     
     public static DataSwitcher gI() {
-        return ds;
+        return getInstance();
     }
     
     /**
@@ -66,6 +65,8 @@ public class DataSwitcher {
             return MetricSwitcher.gI().handleMetricData((MetricData)d);
         else if (d instanceof User)
             return UserSwitcher.gI().handleUser((User) d);
+        else if (d instanceof ProtocolMessage)
+            return MessageSwitcher.gI().handleMessage((ProtocolMessage) d);
         else
             return null;
     }

@@ -33,17 +33,14 @@ public class MetricReceiver {
      */
     private static MetricReceiver mr = null;
     
-    static {
+    public static MetricReceiver getInstance() {
         if (mr == null)
             mr = new MetricReceiver();
-    }
-    
-    public static MetricReceiver getInstance() {
         return mr;
     }
     
     public static MetricReceiver gI() {
-        return mr;
+        return getInstance();
     }
     
     /**
@@ -72,16 +69,14 @@ public class MetricReceiver {
             String selectStmnt = "SELECT AVG(value) AS avg FROM " + type +
                     " WHERE userid = ? AND timestamp BETWEEN ? AND ?;";
             
-            Logger.getInstance().addDebug(selectStmnt);
-            
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, 0);
+            pst.setLong(1, md.getUserId());
 	    pst.setLong(2, md.getTimeStamp() - md.getTimeFrame());
             pst.setLong(3, md.getTimeStamp()); 
-	    
-	    ResultSet rs = pst.executeQuery();
+            
+	    ResultSet rs = dbc.execSelect(md, pst);
 	    
 	    while (rs.next())
 	    {
@@ -111,16 +106,14 @@ public class MetricReceiver {
             String selectStmnt = "SELECT SUM(value) AS sum FROM " + type +
                     " WHERE userid = ? AND timestamp BETWEEN ? AND ?;";
             
-            Logger.getInstance().addDebug(selectStmnt);
-            
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, 0);
+            pst.setLong(1, md.getUserId());
 	    pst.setLong(2, md.getTimeStamp() - md.getTimeFrame());
             pst.setLong(3, md.getTimeStamp()); 
 	    
-	    ResultSet rs = pst.executeQuery();
+	    ResultSet rs = dbc.execSelect(md, pst);
 	    
 	    while (rs.next())
 	    {
@@ -152,17 +145,15 @@ public class MetricReceiver {
                     "(SELECT value FROM " + type + " WHERE " +
                     "userid = ? ORDER BY ABS(value - ?) LIMIT 1;);";
             
-            Logger.getInstance().addDebug(selectStmnt);
-            
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, 0);
+            pst.setLong(1, md.getUserId());
             pst.setLong(2, md.getTimeStamp());
-            pst.setLong(3, 0);
+            pst.setLong(3, md.getUserId());
             pst.setLong(4, md.getTimeStamp() - md.getTimeFrame());          
 	    
-	    ResultSet rs = pst.executeQuery();
+	    ResultSet rs = dbc.execSelect(md, pst);
 	    
 	    while (rs.next())
 	    {
