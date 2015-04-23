@@ -106,10 +106,11 @@ public class DataPoller {
                         // Send and update the lastMetrics array
                         if (send) {
                             for (Data thisMetric : metrics) {
-
-                                ServerConnector.gI().send(thisMetric);
-                                
-                                //IServerConnector.getInstance().receiveData(thisMetric);
+                                // Adding another null check just if some value happens to be missing
+                                // from AGA input
+                                if (thisMetric.getValue() != null) {
+                                    ServerConnector.gI().send(thisMetric);
+                                }
                             }
                             lastMetrics = metrics;
                         }
