@@ -22,6 +22,7 @@ import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.gui.detailedStats.DistTravWindow;
 import se.gu.tux.trux.gui.detailedStats.FuelWindow;
 import se.gu.tux.trux.gui.detailedStats.SpeedWindow;
+import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
 import se.gu.tux.trux.technical_services.IServerConnector;
 import se.gu.tux.trux.technical_services.RealTimeDataParser;
@@ -42,7 +43,10 @@ public class MainActivity extends ActionBarActivity
 
     LoginService ls;
 
-    RealTimeDataParser rtdp;
+    //RealTimeDataParser rtdp;
+
+
+    AGADataParser rtdp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +60,9 @@ public class MainActivity extends ActionBarActivity
 
         btnRegister.setOnClickListener(btnOnClick);
 
-        rtdp = RealTimeDataParser.getInstance();
+        //rtdp = RealTimeDataParser.getInstance();
+
+        rtdp = AGADataParser.getInstance();
 
         ls = new LoginService();
 
@@ -95,7 +101,7 @@ public class MainActivity extends ActionBarActivity
 
     public void goToHome(View view)
     {
-        /*
+
         final String username = userField.getText().toString();
         final String password = passField.getText().toString();
 
@@ -126,10 +132,10 @@ public class MainActivity extends ActionBarActivity
             Intent intent = new Intent(this, DriverHomeScreen.class);
             startActivity(intent);
         }
-        */
 
-        Intent intent = new Intent(this, DriverHomeScreen.class);
-        startActivity(intent);
+
+        //Intent intent = new Intent(this, DriverHomeScreen.class);
+        //startActivity(intent);
 
     } // end goToHome()
 
