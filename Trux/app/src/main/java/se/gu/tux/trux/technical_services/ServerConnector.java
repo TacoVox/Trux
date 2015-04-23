@@ -159,8 +159,8 @@ public class ServerConnector {
                 // If not logged in, throw exception so the using code may take approperiate action
                 // Login attempts and register requests are allowed regardless
                 if (!DataHandler.getInstance().isLoggedIn() &&
-                        !(query.getSessionId() != User.LOGIN_REQUEST ||
-                        query.getSessionId() != User.REGISTER_REQUEST)) {
+                        !(query.getSessionId() == User.LOGIN_REQUEST ||
+                        query.getSessionId() == User.REGISTER_REQUEST)) {
                     throw new NotLoggedInException();
                 }
 
