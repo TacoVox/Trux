@@ -1,6 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
-    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:padding="10dp"
     android:background="#E0E0E0"
     tools:context="se.gu.tux.trux.gui.RegisterWindow">
@@ -21,7 +22,7 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Username:"
+                android:text="@string/user_name_title"
                 android:textColor="#3D3D3D"
                 android:textStyle="bold"
                 android:id="@+id/userNameTitle"
@@ -44,7 +45,7 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="First Name:"
+                android:text="@string/first_name_title"
                 android:textColor="#3D3D3D"
                 android:textStyle="bold"
                 android:id="@+id/firstNameTitle"
@@ -67,7 +68,7 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Last Name:"
+                android:text="@string/last_name_title"
                 android:textColor="#3D3D3D"
                 android:textStyle="bold"
                 android:id="@+id/lastNameTitle"
@@ -90,7 +91,7 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="E-Mail:"
+                android:text="@string/email_title"
                 android:textColor="#3D3D3D"
                 android:textStyle="bold"
                 android:id="@+id/emailTitle"
@@ -114,7 +115,7 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Password:"
+                android:text="@string/password_title"
                 android:textColor="#3D3D3D"
                 android:textStyle="bold"
                 android:id="@+id/passwordTitle"
@@ -138,7 +139,7 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Repeat Password:"
+                android:text="@string/ver_password_title"
                 android:textColor="#3D3D3D"
                 android:textStyle="bold"
                 android:id="@+id/verPasswordTitle"
@@ -161,7 +162,7 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Do you agree with our terms and services?"
+                android:text="@string/agree_button_title"
                 android:textColor="#3D3D3D"
                 android:id="@+id/agreeButton" />
         </LinearLayout>
@@ -170,29 +171,17 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:weightSum="3">
+            android:layout_weight="1">
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="Register"
+                android:text="@string/register_button_title"
                 android:textColor="#E0E0E0"
-                android:background="#3D3D3D"
-                android:id="@+id/registerButton"
-                android:layout_weight="2"/>
+                android:background="@drawable/button_clickable"
+                android:id="@+id/registerButton"/>
 
-            <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="Cancel"
-                android:textColor="#E0E0E0"
-                android:background="#3D3D3D"
-                android:id="@+id/cancelButton"
-                android:layout_weight="1"/>
         </LinearLayout>
 
     </LinearLayout>
