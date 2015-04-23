@@ -64,21 +64,19 @@ public class UserHandler {
         try
 	{
             String selectStmnt = "SELECT userid, password, firstname, lastname" +
-                    " FROM user WHERE userid = ?;";
-            
-            Logger.getInstance().addDebug(selectStmnt);
+                    " FROM user WHERE username = ?;";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, 0);
+            pst.setString(1, u.getUsername());
 	    
             
 	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())
 	    {
-                u.setUserId(rs.getInt("userid"));
+                u.setUserId(rs.getLong("userid"));
                 passwd = rs.getString("password");
                 u.setFirstName(rs.getString("firstname"));
                 u.setLastName(rs.getString("lastname"));
@@ -96,6 +94,8 @@ public class UserHandler {
         
         if(u.passwordMatch(passwd)) {
             u.setSessionId(SessionHandler.gI().startSession(u));
+            
+            SessionHandler.gI().startSession(u);
             
             return u;
         }
@@ -117,7 +117,7 @@ public class UserHandler {
             pst.setString(3, u.getFirstName());
             pst.setString(4, u.getLastName());
 	
-            dbc.execUpdate(u, pst);
+            pst.executeUpdate();
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         }
@@ -129,10 +129,5 @@ public class UserHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
         return new ProtocolMessage(ProtocolMessage.Type.ERROR);
-    }
-    
-    public void purgeSessions()
-    {
-        //Code follows
     }
 }

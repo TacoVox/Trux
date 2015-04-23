@@ -82,7 +82,8 @@ public class MetricInserter implements Runnable {
         String type = md.getClass().getSimpleName().toLowerCase();
         
     	if (md.getValue() == null) {
-            Logger.getInstance().addError("Somebody tried to insert an empty data object.");
+            Logger.getInstance().addError("Somebody tried to insert an empty data object. " +
+                    "Type :" + md.getClass().getSimpleName());
     		return false; 
         }
         
@@ -96,9 +97,9 @@ public class MetricInserter implements Runnable {
             pst.setObject(1, md.getValue());
             
             pst.setLong(2, md.getTimeStamp());
-            pst.setLong(3, 0);
+            pst.setLong(3, md.getUserId());
 		
-            pst.executeUpdate();
+            dbc.execInsert(md, pst);
             
             return true;
         }

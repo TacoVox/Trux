@@ -16,6 +16,7 @@
 package se.gu.tux.truxserver.dbconnect;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import se.gu.tux.truxserver.config.Config;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -41,7 +42,7 @@ public class ConnectionPool {
     /**
      * Non-static part.
      */
-    private final short MAXCONNECTIONS = 2;
+    private final short MAXCONNECTIONS = Config.gI().getMaxNoDBConnections();
 
     private LinkedBlockingQueue queue = null;
     

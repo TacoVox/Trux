@@ -31,7 +31,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.truxserver.ServerSessions;
 
 import se.gu.tux.truxserver.config.Config;
 
@@ -103,6 +104,23 @@ public class DBConnector
     {
         return connection;
     }
+    
+    /**
+     * Method to check if the connection is still a proper connection to the db.
+     * 
+     * @return boolean if the correction is proper or not
+     */
+    protected boolean isValid()
+    {
+        try {
+            return connection.isValid(1);
+        }
+        catch (SQLException e) {
+            Logger.gI().addError(e.getMessage());
+        }
+        
+        return false;
+    }
 
     /**
      * Method to close the connection.
@@ -121,48 +139,34 @@ public class DBConnector
 	}
     }
     
-    protected ResultSet execSelect(User u, PreparedStatement pst) throws SQLException
-    {
-        //This is porpably not a correct SQL Select - i will improve that
-        PreparedStatement finalpst = this.connection.prepareStatement(
-        "IF ((SELECT endtime FROM session WHERE sessionid = ?" +
-                " AND userid = ? IS NULL AND " +
-                "EXISTS(SELECT FROM session WHERE sessionid = ?"
-                + " AND userid = ?)) THEN ");
+    protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
+    {  
+        Logger.gI().addDebug(pst.toString());
         
-        finalpst.setLong(1, u.getSessionId());
-        finalpst.setLong(2, u.getUserId());
-        finalpst.setLong(3, u.getSessionId());
-        finalpst.setLong(4, u.getUserId());
-        
-        finalpst.addBatch(pst.toString());
-        
-        Logger.gI().addDebug(finalpst.toString());
-        
-        return finalpst.executeQuery();
+        if(ServerSessions.gI().isValid(d))
+            return pst.executeQuery();
+        else
+            return null;
     }
     
-    protected ResultSet execUpdate(User u, PreparedStatement pst) throws SQLException
+    protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
     {
-        String sessioncheck = "IF ((SELECT endtime FROM session WHERE sessionid = ?" +
-                " AND userid = ? IS NULL AND " +
-                "EXISTS(SELECT FROM session WHERE sessionid = ?"
-                + " AND userid = ?)) THEN ";
+        Logger.gI().addDebug(pst.toString());
         
-        PreparedStatement finalpst = this.connection.prepareStatement(
-        sessioncheck, Statement.RETURN_GENERATED_KEYS);
+        if(ServerSessions.gI().isValid(d))
+        {
+            pst.executeUpdate();
+            return pst.getGeneratedKeys();
+        }
+        else
+            return null;
+    }
+    
+    protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
+    {
+        Logger.gI().addDebug(pst.toString());
         
-        finalpst.setLong(1, u.getSessionId());
-        finalpst.setLong(2, u.getUserId());
-        finalpst.setLong(3, u.getSessionId());
-        finalpst.setLong(4, u.getUserId());
-        
-        finalpst.addBatch(pst.toString());
-        
-        Logger.gI().addDebug(finalpst.toString());
-        
-        finalpst.executeUpdate();
-        
-        return finalpst.getGeneratedKeys();
+        if(ServerSessions.gI().isValid(d))
+            pst.executeUpdate();
     }
 }
