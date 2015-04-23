@@ -21,6 +21,8 @@ import java.sql.Statement;
 
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.truxserver.ServerSessions;
+import se.gu.tux.truxserver.config.Config;
 
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -60,15 +62,13 @@ public class SessionHandler {
             String updateStmnt = "UPDATE session SET lastactive = ?" +
                     "WHERE userid = ? AND ISNULL(endtime);";
             
-            Logger.getInstance().addDebug(updateStmnt);
-            
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
 	    
             pst.setLong(1, System.currentTimeMillis());
             pst.setLong(2, u.getUserId());
 	    
-	    pst.executeUpdate();
+	    dbc.execUpdate(u, pst);
             
             //return new Response(Response.Type.DATA_RECEIVED);
 	}
@@ -98,16 +98,16 @@ public class SessionHandler {
             pst.setLong(1, System.currentTimeMillis());
             pst.setLong(2, u.getUserId());
             pst.setLong(3, System.currentTimeMillis());
-	    
-            Logger.getInstance().addDebug(pst.toString());
             
-	    pst.executeUpdate();
+            pst.executeUpdate();
             
             ResultSet keys = pst.getGeneratedKeys();
             
             while(keys.next())
                 return keys.getInt(1);
-            return -1;
+            
+            return - 1;
+            
 	}
 	catch (Exception e)
 	{
@@ -129,8 +129,6 @@ public class SessionHandler {
             String updateStmnt = "UPDATE session SET endtime = ?" +
                     "WHERE userid = ? AND sessionid = ?;";
             
-            Logger.getInstance().addDebug(updateStmnt);
-            
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
 	    
@@ -138,7 +136,68 @@ public class SessionHandler {
             pst.setLong(2, pm.getUserId());
             pst.setLong(3, pm.getSessionId());
 	    
-	    pst.executeUpdate();
+	    dbc.execUpdate(pm, pst);
+            
+            ServerSessions.gI().closeSession(pm);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.toString());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+    }
+    
+    public ResultSet getCurrentSessions()
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String updateStmnt = "SELECT * FROM session WHERE endtime IS NULL;";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+	    
+            pst.setLong(1, System.currentTimeMillis());
+            pst.setLong(2, System.currentTimeMillis() -
+                    Config.gI().getSessionTimeout() * 60000);
+	    
+	    return pst.executeQuery();
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.toString());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        return null;
+    }
+    
+    public ProtocolMessage purgeSessions()
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String updateStmnt = "UPDATE session SET endtime = ? " +
+                    "WHERE lastactive < ?;";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+	    
+            pst.setLong(1, System.currentTimeMillis());
+            pst.setLong(2, System.currentTimeMillis() -
+                    Config.gI().getSessionTimeout() * 60000);
+	    
+            pst.executeUpdate();
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
 	}
