@@ -4,6 +4,7 @@ import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.technical_services.IServerConnector;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
 
@@ -55,6 +56,20 @@ public class DataHandler
     } // end getInstance()
 
     /**
+     * Returns true if the user is logged in.
+     * @return
+     */
+    public boolean isLoggedIn() {
+        boolean isLoggedIn = false;
+
+        if (user != null && user.getUserId() > 0 && user.getSessionId() > 0) {
+            return isLoggedIn = true;
+        }
+
+        return isLoggedIn;
+    }
+
+    /**
      * Ivo, this is how i envisioned it - ask for data, get data.
      * So we don't need to keep logic about what signal id is needed everywhere.
      * Each metric datatype knows about their own signal id.
@@ -63,7 +78,7 @@ public class DataHandler
      * @param request
      * @return
      */
-    public Data getData(Data request) {
+    public Data getData(Data request) throws NotLoggedInException {
         if (request.isOnServerSide()) {
 
             request = ServerConnector.gI().answerQuery(request);
