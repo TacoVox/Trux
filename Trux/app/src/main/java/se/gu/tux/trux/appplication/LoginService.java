@@ -58,11 +58,18 @@ public class LoginService
 
     private Context context;
 
+    private File file;
+
+    private static final String fileName = "trux_user_config";
+
 
     public LoginService(Context context)
     {
         user = new User();
         this.context = context;
+
+        file = new File(context.getFilesDir(), fileName);
+
     }
 
 
@@ -96,6 +103,12 @@ public class LoginService
         if (response instanceof User)
         {
             DataHandler.getInstance().setUser((User) response);
+
+            String userInfo = DataHandler.getInstance().getUser().getUsername() + ":" +
+                            DataHandler.getInstance().getUser().getPasswordHash() + ":" +
+                            DataHandler.getInstance().getUser().getSessionId();
+
+            writeToFile(userInfo);
 
             return true;
         }
@@ -157,29 +170,35 @@ public class LoginService
 
 
 
-    private void writeToFile(String data)
+    public void writeToFile(String data)
     {
+
         try
         {
             OutputStreamWriter outputStreamWriter =
-                    new OutputStreamWriter(context.openFileOutput("trux_user_config.txt", Context.MODE_PRIVATE));
+                    new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
+
             outputStreamWriter.write(data);
+
+            System.out.println("-------- writing to file ----------");
+
             outputStreamWriter.close();
         }
-        catch (IOException e) {
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
     }
 
 
 
-    private String readFromFile()
+    public String[] readFromFile()
     {
-        String ret = "";
+        String[] ret = null;
 
         try
         {
-            InputStream inputStream = context.openFileInput("config.txt");
+            InputStream inputStream = context.openFileInput(fileName);
 
             if ( inputStream != null )
             {
@@ -196,15 +215,25 @@ public class LoginService
                     stringBuilder.append(receiveString);
                 }
 
+                System.out.println("-------- reading from file ----------");
+
                 inputStream.close();
 
-                ret = stringBuilder.toString();
+                ret = stringBuilder.toString().split(":");
+
+                System.out.println("-------- user info in file -------------");
+                System.out.println("username: " + ret[0]);
+                System.out.println("password hash: " + ret[1]);
+                System.out.println("session ID: " + ret[2]);
+                System.out.println("----------------------------------------");
             }
         }
-        catch (FileNotFoundException e) {
+        catch (FileNotFoundException e)
+        {
             e.printStackTrace();
         }
-        catch (IOException e) {
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
 
