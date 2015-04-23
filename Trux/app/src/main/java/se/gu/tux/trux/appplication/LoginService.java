@@ -34,6 +34,7 @@ import java.security.NoSuchAlgorithmException;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.ServerConnector;
 
 /**
@@ -61,12 +62,22 @@ public class LoginService
         user.setSessionId(-1);
         DataHandler.getInstance().setUser(user);
 
-        Data response = (Data) ServerConnector.getInstance().answerQuery(user);
+        Data response = null;
 
-        System.out.println("-------user login info----------------");
+        try
+        {
+            response = (Data) ServerConnector.getInstance().answerQuery(user);
+        }
+        catch (NotLoggedInException e)
+        {
+            e.printStackTrace();
+        }
+
+        System.out.println("------- user login info ----------------");
         System.out.println("user is null? " + response == null);
         System.out.println("session ID: " + response.getSessionId());
         System.out.println("user ID: " + response.getUserId());
+        System.out.println("----------------------------------------");
 
         if (response instanceof User)
         {
@@ -83,7 +94,14 @@ public class LoginService
 
     public void logout()
     {
-        ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.LOGOUT_REQUEST));
+        try
+        {
+            ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.LOGOUT_REQUEST));
+        }
+        catch (NotLoggedInException e)
+        {
+            e.printStackTrace();
+        }
     }
 
 
