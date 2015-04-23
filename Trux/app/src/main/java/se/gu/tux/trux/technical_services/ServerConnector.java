@@ -99,7 +99,7 @@ public class ServerConnector {
      * @param d
      * @return
      */
-    public Data answerQuery(Data d) {
+    public Data answerQuery(Data d) throws NotLoggedInException {
         d.setTimeStamp(System.currentTimeMillis());
         return connector.sendQuery(d);
     }
@@ -140,18 +140,9 @@ public class ServerConnector {
          * @param query
          * @return
          */
-        public Data sendQuery(Data query) {
+        public Data sendQuery(Data query) throws NotLoggedInException {
             boolean dataSent = false;
             Data answer = null;
-
-            // If not logged in, throw exception so the using code may take approperiate action
-            // TODO: Note that login attempts must of course be an exception to this check!
-            if (DataHandler.getInstance().getUser() != null &&
-                    (DataHandler.getInstance().getUser().getSessionId() == User.LOGIN_REQUEST ||
-                            DataHandler.getInstance().getUser().getSessionId() == User.REGISTER_REQUEST ||
-                            DataHandler.getInstance().getUser().getUserId() == 0)) {
-                //throw new Exception("Not logged in!");
-            }
 
             while (!dataSent) {
                 // If data is null, return null
@@ -159,14 +150,18 @@ public class ServerConnector {
                     return null;
                 }
 
-                if (cs != null) {
-                    System.out.println("isConnected: " + cs.isConnected());
-                }
-
                 // Check if socket is not closed and the out and in streams are open, if not, connect
                 if (cs == null || cs.isClosed() || out == null || in == null) {
                     System.out.println("SendQuery requesting reconnect...");
                     connect();
+                }
+
+                // If not logged in, throw exception so the using code may take approperiate action
+                // Login attempts and register requests are allowed regardless
+                if (!DataHandler.getInstance().isLoggedIn() &&
+                        query.getSessionId() != User.LOGIN_REQUEST ||
+                        query.getSessionId() != User.REGISTER_REQUEST) {
+                    throw new NotLoggedInException();
                 }
 
                 // Make sure no other thread uses the stream resources here
@@ -254,29 +249,20 @@ public class ServerConnector {
                     if (d != null) {
                         System.out.println("Server connector: Sending...");
 
-
                         // Connect if not already connected.
                         // If we ever lose connection, try reconnecting at regular intervals
                         if (cs == null || cs.isClosed() || out == null || in == null) {
                             connect();
                         }
 
-                        // If not logged in - put back into the queue, sleep for a while,
-                        // and instead try send on next iteration of while loop
-                        if (DataHandler.getInstance().getUser() != null &&
-                                (DataHandler.getInstance().getUser().getSessionId() == User.LOGIN_REQUEST ||
-                                DataHandler.getInstance().getUser().getSessionId() == User.REGISTER_REQUEST ||
-                                DataHandler.getInstance().getUser().getUserId() == 0)) {
-                            System.out.println("Want to send queued data but is not logged in. Sleeping...");
-                            queue.putFirst(d);
-                            Thread.sleep(10000);
-                        } else {
+                        if (DataHandler.getInstance().isLoggedIn()) {
+
+                            // Mark data with session and user
+                            d.setSessionId(DataHandler.getInstance().getUser().getSessionId());
+                            d.setUserId(DataHandler.getInstance().getUser().getUserId());
+
                             // Send the data
                             synchronized (this) {
-                                // Mark data with session and user
-                                d.setSessionId(DataHandler.getInstance().getUser().getSessionId());
-                                d.setUserId(DataHandler.getInstance().getUser().getUserId());
-
                                 out.writeObject(d);
                                 Data inD = (Data) in.readObject();
 
@@ -287,9 +273,14 @@ public class ServerConnector {
                                     System.out.println("returned values: " + inD.getSessionId() + " : " + inD.getUserId());
                                 }
                             }
+
+                        } else {
+                            // Not logged in
+                            System.out.println("Want to send queued data but is not logged in. Sleeping...");
+                            queue.putFirst(d);
+                            Thread.sleep(10000);
                         }
                     }
-
                 } catch (InterruptedException e) {
 
                     // Thread is being interrupted by this application shutting down. Break while loop

@@ -86,7 +86,7 @@ public class MetricReceiver {
 	}
 	catch (Exception e)
 	{
-	    Logger.gI().addError(e.toString());
+	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
@@ -123,7 +123,7 @@ public class MetricReceiver {
 	}
 	catch (Exception e)
 	{
-	    Logger.gI().addError(e.toString());
+	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
@@ -163,7 +163,7 @@ public class MetricReceiver {
 	}
 	catch (Exception e)
 	{
-	    Logger.gI().addError(e.toString());
+	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
