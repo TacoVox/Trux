@@ -14,20 +14,10 @@ public class MetricData extends Data
     public final static long FOREVER = -1;
 
     /**
-     * For the average or sum - should we sum it up over the whole time period or return results
-     * for each day?
-     * Note: for speed etc this will be average (per day or time period), for distance etc it will
-     * be total distance for day or total time period.
-     */
-    public enum Mode {PER_DAY, TOTAL}
-
-    /**
      * Private fields for value and the used timeframe
      */
     private Double value;
-    private Object[] valueArray = null;
     private long tf;
-    private Mode mode;
 
     /**
      * Constructor.
@@ -35,12 +25,6 @@ public class MetricData extends Data
     public MetricData(long tf){
         this.tf = tf;
     }
-
-    public MetricData(long tf, Mode mode){
-        this.tf = tf;
-        this.mode = mode;
-    }
-
 
     /**
      * Getter for the value
@@ -55,15 +39,6 @@ public class MetricData extends Data
     public void setValue(Object value) {
         this.value = (Double) value;
     }
-
-    public Object[] getValueArray() {
-        return valueArray;
-    }
-
-    public void setValueArray(Object[] value) {
-        this.valueArray = value;
-    }
-
 
     public Integer getSignalId() {
         return 0;
