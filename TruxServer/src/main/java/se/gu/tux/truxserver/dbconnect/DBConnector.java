@@ -29,10 +29,8 @@ import java.sql.DriverManager;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.truxserver.ServerSessions;
 
 import se.gu.tux.truxserver.config.Config;
 
@@ -45,7 +43,6 @@ import se.gu.tux.truxserver.logger.Logger;
  * @author <a href="mailto:jonas.kahler@icloud.com">Jonas Kahler</a>
  * @version 4.4
  */
-
 public class DBConnector
 {
     private Connection connection = null;
@@ -64,7 +61,8 @@ public class DBConnector
 	    Class.forName("com.mysql.jdbc.Driver").newInstance();
             Logger.gI().addMsg("MySQL driver loaded...");
 	}
-        catch (ClassNotFoundException | InstantiationException | IllegalAccessException e)
+        catch (ClassNotFoundException | InstantiationException |
+                IllegalAccessException e)
 	{
 	    Logger.gI().addError(e.toString());
 	}
@@ -139,34 +137,76 @@ public class DBConnector
 	}
     }
     
+    /**
+     * Method to execute a select statement.
+     * The method checks if the passed object has a valid sessionid.
+     * 
+     * @param d a Data object (for checking the sessionid)
+     * @param pst a ready-to-use PreparedStatement
+     * 
+     * @return a ResultSet including all things returned by the DB
+     * 
+     * @throws SQLException
+     */
     protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
     {  
-        Logger.gI().addDebug(pst.toString());
+                    
+        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
+                + "sessionid = " + Long.toString(d.getSessionId())
+                + " AND endtime = NULL);";
         
-        if(ServerSessions.gI().isValid(d))
-            return pst.executeQuery();
-        else
-            return null;
+        pst.addBatch(existCheck);
+        
+        Logger.gI().addDebug(pst.toString());
+
+        return pst.executeQuery();
     }
     
+    /**
+     * Method to execute an Insert statement.
+     * The method checks if the passed object has a valid sessionid.
+     * 
+     * @param d a Data object (for checking the sessionid)
+     * @param pst a ready-to-use PreparedStatement
+     * 
+     * @return a Result set containing the inserted keys.
+     * 
+     * @throws SQLException 
+     */
     protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
     {
+        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
+                + "sessionid = " + Long.toString(d.getSessionId())
+                + " AND endtime = NULL);";
+        
+        pst.addBatch(existCheck);
+        
         Logger.gI().addDebug(pst.toString());
         
-        if(ServerSessions.gI().isValid(d))
-        {
-            pst.executeUpdate();
-            return pst.getGeneratedKeys();
-        }
-        else
-            return null;
+        pst.executeUpdate();
+        
+        return pst.getGeneratedKeys();
     }
     
+    /**
+     * Mehthod to execute an update statement.
+     * The method checks if the passed object has a valid sessionid.
+     * 
+     * @param d a Data object (for checking the sessionid)
+     * @param pst a ready-to-use PreaparedStatement
+     * 
+     * @throws SQLException 
+     */
     protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
     {
+        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
+                + "sessionid = " + Long.toString(d.getSessionId())
+                + " AND endtime = NULL);";
+        
+        pst.addBatch(existCheck);
+        
         Logger.gI().addDebug(pst.toString());
         
-        if(ServerSessions.gI().isValid(d))
-            pst.executeUpdate();
+        pst.executeUpdate();
     }
 }

@@ -101,43 +101,7 @@ public class Stats extends ActionBarActivity {
     public void goToOverall(View view) {
         Intent intent = new Intent(this, OverallStats.class);
         startActivity(intent);
-
     }
-
-    public void ligga(long startTime, MetricData.Mode mode, int days) {
-
-        Object[] dayValue = new Object[30];
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.setTimeInMillis(startTime);
-        cal.add(Calendar.DATE, -days);
-
-        for(int i = 0; i < days; i++){
-            GregorianCalendar calBeginning = new GregorianCalendar(
-                    cal.get(Calendar.YEAR),
-                    cal.get(Calendar.MONTH),
-                    cal.get(Calendar.DATE),
-                    0,
-                    0
-                );
-            GregorianCalendar calEnd = new GregorianCalendar(
-                    cal.get(Calendar.YEAR),
-                    cal.get(Calendar.MONTH),
-                    cal.get(Calendar.DATE),
-                    23,
-                    59, 59
-            );
-
-            // Jonas:  Here you have start and end times of each day
-            // So get the average value and put it in the dayValue array on index i
-            System.out.println(calBeginning.getTimeInMillis());
-            System.out.println(calEnd.getTimeInMillis());
-            cal.add(Calendar.DATE, +i);
-        }
-
-    }
-
-
-
 
 }
 

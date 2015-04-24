@@ -13,6 +13,7 @@ import java.util.TimerTask;
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 public class SimpleFuelWindow extends Fragment {
@@ -27,16 +28,20 @@ public class SimpleFuelWindow extends Fragment {
     class myTask extends TimerTask {
 
         public void run() {
+            try {
+                final Fuel fuel = (Fuel) DataHandler.getInstance().getData(new Fuel(0));
 
-            final Fuel fuel = (Fuel) DataHandler.getInstance().getData(new Fuel(0));
-
-            if (fuel.getValue() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        currentFuel.setText(new Long(Math.round((Double) fuel.getValue())).toString());
-                    }
-                });
+                if (fuel.getValue() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            currentFuel.setText(new Long(Math.round((Double) fuel.getValue())).toString());
+                        }
+                    });
+                }
+            }
+            catch (NotLoggedInException nLIE){
+                System.out.println("NotLoggedInException: " + nLIE.getMessage());
             }
 
         }

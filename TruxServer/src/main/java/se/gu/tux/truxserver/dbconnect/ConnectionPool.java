@@ -20,8 +20,10 @@ import se.gu.tux.truxserver.config.Config;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
- *
- * @author jonas
+ * This singleton class provides a pool of database connections.
+ * This pool is threadsafe.
+ * 
+ * @author Jonas Kahler
  */
 public class ConnectionPool {
     /**
@@ -29,12 +31,22 @@ public class ConnectionPool {
      */
     private static ConnectionPool cp = null;
     
+    /**
+     * Method for getting the instance of the pool.
+     * 
+     * @return an Instance of ConnectionPool
+     */
     public static ConnectionPool getInstance() {
         if(cp == null)
             cp = new ConnectionPool();
         return cp;
     }
     
+    /**
+     * Method for getting the instance of the pool.
+     * 
+     * @return an Instance of ConnectionPool
+     */
     public static ConnectionPool gI() {
         return getInstance();
     }
@@ -46,6 +58,9 @@ public class ConnectionPool {
 
     private LinkedBlockingQueue queue = null;
     
+    /**
+     * Private Constructor.
+     */
     private ConnectionPool() {
         queue = new LinkedBlockingQueue();
         
@@ -53,6 +68,11 @@ public class ConnectionPool {
             queue.add(addDBConnector());
     } 
     
+    /**
+     * Method for adding a connector to the pool.
+     * 
+     * @return a DBConnector object
+     */
     private DBConnector addDBConnector() {
         DBConnector dbc = new DBConnector();
         dbc.openConnection();
@@ -60,6 +80,11 @@ public class ConnectionPool {
         return dbc;
     }
     
+    /**
+     * Method for requesting a connector for the pool.
+     * 
+     * @return a connector as soon as a connector is available.
+     */
     public DBConnector getDBC() {
         try {
             return (DBConnector)queue.take();
@@ -71,6 +96,11 @@ public class ConnectionPool {
         return null;
     }
     
+    /**
+     * Method for releasing a connector back to our pool when it is not used anymore.
+     * 
+     * @param dbc a DBConnector to be released back to the pool
+     */
     public void releaseDBC(DBConnector dbc) {
         queue.add(dbc);
     }

@@ -47,7 +47,7 @@ public class MetricSwitcher {
     protected MetricData handleMetricData(MetricData md) {
     	if(md.getTimeFrame() == 0) {
             MetricInserter.gI().addToDB(md);
-            
+
             return md;
         }
         else {

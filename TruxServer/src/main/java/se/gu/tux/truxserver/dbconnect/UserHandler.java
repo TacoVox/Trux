@@ -34,6 +34,11 @@ public class UserHandler {
      */
     private static UserHandler uh = null;
     
+    /**
+     * Method for getting the instance of the MetricInserter.
+     * 
+     * @return an Instance of MetricInserter
+     */
     public static UserHandler getInstance()
     {
         if (uh == null)
@@ -41,6 +46,11 @@ public class UserHandler {
         return uh;
     }
     
+    /**
+     * Method for getting the instance of the MetricInserter.
+     * 
+     * @return an Instance of MetricInserter
+     */
     public static UserHandler gI()
     {
         return getInstance();
@@ -49,8 +59,19 @@ public class UserHandler {
     /**
      * Non-static part.
      */
+    
+    /**
+     * Private Constructor. Not acessable.
+     */
     private UserHandler() {}
     
+    /**
+     * Method to login a user to the system.
+     * 
+     * @param u the user who wants to login
+     * 
+     * @return either a filled in user object on success or a ProtocolMessage indicating an ERROR
+     */
     public Data login(User u)
     {
         int userid = -1;
@@ -64,13 +85,12 @@ public class UserHandler {
         try
 	{
             String selectStmnt = "SELECT userid, password, firstname, lastname" +
-                    " FROM user WHERE username = ?;";
+                    " FROM user WHERE username = ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setString(1, u.getUsername());
-	    
+            pst.setString(1, u.getUsername()); 
             
 	    ResultSet rs = pst.executeQuery();
 	    
@@ -103,6 +123,13 @@ public class UserHandler {
             return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
     }
     
+    /**
+     * Method to register a user to our system.
+     * 
+     * @param u a filled in user object which will be stored
+     * 
+     * @return a ProtocolMessage indicating the success
+     */
     public ProtocolMessage register(User u)
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
@@ -110,7 +137,7 @@ public class UserHandler {
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO user(username, password, firstname, lastname) " + 
-                            "VALUES(?, ?, ?, ?);");
+                            "VALUES(?, ?, ?, ?)");
             
             pst.setString(1, u.getUsername());
             pst.setString(2, u.getPasswordHash());
@@ -129,5 +156,60 @@ public class UserHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
         return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+    }
+    
+    /**
+     * Method for getting user data from the DB.
+     * 
+     * @param u a scaletton user object -> will be filled in
+     * 
+     * @return either a filled in user object on success or a ProtocolMessage indicating an ERROR
+     */
+    public Data getUser(User u)
+    {
+        int userid = -1;
+        String passwd = null;
+        String firstname = null;
+        String lastname = null;
+        int sessionid = -1;
+        
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "SELECT userid, password, firstname, lastname" +
+                    " FROM user WHERE username = ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setString(1, u.getUsername());
+	    
+            ResultSet rs = pst.executeQuery();
+	    
+            if(rs == null)
+                return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+            
+	    while (rs.next())
+	    {
+                u.setUserId(rs.getLong("userid"));
+                passwd = rs.getString("password");
+                u.setFirstName(rs.getString("firstname"));
+                u.setLastName(rs.getString("lastname"));
+                
+		break;
+	    }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        if(u.passwordMatch(passwd))
+            return u;
+        else
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
 }

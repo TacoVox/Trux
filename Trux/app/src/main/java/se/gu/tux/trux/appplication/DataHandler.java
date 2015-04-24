@@ -1,5 +1,8 @@
 package se.gu.tux.trux.appplication;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.User;
@@ -36,7 +39,9 @@ public class DataHandler
      * Constructor. Declared private and not instantiated. We keep an
      * instance of DataHandler instead.
      */
-    private DataHandler()    {}
+    private DataHandler()    {
+        realTimeDataHandler = new RealTimeDataHandler();
+    }
 
 
     /**
@@ -70,8 +75,6 @@ public class DataHandler
     }
 
     /**
-     * Ivo, this is how i envisioned it - ask for data, get data.
-     * So we don't need to keep logic about what signal id is needed everywhere.
      * Each metric datatype knows about their own signal id.
      * Using class can just do Data d = [...].getData(new Speed(0)); for example.'
      * I think this is a neat way for the GUI to get data
@@ -89,14 +92,49 @@ public class DataHandler
 
             if (request instanceof MetricData){
                 // Ask the real time data handler
-                realTimeDataHandler = new RealTimeDataHandler();
-                System.out.println("----------------------------------------------------");
-                System.out.println("returning metric object from data handler");
-                System.out.println("----------------------------------------------------");
-                request = realTimeDataHandler.getSignalData(((MetricData)request));
+                request = realTimeDataHandler.getSignalData(((MetricData) request));
             }
         }
         return request;
+    }
+
+    /**
+     * Please provide a metric object of the right class and with the current timestamp
+     * set.
+     */
+    public Data[] getPerDay (MetricData metricData, int days) throws NotLoggedInException {
+        Data[] perDay = new Data[days];
+
+        // Use a calendar to know when days start and end.
+        // Initiate based on metricData's timestamp.
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTimeInMillis(metricData.getTimeStamp());
+        cal.add(Calendar.DATE, -days);
+
+        // Here fetch metric data for each day, by setting timestamp to the end of the day
+        // AND the timeframe to be one day : ))
+        metricData.settTimeFrame(MetricData.DAY);
+
+        for(int i = 0; i < days; i++) {
+            /* GregorianCalendar calBeginning = new GregorianCalendar(
+                    cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE),
+                    0, 0
+            );*/
+            // Find timestamp for end of day
+            GregorianCalendar calEnd = new GregorianCalendar(
+                    cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE),
+                    23, 59, 59
+            );
+            metricData.setTimeStamp(calEnd.getTimeInMillis());
+
+            // Get data from server
+            perDay[i] = getData(metricData);
+
+            // Move forward one day
+            cal.add(Calendar.DATE, +i);
+        }
+
+        return perDay;
     }
 
 
@@ -105,11 +143,9 @@ public class DataHandler
         this.user = user;
     }
 
-
     public User getUser()
     {
         return user;
     }
-
 
 } // end class DataHandler

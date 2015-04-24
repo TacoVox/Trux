@@ -13,6 +13,7 @@ import java.util.TimerTask;
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 public class SimpleSpeedWindow extends Fragment
@@ -28,15 +29,19 @@ public class SimpleSpeedWindow extends Fragment
     class myTask extends TimerTask {
 
         public void run() {
-
-                final Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
-                if (speed.getValue() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            currentSpeed.setText(new Long(Math.round((Double) speed.getValue())).toString());
-                        }
-                    });
+                try {
+                    final Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
+                    if (speed.getValue() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                currentSpeed.setText(new Long(Math.round((Double) speed.getValue())).toString());
+                            }
+                        });
+                    }
+                }
+                catch (NotLoggedInException nLIE){
+                    System.out.println("NotLoggedInException: " + nLIE.getMessage());
                 }
         }
     }

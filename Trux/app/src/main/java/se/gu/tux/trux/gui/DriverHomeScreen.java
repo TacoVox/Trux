@@ -17,8 +17,6 @@ import tux.gu.se.trux.R;
 
 public class DriverHomeScreen extends ActionBarActivity {
 
-    final Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
