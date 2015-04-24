@@ -154,7 +154,7 @@ public class DBConnector
         String pststring = pst.toString().substring(pst.toString().indexOf("SELECT"), pst.toString().length());
         
         PreparedStatement finalpst = this.connection.prepareStatement(
-            getSessionCheck(pststring));
+            getAdvSessionCheck(pststring));
         
         finalpst.setLong(1, d.getSessionId());
         finalpst.setLong(2, d.getUserId());
@@ -206,7 +206,7 @@ public class DBConnector
         String pststring = pst.toString().substring(pst.toString().indexOf("UPDATE"), pst.toString().length());
         
         PreparedStatement finalpst = this.connection.prepareStatement(
-            getSessionCheck(pststring));
+            getAdvSessionCheck(pststring));
         
         finalpst.setLong(1, d.getSessionId());
         finalpst.setLong(2, d.getUserId());
@@ -217,6 +217,12 @@ public class DBConnector
     }
     
     private String getSessionCheck(String statement)
+    {
+        return statement + " WHERE EXISTS (SELECT * FROM session WHERE "
+                + "sessionid = ? AND userid = ? AND endtime = NULL);";
+    }
+    
+    private String getAdvSessionCheck(String statement)
     {
         int whereindex = statement.indexOf("WHERE");
         String firstpart = statement.toString().substring(0, whereindex + 6);

@@ -80,8 +80,12 @@ public class MetricReceiver {
             
             return getAverage(md);
         }
-        else if(md instanceof Distance)
+        else if(md instanceof Distance) {
+            //Set the value to a default 0
+            md.setValue(new Long(0));
+            
             return getDiff(md);
+        }
         else
             return null;
     }
@@ -202,7 +206,7 @@ public class MetricReceiver {
             
 	    while (rs.next())
 	    {
-		md.setValue(rs.getDouble("diff"));
+		md.setValue(rs.getLong("diff"));
 		break;
 	    }
 	}
