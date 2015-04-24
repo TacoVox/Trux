@@ -151,8 +151,10 @@ public class DBConnector
      */
     protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
     {  
+        String pststring = pst.toString().substring(pst.toString().indexOf("SELECT"), pst.toString().length());
+        
         PreparedStatement finalpst = this.connection.prepareStatement(
-        pst.toString() + getSessionCheck());
+            getSessionCheck(pststring));
         
         finalpst.setLong(1, d.getSessionId());
         finalpst.setLong(2, d.getUserId());
@@ -175,8 +177,10 @@ public class DBConnector
      */
     protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
     {
+        String pststring = pst.toString().substring(pst.toString().indexOf("INSERT"), pst.toString().length());
+        
         PreparedStatement finalpst = this.connection.prepareStatement(
-        pst.toString() + getSessionCheck(), Statement.RETURN_GENERATED_KEYS);
+            getSessionCheck(pststring), Statement.RETURN_GENERATED_KEYS);
         
         finalpst.setLong(1, d.getSessionId());
         finalpst.setLong(2, d.getUserId());
@@ -199,8 +203,10 @@ public class DBConnector
      */
     protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
     {
+        String pststring = pst.toString().substring(pst.toString().indexOf("UPDATE"), pst.toString().length());
+        
         PreparedStatement finalpst = this.connection.prepareStatement(
-        pst.toString() + getSessionCheck());
+            getSessionCheck(pststring));
         
         finalpst.setLong(1, d.getSessionId());
         finalpst.setLong(2, d.getUserId());
@@ -210,9 +216,13 @@ public class DBConnector
         pst.executeUpdate();
     }
     
-    private String getSessionCheck()
+    private String getSessionCheck(String statement)
     {
-        return " AND EXISTS (SELECT * FROM session WHERE "
-                + "sessionid = ? AND userid = ? AND endtime = NULL);";
+        int whereindex = statement.indexOf("WHERE");
+        String firstpart = statement.toString().substring(0, whereindex + 6);
+        String secondpart = statement.toString().substring(whereindex + 6, statement.length());
+        
+        return firstpart + "EXISTS (SELECT * FROM session WHERE "
+                + "sessionid = ? AND userid = ? AND endtime = NULL) AND " + secondpart;
     }
 }
