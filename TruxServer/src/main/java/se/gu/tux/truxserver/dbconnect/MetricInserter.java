@@ -21,9 +21,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import se.gu.tux.trux.datastructure.MetricData;
 
 import se.gu.tux.truxserver.logger.Logger;
+
 /**
- *
- * @author jonas
+ * Class taking care of all MetricData inserts to the DB.
+ * 
+ * @author Jonas Kahler
  */
 public class MetricInserter implements Runnable {
     /**
@@ -31,6 +33,11 @@ public class MetricInserter implements Runnable {
      */
     private static MetricInserter mi;
     
+    /**
+     * Method for getting the instance of the MetricInserter.
+     * 
+     * @return an Instance of MetricInserter
+     */
     public static MetricInserter getInstance()
     {
         if(mi ==  null)
@@ -38,6 +45,11 @@ public class MetricInserter implements Runnable {
         return mi;
     }
     
+    /**
+     * Method for getting the instance of the MetricInserter.
+     * 
+     * @return an Instance of MetricInserter
+     */
     public static MetricInserter gI()
     {
         return getInstance();
@@ -48,10 +60,16 @@ public class MetricInserter implements Runnable {
      */
     private LinkedBlockingQueue queue;
     
+    /**
+     * Constructor.
+     */
     private MetricInserter() {
         queue = new LinkedBlockingQueue();
     }
     
+    /**
+     * Run method.
+     */
     @Override
     public void run() {
         Logger.gI().addMsg("InsertionHandler is running and waiting for input");
@@ -73,10 +91,23 @@ public class MetricInserter implements Runnable {
         
     }
     
+    /**
+     * Method to add MetricData to the queue.
+     * This will add the MetricData to a Queue which will take care of all jobs.
+     * 
+     * @param md the MetricData object which shall be inserted to the DB
+     */
     public synchronized void addToDB(MetricData md) {
         queue.add(md);
     }
     
+    /**
+     * Method which inserts the Metric to the DB.
+     * 
+     * @param md a MetricData object
+     * 
+     * @return success or notl
+     */
     private boolean insertMetric(MetricData md)
     {
         String type = md.getClass().getSimpleName().toLowerCase();

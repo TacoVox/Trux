@@ -34,6 +34,11 @@ public class UserHandler {
      */
     private static UserHandler uh = null;
     
+    /**
+     * Method for getting the instance of the MetricInserter.
+     * 
+     * @return an Instance of MetricInserter
+     */
     public static UserHandler getInstance()
     {
         if (uh == null)
@@ -41,6 +46,11 @@ public class UserHandler {
         return uh;
     }
     
+    /**
+     * Method for getting the instance of the MetricInserter.
+     * 
+     * @return an Instance of MetricInserter
+     */
     public static UserHandler gI()
     {
         return getInstance();
@@ -49,8 +59,19 @@ public class UserHandler {
     /**
      * Non-static part.
      */
+    
+    /**
+     * Private Constructor. Not acessable.
+     */
     private UserHandler() {}
     
+    /**
+     * Method to login a user to the system.
+     * 
+     * @param u the user who wants to login
+     * 
+     * @return either a filled in user object on success or a ProtocolMessage indicating an ERROR
+     */
     public Data login(User u)
     {
         int userid = -1;
@@ -102,6 +123,13 @@ public class UserHandler {
             return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
     }
     
+    /**
+     * Method to register a user to our system.
+     * 
+     * @param u a filled in user object which will be stored
+     * 
+     * @return a ProtocolMessage indicating the success
+     */
     public ProtocolMessage register(User u)
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
@@ -130,6 +158,13 @@ public class UserHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
     
+    /**
+     * Method for getting user data from the DB.
+     * 
+     * @param u a scaletton user object -> will be filled in
+     * 
+     * @return either a filled in user object on success or a ProtocolMessage indicating an ERROR
+     */
     public Data getUser(User u)
     {
         int userid = -1;

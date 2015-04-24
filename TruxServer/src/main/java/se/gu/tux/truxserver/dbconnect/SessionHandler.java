@@ -26,8 +26,9 @@ import se.gu.tux.truxserver.config.Config;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
- *
- * @author jonas
+ * Class taking care of all Session DB operations.
+ * 
+ * @author Jonas Kahler
  */
 public class SessionHandler {
     /**
@@ -35,6 +36,11 @@ public class SessionHandler {
      */
     private static SessionHandler sh = null;
     
+    /**
+     * Method for getting the instance of the SessionHandler.
+     * 
+     * @return an Instance of SessionHandler
+     */
     public static SessionHandler getInstance()
     {
         if (sh == null)
@@ -42,6 +48,11 @@ public class SessionHandler {
         return sh;
     }
     
+    /**
+     * Method for getting the instance of the SessionHandler.
+     * 
+     * @return an Instance of SessionHandler
+     */
     public static SessionHandler gI()
     {
         return getInstance();
@@ -50,8 +61,17 @@ public class SessionHandler {
     /**
      * Non-static part.
      */
+    
+    /**
+     * Private Constructor. Not acessable.
+     */
     private SessionHandler() {}
     
+    /**
+     * Method for updating the session of a user.
+     * 
+     * @param u the user which session shall be updated
+     */
     public void updateActive(User u)
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
@@ -80,7 +100,14 @@ public class SessionHandler {
         //return null;
     }
     
-    public int startSession(User u)
+    /**
+     * Method to start a new session.
+     * 
+     * @param u the user who will start the session
+     * 
+     * @return the session id.
+     */
+    public long startSession(User u)
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
@@ -103,7 +130,7 @@ public class SessionHandler {
             ResultSet keys = pst.getGeneratedKeys();
             
             while(keys.next())
-                return keys.getInt(1);
+                return keys.getLong(1);
             
             return - 1;
             
@@ -119,6 +146,13 @@ public class SessionHandler {
         return -1;
     }
     
+    /**
+     * Method to end a user's session.
+     * 
+     * @param pm a ProtocolMessage with a end session request.
+     * 
+     * @return a ProtocolMessage responding if the action was successful.
+     */
     public ProtocolMessage endSession(ProtocolMessage pm)
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
@@ -150,6 +184,11 @@ public class SessionHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
     
+    /**
+     * Method for getting all active sessions from the DB.
+     * 
+     * @return a ResultSet containing all active sessions
+     */
     public ResultSet getCurrentSessions()
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
@@ -178,6 +217,11 @@ public class SessionHandler {
         return null;
     }
     
+    /**
+     * Metod for closing all sessions which shall expire.
+     * 
+     * @return a ProtocolMessage indicating the success
+     */
     public ProtocolMessage purgeSessions()
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();

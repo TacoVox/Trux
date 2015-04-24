@@ -43,7 +43,6 @@ import se.gu.tux.truxserver.logger.Logger;
  * @author <a href="mailto:jonas.kahler@icloud.com">Jonas Kahler</a>
  * @version 4.4
  */
-
 public class DBConnector
 {
     private Connection connection = null;
@@ -143,6 +142,17 @@ public class DBConnector
 	}
     }
     
+    /**
+     * Method to execute a select statement.
+     * The method checks if the passed object has a valid sessionid.
+     * 
+     * @param d a Data object (for checking the sessionid)
+     * @param pst a ready-to-use PreparedStatement
+     * 
+     * @return a ResultSet including all things returned by the DB
+     * 
+     * @throws SQLException
+     */
     protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
     {  
         existCheck.setLong(1, d.getUserId());
@@ -154,8 +164,23 @@ public class DBConnector
         return pst.executeQuery();
     }
     
+    /**
+     * Method to execute an Insert statement.
+     * The method checks if the passed object has a valid sessionid.
+     * 
+     * @param d a Data object (for checking the sessionid)
+     * @param pst a ready-to-use PreparedStatement
+     * 
+     * @return a Result set containing the inserted keys.
+     * 
+     * @throws SQLException 
+     */
     protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
     {
+        existCheck.setLong(1, d.getUserId());
+        
+        pst.addBatch(existCheck.toString());
+        
         Logger.gI().addDebug(pst.toString());
         
         pst.executeUpdate();
@@ -163,8 +188,21 @@ public class DBConnector
         return pst.getGeneratedKeys();
     }
     
+    /**
+     * Mehthod to execute an update statement.
+     * The method checks if the passed object has a valid sessionid.
+     * 
+     * @param d a Data object (for checking the sessionid)
+     * @param pst a ready-to-use PreaparedStatement
+     * 
+     * @throws SQLException 
+     */
     protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
     {
+        existCheck.setLong(1, d.getUserId());
+        
+        pst.addBatch(existCheck.toString());
+        
         Logger.gI().addDebug(pst.toString());
         
         pst.executeUpdate();

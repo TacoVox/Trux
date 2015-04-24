@@ -22,11 +22,13 @@ import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
+
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
- *
- * @author jonas
+ * Method taking care of all MetricData receives from the DB.
+ * 
+ * @author Jonas Kahler
  */
 public class MetricReceiver {
     /**
@@ -34,12 +36,22 @@ public class MetricReceiver {
      */
     private static MetricReceiver mr = null;
     
+    /**
+     * Method for getting the instance of the MetricReceiver.
+     * 
+     * @return an Instance of MetricReceiver
+     */
     public static MetricReceiver getInstance() {
         if (mr == null)
             mr = new MetricReceiver();
         return mr;
     }
     
+    /**
+     * Method for getting the instance of the MetricReceiver.
+     * 
+     * @return an Instance of MetricReceiver
+     */
     public static MetricReceiver gI() {
         return getInstance();
     }
@@ -47,8 +59,19 @@ public class MetricReceiver {
     /**
      * Non-static part.
      */
+    
+    /**
+     * Private Constructor. Not acessable.
+     */
     private MetricReceiver() {}
     
+    /**
+     * Method figuring with what method to fetch MetricData from the DB.
+     * 
+     * @param md the scaletton of the MetricData to fetch.
+     * 
+     * @return a filled MetricData object.
+     */
     public MetricData getMetric(MetricData md)
     {
         if(md instanceof Fuel || md instanceof Speed)
@@ -59,6 +82,13 @@ public class MetricReceiver {
             return null;
     }
     
+    /**
+     * Method to fetch Metric Data from the DB with the AVG.
+     * 
+     * @param md the scaletton of the MetricData to fetch.
+     * 
+     * @return a filled MetricData object.
+     */
     private MetricData getAverage(MetricData md)
     {
         String type = md.getClass().getSimpleName().toLowerCase();
@@ -96,6 +126,13 @@ public class MetricReceiver {
         return md;
     }
     
+    /**
+     * Method to fetch Metric Data from the DB with the SUM.
+     * 
+     * @param md the scaletton of the MetricData to fetch.
+     * 
+     * @return a filled MetricData object.
+     */
     private MetricData getSum(MetricData md)
     {
         String type = md.getClass().getSimpleName().toLowerCase();
@@ -129,6 +166,13 @@ public class MetricReceiver {
         return md;
     }
     
+    /**
+     * Method to fetch Metric Data from the DB with the DIFF.
+     * 
+     * @param md the scaletton of the MetricData to fetch.
+     * 
+     * @return a filled MetricData object.
+     */
     private MetricData getDiff(MetricData md)
     {
         String type = md.getClass().getSimpleName().toLowerCase();
