@@ -74,7 +74,7 @@ public class MetricReceiver {
      */
     public MetricData getMetric(MetricData md)
     {
-        if(md instanceof Fuel || md instanceof Speed) {
+        if(md instanceof Fuel || md instanceof Speed) {            
             //Set the value to a default 0
             md.setValue((Double) 0.0);
             
@@ -115,7 +115,7 @@ public class MetricReceiver {
             
 	    while (rs.next())
 	    {
-		md.setValue((Double)rs.getObject("avg"));
+		md.setValue(rs.getDouble("avg"));
 		break;
 	    }
 	}

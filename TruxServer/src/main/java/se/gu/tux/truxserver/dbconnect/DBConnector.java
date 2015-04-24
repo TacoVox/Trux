@@ -29,6 +29,7 @@ import java.sql.DriverManager;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 import se.gu.tux.trux.datastructure.Data;
 
@@ -150,14 +151,13 @@ public class DBConnector
      */
     protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
     {  
-                    
-        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
-                + "sessionid = " + Long.toString(d.getSessionId())
-                + " AND endtime = NULL);";
+        PreparedStatement finalpst = this.connection.prepareStatement(
+        pst.toString() + getSessionCheck());
         
-        pst.addBatch(existCheck);
+        finalpst.setLong(1, d.getSessionId());
+        finalpst.setLong(2, d.getUserId());
         
-        Logger.gI().addDebug(pst.toString());
+        Logger.gI().addDebug(finalpst.toString());
 
         return pst.executeQuery();
     }
@@ -175,17 +175,17 @@ public class DBConnector
      */
     protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
     {
-        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
-                + "sessionid = " + Long.toString(d.getSessionId())
-                + " AND endtime = NULL);";
+        PreparedStatement finalpst = this.connection.prepareStatement(
+        pst.toString() + getSessionCheck(), Statement.RETURN_GENERATED_KEYS);
         
-        pst.addBatch(existCheck);
+        finalpst.setLong(1, d.getSessionId());
+        finalpst.setLong(2, d.getUserId());
         
-        Logger.gI().addDebug(pst.toString());
+        Logger.gI().addDebug(finalpst.toString());
         
-        pst.executeUpdate();
+        finalpst.executeUpdate();
         
-        return pst.getGeneratedKeys();
+        return finalpst.getGeneratedKeys();
     }
     
     /**
@@ -199,14 +199,20 @@ public class DBConnector
      */
     protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
     {
-        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
-                + "sessionid = " + Long.toString(d.getSessionId())
-                + " AND endtime = NULL);";
+        PreparedStatement finalpst = this.connection.prepareStatement(
+        pst.toString() + getSessionCheck());
         
-        pst.addBatch(existCheck);
+        finalpst.setLong(1, d.getSessionId());
+        finalpst.setLong(2, d.getUserId());
         
-        Logger.gI().addDebug(pst.toString());
+        Logger.gI().addDebug(finalpst.toString());
         
         pst.executeUpdate();
+    }
+    
+    private String getSessionCheck()
+    {
+        return " AND EXISTS (SELECT * FROM session WHERE "
+                + "sessionid = ? AND userid = ? AND endtime = NULL);";
     }
 }
