@@ -17,6 +17,8 @@ import java.util.HashMap;
 
 /**
  * Created by ivryashkov on 2015-04-22.
+ *
+ * Handles the data received from AGA.
  */
 public class AGADataParser
 {
@@ -114,7 +116,7 @@ public class AGADataParser
 
     /**
      * Gets the value for a signal. Takes an Integer with the signal id
-     * as parameter. Returns a Double with the value of the signal.
+     * as parameter. Returns an Object with the value of the signal.
      *
      * @param automotiveSignalId    The signal id.
      * @return                      Object
