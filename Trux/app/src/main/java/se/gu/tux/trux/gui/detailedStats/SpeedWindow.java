@@ -55,7 +55,7 @@ public class SpeedWindow extends Fragment {
                         System.out.println("Assuming 0 at null value at pos: " + i );
                         speedPoints[i] = new DataPoint(i + 1, 0);
                     } else {
-                        speedPoints[i] = new DataPoint(i + 1, (Double) avgSpeedPerDay[i].getValue());
+                        speedPoints[i] = new DataPoint(i + 1, (Double)(avgSpeedPerDay[i]).getValue());
                     }
                 }
                 speedValues = new LineGraphSeries(speedPoints);
@@ -65,7 +65,7 @@ public class SpeedWindow extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(speedToday.getValue() ==  0.0)
+                            if(speedToday.getValue() ==   new Double(0.0))
                             System.out.println(speedToday.getValue()+ "Hejsankaksdfkasdkfaksdfkasdfk");
                             speedTextViewToday.setText(new Long(Math.round((Double) speedToday.getValue())).toString());
                             speedTextViewWeek.setText(new Long(Math.round((Double) speedWeek.getValue())).toString());
