@@ -109,6 +109,9 @@ public class MetricReceiver {
             
             ResultSet rs = dbc.execSelect(md, pst);
             
+            //Set the value to a default 0
+            md.setValue((Double) 0.0);
+            
 	    while (rs.next())
 	    {
 		md.setValue((Double)rs.getObject("avg"));
@@ -149,6 +152,8 @@ public class MetricReceiver {
             
 	    ResultSet rs = dbc.execSelect(md, pst);
 	    
+            //Set the value to a default 0
+            
 	    while (rs.next())
 	    {
 		md.setValue(rs.getObject("sum"));
@@ -196,6 +201,8 @@ public class MetricReceiver {
 	    
 	    ResultSet rs = dbc.execSelect(md, pst);
 	    
+            //Set the value to a default 0
+            
 	    while (rs.next())
 	    {
 		md.setValue(rs.getDouble("diff"));

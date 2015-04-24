@@ -49,8 +49,6 @@ public class DBConnector
     
     private DatabaseMetaData dbmd = null;
     
-    private PreparedStatement existCheck;
-    
     /**
      * Constructor
      * 
@@ -62,12 +60,9 @@ public class DBConnector
 	{
 	    Class.forName("com.mysql.jdbc.Driver").newInstance();
             Logger.gI().addMsg("MySQL driver loaded...");
-            
-            existCheck = this.getConnection().prepareStatement(" AND EXISTS (SELECT "
-                + "* FROM session WHERE sessionid = ? AND endtime = NULL);");
 	}
         catch (ClassNotFoundException | InstantiationException |
-                IllegalAccessException | SQLException e)
+                IllegalAccessException e)
 	{
 	    Logger.gI().addError(e.toString());
 	}
@@ -155,9 +150,12 @@ public class DBConnector
      */
     protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
     {  
-        existCheck.setLong(1, d.getUserId());
+                    
+        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
+                + "sessionid = " + Long.toString(d.getSessionId())
+                + " AND endtime = NULL);";
         
-        pst.addBatch(existCheck.toString());
+        pst.addBatch(existCheck);
         
         Logger.gI().addDebug(pst.toString());
 
@@ -177,9 +175,11 @@ public class DBConnector
      */
     protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
     {
-        existCheck.setLong(1, d.getUserId());
+        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
+                + "sessionid = " + Long.toString(d.getSessionId())
+                + " AND endtime = NULL);";
         
-        pst.addBatch(existCheck.toString());
+        pst.addBatch(existCheck);
         
         Logger.gI().addDebug(pst.toString());
         
@@ -199,9 +199,11 @@ public class DBConnector
      */
     protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
     {
-        existCheck.setLong(1, d.getUserId());
+        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
+                + "sessionid = " + Long.toString(d.getSessionId())
+                + " AND endtime = NULL);";
         
-        pst.addBatch(existCheck.toString());
+        pst.addBatch(existCheck);
         
         Logger.gI().addDebug(pst.toString());
         
