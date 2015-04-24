@@ -88,6 +88,11 @@ public class DistTravWindow extends Fragment {
         distanceTextViewWeek = (TextView) myFragmentView.findViewById(R.id.avg_lastweek_distance_traveled_value);
         distanceTextViewMonth = (TextView) myFragmentView.findViewById(R.id.avg_lastmonth_distance_traveled_value);
         distanceTextViewTotal = (TextView) myFragmentView.findViewById(R.id.avg_total_distance_traveled_value);
+
+        t = new Timer();
+        timer = new MyTask();
+        t.schedule(timer , 0 , 1000000);
+
         return myFragmentView;
 
 
