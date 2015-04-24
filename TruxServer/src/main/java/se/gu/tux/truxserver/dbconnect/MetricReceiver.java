@@ -17,11 +17,11 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
-import se.gu.tux.truxserver.ServerSessions;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -68,7 +68,7 @@ public class MetricReceiver {
         try
 	{
             String selectStmnt = "SELECT AVG(value) AS avg FROM " + type +
-                    " WHERE userid = ? AND timestamp BETWEEN ? AND ?;";
+                    " WHERE userid = ? AND timestamp BETWEEN ? AND ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
@@ -77,10 +77,7 @@ public class MetricReceiver {
 	    pst.setLong(2, (md.getTimeStamp() - md.getTimeFrame()));
             pst.setLong(3, md.getTimeStamp()); 
             
-            //if(ServerSessions.gI().isValid(md))
-                //return null;
-            
-            ResultSet rs = pst.executeQuery();
+            ResultSet rs = dbc.execSelect(md, pst);
             
 	    while (rs.next())
 	    {
@@ -108,15 +105,12 @@ public class MetricReceiver {
         try
 	{
             String selectStmnt = "SELECT SUM(value) AS sum FROM " + type +
-                    " WHERE userid = ? AND timestamp BETWEEN ? AND ?;";
+                    " WHERE userid = ? AND timestamp BETWEEN ? AND ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
-	    
-            if(!ServerSessions.gI().isValid(md))
-               return null;
             
-	    ResultSet rs = pst.executeQuery();
+	    ResultSet rs = dbc.execSelect(md, pst);
 	    
 	    while (rs.next())
 	    {
@@ -156,10 +150,7 @@ public class MetricReceiver {
             pst.setLong(3, md.getUserId());
             pst.setLong(4, md.getTimeStamp() - md.getTimeFrame());          
 	    
-            if(!ServerSessions.gI().isValid(md))
-                return null;
-            
-	    ResultSet rs = pst.executeQuery();
+	    ResultSet rs = dbc.execSelect(md, pst);
 	    
 	    while (rs.next())
 	    {

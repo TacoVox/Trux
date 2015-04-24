@@ -29,10 +29,8 @@ import java.sql.DriverManager;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.truxserver.ServerSessions;
 
 import se.gu.tux.truxserver.config.Config;
 
@@ -52,6 +50,8 @@ public class DBConnector
     
     private DatabaseMetaData dbmd = null;
     
+    private PreparedStatement existCheck;
+    
     /**
      * Constructor
      * 
@@ -63,8 +63,12 @@ public class DBConnector
 	{
 	    Class.forName("com.mysql.jdbc.Driver").newInstance();
             Logger.gI().addMsg("MySQL driver loaded...");
+            
+            existCheck = this.getConnection().prepareStatement(" AND EXISTS (SELECT "
+                + "* FROM session WHERE sessionid = ? AND endtime = NULL);");
 	}
-        catch (ClassNotFoundException | InstantiationException | IllegalAccessException e)
+        catch (ClassNotFoundException | InstantiationException |
+                IllegalAccessException | SQLException e)
 	{
 	    Logger.gI().addError(e.toString());
 	}
@@ -139,35 +143,30 @@ public class DBConnector
 	}
     }
     
-//    protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
-//    {  
-//        Logger.gI().addDebug(pst.toString());
-//        
-//        if(ServerSessions.gI().isValid(d))
-//            return pst.executeQuery();
-//        else
-//            return null;
-//    }
-//    
-//    protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
-//    {
-//        Logger.gI().addDebug(pst.toString());
-//        
-//        if(ServerSessions.gI().isValid(d))
-//        {
-//            pst.executeUpdate();
-//            return pst.getGeneratedKeys();
-//        }
-//        else
-//            return null;
-//    }
-//    
-//    protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
-//    {
-//        Logger.gI().addDebug(pst.toString());
-//        
-//        if(ServerSessions.gI().isValid(d))
-//            pst.executeUpdate();
-//    }
-//}
+    protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
+    {  
+        existCheck.setLong(1, d.getUserId());
+        
+        pst.addBatch(existCheck.toString());
+        
+        Logger.gI().addDebug(pst.toString());
+
+        return pst.executeQuery();
+    }
+    
+    protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
+    {
+        Logger.gI().addDebug(pst.toString());
+        
+        pst.executeUpdate();
+        
+        return pst.getGeneratedKeys();
+    }
+    
+    protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
+    {
+        Logger.gI().addDebug(pst.toString());
+        
+        pst.executeUpdate();
+    }
 }

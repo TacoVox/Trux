@@ -21,9 +21,8 @@ import java.sql.Statement;
 
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
-import se.gu.tux.truxserver.ServerSessions;
-import se.gu.tux.truxserver.config.Config;
 
+import se.gu.tux.truxserver.config.Config;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -60,18 +59,15 @@ public class SessionHandler {
         try
 	{
             String updateStmnt = "UPDATE session SET lastactive = ?" +
-                    "WHERE userid = ? AND ISNULL(endtime);";
+                    "WHERE userid = ? AND ISNULL(endtime)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
 	    
             pst.setLong(1, System.currentTimeMillis());
             pst.setLong(2, u.getUserId());
-	    
-            if(!ServerSessions.gI().isValid(u))
-                return;
             
-            pst.executeUpdate();
+            dbc.execUpdate(u, pst);
 	}
 	catch (Exception e)
 	{
@@ -91,7 +87,7 @@ public class SessionHandler {
         try
 	{
             String insertStmnt = "INSERT INTO session(starttime, userid, "
-                    + "lastactive, keepalive) VALUES(?, ?, ?, ?);";
+                    + "lastactive, keepalive) VALUES(?, ?, ?, ?)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     insertStmnt, Statement.RETURN_GENERATED_KEYS);
@@ -101,6 +97,7 @@ public class SessionHandler {
             pst.setLong(3, System.currentTimeMillis());
             pst.setBoolean(4, u.getStayLoggedIn());
             
+            //No check for active session here!
             pst.executeUpdate();
             
             ResultSet keys = pst.getGeneratedKeys();
@@ -129,7 +126,7 @@ public class SessionHandler {
         try
 	{
             String updateStmnt = "UPDATE session SET endtime = ?" +
-                    "WHERE userid = ? AND sessionid = ?;";
+                    "WHERE userid = ? AND sessionid = ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
@@ -137,13 +134,8 @@ public class SessionHandler {
             pst.setLong(1, System.currentTimeMillis());
             pst.setLong(2, pm.getUserId());
             pst.setLong(3, pm.getSessionId());
-	    
-            if(!ServerSessions.gI().isValid(pm))
-                return new ProtocolMessage(ProtocolMessage.Type.ERROR);
             
-	    pst.executeUpdate();
-            
-            ServerSessions.gI().closeSession(pm);
+	    dbc.execUpdate(pm, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
 	}
@@ -164,7 +156,7 @@ public class SessionHandler {
         
         try
 	{
-            String updateStmnt = "SELECT * FROM session WHERE endtime IS NULL;";
+            String updateStmnt = "SELECT * FROM session WHERE endtime IS NULL";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
@@ -194,7 +186,7 @@ public class SessionHandler {
 	{
             String updateStmnt = "UPDATE session SET endtime = ? " +
                     "WHERE lastactive < ? AND keepalive = FALSE"
-                    + " AND endtime IS NULL;";
+                    + " AND endtime IS NULL";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
