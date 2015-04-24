@@ -74,8 +74,12 @@ public class MetricReceiver {
      */
     public MetricData getMetric(MetricData md)
     {
-        if(md instanceof Fuel || md instanceof Speed)
+        if(md instanceof Fuel || md instanceof Speed) {
+            //Set the value to a default 0
+            md.setValue((Double) 0.0);
+            
             return getAverage(md);
+        }
         else if(md instanceof Distance)
             return getDiff(md);
         else
@@ -108,9 +112,6 @@ public class MetricReceiver {
             pst.setLong(3, md.getTimeStamp()); 
             
             ResultSet rs = dbc.execSelect(md, pst);
-            
-            //Set the value to a default 0
-            md.setValue((Double) 0.0);
             
 	    while (rs.next())
 	    {
@@ -151,8 +152,6 @@ public class MetricReceiver {
                     selectStmnt);
             
 	    ResultSet rs = dbc.execSelect(md, pst);
-	    
-            //Set the value to a default 0
             
 	    while (rs.next())
 	    {
@@ -200,8 +199,6 @@ public class MetricReceiver {
             pst.setLong(4, md.getTimeStamp() - md.getTimeFrame());          
 	    
 	    ResultSet rs = dbc.execSelect(md, pst);
-	    
-            //Set the value to a default 0
             
 	    while (rs.next())
 	    {
