@@ -21,6 +21,7 @@ import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.truxserver.ServerSessions;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -71,22 +72,25 @@ public class MetricReceiver {
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
-	    
+
             pst.setLong(1, md.getUserId());
-	    pst.setLong(2, md.getTimeStamp() - md.getTimeFrame());
+	    pst.setLong(2, (md.getTimeStamp() - md.getTimeFrame()));
             pst.setLong(3, md.getTimeStamp()); 
             
-	    ResultSet rs = dbc.execSelect(md, pst);
-	    
+            //if(ServerSessions.gI().isValid(md))
+                //return null;
+            
+            ResultSet rs = pst.executeQuery();
+            
 	    while (rs.next())
 	    {
-		md.setValue(rs.getObject("avg"));
+		md.setValue((Double)rs.getObject("avg"));
 		break;
 	    }
 	}
 	catch (Exception e)
 	{
-	    Logger.gI().addError(e.getLocalizedMessage());
+	    Logger.gI().addError(e.getMessage());
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
@@ -109,11 +113,10 @@ public class MetricReceiver {
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, md.getUserId());
-	    pst.setLong(2, md.getTimeStamp() - md.getTimeFrame());
-            pst.setLong(3, md.getTimeStamp()); 
-	    
-	    ResultSet rs = dbc.execSelect(md, pst);
+            if(!ServerSessions.gI().isValid(md))
+               return null;
+            
+	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())
 	    {
@@ -153,7 +156,10 @@ public class MetricReceiver {
             pst.setLong(3, md.getUserId());
             pst.setLong(4, md.getTimeStamp() - md.getTimeFrame());          
 	    
-	    ResultSet rs = dbc.execSelect(md, pst);
+            if(!ServerSessions.gI().isValid(md))
+                return null;
+            
+	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())
 	    {

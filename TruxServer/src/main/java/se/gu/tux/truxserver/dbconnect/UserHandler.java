@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.truxserver.ServerSessions;
 
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -69,8 +70,7 @@ public class UserHandler {
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setString(1, u.getUsername());
-	    
+            pst.setString(1, u.getUsername()); 
             
 	    ResultSet rs = pst.executeQuery();
 	    
@@ -151,8 +151,10 @@ public class UserHandler {
 	    
             pst.setString(1, u.getUsername());
 	    
-            
-	    ResultSet rs = dbc.execSelect(u, pst);
+            if(!ServerSessions.gI().isValid(u))
+                return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+	    
+            ResultSet rs = pst.executeQuery();
 	    
             if(rs == null)
                 return new ProtocolMessage(ProtocolMessage.Type.ERROR);

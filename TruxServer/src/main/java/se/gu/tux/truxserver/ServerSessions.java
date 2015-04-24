@@ -78,9 +78,6 @@ public class ServerSessions {
     
     public boolean isValid(Data d)
     {
-        if(sessions.containsKey(d.getSessionId()))
-            if(sessions.containsValue(d.getUserId()))
-                return true;
-        return false;
+        return sessions.containsKey(d.getSessionId());
     }
 }

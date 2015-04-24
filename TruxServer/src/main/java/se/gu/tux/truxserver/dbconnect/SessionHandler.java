@@ -68,9 +68,10 @@ public class SessionHandler {
             pst.setLong(1, System.currentTimeMillis());
             pst.setLong(2, u.getUserId());
 	    
-	    dbc.execUpdate(u, pst);
+            if(!ServerSessions.gI().isValid(u))
+                return;
             
-            //return new Response(Response.Type.DATA_RECEIVED);
+            pst.executeUpdate();
 	}
 	catch (Exception e)
 	{
@@ -137,7 +138,10 @@ public class SessionHandler {
             pst.setLong(2, pm.getUserId());
             pst.setLong(3, pm.getSessionId());
 	    
-	    dbc.execUpdate(pm, pst);
+            if(!ServerSessions.gI().isValid(pm))
+                return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+            
+	    pst.executeUpdate();
             
             ServerSessions.gI().closeSession(pm);
             

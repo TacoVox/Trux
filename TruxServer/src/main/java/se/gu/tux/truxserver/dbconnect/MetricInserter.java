@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.truxserver.ServerSessions;
 
 import se.gu.tux.truxserver.logger.Logger;
 /**
@@ -99,7 +100,8 @@ public class MetricInserter implements Runnable {
             pst.setLong(2, md.getTimeStamp());
             pst.setLong(3, md.getUserId());
 		
-            dbc.execInsert(md, pst);
+            //if(!ServerSessions.gI().isValid(md))
+            //    return false;
             
             return true;
         }

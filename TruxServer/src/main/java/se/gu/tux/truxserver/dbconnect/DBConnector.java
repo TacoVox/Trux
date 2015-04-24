@@ -139,34 +139,35 @@ public class DBConnector
 	}
     }
     
-    protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
-    {  
-        Logger.gI().addDebug(pst.toString());
-        
-        if(ServerSessions.gI().isValid(d))
-            return pst.executeQuery();
-        else
-            return null;
-    }
-    
-    protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
-    {
-        Logger.gI().addDebug(pst.toString());
-        
-        if(ServerSessions.gI().isValid(d))
-        {
-            pst.executeUpdate();
-            return pst.getGeneratedKeys();
-        }
-        else
-            return null;
-    }
-    
-    protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
-    {
-        Logger.gI().addDebug(pst.toString());
-        
-        if(ServerSessions.gI().isValid(d))
-            pst.executeUpdate();
-    }
+//    protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
+//    {  
+//        Logger.gI().addDebug(pst.toString());
+//        
+//        if(ServerSessions.gI().isValid(d))
+//            return pst.executeQuery();
+//        else
+//            return null;
+//    }
+//    
+//    protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
+//    {
+//        Logger.gI().addDebug(pst.toString());
+//        
+//        if(ServerSessions.gI().isValid(d))
+//        {
+//            pst.executeUpdate();
+//            return pst.getGeneratedKeys();
+//        }
+//        else
+//            return null;
+//    }
+//    
+//    protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
+//    {
+//        Logger.gI().addDebug(pst.toString());
+//        
+//        if(ServerSessions.gI().isValid(d))
+//            pst.executeUpdate();
+//    }
+//}
 }
