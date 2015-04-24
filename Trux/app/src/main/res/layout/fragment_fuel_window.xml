@@ -34,17 +34,17 @@
                     android:layout_height="wrap_content"
                     android:text="@string/average_today"
                     android:id="@+id/avg_today_fuel"
-                    android:textSize="20dp"
+                    android:textSize="15sp"
                     android:textColor="#E0E0E0"  />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/loading"
                     android:id="@+id/avg_today_fuel_value"
                     android:layout_alignBottom="@+id/avg_today_fuel"
                     android:layout_alignStart="@+id/avg_lastweek_fuel_value"
-                    android:textSize="20dp"
+                    android:textSize="15sp"
                     android:textColor="#E0E0E0"
                     android:layout_marginLeft="10dp"/>
             </LinearLayout>
@@ -63,15 +63,15 @@
                     android:layout_height="wrap_content"
                     android:text="@string/average_lastweek"
                     android:id="@+id/avg_lastweek_fuel"
-                    android:textSize="20dp"
+                    android:textSize="15sp"
                     android:textColor="#E0E0E0"  />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/loading"
                     android:id="@+id/avg_lastweek_fuel_value"
-                    android:textSize="20dp"
+                    android:textSize="15sp"
                     android:textColor="#E0E0E0"
                     android:layout_marginLeft="10dp"/>
             </LinearLayout>
@@ -90,15 +90,15 @@
                     android:layout_height="wrap_content"
                     android:text="@string/average_lastmonth"
                     android:id="@+id/avg_lastmonth_fuel"
-                    android:textSize="20dp"
+                    android:textSize="15sp"
                     android:textColor="#E0E0E0"  />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/loading"
                     android:id="@+id/avg_lastmonth_fuel_value"
-                    android:textSize="20dp"
+                    android:textSize="15sp"
                     android:textColor="#E0E0E0"
                     android:layout_marginLeft="10dp"/>
             </LinearLayout>
@@ -117,15 +117,15 @@
                     android:layout_height="wrap_content"
                     android:text="@string/average_total"
                     android:id="@+id/avg_total_fuel"
-                    android:textSize="20dp"
+                    android:textSize="15sp"
                     android:textColor="#E0E0E0"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="@string/loading"
                     android:id="@+id/avg_total_fuel_value"
-                    android:textSize="20dp"
+                    android:textSize="15sp"
                     android:textColor="#E0E0E0"
                     android:layout_marginLeft="10dp"/>
             </LinearLayout>
