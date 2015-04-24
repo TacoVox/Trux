@@ -60,3 +60,4 @@ buildNumber.properties
 
 # TruxServer
 logs/
+TruxServer/src/main/java/se/gu/tux/trux/datastructure
