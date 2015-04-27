@@ -92,12 +92,13 @@ public class Stats extends ActionBarActivity implements Serializable {
         public void onClick(final View v) {
             newFragment = null;
             if (v == speedBtn) {
-                newFragment = new SpeedWindow();
+
                 // Make sure values are set once they are loaded
                 new AsyncTask() {
                     @Override
                     protected Object doInBackground(Object[] objects) {
                         while (!speedLoaded) {
+                           findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         runOnUiThread(new Runnable() {
@@ -105,18 +106,21 @@ public class Stats extends ActionBarActivity implements Serializable {
                             public void run() {
                                 newFragment.setValues(speedToday, speedWeek, speedMonth, speedTotal,
                                         speedValues);
+
                             }
                         });
+                        newFragment = new SpeedWindow();
                         return null;
                     }
                 }.execute();
             } else if (v == fuelBtn) {
-                newFragment = new FuelWindow();
+
 
                 new AsyncTask() {
                     @Override
                     protected Object doInBackground(Object[] objects) {
                         while (!fuelLoaded) {
+                            findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         runOnUiThread(new Runnable() {
@@ -126,16 +130,18 @@ public class Stats extends ActionBarActivity implements Serializable {
                                         fuelValues);
                             }
                         });
+                        newFragment = new FuelWindow();
                         return null;
                     }
                 }.execute();
             } else if (v == distanceBtn) {
-                newFragment = new DistTravWindow();
+
 
                 new AsyncTask() {
                     @Override
                     protected Object doInBackground(Object[] objects) {
                         while (!distanceLoaded) {
+                            findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         runOnUiThread(new Runnable() {
@@ -145,6 +151,7 @@ public class Stats extends ActionBarActivity implements Serializable {
                                         distanceValues);
                             }
                         });
+                        newFragment = new DistTravWindow();
                         return null;
                     }
                 }.execute();

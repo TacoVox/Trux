@@ -32,7 +32,6 @@ public class SpeedWindow extends DetailedStatsFragment {
     TextView speedTextViewToday, speedTextViewWeek, speedTextViewMonth, speedTextViewTotal;
     GraphView speedGraph;
 
-
     public void setValues(final MetricData speedToday, final MetricData speedWeek, final MetricData speedMonth,
                           final MetricData speedTotal, final LineGraphSeries speedValues) {
         if (speedToday.getValue() != null && speedWeek.getValue() != null
@@ -55,7 +54,7 @@ public class SpeedWindow extends DetailedStatsFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        
         myFragmentView = inflater.inflate(R.layout.fragment_speed_window, container, false);
 
         speedTextViewToday = (TextView) myFragmentView.findViewById(R.id.avg_today_speed_value);
