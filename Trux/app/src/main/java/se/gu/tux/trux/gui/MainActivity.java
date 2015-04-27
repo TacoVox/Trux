@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.DataHandler;
@@ -39,7 +40,12 @@ public class MainActivity extends ActionBarActivity
 
     LoginService ls;
 
+    private String[] userInfo;
 
+    // file name
+    private static final String FILE_NAME = "trux_user_config";
+
+    private File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +62,7 @@ public class MainActivity extends ActionBarActivity
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
         // Create login service
-        ls = new LoginService(this.getBaseContext());
+        ls = new LoginService(this.getBaseContext(), FILE_NAME);
 
         ServerConnector.gI().connect("www.derkahler.de");
         //IServerConnector.getInstance().connectTo("10.0.2.2");
@@ -67,6 +73,32 @@ public class MainActivity extends ActionBarActivity
         // Start the DataPoller that will send AGA metrics to the server with regular interavals
         DataPoller.gI().start();
 
+        // create a file to store data
+        if (file == null || !file.exists())
+        {
+            file = new File(getFilesDir(), FILE_NAME);
+        }
+        else
+        {
+            userInfo = ls.readFromFile();
+        }
+
+        if (userInfo != null && userInfo[4].equals(true))
+        {
+            autoLogin();
+        }
+    }
+
+
+    @Override
+    protected void onResume()
+    {
+        super.onRestart();
+        userInfo = ls.readFromFile();
+        if (userInfo != null && userInfo[4].equals(true))
+        {
+            autoLogin();
+        }
     }
 
     @Override
@@ -94,33 +126,28 @@ public class MainActivity extends ActionBarActivity
 
     public void goToHome(View view)
     {
-        String username = "";
-        String password = "";
-        Long sessionId;
-        Long userId;
+        String username = userField.getText().toString();
+        String password = passField.getText().toString();
+        Long sessionId = User.LOGIN_REQUEST;
+        Long userId = -1L;
+        Short keepFlag = 0;
 
-        if (keepLoggedIn())
+        if (checkBox.isChecked())
         {
-            username = DataHandler.getInstance().getUser().getUsername();
-            password = DataHandler.getInstance().getUser().getPasswordHash();
-            sessionId = DataHandler.getInstance().getUser().getSessionId();
-            userId = DataHandler.getInstance().getUser().getUserId();
+            keepFlag = 1;
         }
-        else
-        {
-            username = userField.getText().toString();
-            password = passField.getText().toString();
-            sessionId = User.LOGIN_REQUEST;
-            userId = -1L;
-        }
+
 
         if (username.isEmpty() || password.isEmpty())
         {
+            // TODO
+            // something wrong with credentials, display info to user
+            // refresh app, ask for login again
             return;
         }
 
         AsyncTask<String, Void, Boolean> check =
-                new LoginCheck().execute(username, password, Long.toString(sessionId), Long.toString(userId));
+                new LoginCheck().execute(username, password, Long.toString(sessionId), Long.toString(userId), Short.toString(keepFlag));
 
         boolean isAllowed = false;
 
@@ -143,70 +170,46 @@ public class MainActivity extends ActionBarActivity
             startActivity(intent);
         }
 
-
-        //Intent intent = new Intent(this, DriverHomeScreen.class);
-        //startActivity(intent);
-
     } // end goToHome()
 
 
-    private boolean keepLoggedIn()
+
+    private void autoLogin()
     {
-        boolean keep = false;
+        // new protocol message, set type to auto login request and password hash
+        ProtocolMessage request = new ProtocolMessage(ProtocolMessage.Type.AUTO_LOGIN_REQUEST, userInfo[1]);
 
-        if (checkBox.isChecked())
+        // set session ID and user ID
+        request.setSessionId(Long.parseLong(userInfo[2]));
+        request.setUserId(Long.parseLong(userInfo[3]));
+
+        ProtocolMessage msg = null;
+
+        AsyncTask<ProtocolMessage, Void, ProtocolMessage> check = new AutoLoginCheck().execute(request);
+
+        try
         {
-            // get user info from file
-            String[] info = ls.readFromFile();
-
-            // new protocol message, set type to auto login request and password hash
-            final ProtocolMessage request = new ProtocolMessage(ProtocolMessage.Type.AUTO_LOGIN_REQUEST, info[1]);
-
-            // set session ID and user ID
-            request.setSessionId(Long.parseLong(info[2]));
-            request.setUserId(Long.parseLong(info[3]));
-
-            ProtocolMessage msg = null;
-
-            AsyncTask<ProtocolMessage, Void, ProtocolMessage> check = new AutoLoginCheck().execute(request);
-
-            try
-            {
-                msg = check.get();
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-            catch (ExecutionException e)
-            {
-                e.printStackTrace();
-            }
-
-
-            if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
-            {
-                User user = new User();
-
-                // set info for user
-                user.setUsername(info[0]);
-                user.setPasswordHash(info[1]);
-                user.setSessionId(msg.getSessionId());
-                user.setUserId(msg.getUserId());
-
-                // set user in DataHandler for future use
-                DataHandler.getInstance().setUser(user);
-
-                keep = true;
-            }
-            else
-            {
-                System.out.println("-------- ERROR: login fail ----------");
-            }
-
+            msg = check.get();
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        catch (ExecutionException e)
+        {
+            e.printStackTrace();
         }
 
-        return keep;
+
+        if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
+        {
+            Intent intent = new Intent(this, DriverHomeScreen.class);
+            startActivity(intent);
+        }
+        else
+        {
+            System.out.println("-------- ERROR: login fail ----------");
+        }
     }
 
 
@@ -247,7 +250,8 @@ public class MainActivity extends ActionBarActivity
         @Override
         protected Boolean doInBackground(String... strings)
         {
-            boolean isAllowed = ls.login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]));
+            boolean isAllowed =
+                    ls.login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
             return isAllowed;
         }
     } // end inner class
@@ -271,7 +275,7 @@ public class MainActivity extends ActionBarActivity
             {
                 e.printStackTrace();
             }
-            
+
             return msg;
         }
     }

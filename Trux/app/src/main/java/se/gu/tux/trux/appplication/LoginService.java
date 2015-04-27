@@ -35,12 +35,8 @@ public class LoginService
     // file input and output streams
     private Context context;
 
-    // file object to store user info, used to read from
-    // when the user checks the box to kept logged in
-    private File file;
 
-    // file name
-    private static final String FILE_NAME = "trux_user_config.txt";
+    private String fileName = "";
 
 
     /**
@@ -48,17 +44,14 @@ public class LoginService
      *
      * @param context   The Context object to be used.
      */
-    public LoginService(Context context)
+    public LoginService(Context context, String fileName)
     {
         // initialise user
         user = new User();
         // get the context
         this.context = context;
-        // create a file to store data
-        if (file == null || !file.exists())
-        {
-            file = new File(context.getFilesDir(), FILE_NAME);
-        }
+        // get the file name
+        this.fileName = fileName;
     }
 
 
@@ -71,7 +64,7 @@ public class LoginService
      * @param password      The user's password.
      * @return              true if login successful, false otherwise
      */
-    public boolean login(String username, String password, Long sessionId, Long userId)
+    public boolean login(String username, String password, Long sessionId, Long userId, Short keepFlag)
     {
         // set username in user object
         user.setUsername(username);
@@ -87,7 +80,18 @@ public class LoginService
         // set user ID
         user.setUserId(userId);
 
-        // set this user in DataHandler for future reference
+        // check if the user wants to stay logged in
+        if (keepFlag == 1)
+        {
+            user.setStayLoggedIn(true);
+        }
+        else
+        {
+            user.setStayLoggedIn(false);
+        }
+
+        // set this user in DataHandler for use in ServerConnector
+        // when called to answer query
         DataHandler.getInstance().setUser(user);
 
         ProtocolMessage response = null;
@@ -126,7 +130,8 @@ public class LoginService
             String userInfo = DataHandler.getInstance().getUser().getUsername() + ":" +
                             DataHandler.getInstance().getUser().getPasswordHash() + ":" +
                             DataHandler.getInstance().getUser().getSessionId() + ":" +
-                            DataHandler.getInstance().getUser().getUserId();
+                            DataHandler.getInstance().getUser().getUserId() + ":" +
+                            DataHandler.getInstance().getUser().getStayLoggedIn();
 
             // save user info to file
             writeToFile(userInfo);
@@ -183,6 +188,7 @@ public class LoginService
             //This bytes[] has bytes in decimal format;
             //Convert it to hexadecimal format
             StringBuilder sb = new StringBuilder();
+
             for(int i=0; i< bytes.length ;i++)
             {
                 sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
@@ -212,7 +218,7 @@ public class LoginService
         {
             // open output stream
             OutputStreamWriter outputStreamWriter =
-                    new OutputStreamWriter(context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE));
+                    new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
 
             System.out.println("-------- writing to file ----------");
 
@@ -244,7 +250,7 @@ public class LoginService
         try
         {
             // open input stream
-            InputStream inputStream = context.openFileInput(FILE_NAME);
+            InputStream inputStream = context.openFileInput(fileName);
 
             if ( inputStream != null )
             {
@@ -273,6 +279,7 @@ public class LoginService
                 System.out.println("password hash: " + results[1]);
                 System.out.println("session ID: " + results[2]);
                 System.out.println("user ID: " + results[3]);
+                System.out.println("stay logged in? : " + results[4]);
                 System.out.println("----------------------------------------");
             }
         }
