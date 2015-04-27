@@ -2,7 +2,6 @@ package se.gu.tux.trux.gui.detailedStats;
 
 
 import android.app.FragmentTransaction;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -16,12 +15,6 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
-
-import java.lang.reflect.Array;
-import java.util.Calendar;
-import java.util.Date;
 
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
@@ -93,10 +86,6 @@ public class Stats extends ActionBarActivity implements Serializable {
         getValues();
     }
 
-
-
-
-
      class ButtonListener implements Button.OnClickListener {
 
         @Override
@@ -111,11 +100,9 @@ public class Stats extends ActionBarActivity implements Serializable {
                         while (!speedLoaded) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
-                        System.out.println("WWWWWWWWWWWWWWWWWWWWaiting for ui thread");
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                System.out.println("RRRRRRRRRRRRRRRunnnnnnnnnnnnnnnn");
                                 newFragment.setValues(speedToday, speedWeek, speedMonth, speedTotal,
                                         speedValues);
                             }

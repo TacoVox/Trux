@@ -109,7 +109,7 @@ public class DataHandler
         // Initiate based on metricData's timestamp.
         GregorianCalendar cal = new GregorianCalendar();
         cal.setTimeInMillis(metricData.getTimeStamp());
-        cal.add(Calendar.DATE, -days);
+        cal.add(Calendar.DATE, -(days - 1));
 
         // Here fetch metric data for each day, by setting timestamp to the end of the day
         // AND the timeframe to be one day : ))
