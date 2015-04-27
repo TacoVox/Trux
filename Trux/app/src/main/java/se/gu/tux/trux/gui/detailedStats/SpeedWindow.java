@@ -79,6 +79,5 @@ public class SpeedWindow extends DetailedStatsFragment {
 
     public void hideLoading() {
         myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-        myFragmentView.setPadding(10, 10, 10, 10);
     }
 }

@@ -13,7 +13,7 @@
 
     <string name="speed_button_text">Speed</string>
     <string name="fuel_button_text">Fuel</string>
-    <string name="distance_traveled_text">Distance Traveled</string>
+    <string name="distance_traveled_text">Distance</string>
 
     <string name="title_activity_speed">Speed</string>
 
