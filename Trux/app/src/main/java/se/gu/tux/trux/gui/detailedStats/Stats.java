@@ -28,14 +28,10 @@ import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 /**
- * Möjligtvis snygga till koden genom att:
+ * TODO TODO TODO Möjligtvis snygga till koden genom att:
  * Skapa en datatyp som innehåller today - total + linegraphseries
  * Ev låt DataHandler fylla HELA den med data?
- * Skapa en metod i stats som returnerar dessa mot en key (t ex speed)
- * OM de är satta, annars null
- * Låt en inre klass av asynctask fråga regelbundet
- * Skicka hela datatypen till DetailedStatsFragment.setValues när den är laddad == inte null
- *
+ * SE LÄNGRE KOMMENTAR I ONCLICK
  *
  */
 
@@ -91,6 +87,14 @@ public class Stats extends ActionBarActivity implements Serializable {
 
         @Override
         public void onClick(final View v) {
+            // TODO: Tell datahandler to start downloading stats
+            // then check if loaded (for the seleceted metric type)
+            // the data handler should be able to return a wrapper object for all detailed stats
+            // with just a metric data as key argument (give it a fuel object to receive detailed
+            // stats object for fuel etc) - The data handler should then store these in a hash map
+            // or something - cache them and also let the wrapper object contain a timestamp -
+            // that way if they are older than say 15 minutes, update them : ))
+
             newFragment = null;
 
             if (v == speedBtn) {
