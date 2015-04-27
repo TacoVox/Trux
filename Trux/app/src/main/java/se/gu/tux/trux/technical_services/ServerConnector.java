@@ -206,7 +206,7 @@ public class ServerConnector {
                     ((ProtocolMessage)answer).getType() == ProtocolMessage.Type.INVALID_SESSION) {
                 throw new NotLoggedInException();
             }
-            
+
             return answer;
         }
 
