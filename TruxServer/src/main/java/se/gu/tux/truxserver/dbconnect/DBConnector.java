@@ -29,6 +29,7 @@ import java.sql.DriverManager;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 import se.gu.tux.trux.datastructure.Data;
 
@@ -150,14 +151,15 @@ public class DBConnector
      */
     protected ResultSet execSelect(Data d, PreparedStatement pst) throws SQLException
     {  
-                    
-        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
-                + "sessionid = " + Long.toString(d.getSessionId())
-                + " AND endtime = NULL);";
+        String pststring = pst.toString().substring(pst.toString().indexOf("SELECT"), pst.toString().length());
         
-        pst.addBatch(existCheck);
+        PreparedStatement finalpst = this.connection.prepareStatement(
+            getAdvSessionCheck(pststring));
         
-        Logger.gI().addDebug(pst.toString());
+        finalpst.setLong(1, d.getSessionId());
+        finalpst.setLong(2, d.getUserId());
+        
+        //Logger.gI().addDebug(finalpst.toString());
 
         return pst.executeQuery();
     }
@@ -175,17 +177,19 @@ public class DBConnector
      */
     protected ResultSet execInsert(Data d, PreparedStatement pst) throws SQLException
     {
-        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
-                + "sessionid = " + Long.toString(d.getSessionId())
-                + " AND endtime = NULL);";
+        String pststring = pst.toString().substring(pst.toString().indexOf("INSERT"), pst.toString().length());
         
-        pst.addBatch(existCheck);
+        PreparedStatement finalpst = this.connection.prepareStatement(
+            getSessionCheck(pststring), Statement.RETURN_GENERATED_KEYS);
         
-        Logger.gI().addDebug(pst.toString());
+        finalpst.setLong(1, d.getSessionId());
+        finalpst.setLong(2, d.getUserId());
         
-        pst.executeUpdate();
+        //Logger.gI().addDebug(finalpst.toString());
         
-        return pst.getGeneratedKeys();
+        finalpst.executeUpdate();
+        
+        return finalpst.getGeneratedKeys();
     }
     
     /**
@@ -199,14 +203,32 @@ public class DBConnector
      */
     protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
     {
-        String existCheck = " AND EXISTS (SELECT * FROM session WHERE "
-                + "sessionid = " + Long.toString(d.getSessionId())
-                + " AND endtime = NULL);";
+        String pststring = pst.toString().substring(pst.toString().indexOf("UPDATE"), pst.toString().length());
         
-        pst.addBatch(existCheck);
+        PreparedStatement finalpst = this.connection.prepareStatement(
+            getAdvSessionCheck(pststring));
         
-        Logger.gI().addDebug(pst.toString());
+        finalpst.setLong(1, d.getSessionId());
+        finalpst.setLong(2, d.getUserId());
+        
+        //Logger.gI().addDebug(finalpst.toString());
         
         pst.executeUpdate();
+    }
+    
+    private String getSessionCheck(String statement)
+    {
+        return statement + " WHERE EXISTS (SELECT * FROM session WHERE "
+                + "sessionid = ? AND userid = ? AND endtime IS NULL);";
+    }
+    
+    private String getAdvSessionCheck(String statement)
+    {
+        int whereindex = statement.indexOf("WHERE");
+        String firstpart = statement.toString().substring(0, whereindex + 6);
+        String secondpart = statement.toString().substring(whereindex + 6, statement.length());
+        
+        return firstpart + "EXISTS (SELECT * FROM session WHERE "
+                + "sessionid = ? AND userid = ? AND endtime IS NULL) AND " + secondpart;
     }
 }

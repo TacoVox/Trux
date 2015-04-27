@@ -15,6 +15,7 @@
  */
 package se.gu.tux.truxserver.dataswitch;
 
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.dbconnect.SessionHandler;
 
@@ -45,7 +46,7 @@ public class MessageSwitcher {
      */
     private MessageSwitcher() {}
     
-    public ProtocolMessage handleMessage(ProtocolMessage pm)
+    public Data handleMessage(ProtocolMessage pm)
     {
         if(pm.getValue().equals(ProtocolMessage.Type.LOGOUT_REQUEST))
             return SessionHandler.gI().endSession(pm);

@@ -19,6 +19,7 @@ import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+
 import se.gu.tux.truxserver.dbconnect.MetricInserter;
 
 /**

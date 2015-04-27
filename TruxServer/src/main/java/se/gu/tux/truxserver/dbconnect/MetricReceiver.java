@@ -74,14 +74,18 @@ public class MetricReceiver {
      */
     public MetricData getMetric(MetricData md)
     {
-        if(md instanceof Fuel || md instanceof Speed) {
+        if(md instanceof Fuel || md instanceof Speed) {            
             //Set the value to a default 0
             md.setValue((Double) 0.0);
             
             return getAverage(md);
         }
-        else if(md instanceof Distance)
+        else if(md instanceof Distance) {
+            //Set the value to a default 0
+            md.setValue(new Long(0));
+            
             return getDiff(md);
+        }
         else
             return null;
     }
@@ -115,7 +119,7 @@ public class MetricReceiver {
             
 	    while (rs.next())
 	    {
-		md.setValue((Double)rs.getObject("avg"));
+		md.setValue(rs.getDouble("avg"));
 		break;
 	    }
 	}
@@ -185,8 +189,8 @@ public class MetricReceiver {
         
         try
 	{
-            String selectStmnt = "SELECT (SELECT value FROM " + type + "WHERE "
-                    + "userid = ? ORDER BY (timestamp - ?) ASC LIMIT 1) "
+            String selectStmnt = "SELECT (SELECT value FROM " + type + " WHERE "
+                    + "userid = ? ORDER BY (timestamp - ?) DESC LIMIT 1) "
                     + "- (SELECT (value * - 1) FROM " + type + " WHERE "
                     + "userid = ? ORDER BY (timestamp - ?) ASC LIMIT 1) AS diff";
             
@@ -202,7 +206,7 @@ public class MetricReceiver {
             
 	    while (rs.next())
 	    {
-		md.setValue(rs.getDouble("diff"));
+		md.setValue(rs.getLong("diff"));
 		break;
 	    }
 	}
