@@ -200,10 +200,13 @@ public class ServerConnector {
                 }
             }
 
-            if (answer instanceof ProtocolMessage) {
-                if (((ProtocolMessage)answer).getValue() )
+            // If we requested something that required valid session and we didn't have one, throw
+            // NotLoggedInException
+            if (answer instanceof ProtocolMessage &&
+                    ((ProtocolMessage)answer).getType() == ProtocolMessage.Type.INVALID_SESSION) {
+                throw new NotLoggedInException();
             }
-            // TODO: check if protocolmessage saying invalid session, then throw notloggedinexception
+            
             return answer;
         }
 
