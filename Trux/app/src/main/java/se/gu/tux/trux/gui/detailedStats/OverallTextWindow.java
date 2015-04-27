@@ -19,7 +19,7 @@ public class OverallTextWindow extends Fragment {
 
     TextView speedTextViewTotal, fuelTextViewTotal, distanceTextViewTotal;
     Stats values = new Stats();
-    public void setOverallValues(MetricData speedTotal, MetricData fuelTotal, MetricData distanceTotal){
+    /*public void setOverallValues(MetricData speedTotal, MetricData fuelTotal, MetricData distanceTotal){
         speedTotal = values.getTotalSpeed();
         fuelTotal = values.getTotalFuel();
         distanceTotal = values.getTotalDistance();
@@ -37,6 +37,8 @@ public class OverallTextWindow extends Fragment {
 
         }
     }
+
+    */
 
     @Override
     public void onCreate(Bundle savedInstanceState)
