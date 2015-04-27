@@ -46,6 +46,7 @@ https://intellij-support.jetbrains.com/entries/23393067)
 dist/
 /Trux/.nb-gradle/private/
 /Trux/.nb-gradle/profiles/private/
+nbactions.xml
 
 # Maven
 target/
@@ -59,3 +60,4 @@ buildNumber.properties
 
 # TruxServer
 logs/
+TruxServer/src/main/java/se/gu/tux/trux/datastructure

@@ -1,32 +1,5 @@
 package se.gu.tux.trux.appplication;
 
-/*
- * Password Hashing With PBKDF2 (http://crackstation.net/hashing-security.htm).
- * Copyright (c) 2013, Taylor Hornby
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
 
 import android.content.Context;
 
@@ -50,43 +23,74 @@ import se.gu.tux.trux.technical_services.ServerConnector;
 
 /**
  * Created by ivryashkov on 2015-04-20.
+ *
+ * Handles the login to the application.
+ *
  */
 public class LoginService
 {
 
+    // user object for storing user info
     private User user;
 
+    // context object, we get it from MainActivity, used for opening
+    // file input and output streams
     private Context context;
 
+    // file object to store user info, used to read from
+    // when the user checks the box to kept logged in
     private File file;
 
+    // file name
     private static final String fileName = "trux_user_config";
 
 
+    /**
+     * Constructor. Takes a Context object as parameter.
+     *
+     * @param context   The Context object to be used.
+     */
     public LoginService(Context context)
     {
+        // initialise user
         user = new User();
+        // get the context
         this.context = context;
-
+        // create a file to store data
         file = new File(context.getFilesDir(), fileName);
 
     }
 
 
+    /**
+     * Checks if the user credentials are correct. Takes a String with the user's
+     * username and a String with the user's password as parameters. Returns true if
+     * login is successful, false otherwise.
+     *
+     * @param username      The user's username.
+     * @param password      The user's password.
+     * @return              true if login successful, false otherwise
+     */
     public boolean isAllowed(String username, String password)
     {
+        // set username in user object
         user.setUsername(username);
 
+        // create hash for the password
         String hashPass = createHash(password);
+        // set password hash in user object
         user.setPasswordHash(hashPass);
 
+        // set session ID, -1 for a new login session
         user.setSessionId(-1);
+        // set this user in DataHandler for future reference
         DataHandler.getInstance().setUser(user);
 
         Data response = null;
 
         try
         {
+            // check if this user is allowed to login
             response = (Data) ServerConnector.getInstance().answerQuery(user);
         }
         catch (NotLoggedInException e)
@@ -102,12 +106,15 @@ public class LoginService
 
         if (response instanceof User)
         {
+            // if the login is approved, set the user in DataHandler
+            // now the user has a valid session ID
             DataHandler.getInstance().setUser((User) response);
 
             String userInfo = DataHandler.getInstance().getUser().getUsername() + ":" +
                             DataHandler.getInstance().getUser().getPasswordHash() + ":" +
                             DataHandler.getInstance().getUser().getSessionId();
 
+            // save user info to file
             writeToFile(userInfo);
 
             return true;
@@ -120,10 +127,14 @@ public class LoginService
     } // end isAllowed()
 
 
+    /**
+     * Logs out the user from the application.
+     */
     public void logout()
     {
         try
         {
+            // send a protocol message with a request to log out
             ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.LOGOUT_REQUEST));
         }
         catch (NotLoggedInException e)
@@ -133,6 +144,13 @@ public class LoginService
     }
 
 
+    /**
+     * Hashes the user password. Takes a String with the user password (not hashed)
+     * as parameter. Returns a String with the hashed password.
+     *
+     * @param password      The user's password.
+     * @return              String
+     */
     private String createHash(String password)
     {
         String generatedPassword = "";
@@ -169,12 +187,16 @@ public class LoginService
     } // end createHash()
 
 
-
+    /**
+     * Writes the user data to the file. Takes a String with the user info.
+     *
+     * @param data      The user data.
+     */
     public void writeToFile(String data)
     {
-
         try
         {
+            // open output stream
             OutputStreamWriter outputStreamWriter =
                     new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
 
@@ -191,13 +213,19 @@ public class LoginService
     }
 
 
-
+    /**
+     * Reads the user's data from the file. Returns a String array with the results.
+     *
+     * @return      String[]
+     */
     public String[] readFromFile()
     {
+        // the array to be returned
         String[] ret = null;
 
         try
         {
+            // open input stream
             InputStream inputStream = context.openFileInput(fileName);
 
             if ( inputStream != null )
@@ -210,6 +238,7 @@ public class LoginService
 
                 StringBuilder stringBuilder = new StringBuilder();
 
+                // read the data
                 while ( (receiveString = bufferedReader.readLine()) != null )
                 {
                     stringBuilder.append(receiveString);

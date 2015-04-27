@@ -34,6 +34,11 @@ public class UserHandler {
      */
     private static UserHandler uh = null;
     
+    /**
+     * Method for getting the instance of the MetricInserter.
+     * 
+     * @return an Instance of MetricInserter
+     */
     public static UserHandler getInstance()
     {
         if (uh == null)
@@ -41,6 +46,11 @@ public class UserHandler {
         return uh;
     }
     
+    /**
+     * Method for getting the instance of the MetricInserter.
+     * 
+     * @return an Instance of MetricInserter
+     */
     public static UserHandler gI()
     {
         return getInstance();
@@ -49,37 +59,42 @@ public class UserHandler {
     /**
      * Non-static part.
      */
+    
+    /**
+     * Private Constructor. Not acessable.
+     */
     private UserHandler() {}
     
+    /**
+     * Method to login a user to the system.
+     * 
+     * @param u the user who wants to login
+     * 
+     * @return either a filled in user object on success or a ProtocolMessage indicating an ERROR
+     */
     public Data login(User u)
     {
-        int userid = -1;
+        long userid = -1;
         String passwd = null;
-        String firstname = null;
-        String lastname = null;
-        int sessionid = -1;
         
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
 	{
-            String selectStmnt = "SELECT userid, password, firstname, lastname" +
-                    " FROM user WHERE username = ?;";
+            String selectStmnt = "SELECT userid, password" +
+                    " FROM user WHERE username = ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setString(1, u.getUsername());
-	    
+            pst.setString(1, u.getUsername()); 
             
 	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())
 	    {
-                u.setUserId(rs.getLong("userid"));
+                userid = rs.getLong("userid");
                 passwd = rs.getString("password");
-                u.setFirstName(rs.getString("firstname"));
-                u.setLastName(rs.getString("lastname"));
                 
 		break;
 	    }
@@ -92,17 +107,82 @@ public class UserHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
         
-        if(u.passwordMatch(passwd)) {
-            u.setSessionId(SessionHandler.gI().startSession(u));
+        if(u.passwordMatch(passwd) && userid != -1) {
+            ProtocolMessage pm = new ProtocolMessage(ProtocolMessage.Type.LOGIN_SUCCESS);
             
-            SessionHandler.gI().startSession(u);
+            pm.setUserId(userid);
+            pm.setSessionId(SessionHandler.gI().startSession(u));
             
-            return u;
+            return pm;
         }
         else
             return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
     }
     
+    /**
+     * Auto-login method.
+     * @param u
+     * @return 
+     */
+    public Data autoLogin(User u)
+    {
+        long userid = -1;
+        String passwd = null;
+        long sessionid = -1;
+        
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "SELECT user.userid, user.password, session.sessionid" +
+                    " FROM user, session WHERE user.userid = session.userid AND"
+                    + " user.userid = ? AND session.sessionid = ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setLong(1, u.getUserId()); 
+            pst.setLong(2, u.getSessionId());
+            
+	    ResultSet rs = pst.executeQuery();
+	    
+	    while (rs.next())
+	    {
+                userid = rs.getLong("user.userid");
+                passwd = rs.getString("user.password");
+                sessionid = rs.getLong("session.sessionid");
+                
+		break;
+	    }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        if(u.passwordMatch(passwd) && sessionid == u.getSessionId() 
+                && userid == u.getUserId()) {
+            ProtocolMessage pm = new ProtocolMessage(ProtocolMessage.Type.LOGIN_SUCCESS);
+            
+            pm.setUserId(userid);
+            pm.setSessionId(SessionHandler.gI().startSession(u));
+            
+            return pm;
+        }
+        else
+            return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
+    }
+    
+    /**
+     * Method to register a user to our system.
+     * 
+     * @param u a filled in user object which will be stored
+     * 
+     * @return a ProtocolMessage indicating the success
+     */
     public ProtocolMessage register(User u)
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
@@ -110,7 +190,7 @@ public class UserHandler {
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO user(username, password, firstname, lastname) " + 
-                            "VALUES(?, ?, ?, ?);");
+                            "VALUES(?, ?, ?, ?)");
             
             pst.setString(1, u.getUsername());
             pst.setString(2, u.getPasswordHash());
@@ -131,6 +211,13 @@ public class UserHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
     
+    /**
+     * Method for getting user data from the DB.
+     * 
+     * @param u a scaletton user object -> will be filled in
+     * 
+     * @return either a filled in user object on success or a ProtocolMessage indicating an ERROR
+     */
     public Data getUser(User u)
     {
         int userid = -1;
@@ -144,15 +231,14 @@ public class UserHandler {
         try
 	{
             String selectStmnt = "SELECT userid, password, firstname, lastname" +
-                    " FROM user WHERE username = ?;";
+                    " FROM user WHERE username = ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
             pst.setString(1, u.getUsername());
 	    
-            
-	    ResultSet rs = dbc.execSelect(u, pst);
+            ResultSet rs = pst.executeQuery();
 	    
             if(rs == null)
                 return new ProtocolMessage(ProtocolMessage.Type.ERROR);

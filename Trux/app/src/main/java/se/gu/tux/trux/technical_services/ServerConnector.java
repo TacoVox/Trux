@@ -199,6 +199,7 @@ public class ServerConnector {
                 }
             }
 
+            // TODO: check if protocolmessage saying invalid session, then throw notloggedinexception
             return answer;
         }
 

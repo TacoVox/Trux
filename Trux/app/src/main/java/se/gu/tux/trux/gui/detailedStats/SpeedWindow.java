@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.detailedStats;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -25,67 +26,29 @@ import se.gu.tux.trux.gui.MainActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
-public class SpeedWindow extends Fragment {
-
-    TimerTask timer;
-    private Timer t;
+public class SpeedWindow extends DetailedStatsFragment {
 
     View myFragmentView;
     TextView speedTextViewToday, speedTextViewWeek, speedTextViewMonth, speedTextViewTotal;
     GraphView speedGraph;
-    LineGraphSeries speedValues;
-
-    class MyTask extends TimerTask {
-        public void run() {
-            try {
-                final Speed speedToday = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.DAY));
-                final Speed speedWeek = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.WEEK));
-                final Speed speedMonth = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.THIRTYDAYS));
-                final Speed speedTotal = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.FOREVER));
 
 
-                // Create speed object and mark it with current time.
-                // Then request an array of speed average values for last 30 days.
-                Speed mySpeed = new Speed(0);
-                mySpeed.setTimeStamp(System.currentTimeMillis());
-                Data[] avgSpeedPerDay = DataHandler.getInstance().getPerDay(mySpeed, 30);
-                DataPoint[] speedPoints = new DataPoint[30];
-                for (int i = 0; i < 30; i++) {
-                    if (avgSpeedPerDay[i].getValue() == null) {
-                        System.out.println("Assuming 0 at null value at pos: " + i );
-                        speedPoints[i] = new DataPoint(i + 1, 0);
-                    } else {
-                        speedPoints[i] = new DataPoint(i + 1, (Double) avgSpeedPerDay[i].getValue());
-                    }
+    public void setValues(final MetricData speedToday, final MetricData speedWeek, final MetricData speedMonth,
+                          final MetricData speedTotal, final LineGraphSeries speedValues) {
+        if (speedToday.getValue() != null && speedWeek.getValue() != null
+                && speedMonth.getValue() != null && speedTotal.getValue() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    speedTextViewToday.setText(new Long(Math.round((Double) speedToday.getValue())).toString());
+                    speedTextViewWeek.setText(new Long(Math.round((Double) speedWeek.getValue())).toString());
+                    speedTextViewMonth.setText(new Long(Math.round((Double) speedMonth.getValue())).toString());
+                    speedTextViewTotal.setText(new Long(Math.round((Double) speedTotal.getValue())).toString());
+
+                    speedGraph.addSeries(speedValues);
                 }
-                speedValues = new LineGraphSeries(speedPoints);
+            });
 
-                if (speedToday.getValue() != null && speedWeek.getValue() != null
-                        && speedMonth.getValue() != null && speedTotal.getValue() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(speedToday.getValue() ==  0.0)
-                            System.out.println(speedToday.getValue()+ "Hejsankaksdfkasdkfaksdfkasdfk");
-                            speedTextViewToday.setText(new Long(Math.round((Double) speedToday.getValue())).toString());
-                            speedTextViewWeek.setText(new Long(Math.round((Double) speedWeek.getValue())).toString());
-                            speedTextViewMonth.setText(new Long(Math.round((Double) speedMonth.getValue())).toString());
-                            speedTextViewTotal.setText(new Long(Math.round((Double) speedTotal.getValue())).toString());
-
-                            // Update the graph
-                            speedGraph.addSeries(speedValues);
-                        }
-                    });
-
-                }
-
-            }
-            catch(NotLoggedInException nLIE){
-                System.out.println("NotLoggedInException: " + nLIE.getMessage());
-
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
-            }
         }
     }
 
@@ -94,6 +57,7 @@ public class SpeedWindow extends Fragment {
                              Bundle savedInstanceState) {
 
         myFragmentView = inflater.inflate(R.layout.fragment_speed_window, container, false);
+
         speedTextViewToday = (TextView) myFragmentView.findViewById(R.id.avg_today_speed_value);
         speedTextViewWeek = (TextView) myFragmentView.findViewById(R.id.avg_lastweek_speed_value);
         speedTextViewMonth = (TextView) myFragmentView.findViewById(R.id.avg_lastmonth_speed_value);
@@ -101,13 +65,7 @@ public class SpeedWindow extends Fragment {
 
         popSpeedGraph(myFragmentView);
 
-        t = new Timer();
-        timer = new MyTask();
-        t.schedule(timer , 0 , 1000000);
-
         return myFragmentView;
-
-
     }
 
     private void popSpeedGraph(View view) {
