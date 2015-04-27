@@ -77,6 +77,7 @@ public class MainActivity extends ActionBarActivity
         if (file == null || !file.exists())
         {
             file = new File(getFilesDir(), FILE_NAME);
+            System.out.println("------- file path: " + file.getAbsolutePath() + " ----------");
         }
         else
         {
@@ -90,16 +91,6 @@ public class MainActivity extends ActionBarActivity
     }
 
 
-    @Override
-    protected void onResume()
-    {
-        super.onRestart();
-        userInfo = ls.readFromFile();
-        if (userInfo != null && userInfo[4].equals(true))
-        {
-            autoLogin();
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
