@@ -27,13 +27,14 @@
             android:layout_height="fill_parent"
             android:background="#FF3D3D3D"
             android:layout_margin="5dp"
-            android:padding="5dip"
+            android:padding="10dp"
             android:layout_weight="1">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/average_today"
                 android:id="@+id/avg_today_distance_traveled"
+                android:layout_gravity="center"
                 android:textSize="15sp"
                 android:textColor="#E0E0E0"/>
 
@@ -42,8 +43,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/loading"
                 android:id="@+id/avg_today_distance_traveled_value"
-                android:layout_alignBottom="@+id/avg_today_fuel"
-                android:layout_alignStart="@+id/avg_lastweek_distance_traveled_value"
+                android:layout_gravity="center"
                 android:textSize="15sp"
                 android:textColor="#E0E0E0"
                 android:layout_marginLeft="10dp"/>
@@ -55,7 +55,7 @@
             android:layout_height="fill_parent"
             android:background="#FF3D3D3D"
             android:layout_margin="5dp"
-            android:padding="5dip"
+            android:padding="10dp"
             android:layout_weight="1">
 
             <TextView
@@ -63,6 +63,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/average_lastweek"
                 android:id="@+id/avg_lastweek_distance_traveled"
+                android:layout_gravity="center"
                 android:textSize="15sp"
                 android:textColor="#E0E0E0"/>
 
@@ -71,6 +72,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/loading"
                 android:id="@+id/avg_lastweek_distance_traveled_value"
+                android:layout_gravity="center"
                 android:textSize="15sp"
                 android:textColor="#E0E0E0"
                 android:layout_marginLeft="10dp"/>
@@ -82,7 +84,7 @@
             android:layout_height="fill_parent"
             android:background="#FF3D3D3D"
             android:layout_margin="5dp"
-            android:padding="5dip"
+            android:padding="10dp"
             android:layout_weight="1">
 
             <TextView
@@ -90,6 +92,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/average_lastmonth"
                 android:id="@+id/avg_lastmonth_distance_traveled"
+                android:layout_gravity="center"
                 android:textSize="15sp"
                 android:textColor="#E0E0E0"/>
 
@@ -98,6 +101,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/loading"
                 android:id="@+id/avg_lastmonth_distance_traveled_value"
+                android:layout_gravity="center"
                 android:textSize="15sp"
                 android:textColor="#E0E0E0"
                 android:layout_marginLeft="10dp"/>
@@ -109,7 +113,7 @@
             android:layout_height="fill_parent"
             android:background="#FF3D3D3D"
             android:layout_margin="5dp"
-            android:padding="5dip"
+            android:padding="10dp"
             android:layout_weight="1">
 
             <TextView
@@ -117,6 +121,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/average_total"
                 android:id="@+id/avg_total_distance_traveled"
+                android:layout_gravity="center"
                 android:textSize="15sp"
                 android:textColor="#E0E0E0"/>
 
@@ -125,6 +130,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/loading"
                 android:id="@+id/avg_total_distance_traveled_value"
+                android:layout_gravity="center"
                 android:textSize="15sp"
                 android:textColor="#E0E0E0"
                 android:layout_marginLeft="10dp"/>
