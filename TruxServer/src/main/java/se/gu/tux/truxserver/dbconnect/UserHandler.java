@@ -74,7 +74,6 @@ public class UserHandler {
      */
     public Data login(User u)
     {
-        long userid = -1;
         String passwd = null;
         
         DBConnector dbc = ConnectionPool.gI().getDBC();
@@ -93,7 +92,7 @@ public class UserHandler {
 	    
 	    while (rs.next())
 	    {
-                userid = rs.getLong("userid");
+                u.setUserId(rs.getLong("userid"));
                 passwd = rs.getString("password");
                 
 		break;
@@ -107,10 +106,10 @@ public class UserHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
         
-        if(u.passwordMatch(passwd) && userid != -1) {
+        if(u.passwordMatch(passwd) && u.getUserId() != -1) {
             ProtocolMessage pm = new ProtocolMessage(ProtocolMessage.Type.LOGIN_SUCCESS);
             
-            pm.setUserId(userid);
+            pm.setUserId(u.getUserId());
             pm.setSessionId(SessionHandler.gI().startSession(u));
             
             return pm;
@@ -168,6 +167,7 @@ public class UserHandler {
             ProtocolMessage m = new ProtocolMessage(ProtocolMessage.Type.LOGIN_SUCCESS);
             
             m.setUserId(userid);
+            m.setSessionId(sessionid);
             
             return m;
         }
