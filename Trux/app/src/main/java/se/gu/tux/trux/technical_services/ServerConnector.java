@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 
 /**
@@ -199,6 +200,9 @@ public class ServerConnector {
                 }
             }
 
+            if (answer instanceof ProtocolMessage) {
+                if (((ProtocolMessage)answer).getValue() )
+            }
             // TODO: check if protocolmessage saying invalid session, then throw notloggedinexception
             return answer;
         }
