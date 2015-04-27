@@ -159,7 +159,7 @@ public class DBConnector
         finalpst.setLong(1, d.getSessionId());
         finalpst.setLong(2, d.getUserId());
         
-        Logger.gI().addDebug(finalpst.toString());
+        //Logger.gI().addDebug(finalpst.toString());
 
         return pst.executeQuery();
     }
@@ -185,7 +185,7 @@ public class DBConnector
         finalpst.setLong(1, d.getSessionId());
         finalpst.setLong(2, d.getUserId());
         
-        Logger.gI().addDebug(finalpst.toString());
+        //Logger.gI().addDebug(finalpst.toString());
         
         finalpst.executeUpdate();
         
@@ -211,7 +211,7 @@ public class DBConnector
         finalpst.setLong(1, d.getSessionId());
         finalpst.setLong(2, d.getUserId());
         
-        Logger.gI().addDebug(finalpst.toString());
+        //Logger.gI().addDebug(finalpst.toString());
         
         pst.executeUpdate();
     }
