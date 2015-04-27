@@ -32,7 +32,7 @@
     <string name="email_title">E-Mail:</string>
     <string name="password_title">Password:</string>
     <string name="ver_password_title">Repeat Password:</string>
-    <string name="agree_button_title">Do you agree you our terms and services?</string>
+    <string name="agree_button_title">I agree to the Terms and Conditions of Use</string>
     <string name="register_button_title">Register</string>
 
     <string name="average_today">Average Today:</string>
@@ -40,7 +40,7 @@
     <string name="average_lastmonth">Average Last Month:</string>
     <string name="average_total">Average Total:</string>
 
-    <string name="title_activity_distance__traveled">Distance_Traveled</string>
+    <string name="title_activity_distance">Distance</string>
 
     <string name="title_activity_simple_stats">SimpleStats</string>
 
@@ -48,7 +48,7 @@
 
     <string name="average_speed">Average Speed:</string>
     <string name="average_fuel">Average Fuel:</string>
-    <string name="average_distance_traveled">Average Distance Traveled:</string>
+    <string name="average_distance_traveled">Average Distance:</string>
     <string name="title_activity_choose_stat_screen">ChooseStatScreen</string>
     <string name="title_activity_stats_windows">StatsWindows</string>
     <string name="hello_world">Hello world!</string>
