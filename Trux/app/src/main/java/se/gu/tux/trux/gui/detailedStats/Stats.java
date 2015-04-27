@@ -43,7 +43,7 @@ import tux.gu.se.trux.R;
 public class Stats extends ActionBarActivity implements Serializable {
 
     DetailedStatsFragment newFragment;
-    Button speedBtn, fuelBtn, distanceBtn;
+    Button speedBtn, fuelBtn, distanceBtn, overallBtn;
     FragmentTransaction transaction;
 
     private volatile Speed speedToday;
@@ -77,7 +77,7 @@ public class Stats extends ActionBarActivity implements Serializable {
         speedBtn = (Button) findViewById(R.id.speed_button);
         fuelBtn = (Button) findViewById(R.id.fuel_button);
         distanceBtn = (Button) findViewById(R.id.distance_traveled);
-
+        overallBtn = (Button) findViewById(R.id.overall_button);
         Button.OnClickListener btnOnClick = new ButtonListener();
 
         speedBtn.setOnClickListener(btnOnClick);
@@ -126,45 +126,59 @@ public class Stats extends ActionBarActivity implements Serializable {
 
                 newFragment = new FuelWindow();
 
-                new AsyncTask() {
+                AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
                     @Override
-                    protected Object doInBackground(Object[] objects) {
+                    protected Boolean doInBackground(Void... voids) {
                         while (!fuelLoaded) {
-                            findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                newFragment.setValues(fuelToday, fuelWeek, fuelMonth, fuelTotal,
-                                        fuelValues);
-                            }
-                        });
                         return null;
                     }
-                }.execute();
-            } else if (v == distanceBtn) {
 
-
-                new AsyncTask() {
                     @Override
-                    protected Object doInBackground(Object[] objects) {
-                        while (!distanceLoaded) {
-                            findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
-                            try { Thread.sleep(100); } catch (InterruptedException e) {}
-                        }
-                        newFragment = new DistTravWindow();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                    public void onPreExecute() {
+                        super.onPreExecute();
+                    }
 
-                                newFragment.setValues(distanceToday, distanceWeek, distanceMonth, distanceTotal,
-                                        distanceValues);
-                            }
-                        });
-                        return null;
+                    @Override
+                    protected void onPostExecute(Boolean b) {
+                        super.onPostExecute(b);
+                        newFragment.setValues(fuelToday, fuelWeek, fuelMonth, fuelTotal,
+                                fuelValues);
+                        newFragment.hideLoading();
                     }
                 }.execute();
+                
+            } else if (v == distanceBtn) {
+                
+                newFragment = new DistTravWindow();
+
+
+                AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+                        while (!distanceLoaded) {
+                            try { Thread.sleep(100); } catch (InterruptedException e) {}
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public void onPreExecute() {
+                        super.onPreExecute();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean b) {
+                        super.onPostExecute(b);
+                        newFragment.setValues(distanceToday, distanceWeek, distanceMonth, distanceTotal,
+                                distanceValues);
+                        newFragment.hideLoading();
+                    }
+                }.execute();
+            } else if (v == overallBtn){
+                Intent intent = new Intent(Stats.this, OverallStats.class);
+                startActivity(intent);
             }
 
             transaction = getFragmentManager().beginTransaction();
@@ -289,6 +303,15 @@ public class Stats extends ActionBarActivity implements Serializable {
             }
         }
         return dataPoints;
+    }
+    public Speed getTotalSpeed(){
+        return speedTotal;
+    }
+    public Fuel getTotalFuel(){
+        return fuelTotal;
+    }
+    public Distance getTotalDistance(){
+        return distanceTotal;
     }
 }
 

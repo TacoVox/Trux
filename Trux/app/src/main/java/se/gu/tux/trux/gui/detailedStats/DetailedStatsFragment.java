@@ -14,6 +14,5 @@ import tux.gu.se.trux.R;
 public abstract class DetailedStatsFragment extends Fragment {
     public abstract void setValues(final MetricData today, final MetricData week, final MetricData month,
                           final MetricData total, final LineGraphSeries values);
-
     public abstract void hideLoading();
 }
