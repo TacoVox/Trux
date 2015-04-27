@@ -74,17 +74,14 @@ public class UserHandler {
      */
     public Data login(User u)
     {
-        int userid = -1;
+        long userid = -1;
         String passwd = null;
-        String firstname = null;
-        String lastname = null;
-        int sessionid = -1;
         
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
 	{
-            String selectStmnt = "SELECT userid, password, firstname, lastname" +
+            String selectStmnt = "SELECT userid, password" +
                     " FROM user WHERE username = ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
@@ -96,10 +93,8 @@ public class UserHandler {
 	    
 	    while (rs.next())
 	    {
-                u.setUserId(rs.getLong("userid"));
+                userid = rs.getLong("userid");
                 passwd = rs.getString("password");
-                u.setFirstName(rs.getString("firstname"));
-                u.setLastName(rs.getString("lastname"));
                 
 		break;
 	    }
@@ -112,12 +107,70 @@ public class UserHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
         
-        if(u.passwordMatch(passwd)) {
-            u.setSessionId(SessionHandler.gI().startSession(u));
+        if(u.passwordMatch(passwd) && userid != -1) {
+            ProtocolMessage pm = new ProtocolMessage(ProtocolMessage.Type.LOGIN_SUCCESS);
             
-            SessionHandler.gI().startSession(u);
+            pm.setUserId(userid);
+            pm.setSessionId(SessionHandler.gI().startSession(u));
             
-            return u;
+            return pm;
+        }
+        else
+            return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
+    }
+    
+    /**
+     * Auto-login method.
+     * @param u
+     * @return 
+     */
+    public Data autoLogin(User u)
+    {
+        long userid = -1;
+        String passwd = null;
+        long sessionid = -1;
+        
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "SELECT user.userid, user.password, session.sessionid" +
+                    " FROM user, session WHERE user.userid = session.userid AND"
+                    + " user.userid = ? AND session.sessionid = ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setLong(1, u.getUserId()); 
+            pst.setLong(2, u.getSessionId());
+            
+	    ResultSet rs = pst.executeQuery();
+	    
+	    while (rs.next())
+	    {
+                userid = rs.getLong("user.userid");
+                passwd = rs.getString("user.password");
+                sessionid = rs.getLong("session.sessionid");
+                
+		break;
+	    }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        if(u.passwordMatch(passwd) && sessionid == u.getSessionId() 
+                && userid == u.getUserId()) {
+            ProtocolMessage pm = new ProtocolMessage(ProtocolMessage.Type.LOGIN_SUCCESS);
+            
+            pm.setUserId(userid);
+            pm.setSessionId(SessionHandler.gI().startSession(u));
+            
+            return pm;
         }
         else
             return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
