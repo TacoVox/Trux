@@ -61,6 +61,7 @@ public class ServerRunnable implements Runnable {
 						// So we do nothing on the exception, it's just catched there to keep the 
 						// loop running at regular intervals
 						d = (Data)in.readObject();
+                                                Logger.gI().addMsg(d.getClass().getSimpleName());
 					} catch(SocketTimeoutException e) {}					
 				}
 				
@@ -72,11 +73,11 @@ public class ServerRunnable implements Runnable {
 				}				
 				
 				// Debugging output
-				//if (d.getValue() != null) {
-				//	Logger.gI().addDebug(d.getValue().toString());
-				//} else {
-				//	Logger.gI().addDebug(connectionId + ": Received object with null value from " + cs.getInetAddress());
-				//}
+				if (d.getValue() != null) {
+					Logger.gI().addDebug(d.getValue().toString());
+				} else {
+					Logger.gI().addDebug(connectionId + ": Received object with null value from " + cs.getInetAddress());
+				}
 				
 				// Send data to DataSwitcher
 				d = DataSwitcher.gI().handleData(d);

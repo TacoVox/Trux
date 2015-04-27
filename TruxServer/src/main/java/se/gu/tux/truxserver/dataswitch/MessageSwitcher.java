@@ -49,9 +49,9 @@ public class MessageSwitcher {
     
     public Data handleMessage(ProtocolMessage pm)
     {
-        if(pm.getType().equals(ProtocolMessage.Type.AUTO_LOGIN_REQUEST))
+        if(pm.getType() == ProtocolMessage.Type.AUTO_LOGIN_REQUEST)
             return UserHandler.gI().autoLogin(pm);
-        else if(pm.getType().equals(ProtocolMessage.Type.LOGOUT_REQUEST))
+        else if(pm.getType() == ProtocolMessage.Type.LOGOUT_REQUEST)
             return SessionHandler.gI().endSession(pm);
         
         return pm;
