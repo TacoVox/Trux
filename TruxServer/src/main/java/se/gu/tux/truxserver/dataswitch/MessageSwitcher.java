@@ -18,6 +18,7 @@ package se.gu.tux.truxserver.dataswitch;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.dbconnect.SessionHandler;
+import se.gu.tux.truxserver.dbconnect.UserHandler;
 
 /**
  *
@@ -48,7 +49,9 @@ public class MessageSwitcher {
     
     public Data handleMessage(ProtocolMessage pm)
     {
-        if(pm.getValue().equals(ProtocolMessage.Type.LOGOUT_REQUEST))
+        if(pm.getType().equals(ProtocolMessage.Type.AUTO_LOGIN_REQUEST))
+            return UserHandler.gI().autoLogin(pm);
+        else if(pm.getType().equals(ProtocolMessage.Type.LOGOUT_REQUEST))
             return SessionHandler.gI().endSession(pm);
         
         return pm;
