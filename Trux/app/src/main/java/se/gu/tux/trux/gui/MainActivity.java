@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.DataHandler;
@@ -73,10 +74,20 @@ public class MainActivity extends ActionBarActivity
         // Start the DataPoller that will send AGA metrics to the server with regular interavals
         DataPoller.gI().start();
 
+        file = new File(getFilesDir(), FILE_NAME);
+
         // create a file to store data
         if (file == null || !file.exists())
         {
-            file = new File(getFilesDir(), FILE_NAME);
+            //file = new File(getFilesDir(), FILE_NAME);
+            try
+            {
+                file.createNewFile();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
             System.out.println("------- file path: " + file.getAbsolutePath() + " ----------");
         }
         else
@@ -84,7 +95,7 @@ public class MainActivity extends ActionBarActivity
             userInfo = ls.readFromFile();
         }
 
-        if (userInfo != null && userInfo[4].equals(true))
+        if (userInfo != null && userInfo[4].equals("true"))
         {
             autoLogin();
         }
@@ -176,7 +187,18 @@ public class MainActivity extends ActionBarActivity
 
         ProtocolMessage msg = null;
 
+        User user = new User();
+
+        user.setUsername(userInfo[0]);
+        user.setPasswordHash(userInfo[1]);
+        user.setSessionId(Long.parseLong(userInfo[2]));
+        user.setUserId(Long.parseLong(userInfo[3]));
+
+        DataHandler.getInstance().setUser(user);
+
+        System.out.println("------ sending request for auto-login ------------");
         AsyncTask<ProtocolMessage, Void, ProtocolMessage> check = new AutoLoginCheck().execute(request);
+        System.out.println("------ request for auto-login received ------------");
 
         try
         {
@@ -243,6 +265,7 @@ public class MainActivity extends ActionBarActivity
         {
             boolean isAllowed =
                     ls.login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
+
             return isAllowed;
         }
     } // end inner class
@@ -269,7 +292,7 @@ public class MainActivity extends ActionBarActivity
 
             return msg;
         }
-    }
+    } // end inner class
 
 
     /*
