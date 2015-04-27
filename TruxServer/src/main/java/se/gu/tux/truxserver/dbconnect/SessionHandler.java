@@ -233,8 +233,10 @@ public class SessionHandler {
         try
 	{
             String updateStmnt = "UPDATE session SET endtime = ? " +
-                    "WHERE lastactive < ? AND keepalive = FALSE"
-                    + " AND endtime IS NULL";
+                    "WHERE (lastactive < ? AND keepalive = FALSE"
+                    + " AND endtime IS NULL) OR "
+                    + "(lastactive < ? AND keepalive = TRUE"
+                    + " AND endtime IS NULL)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
@@ -242,6 +244,8 @@ public class SessionHandler {
             pst.setLong(1, System.currentTimeMillis());
             pst.setLong(2, System.currentTimeMillis() -
                     Config.gI().getSessionTimeout() * 60000);
+            pst.setLong(3, System.currentTimeMillis() -
+                    168 * 60 * 60000);
 	    
             pst.executeUpdate();
             
