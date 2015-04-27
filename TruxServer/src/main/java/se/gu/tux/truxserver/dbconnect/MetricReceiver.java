@@ -190,7 +190,7 @@ public class MetricReceiver {
         try
 	{
             String selectStmnt = "SELECT (SELECT value FROM " + type + " WHERE "
-                    + "userid = ? ORDER BY (timestamp - ?) ASC LIMIT 1) "
+                    + "userid = ? ORDER BY (timestamp - ?) DESC LIMIT 1) "
                     + "- (SELECT (value * - 1) FROM " + type + " WHERE "
                     + "userid = ? ORDER BY (timestamp - ?) ASC LIMIT 1) AS diff";
             

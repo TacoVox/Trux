@@ -219,7 +219,7 @@ public class DBConnector
     private String getSessionCheck(String statement)
     {
         return statement + " WHERE EXISTS (SELECT * FROM session WHERE "
-                + "sessionid = ? AND userid = ? AND endtime = NULL);";
+                + "sessionid = ? AND userid = ? AND endtime IS NULL);";
     }
     
     private String getAdvSessionCheck(String statement)
@@ -229,6 +229,6 @@ public class DBConnector
         String secondpart = statement.toString().substring(whereindex + 6, statement.length());
         
         return firstpart + "EXISTS (SELECT * FROM session WHERE "
-                + "sessionid = ? AND userid = ? AND endtime = NULL) AND " + secondpart;
+                + "sessionid = ? AND userid = ? AND endtime IS NULL) AND " + secondpart;
     }
 }

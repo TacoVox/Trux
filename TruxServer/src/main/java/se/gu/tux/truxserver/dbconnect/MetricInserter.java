@@ -122,8 +122,10 @@ public class MetricInserter implements Runnable {
         try
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO " + type + "(value, timestamp, userid) " + 
-                            "VALUES(?, ?, ?)");
+                    //"INSERT INTO " + type + "(value, timestamp, userid) " + 
+                    //        "VALUES(?, ?, ?)");
+                    "INSERT INTO " + type + "(value, timestamp, userid) "
+                            + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
             
             pst.setObject(1, md.getValue());
             pst.setLong(2, md.getTimeStamp());
