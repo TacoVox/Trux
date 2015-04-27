@@ -6,7 +6,6 @@ import android.content.Context;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,7 +16,6 @@ import java.security.NoSuchAlgorithmException;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
-import se.gu.tux.trux.gui.MainActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.ServerConnector;
 
@@ -42,7 +40,7 @@ public class LoginService
     private File file;
 
     // file name
-    private static final String fileName = "trux_user_config";
+    private static final String FILE_NAME = "trux_user_config.txt";
 
 
     /**
@@ -57,8 +55,10 @@ public class LoginService
         // get the context
         this.context = context;
         // create a file to store data
-        file = new File(context.getFilesDir(), fileName);
-
+        if (file == null || !file.exists())
+        {
+            file = new File(context.getFilesDir(), FILE_NAME);
+        }
     }
 
 
@@ -71,7 +71,7 @@ public class LoginService
      * @param password      The user's password.
      * @return              true if login successful, false otherwise
      */
-    public boolean isAllowed(String username, String password)
+    public boolean login(String username, String password, Long sessionId, Long userId)
     {
         // set username in user object
         user.setUsername(username);
@@ -82,18 +82,26 @@ public class LoginService
         user.setPasswordHash(hashPass);
 
         // set session ID, -1 for a new login session
-        user.setSessionId(-1);
+        user.setSessionId(sessionId);
+
+        // set user ID
+        user.setUserId(userId);
+
         // set this user in DataHandler for future reference
         DataHandler.getInstance().setUser(user);
 
-        Data response = null;
+        ProtocolMessage response = null;
 
         try
         {
             // check if this user is allowed to login
-            response = (Data) ServerConnector.getInstance().answerQuery(user);
+            response = (ProtocolMessage) ServerConnector.getInstance().answerQuery(user);
         }
         catch (NotLoggedInException e)
+        {
+            e.printStackTrace();
+        }
+        catch (ClassCastException e)
         {
             e.printStackTrace();
         }
@@ -104,15 +112,21 @@ public class LoginService
         System.out.println("user ID: " + response.getUserId());
         System.out.println("----------------------------------------");
 
-        if (response instanceof User)
+        if (response.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
         {
             // if the login is approved, set the user in DataHandler
             // now the user has a valid session ID
-            DataHandler.getInstance().setUser((User) response);
+            user.setUsername(username);
+            user.setPasswordHash(hashPass);
+            user.setSessionId(response.getSessionId());
+            user.setUserId(response.getUserId());
+
+            DataHandler.getInstance().setUser(user);
 
             String userInfo = DataHandler.getInstance().getUser().getUsername() + ":" +
                             DataHandler.getInstance().getUser().getPasswordHash() + ":" +
-                            DataHandler.getInstance().getUser().getSessionId();
+                            DataHandler.getInstance().getUser().getSessionId() + ":" +
+                            DataHandler.getInstance().getUser().getUserId();
 
             // save user info to file
             writeToFile(userInfo);
@@ -124,7 +138,7 @@ public class LoginService
             return false;
         }
 
-    } // end isAllowed()
+    } // end login()
 
 
     /**
@@ -198,17 +212,21 @@ public class LoginService
         {
             // open output stream
             OutputStreamWriter outputStreamWriter =
-                    new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
-
-            outputStreamWriter.write(data);
+                    new OutputStreamWriter(context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE));
 
             System.out.println("-------- writing to file ----------");
 
+            // write data
+            outputStreamWriter.write(data);
+            // make sure data is written
+            outputStreamWriter.flush();
+            // close output stream
             outputStreamWriter.close();
         }
         catch (IOException e)
         {
             e.printStackTrace();
+            System.out.println("-------- ERROR: writing to file ----------");
         }
     }
 
@@ -221,12 +239,12 @@ public class LoginService
     public String[] readFromFile()
     {
         // the array to be returned
-        String[] ret = null;
+        String[] results = null;
 
         try
         {
             // open input stream
-            InputStream inputStream = context.openFileInput(fileName);
+            InputStream inputStream = context.openFileInput(FILE_NAME);
 
             if ( inputStream != null )
             {
@@ -238,35 +256,38 @@ public class LoginService
 
                 StringBuilder stringBuilder = new StringBuilder();
 
+                System.out.println("-------- reading from file ----------");
+
                 // read the data
                 while ( (receiveString = bufferedReader.readLine()) != null )
                 {
                     stringBuilder.append(receiveString);
                 }
 
-                System.out.println("-------- reading from file ----------");
-
                 inputStream.close();
 
-                ret = stringBuilder.toString().split(":");
+                results = stringBuilder.toString().split(":");
 
                 System.out.println("-------- user info in file -------------");
-                System.out.println("username: " + ret[0]);
-                System.out.println("password hash: " + ret[1]);
-                System.out.println("session ID: " + ret[2]);
+                System.out.println("username: " + results[0]);
+                System.out.println("password hash: " + results[1]);
+                System.out.println("session ID: " + results[2]);
+                System.out.println("user ID: " + results[3]);
                 System.out.println("----------------------------------------");
             }
         }
         catch (FileNotFoundException e)
         {
             e.printStackTrace();
+            System.out.println("-------- ERROR: reading from file ----------");
         }
         catch (IOException e)
         {
             e.printStackTrace();
+            System.out.println("-------- ERROR: reading from file ----------");
         }
 
-        return ret;
+        return results;
     }
 
 

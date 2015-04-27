@@ -13,28 +13,16 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.swedspot.automotiveapi.AutomotiveManager;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.LoginService;
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
-import se.gu.tux.trux.gui.detailedStats.DistTravWindow;
-import se.gu.tux.trux.gui.detailedStats.FuelWindow;
-import se.gu.tux.trux.gui.detailedStats.SpeedWindow;
 import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
-import se.gu.tux.trux.technical_services.IServerConnector;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
-import se.gu.tux.trux.technical_services.RealTimeDataParser;
 import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
@@ -108,16 +96,22 @@ public class MainActivity extends ActionBarActivity
     {
         String username = "";
         String password = "";
+        Long sessionId;
+        Long userId;
 
         if (keepLoggedIn())
         {
             username = DataHandler.getInstance().getUser().getUsername();
             password = DataHandler.getInstance().getUser().getPasswordHash();
+            sessionId = DataHandler.getInstance().getUser().getSessionId();
+            userId = DataHandler.getInstance().getUser().getUserId();
         }
         else
         {
             username = userField.getText().toString();
             password = passField.getText().toString();
+            sessionId = User.LOGIN_REQUEST;
+            userId = -1L;
         }
 
         if (username.isEmpty() || password.isEmpty())
@@ -125,7 +119,8 @@ public class MainActivity extends ActionBarActivity
             return;
         }
 
-        AsyncTask<String, Void, Boolean> check = new LoginCheck().execute(username, password);
+        AsyncTask<String, Void, Boolean> check =
+                new LoginCheck().execute(username, password, Long.toString(sessionId), Long.toString(userId));
 
         boolean isAllowed = false;
 
@@ -161,42 +156,54 @@ public class MainActivity extends ActionBarActivity
 
         if (checkBox.isChecked())
         {
+            // get user info from file
             String[] info = ls.readFromFile();
 
-            final User user = new User();
+            // new protocol message, set type to auto login request and password hash
+            final ProtocolMessage request = new ProtocolMessage(ProtocolMessage.Type.AUTO_LOGIN_REQUEST, info[1]);
 
-            user.setUsername(info[0]);
-            user.setPasswordHash(info[1]);
-            user.setUserId(Long.parseLong(info[2]));
+            // set session ID and user ID
+            request.setSessionId(Long.parseLong(info[2]));
+            request.setUserId(Long.parseLong(info[3]));
 
-            final Data[] msg = {null};
+            ProtocolMessage msg = null;
 
-            DataHandler.getInstance().setUser(user);
+            AsyncTask<ProtocolMessage, Void, ProtocolMessage> check = new AutoLoginCheck().execute(request);
 
-            new AsyncTask()
+            try
             {
-                @Override
-                protected Object doInBackground(Object[] objects) {
-                    try
-                    {
-                        msg[0] = ServerConnector.gI().answerQuery(user);
-                    }
-                    catch (NotLoggedInException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                }
-            }.execute();
-
-            if (msg[0] instanceof User)
+                msg = check.get();
+            }
+            catch (InterruptedException e)
             {
-                DataHandler.getInstance().setUser((User) msg[0]);
+                e.printStackTrace();
+            }
+            catch (ExecutionException e)
+            {
+                e.printStackTrace();
+            }
+
+
+            if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
+            {
+                User user = new User();
+
+                // set info for user
+                user.setUsername(info[0]);
+                user.setPasswordHash(info[1]);
+                user.setSessionId(msg.getSessionId());
+                user.setUserId(msg.getUserId());
+
+                // set user in DataHandler for future use
+                DataHandler.getInstance().setUser(user);
+
                 keep = true;
             }
-            else if (msg[0] instanceof ProtocolMessage)
+            else
             {
-                System.out.println("--------- Login not successful ------------");
+                System.out.println("-------- ERROR: login fail ----------");
             }
+
         }
 
         return keep;
@@ -232,21 +239,48 @@ public class MainActivity extends ActionBarActivity
     }
 
 
-
-
+    /**
+     * Private class. Checks if the user is allowed to login.
+     */
     private class LoginCheck extends AsyncTask<String, Void, Boolean>
     {
         @Override
         protected Boolean doInBackground(String... strings)
         {
-            boolean isAllowed = ls.isAllowed(strings[0], strings[1]);
+            boolean isAllowed = ls.login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]));
             return isAllowed;
         }
     } // end inner class
 
 
+    /**
+     * Private class. Checks if the user is allowed to login when auto-login requested.
+     */
+    private class AutoLoginCheck extends AsyncTask<ProtocolMessage, Void, ProtocolMessage>
+    {
+        ProtocolMessage msg = null;
+
+        @Override
+        protected ProtocolMessage doInBackground(ProtocolMessage... protocolMessages)
+        {
+            try
+            {
+                msg = (ProtocolMessage) ServerConnector.gI().answerQuery(protocolMessages[0]);
+            }
+            catch (NotLoggedInException e)
+            {
+                e.printStackTrace();
+            }
+            
+            return msg;
+        }
+    }
+
+
     /*
     public void onStop() {
+        // TODO
+        // clean-up on stop
         System.out.println("ONSTOP....!");
     }
     */
