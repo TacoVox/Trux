@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity
     private String[] userInfo;
 
     // file name
-    private static final String FILE_NAME = "trux_user_config.txt";
+    private static final String FILE_NAME = "trux_user_config";
 
     private File file;
 
@@ -89,6 +89,17 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+
+    @Override
+    protected void onRestart()
+    {
+        super.onRestart();
+        userInfo = ls.readFromFile();
+        if (userInfo != null && userInfo[4].equals(true))
+        {
+            autoLogin();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
