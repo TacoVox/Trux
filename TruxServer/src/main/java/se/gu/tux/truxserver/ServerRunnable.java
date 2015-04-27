@@ -2,20 +2,14 @@ package se.gu.tux.truxserver;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.nio.channels.ClosedByInterruptException;
 
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.Distance;
-import se.gu.tux.trux.datastructure.Fuel;
-import se.gu.tux.trux.datastructure.MetricData;
-import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -78,11 +72,11 @@ public class ServerRunnable implements Runnable {
 				}				
 				
 				// Debugging output
-				if (d.getValue() != null) {
-					Logger.gI().addDebug(d.getValue().toString());
-				} else {
-					Logger.gI().addDebug(connectionId + ": Received object with null value from " + cs.getInetAddress());
-				}
+				//if (d.getValue() != null) {
+				//	Logger.gI().addDebug(d.getValue().toString());
+				//} else {
+				//	Logger.gI().addDebug(connectionId + ": Received object with null value from " + cs.getInetAddress());
+				//}
 				
 				// Send data to DataSwitcher
 				d = DataSwitcher.gI().handleData(d);
