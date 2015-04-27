@@ -16,6 +16,7 @@
 package se.gu.tux.truxserver.dataswitch;
 
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.truxserver.dbconnect.MetricInserter;
 import se.gu.tux.truxserver.dbconnect.MetricReceiver;
 
@@ -44,7 +45,7 @@ public class MetricSwitcher {
      */
     private MetricSwitcher() {}
     
-    protected MetricData handleMetricData(MetricData md) {
+    protected Data handleMetricData(MetricData md) {
     	if(md.getTimeFrame() == 0) {
             MetricInserter.gI().addToDB(md);
 
