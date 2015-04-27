@@ -91,7 +91,7 @@ public class MainActivity extends ActionBarActivity
 
 
     @Override
-    protected void onRestart()
+    protected void onResume()
     {
         super.onRestart();
         userInfo = ls.readFromFile();
