@@ -15,6 +15,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.Serializable;
+import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
@@ -91,30 +92,39 @@ public class Stats extends ActionBarActivity implements Serializable {
         @Override
         public void onClick(final View v) {
             newFragment = null;
+
             if (v == speedBtn) {
+                newFragment = new SpeedWindow();
 
                 // Make sure values are set once they are loaded
-                new AsyncTask() {
+                AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
                     @Override
-                    protected Object doInBackground(Object[] objects) {
+                    protected Boolean doInBackground(Void... voids) {
                         while (!speedLoaded) {
-                           findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                newFragment.setValues(speedToday, speedWeek, speedMonth, speedTotal,
-                                        speedValues);
-
-                            }
-                        });
-                        newFragment = new SpeedWindow();
                         return null;
                     }
+
+                    @Override
+                    public void onPreExecute() {
+                        super.onPreExecute();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean b) {
+                        super.onPostExecute(b);
+                        newFragment.setValues(speedToday, speedWeek, speedMonth, speedTotal,
+                            speedValues);
+                        newFragment.hideLoading();
+                    }
                 }.execute();
+
+
+
             } else if (v == fuelBtn) {
 
+                newFragment = new FuelWindow();
 
                 new AsyncTask() {
                     @Override
@@ -130,7 +140,6 @@ public class Stats extends ActionBarActivity implements Serializable {
                                         fuelValues);
                             }
                         });
-                        newFragment = new FuelWindow();
                         return null;
                     }
                 }.execute();
@@ -144,14 +153,15 @@ public class Stats extends ActionBarActivity implements Serializable {
                             findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
+                        newFragment = new DistTravWindow();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+
                                 newFragment.setValues(distanceToday, distanceWeek, distanceMonth, distanceTotal,
                                         distanceValues);
                             }
                         });
-                        newFragment = new DistTravWindow();
                         return null;
                     }
                 }.execute();
