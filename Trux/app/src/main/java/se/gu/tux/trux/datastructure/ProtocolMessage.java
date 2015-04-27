@@ -4,13 +4,20 @@ package se.gu.tux.trux.datastructure;
  * Created by jonas on 3/24/15.
  */
 public class ProtocolMessage extends Data {
-	public enum Type {LOGIN_SUCCESS, LOGIN_FAILED, LOGOUT_REQUEST, DATA_RECEIVED, SUCCESS, ERROR};
+	public enum Type {LOGIN_SUCCESS, LOGIN_FAILED, AUTO_LOGIN_REQUEST, LOGOUT_REQUEST, DATA_RECEIVED,
+        SUCCESS, ERROR};
 	private Type responseType;
+    private String message;
 	
 	public ProtocolMessage(Type response) {
 		this.responseType = response;
 	}
-	
+
+    public ProtocolMessage(Type response, String message) {
+        this.responseType = response;
+        this.message = message;
+    }
+
 	@Override
 	public Object getValue() {
 		return responseType;
