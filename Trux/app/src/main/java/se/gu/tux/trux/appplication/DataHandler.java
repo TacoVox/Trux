@@ -223,20 +223,31 @@ public class DataHandler
         metricData.settTimeFrame(MetricData.DAY);
 
         for(int i = 0; i < days; i++) {
+            MetricData md = metricData;
+            try {
+                md = metricData.getClass().newInstance();
+                md.settTimeFrame(MetricData.DAY);
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
             /* GregorianCalendar calBeginning = new GregorianCalendar(
                     cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE),
                     0, 0
             );*/
+
             // Find timestamp for end of day
             GregorianCalendar calEnd = new GregorianCalendar(
                     cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE),
                     23, 59, 59
             );
             System.out.println(calEnd.getTimeInMillis());
-            metricData.setTimeStamp(calEnd.getTimeInMillis());
+            md.setTimeStamp(calEnd.getTimeInMillis());
 
             // Get data from server
-            perDay[i] = ServerConnector.gI().answerTimestampedQuery(metricData);
+            perDay[i] = ServerConnector.gI().answerTimestampedQuery(md);
 
             // Move forward one day
             cal.add(Calendar.DATE, +i);
