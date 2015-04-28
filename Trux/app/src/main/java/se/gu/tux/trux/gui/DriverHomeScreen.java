@@ -24,7 +24,6 @@ public class DriverHomeScreen extends ActionBarActivity {
 
 
     Fragment fragment;
-    LoginService logout;
     FragmentTransaction transaction;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +75,8 @@ public class DriverHomeScreen extends ActionBarActivity {
     }
 
     public void logout(MenuItem item){
+
+        LoginService.getInstance().logout();
         Intent intent = new Intent(DriverHomeScreen.this, MainActivity.class);
         startActivity(intent);
     }
