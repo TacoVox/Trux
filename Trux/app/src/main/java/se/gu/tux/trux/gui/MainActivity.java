@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends ItemMenu
 {
     Fragment newFragment;
     FragmentTransaction transaction;
@@ -166,7 +167,6 @@ public class MainActivity extends ActionBarActivity
 
         if (isAllowed)
         {
-            // findViewById(R.id.loadingPanel).setVisibility(View.GONE);
             Intent intent = new Intent(this, DriverHomeScreen.class);
             startActivity(intent);
         }
@@ -267,6 +267,12 @@ public class MainActivity extends ActionBarActivity
     private class LoginCheck extends AsyncTask<String, Void, Boolean>
     {
         @Override
+        protected void onPreExecute()
+        {
+            Toast.makeText(getApplicationContext(), "Logging in. Please wait...", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
         protected Boolean doInBackground(String... strings)
         {
             boolean isAllowed =
@@ -274,6 +280,13 @@ public class MainActivity extends ActionBarActivity
 
             return isAllowed;
         }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean)
+        {
+            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
+        }
+        
     } // end inner class
 
 

@@ -39,9 +39,10 @@ public class SpeedWindow extends DetailedStatsFragment {
         speedGraph = new GraphView(getActivity());
         speedGraph.setTitle("Speed");
         speedGraph.setTitleTextSize(40);
+        speedGraph.getViewport().setXAxisBoundsManual(true);
+        speedGraph.getViewport().setMaxX(30);
         speedGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Speed");
         speedGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
-
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.SpeedGraph);
             layout.addView(speedGraph);
@@ -65,5 +66,11 @@ public class SpeedWindow extends DetailedStatsFragment {
 
     public void hideLoading() {
         myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean hasLoaded() {
+        if (speedTextViewToday != null) return true;
+        return false;
     }
 }

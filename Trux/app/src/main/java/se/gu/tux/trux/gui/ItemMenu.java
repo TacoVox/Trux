@@ -20,6 +20,7 @@ public class ItemMenu extends ActionBarActivity
 {
     Fragment newFragment;
     FragmentTransaction transaction;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -61,9 +62,10 @@ public class ItemMenu extends ActionBarActivity
 */
     public void goToAbout(MenuItem item)
     {
+
         newFragment = new About();
         transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.StatsView2, newFragment);
+        transaction.replace(R.id.driverhome, newFragment);
         transaction.addToBackStack(null);
         transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
         transaction.commit();
@@ -72,14 +74,14 @@ public class ItemMenu extends ActionBarActivity
     {
         newFragment = new Contact();
         transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.StatsView2, newFragment);
+        transaction.replace(R.id.driverhome, newFragment);
         transaction.addToBackStack(null);
         transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
         transaction.commit();
     }
     public void logout(MenuItem item)
     {
-
+        System.out.println("Logout is clicked");
         AsyncTask<Void, Void, Boolean> check = new Logout().execute();
 
         boolean loggedOut = false;

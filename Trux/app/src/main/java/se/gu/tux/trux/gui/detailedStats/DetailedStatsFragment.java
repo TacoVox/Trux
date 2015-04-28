@@ -10,4 +10,5 @@ import se.gu.tux.trux.appplication.DetailedStatsBundle;
 public abstract class DetailedStatsFragment extends Fragment {
     public abstract void setValues(final DetailedStatsBundle stats);
     public abstract void hideLoading();
+    public abstract boolean hasLoaded();
 }

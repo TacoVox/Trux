@@ -215,7 +215,7 @@ public class DataHandler
         // Use a calendar to know when days start and end.
         // Initiate based on metricData's timestamp.
         GregorianCalendar cal = new GregorianCalendar();
-        cal.setTimeInMillis(metricData.getTimeStamp());
+        //cal.setTimeInMillis(metricData.getTimeStamp());
         cal.add(Calendar.DATE, -(days - 1));
 
         // Here fetch metric data for each day, by setting timestamp to the end of the day
@@ -238,19 +238,25 @@ public class DataHandler
                     0, 0
             );*/
 
+
             // Find timestamp for end of day
             GregorianCalendar calEnd = new GregorianCalendar(
                     cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE),
                     23, 59, 59
             );
-            System.out.println(calEnd.getTimeInMillis());
+            /*System.out.println(calEnd.getTimeInMillis());
             md.setTimeStamp(calEnd.getTimeInMillis());
+
+            TEST:::: */
+            md.settTimeFrame(MetricData.DAY);
+            md.setTimeStamp(calEnd.getTimeInMillis());
+
 
             // Get data from server
             perDay[i] = ServerConnector.gI().answerTimestampedQuery(md);
-
+            System.out.println("RESPONSE DATA: " + perDay[i].getValue());
             // Move forward one day
-            cal.add(Calendar.DATE, +i);
+            cal.add(Calendar.DATE, +1);
         }
 
         return perDay;
@@ -269,10 +275,10 @@ public class DataHandler
                 dataPoints[i] = new DataPoint(i + 1, 0);
             } else {
                 if (md instanceof Speed || md instanceof Fuel) {
-                    dataPoints[i] = new DataPoint(i + 1, (Double) (data[i]).getValue());
+                    dataPoints[i] = new DataPoint(i + 1, (Double)(data[i]).getValue());
                     System.out.println("ddddd: " + data[i].getValue());
                 } else {
-                    dataPoints[i] = new DataPoint(i + 1, (Long) (data[i]).getValue());
+                    dataPoints[i] = new DataPoint(i + 1, (Long)(data[i]).getValue());
                 }
             }
         }

@@ -17,6 +17,7 @@ import tux.gu.se.trux.R;
 public class FuelWindow extends DetailedStatsFragment {
 
     View myFragmentView;
+
     TextView fuelTextViewToday, fuelTextViewWeek, fuelTextViewMonth, fuelTextViewTotal;
     GraphView fuelGraph;
 
@@ -55,6 +56,8 @@ public class FuelWindow extends DetailedStatsFragment {
         fuelGraph = new GraphView(getActivity());
         fuelGraph.setTitle("Fuel Consumption");
         fuelGraph.setTitleTextSize(40);
+        fuelGraph.getViewport().setXAxisBoundsManual(true);
+        fuelGraph.getViewport().setMaxX(30);
         fuelGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Consumption");
         fuelGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
@@ -69,5 +72,11 @@ public class FuelWindow extends DetailedStatsFragment {
 
     public void hideLoading() {
         getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean hasLoaded() {
+        if (fuelTextViewToday != null) return true;
+        return false;
     }
 }

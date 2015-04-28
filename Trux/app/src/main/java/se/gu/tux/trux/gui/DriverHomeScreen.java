@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.LoginService;
 import se.gu.tux.trux.datastructure.Distance;
+import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.gui.detailedStats.Contact;
 import se.gu.tux.trux.gui.detailedStats.Stats;
@@ -59,23 +60,40 @@ public class DriverHomeScreen extends ItemMenu {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToStats(View view){
-
-        Intent intent = new Intent(DriverHomeScreen.this, ChooseStatScreen.class);
-        startActivity(intent);
-
-        /**
+    public void goToStats(View view) {
         Intent rich = new Intent(DriverHomeScreen.this, Stats.class);
         Intent simple = new Intent(DriverHomeScreen.this, SimpleStats.class);
+        ;
+        try {
+            final Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
+            if (speed.getValue() != null && (Double) speed.getValue() > 0) {
+                startActivity(simple);
+            } else
+                startActivity(rich);
+        } catch (Exception e) {
 
-        if (speed.getValue() == null) {
-            startActivity(rich);
         }
-        else {
-            startActivity(simple);
-        }
-        **/
     }
+    public void goLogout(MenuItem item){
+           super.logout(item);
+
+    }
+    /*
+    public void goSettings(MenuItem item){
+        super.goToSettings
+    }
+*/
+    public void goAbout(MenuItem item){
+        super.goToAbout(item);
+    }
+
+    public void goContact(MenuItem item){
+        super.goToContact(item);
+    }
+
+
+    //These lines are commented-out for now when we are doing the super.class to hold the menu items
+
 /*
     public void logout(MenuItem item){
 
