@@ -182,7 +182,7 @@ public class ServerConnector {
                         out.writeObject(query);
                         answer = (Data)in.readObject();
 
-                        System.out.println("returned values: " + answer.getSessionId() + " : " + answer.getUserId());
+                        System.out.println("returned values: " + answer.getValue());
 
                         dataSent = true;
 

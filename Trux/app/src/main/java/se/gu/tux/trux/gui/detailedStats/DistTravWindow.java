@@ -62,6 +62,8 @@ public class DistTravWindow extends DetailedStatsFragment {
         distanceGraph = new GraphView(getActivity());
         distanceGraph.setTitle("Distance Traveled");
         distanceGraph.setTitleTextSize(40);
+        distanceGraph.getViewport().setXAxisBoundsManual(true);
+        distanceGraph.getViewport().setMaxX(30);
         distanceGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Distance");
         distanceGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
@@ -76,5 +78,11 @@ public class DistTravWindow extends DetailedStatsFragment {
 
     public void hideLoading() {
         getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean hasLoaded() {
+        if (distanceTextViewToday != null) return true;
+        return false;
     }
 }

@@ -38,10 +38,10 @@ import tux.gu.se.trux.R;
 
 
 public class Stats extends ActionBarActivity implements Serializable {
-    Fragment fragment;
-    DetailedStatsFragment newFragment;
-    Button speedBtn, fuelBtn, distanceBtn, overallBtn;
-    FragmentTransaction transaction;
+    //volatile Fragment fragment;
+    private volatile DetailedStatsFragment newFragment;
+    private Button speedBtn, fuelBtn, distanceBtn, overallBtn;
+    private FragmentTransaction transaction;
 
 
     @Override
@@ -98,7 +98,8 @@ public class Stats extends ActionBarActivity implements Serializable {
 
                     @Override
                     protected Boolean doInBackground(Void... voids) {
-                        while (!DataHandler.getInstance().detailedStatsReady(s)) {
+                        while (!(DataHandler.getInstance().detailedStatsReady(s)
+                                && newFragment.hasLoaded())) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         return null;
@@ -128,7 +129,8 @@ public class Stats extends ActionBarActivity implements Serializable {
 
                     @Override
                     protected Boolean doInBackground(Void... voids) {
-                        while (!DataHandler.getInstance().detailedStatsReady(f)) {
+                        while (!(DataHandler.getInstance().detailedStatsReady(f)
+                                && newFragment.hasLoaded())) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         return null;
@@ -156,7 +158,8 @@ public class Stats extends ActionBarActivity implements Serializable {
 
                     @Override
                     protected Boolean doInBackground(Void... voids) {
-                        while (!DataHandler.getInstance().detailedStatsReady(d)) {
+                        while (!(DataHandler.getInstance().detailedStatsReady(d)
+                                && newFragment.hasLoaded())) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         return null;
@@ -206,6 +209,7 @@ public class Stats extends ActionBarActivity implements Serializable {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -232,12 +236,12 @@ public class Stats extends ActionBarActivity implements Serializable {
     }
 
     public void contact(MenuItem item){
-        fragment = new Contact();
+     /*   fragment = new Contact();
         transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.StatsView2, fragment);
         transaction.addToBackStack(null);
         transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-        transaction.commit();
+        transaction.commit();*/
     }
 }
 
