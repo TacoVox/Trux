@@ -3,12 +3,15 @@ package se.gu.tux.trux.gui;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
+import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.LoginService;
@@ -76,10 +79,34 @@ public class DriverHomeScreen extends ActionBarActivity {
 
     public void logout(MenuItem item){
 
-        LoginService.getInstance().logout();
-        Intent intent = new Intent(DriverHomeScreen.this, MainActivity.class);
-        startActivity(intent);
+        AsyncTask<Void, Void, Boolean> check = new Logout().execute();
+
+        boolean loggedOut = false;
+
+        try
+        {
+            loggedOut = check.get();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        if (loggedOut)
+        {
+            Intent intent = new Intent(DriverHomeScreen.this, MainActivity.class);
+            startActivity(intent);
+        }
+        else
+        {
+            Intent intent = new Intent(DriverHomeScreen.this, MainActivity.class);
+            startActivity(intent);
+        }
     }
+
+
     public void contact(MenuItem item){
         fragment = new Contact();
         transaction = getFragmentManager().beginTransaction();
@@ -96,6 +123,17 @@ public class DriverHomeScreen extends ActionBarActivity {
             this.finish();
         } else {
             getFragmentManager().popBackStack();
+        }
+    }
+
+
+    private class Logout extends AsyncTask<Void, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(Void... voids)
+        {
+            boolean success = LoginService.getInstance().logout();
+            return success;
         }
     }
 

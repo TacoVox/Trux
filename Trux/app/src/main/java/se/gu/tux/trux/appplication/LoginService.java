@@ -171,9 +171,12 @@ public class LoginService
     /**
      * Logs out the user from the application.
      */
-    public void logout()
+    public boolean logout()
     {
+        boolean isLoggedOut = false;
+
         ProtocolMessage pm = null;
+
         try
         {
             // send a protocol message with a request to log out
@@ -190,7 +193,10 @@ public class LoginService
             //Create anonymous instance - we don't need it after that
             new File(fileName).delete();
             DataHandler.getInstance().setUser(null);
+            isLoggedOut = true;
         }
+
+        return isLoggedOut;
     }
 
 
