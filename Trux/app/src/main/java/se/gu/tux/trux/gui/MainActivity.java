@@ -39,8 +39,6 @@ public class MainActivity extends ActionBarActivity
     Button btnRegister;
     CheckBox checkBox;
 
-    LoginService ls;
-
     private String[] userInfo;
 
     // file name
@@ -63,7 +61,7 @@ public class MainActivity extends ActionBarActivity
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
         // Create login service
-        ls = new LoginService(this.getBaseContext(), FILE_NAME);
+        LoginService.createInstance(this.getBaseContext(), FILE_NAME);
 
         ServerConnector.gI().connect("www.derkahler.de");
         //IServerConnector.getInstance().connectTo("10.0.2.2");
@@ -92,7 +90,7 @@ public class MainActivity extends ActionBarActivity
         }
         else
         {
-            userInfo = ls.readFromFile();
+            userInfo = LoginService.getInstance().readFromFile();
         }
 
         if (userInfo != null && userInfo[4].equals("true"))
@@ -264,7 +262,7 @@ public class MainActivity extends ActionBarActivity
         protected Boolean doInBackground(String... strings)
         {
             boolean isAllowed =
-                    ls.login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
+                    LoginService.getInstance().login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
 
             return isAllowed;
         }
