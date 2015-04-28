@@ -32,30 +32,23 @@ public class SpeedWindow extends DetailedStatsFragment {
     TextView speedTextViewToday, speedTextViewWeek, speedTextViewMonth, speedTextViewTotal;
     GraphView speedGraph;
 
-
     public void setValues(final MetricData speedToday, final MetricData speedWeek, final MetricData speedMonth,
                           final MetricData speedTotal, final LineGraphSeries speedValues) {
         if (speedToday.getValue() != null && speedWeek.getValue() != null
                 && speedMonth.getValue() != null && speedTotal.getValue() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    speedTextViewToday.setText(new Long(Math.round((Double) speedToday.getValue())).toString());
-                    speedTextViewWeek.setText(new Long(Math.round((Double) speedWeek.getValue())).toString());
-                    speedTextViewMonth.setText(new Long(Math.round((Double) speedMonth.getValue())).toString());
-                    speedTextViewTotal.setText(new Long(Math.round((Double) speedTotal.getValue())).toString());
 
-                    speedGraph.addSeries(speedValues);
-                }
-            });
+            speedTextViewToday.setText(new Long(Math.round((Double) speedToday.getValue())).toString());
+            speedTextViewWeek.setText(new Long(Math.round((Double) speedWeek.getValue())).toString());
+            speedTextViewMonth.setText(new Long(Math.round((Double) speedMonth.getValue())).toString());
+            speedTextViewTotal.setText(new Long(Math.round((Double) speedTotal.getValue())).toString());
 
+            speedGraph.addSeries(speedValues);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         myFragmentView = inflater.inflate(R.layout.fragment_speed_window, container, false);
 
         speedTextViewToday = (TextView) myFragmentView.findViewById(R.id.avg_today_speed_value);
@@ -64,7 +57,7 @@ public class SpeedWindow extends DetailedStatsFragment {
         speedTextViewTotal = (TextView) myFragmentView.findViewById(R.id.avg_total_speed_value);
 
         popSpeedGraph(myFragmentView);
-
+        myFragmentView.findViewById(R.id.loadingPanel).bringToFront();
         return myFragmentView;
     }
 
@@ -84,5 +77,7 @@ public class SpeedWindow extends DetailedStatsFragment {
         }
     }
 
-
+    public void hideLoading() {
+        myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+    }
 }

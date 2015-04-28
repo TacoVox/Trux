@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="se.gu.tux.trux.gui.DriverHomeScreen"
-    android:id="@+id/layout"
+
     android:padding="5dp"
     android:background="#E0E0E0">
 
@@ -12,6 +12,10 @@
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        android:layout_margin="10dip"
+        android:id="@+id/driverhome"
+        android:padding="10dip"
+        android:background="@drawable/custom_border"
         android:weightSum="2">
 
         <Button
@@ -19,7 +23,7 @@
             android:layout_height="fill_parent"
             android:text="@string/community_text"
             android:id="@+id/communityBtn"
-            android:background="#3D3D3D"
+            android:background="@drawable/button_clickable"
             android:textColor="#E0E0E0"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
@@ -38,7 +42,7 @@
                 android:layout_height="fill_parent"
                 android:text="@string/profile_text"
                 android:id="@+id/profileBtn"
-                android:background="#3D3D3D"
+                android:background="@drawable/button_clickable"
                 android:textColor="#E0E0E0"
                 android:layout_weight="1"
                 android:layout_margin="5dp"/>
@@ -48,7 +52,7 @@
                 android:layout_height="fill_parent"
                 android:text="@string/statistics_text"
                 android:id="@+id/statsBtn"
-                android:background="#3D3D3D"
+                android:background="@drawable/button_clickable"
                 android:textColor="#E0E0E0"
                 android:layout_weight="1"
                 android:onClick="goToStats"

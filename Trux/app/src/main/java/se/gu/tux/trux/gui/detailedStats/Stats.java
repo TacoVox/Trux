@@ -4,6 +4,7 @@ package se.gu.tux.trux.gui.detailedStats;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.Serializable;
+import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
@@ -27,22 +29,18 @@ import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 /**
- * Möjligtvis snygga till koden genom att:
+ * TODO TODO TODO Möjligtvis snygga till koden genom att:
  * Skapa en datatyp som innehåller today - total + linegraphseries
  * Ev låt DataHandler fylla HELA den med data?
- * Skapa en metod i stats som returnerar dessa mot en key (t ex speed)
- * OM de är satta, annars null
- * Låt en inre klass av asynctask fråga regelbundet
- * Skicka hela datatypen till DetailedStatsFragment.setValues när den är laddad == inte null
- *
+ * SE LÄNGRE KOMMENTAR I ONCLICK
  *
  */
 
 
 public class Stats extends ActionBarActivity implements Serializable {
-
+    Fragment fragment;
     DetailedStatsFragment newFragment;
-    Button speedBtn, fuelBtn, distanceBtn;
+    Button speedBtn, fuelBtn, distanceBtn, overallBtn;
     FragmentTransaction transaction;
 
     private volatile Speed speedToday;
@@ -76,7 +74,7 @@ public class Stats extends ActionBarActivity implements Serializable {
         speedBtn = (Button) findViewById(R.id.speed_button);
         fuelBtn = (Button) findViewById(R.id.fuel_button);
         distanceBtn = (Button) findViewById(R.id.distance_traveled);
-
+        overallBtn = (Button) findViewById(R.id.overall_button);
         Button.OnClickListener btnOnClick = new ButtonListener();
 
         speedBtn.setOnClickListener(btnOnClick);
@@ -90,64 +88,102 @@ public class Stats extends ActionBarActivity implements Serializable {
 
         @Override
         public void onClick(final View v) {
+            // TODO: Tell datahandler to start downloading stats
+            // then check if loaded (for the seleceted metric type)
+            // the data handler should be able to return a wrapper object for all detailed stats
+            // with just a metric data as key argument (give it a fuel object to receive detailed
+            // stats object for fuel etc) - The data handler should then store these in a hash map
+            // or something - cache them and also let the wrapper object contain a timestamp -
+            // that way if they are older than say 15 minutes, update them : ))
+
             newFragment = null;
+
             if (v == speedBtn) {
                 newFragment = new SpeedWindow();
+
                 // Make sure values are set once they are loaded
-                new AsyncTask() {
+                AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
                     @Override
-                    protected Object doInBackground(Object[] objects) {
+                    protected Boolean doInBackground(Void... voids) {
                         while (!speedLoaded) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                newFragment.setValues(speedToday, speedWeek, speedMonth, speedTotal,
-                                        speedValues);
-                            }
-                        });
                         return null;
                     }
+
+                    @Override
+                    public void onPreExecute() {
+                        super.onPreExecute();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean b) {
+                        super.onPostExecute(b);
+                        newFragment.setValues(speedToday, speedWeek, speedMonth, speedTotal,
+                            speedValues);
+                        newFragment.hideLoading();
+                    }
                 }.execute();
+
+
+
             } else if (v == fuelBtn) {
+
                 newFragment = new FuelWindow();
 
-                new AsyncTask() {
+                AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
                     @Override
-                    protected Object doInBackground(Object[] objects) {
+                    protected Boolean doInBackground(Void... voids) {
                         while (!fuelLoaded) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                newFragment.setValues(fuelToday, fuelWeek, fuelMonth, fuelTotal,
-                                        fuelValues);
-                            }
-                        });
                         return null;
                     }
+
+                    @Override
+                    public void onPreExecute() {
+                        super.onPreExecute();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean b) {
+                        super.onPostExecute(b);
+                        newFragment.setValues(fuelToday, fuelWeek, fuelMonth, fuelTotal,
+                                fuelValues);
+                        newFragment.hideLoading();
+                    }
                 }.execute();
+                
             } else if (v == distanceBtn) {
+                
                 newFragment = new DistTravWindow();
 
-                new AsyncTask() {
+
+                AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
                     @Override
-                    protected Object doInBackground(Object[] objects) {
+                    protected Boolean doInBackground(Void... voids) {
                         while (!distanceLoaded) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                newFragment.setValues(distanceToday, distanceWeek, distanceMonth, distanceTotal,
-                                        distanceValues);
-                            }
-                        });
                         return null;
                     }
+
+                    @Override
+                    public void onPreExecute() {
+                        super.onPreExecute();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean b) {
+                        super.onPostExecute(b);
+                        newFragment.setValues(distanceToday, distanceWeek, distanceMonth, distanceTotal,
+                                distanceValues);
+                        newFragment.hideLoading();
+                    }
                 }.execute();
+            } else if (v == overallBtn){
+                Intent intent = new Intent(Stats.this, OverallStats.class);
+                startActivity(intent);
             }
 
             transaction = getFragmentManager().beginTransaction();
@@ -272,6 +308,30 @@ public class Stats extends ActionBarActivity implements Serializable {
             }
         }
         return dataPoints;
+    }
+
+    public void logout(MenuItem item){
+        Intent intent = new Intent(Stats.this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    public void contact(MenuItem item){
+        fragment = new Contact();
+        transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.StatsView2, fragment);
+        transaction.addToBackStack(null);
+        transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+        transaction.commit();
+    }
+
+    public Speed getTotalSpeed(){
+        return speedTotal;
+    }
+    public Fuel getTotalFuel(){
+        return fuelTotal;
+    }
+    public Distance getTotalDistance(){
+        return distanceTotal;
     }
 }
 
