@@ -23,6 +23,7 @@ import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 
 import se.gu.tux.truxserver.logger.Logger;
+import se.gu.tux.truxserver.services.EMailSender;
 
 /**
  *
@@ -243,17 +244,20 @@ public class UserHandler {
         try
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO register, (username, password, firstname, lastname, "
-                            + "email, timestamp) VALUES(?, ?, ?, ?, ?, ?)");
+                    "INSERT INTO register, (registerid, username, password, firstname, lastname, "
+                            + "email, timestamp) VALUES(?, ?, ?, ?, ?, ?, ?)");
             
-            pst.setString(1, u.getUsername());
-            pst.setString(2, u.getPasswordHash());
-            pst.setString(3, u.getFirstName());
-            pst.setString(4, u.getLastName());
-            pst.setString(5, u.getEmail());
-            pst.setLong(6, System.currentTimeMillis());
+            pst.setInt(1, u.getEmail().hashCode());
+            pst.setString(2, u.getUsername());
+            pst.setString(3, u.getPasswordHash());
+            pst.setString(4, u.getFirstName());
+            pst.setString(5, u.getLastName());
+            pst.setString(6, u.getEmail());
+            pst.setLong(7, System.currentTimeMillis());
 	
             pst.executeUpdate();
+            
+            EMailSender.gI().sendConfirmationMail(u.getEmail(), Integer.toString(u.getEmail().hashCode()));
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         }
