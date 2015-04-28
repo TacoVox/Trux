@@ -316,14 +316,16 @@ public class LoginService
                     new File(fileName).delete();
                     results = null;
                 }
-
-                System.out.println("-------- user info in file -------------");
-                System.out.println("username: " + results[0]);
-                System.out.println("password hash: " + results[1]);
-                System.out.println("session ID: " + results[2]);
-                System.out.println("user ID: " + results[3]);
-                System.out.println("stay logged in? : " + results[4]);
-                System.out.println("----------------------------------------");
+                else
+                {
+                    System.out.println("-------- user info in file -------------");
+                    System.out.println("username: " + results[0]);
+                    System.out.println("password hash: " + results[1]);
+                    System.out.println("session ID: " + results[2]);
+                    System.out.println("user ID: " + results[3]);
+                    System.out.println("stay logged in? : " + results[4]);
+                    System.out.println("----------------------------------------");
+                }
             }
         }
         catch (FileNotFoundException e)
