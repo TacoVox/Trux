@@ -311,6 +311,12 @@ public class LoginService
 
                 results = stringBuilder.toString().split(":");
 
+                if (results.length < 5)
+                {
+                    new File(fileName).delete();
+                    results = null;
+                }
+
                 System.out.println("-------- user info in file -------------");
                 System.out.println("username: " + results[0]);
                 System.out.println("password hash: " + results[1]);
