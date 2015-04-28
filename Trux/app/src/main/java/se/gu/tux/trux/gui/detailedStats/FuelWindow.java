@@ -1,10 +1,6 @@
 package se.gu.tux.trux.gui.detailedStats;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,43 +8,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.datastructure.MetricData;
-import se.gu.tux.trux.datastructure.Fuel;
-import se.gu.tux.trux.datastructure.Speed;
-import se.gu.tux.trux.gui.MainActivity;
-import se.gu.tux.trux.technical_services.NotLoggedInException;
+import se.gu.tux.trux.appplication.DetailedStatsBundle;
 import tux.gu.se.trux.R;
 
 
 public class FuelWindow extends DetailedStatsFragment {
 
     View myFragmentView;
+
     TextView fuelTextViewToday, fuelTextViewWeek, fuelTextViewMonth, fuelTextViewTotal;
     GraphView fuelGraph;
 
-    public void setValues(final MetricData fuelToday, final MetricData fuelWeek, final MetricData fuelMonth,
-                          final MetricData fuelTotal, final LineGraphSeries fuelValues) {
-        if (fuelToday.getValue() != null && fuelWeek.getValue() != null
-                && fuelMonth.getValue() != null && fuelTotal.getValue() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    fuelTextViewToday.setText(new Long(Math.round((Double) fuelToday.getValue())).toString());
-                    fuelTextViewWeek.setText(new Long(Math.round((Double) fuelWeek.getValue())).toString());
-                    fuelTextViewMonth.setText(new Long(Math.round((Double) fuelMonth.getValue())).toString());
-                    fuelTextViewTotal.setText(new Long(Math.round((Double) fuelTotal.getValue())).toString());
-
-                    fuelGraph.addSeries(fuelValues);
-                }
-            });
-
+    @Override
+    public void setValues(DetailedStatsBundle stats) {
+        if (stats != null) {
+            fuelTextViewToday.setText(new Long(Math.round((Double) stats.getToday().getValue())).toString());
+            fuelTextViewWeek.setText(new Long(Math.round((Double) stats.getWeek().getValue())).toString());
+            fuelTextViewMonth.setText(new Long(Math.round((Double) stats.getMonth().getValue())).toString());
+            fuelTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString());
+            LineGraphSeries fuelValues = new LineGraphSeries(stats.getGraphPoints());
+            fuelGraph.addSeries(fuelValues);
         }
     }
 
@@ -75,6 +56,8 @@ public class FuelWindow extends DetailedStatsFragment {
         fuelGraph = new GraphView(getActivity());
         fuelGraph.setTitle("Fuel Consumption");
         fuelGraph.setTitleTextSize(40);
+        fuelGraph.getViewport().setXAxisBoundsManual(true);
+        fuelGraph.getViewport().setMaxX(30);
         fuelGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Consumption");
         fuelGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
@@ -89,5 +72,11 @@ public class FuelWindow extends DetailedStatsFragment {
 
     public void hideLoading() {
         getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean hasLoaded() {
+        if (fuelTextViewToday != null) return true;
+        return false;
     }
 }

@@ -163,7 +163,7 @@ public class SessionHandler {
         
         try
 	{
-            String updateStmnt = "UPDATE session SET endtime = ?" +
+            String updateStmnt = "UPDATE session SET endtime = ? " +
                     "WHERE userid = ? AND sessionid = ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(

@@ -22,6 +22,7 @@ public class MetricData extends Data
     /**
      * Constructor.
      */
+    public MetricData(){}
     public MetricData(long tf){
         this.tf = tf;
     }
@@ -65,5 +66,9 @@ public class MetricData extends Data
         } else {
             return false;
         }
+    }
+
+    public int hashCode() {
+        return (int)(tf + Math.round((Double)getValue() * 1000));
     }
 }

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import se.gu.tux.trux.appplication.LoginService;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.gui.detailedStats.Contact;
 import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
@@ -29,7 +31,7 @@ import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends ItemMenu
 {
     Fragment newFragment;
     FragmentTransaction transaction;
@@ -38,8 +40,6 @@ public class MainActivity extends ActionBarActivity
     TextView passField;
     Button btnRegister;
     CheckBox checkBox;
-
-    LoginService ls;
 
     private String[] userInfo;
 
@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
         // Create login service
-        ls = new LoginService(this.getBaseContext(), FILE_NAME);
+        LoginService.createInstance(this.getBaseContext(), FILE_NAME);
 
         ServerConnector.gI().connect("www.derkahler.de");
         //IServerConnector.getInstance().connectTo("10.0.2.2");
@@ -79,7 +79,6 @@ public class MainActivity extends ActionBarActivity
         // create a file to store data
         if (file == null || !file.exists())
         {
-            //file = new File(getFilesDir(), FILE_NAME);
             try
             {
                 file.createNewFile();
@@ -92,7 +91,7 @@ public class MainActivity extends ActionBarActivity
         }
         else
         {
-            userInfo = ls.readFromFile();
+            userInfo = LoginService.getInstance().readFromFile();
         }
 
         if (userInfo != null && userInfo[4].equals("true"))
@@ -243,7 +242,14 @@ public class MainActivity extends ActionBarActivity
         }
     };
 
-
+    public void goContact(MenuItem item){
+        newFragment = new Contact();
+        transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.mainActivity, newFragment);
+        transaction.addToBackStack(null);
+        transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+        transaction.commit();
+    }
 
     @Override
     public void onBackPressed() {
@@ -261,13 +267,26 @@ public class MainActivity extends ActionBarActivity
     private class LoginCheck extends AsyncTask<String, Void, Boolean>
     {
         @Override
+        protected void onPreExecute()
+        {
+            Toast.makeText(getApplicationContext(), "Logging in. Please wait...", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
         protected Boolean doInBackground(String... strings)
         {
             boolean isAllowed =
-                    ls.login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
+                    LoginService.getInstance().login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
 
             return isAllowed;
         }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean)
+        {
+            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
+        }
+        
     } // end inner class
 
 

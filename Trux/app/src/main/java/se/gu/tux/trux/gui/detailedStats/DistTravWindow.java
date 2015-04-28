@@ -1,10 +1,6 @@
 package se.gu.tux.trux.gui.detailedStats;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,18 +8,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.datastructure.Distance;
-import se.gu.tux.trux.datastructure.MetricData;
-import se.gu.tux.trux.datastructure.Speed;
-import se.gu.tux.trux.gui.MainActivity;
-import se.gu.tux.trux.technical_services.NotLoggedInException;
+import se.gu.tux.trux.appplication.DetailedStatsBundle;
 import tux.gu.se.trux.R;
 
 
@@ -33,27 +20,22 @@ public class DistTravWindow extends DetailedStatsFragment {
     TextView distanceTextViewToday, distanceTextViewWeek, distanceTextViewMonth, distanceTextViewTotal;
     GraphView distanceGraph;
 
-    public void setValues(final MetricData distanceToday, final MetricData distanceWeek, final MetricData distanceMonth,
-                          final MetricData distanceTotal, final LineGraphSeries distanceValues) {
-        if (distanceToday.getValue() != null && distanceWeek.getValue() != null
-                && distanceMonth.getValue() != null && distanceTotal.getValue() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Long distToday = (Long) distanceToday.getValue() / 1000;
-                    Long distWeek = (Long) distanceWeek.getValue() / 1000;
-                    Long distMonth = (Long) distanceMonth.getValue() / 1000;
-                    Long distTotal = (Long) distanceTotal.getValue() / 1000;
 
-                    distanceTextViewToday.setText(distToday.toString());
-                    distanceTextViewWeek.setText(distWeek.toString());
-                    distanceTextViewMonth.setText(distMonth.toString());
-                    distanceTextViewTotal.setText(distTotal.toString());
+    @Override
+    public void setValues(final DetailedStatsBundle stats) {
+        if (stats != null) {
+            Long distToday = (Long) stats.getToday().getValue() / 1000;
+            Long distWeek = (Long) stats.getWeek().getValue() / 1000;
+            Long distMonth = (Long) stats.getMonth().getValue() / 1000;
+            Long distTotal = (Long) stats.getTotal().getValue() / 1000;
 
-                    distanceGraph.addSeries(distanceValues);
-                }
-            });
+            distanceTextViewToday.setText(distToday.toString());
+            distanceTextViewWeek.setText(distWeek.toString());
+            distanceTextViewMonth.setText(distMonth.toString());
+            distanceTextViewTotal.setText(distTotal.toString());
 
+            LineGraphSeries distanceValues = new LineGraphSeries(stats.getGraphPoints());
+            distanceGraph.addSeries(distanceValues);
         }
     }
 
@@ -80,6 +62,8 @@ public class DistTravWindow extends DetailedStatsFragment {
         distanceGraph = new GraphView(getActivity());
         distanceGraph.setTitle("Distance Traveled");
         distanceGraph.setTitleTextSize(40);
+        distanceGraph.getViewport().setXAxisBoundsManual(true);
+        distanceGraph.getViewport().setMaxX(30);
         distanceGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Distance");
         distanceGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
@@ -94,5 +78,11 @@ public class DistTravWindow extends DetailedStatsFragment {
 
     public void hideLoading() {
         getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean hasLoaded() {
+        if (distanceTextViewToday != null) return true;
+        return false;
     }
 }

@@ -105,6 +105,10 @@ public class ServerConnector {
         return connector.sendQuery(d);
     }
 
+    public Data answerTimestampedQuery(Data d) throws NotLoggedInException {
+        return connector.sendQuery(d);
+    }
+
 
     class ConnectorRunnable implements Runnable {
         private Socket cs;
@@ -172,13 +176,13 @@ public class ServerConnector {
                     try {
 
                         // Send and receive
-                        System.out.println("Sending query...");
+                        System.out.println("Sending query...: " + query.getTimeStamp());
                         query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
                         query.setUserId(DataHandler.getInstance().getUser().getUserId());
                         out.writeObject(query);
                         answer = (Data)in.readObject();
 
-                        System.out.println("returned values: " + answer.getSessionId() + " : " + answer.getUserId());
+                        System.out.println("returned values: " + answer.getValue());
 
                         dataSent = true;
 

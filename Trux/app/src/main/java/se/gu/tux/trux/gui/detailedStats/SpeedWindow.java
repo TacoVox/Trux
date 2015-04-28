@@ -1,9 +1,6 @@
 package se.gu.tux.trux.gui.detailedStats;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,19 +8,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.MetricData;
-import se.gu.tux.trux.datastructure.Speed;
-import se.gu.tux.trux.gui.ChooseStatScreen;
-import se.gu.tux.trux.gui.MainActivity;
-import se.gu.tux.trux.technical_services.NotLoggedInException;
+import se.gu.tux.trux.appplication.DetailedStatsBundle;
 import tux.gu.se.trux.R;
 
 public class SpeedWindow extends DetailedStatsFragment {
@@ -31,20 +18,6 @@ public class SpeedWindow extends DetailedStatsFragment {
     View myFragmentView;
     TextView speedTextViewToday, speedTextViewWeek, speedTextViewMonth, speedTextViewTotal;
     GraphView speedGraph;
-
-    public void setValues(final MetricData speedToday, final MetricData speedWeek, final MetricData speedMonth,
-                          final MetricData speedTotal, final LineGraphSeries speedValues) {
-        if (speedToday.getValue() != null && speedWeek.getValue() != null
-                && speedMonth.getValue() != null && speedTotal.getValue() != null) {
-
-            speedTextViewToday.setText(new Long(Math.round((Double) speedToday.getValue())).toString());
-            speedTextViewWeek.setText(new Long(Math.round((Double) speedWeek.getValue())).toString());
-            speedTextViewMonth.setText(new Long(Math.round((Double) speedMonth.getValue())).toString());
-            speedTextViewTotal.setText(new Long(Math.round((Double) speedTotal.getValue())).toString());
-
-            speedGraph.addSeries(speedValues);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,9 +39,10 @@ public class SpeedWindow extends DetailedStatsFragment {
         speedGraph = new GraphView(getActivity());
         speedGraph.setTitle("Speed");
         speedGraph.setTitleTextSize(40);
+        speedGraph.getViewport().setXAxisBoundsManual(true);
+        speedGraph.getViewport().setMaxX(30);
         speedGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Speed");
         speedGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
-
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.SpeedGraph);
             layout.addView(speedGraph);
@@ -77,7 +51,26 @@ public class SpeedWindow extends DetailedStatsFragment {
         }
     }
 
+    @Override
+    public void setValues(DetailedStatsBundle stats) {
+        if (stats != null) {
+            speedTextViewToday.setText(new Long(Math.round((Double) stats.getToday().getValue())).toString());
+            speedTextViewWeek.setText(new Long(Math.round((Double) stats.getWeek().getValue())).toString());
+            speedTextViewMonth.setText(new Long(Math.round((Double) stats.getMonth().getValue())).toString());
+            speedTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString());
+            LineGraphSeries speedValues = new LineGraphSeries(stats.getGraphPoints());
+            speedGraph.addSeries(speedValues);
+            speedGraph.invalidate();
+        }
+    }
+
     public void hideLoading() {
         myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean hasLoaded() {
+        if (speedTextViewToday != null) return true;
+        return false;
     }
 }

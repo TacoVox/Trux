@@ -38,31 +38,10 @@ import tux.gu.se.trux.R;
 
 
 public class Stats extends ActionBarActivity implements Serializable {
-    Fragment fragment;
-    DetailedStatsFragment newFragment;
-    Button speedBtn, fuelBtn, distanceBtn, overallBtn;
-    FragmentTransaction transaction;
-
-    private volatile Speed speedToday;
-    private volatile Speed speedWeek;
-    private volatile Speed speedMonth;
-    private volatile Speed speedTotal;
-    private volatile LineGraphSeries speedValues;
-    private volatile Boolean speedLoaded = false;
-
-    private volatile Fuel fuelToday;
-    private volatile Fuel fuelWeek;
-    private volatile Fuel fuelMonth;
-    private volatile Fuel fuelTotal;
-    private volatile LineGraphSeries fuelValues;
-    private volatile boolean fuelLoaded = false;
-
-    private volatile Distance distanceToday;
-    private volatile Distance distanceWeek;
-    private volatile Distance distanceMonth;
-    private volatile Distance distanceTotal;
-    private volatile LineGraphSeries distanceValues;
-    private volatile boolean distanceLoaded = false;
+    //volatile Fragment fragment;
+    private volatile DetailedStatsFragment newFragment;
+    private Button speedBtn, fuelBtn, distanceBtn, overallBtn;
+    private FragmentTransaction transaction;
 
 
     @Override
@@ -81,13 +60,25 @@ public class Stats extends ActionBarActivity implements Serializable {
         fuelBtn.setOnClickListener(btnOnClick);
         distanceBtn.setOnClickListener(btnOnClick);
 
-        getValues();
+        // Tell data handler to start downloading all stats
+        DataHandler.getInstance().cacheDetailedStats();;
     }
 
-     class ButtonListener implements Button.OnClickListener {
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Tell data handler to start downloading all stats
+        DataHandler.getInstance().cacheDetailedStats();;
+    }
+
+    class ButtonListener implements Button.OnClickListener {
 
         @Override
         public void onClick(final View v) {
+
+
+
             // TODO: Tell datahandler to start downloading stats
             // then check if loaded (for the seleceted metric type)
             // the data handler should be able to return a wrapper object for all detailed stats
@@ -103,9 +94,12 @@ public class Stats extends ActionBarActivity implements Serializable {
 
                 // Make sure values are set once they are loaded
                 AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
+                    Speed s = new Speed(0);
+
                     @Override
                     protected Boolean doInBackground(Void... voids) {
-                        while (!speedLoaded) {
+                        while (!(DataHandler.getInstance().detailedStatsReady(s)
+                                && newFragment.hasLoaded())) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         return null;
@@ -119,8 +113,7 @@ public class Stats extends ActionBarActivity implements Serializable {
                     @Override
                     protected void onPostExecute(Boolean b) {
                         super.onPostExecute(b);
-                        newFragment.setValues(speedToday, speedWeek, speedMonth, speedTotal,
-                            speedValues);
+                        newFragment.setValues(DataHandler.getInstance().getDetailedStats(s));
                         newFragment.hideLoading();
                     }
                 }.execute();
@@ -132,9 +125,12 @@ public class Stats extends ActionBarActivity implements Serializable {
                 newFragment = new FuelWindow();
 
                 AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
+                    Fuel f = new Fuel(0);
+
                     @Override
                     protected Boolean doInBackground(Void... voids) {
-                        while (!fuelLoaded) {
+                        while (!(DataHandler.getInstance().detailedStatsReady(f)
+                                && newFragment.hasLoaded())) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         return null;
@@ -148,8 +144,7 @@ public class Stats extends ActionBarActivity implements Serializable {
                     @Override
                     protected void onPostExecute(Boolean b) {
                         super.onPostExecute(b);
-                        newFragment.setValues(fuelToday, fuelWeek, fuelMonth, fuelTotal,
-                                fuelValues);
+                        newFragment.setValues(DataHandler.getInstance().getDetailedStats(f));
                         newFragment.hideLoading();
                     }
                 }.execute();
@@ -158,11 +153,13 @@ public class Stats extends ActionBarActivity implements Serializable {
                 
                 newFragment = new DistTravWindow();
 
-
                 AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
+                    Distance d = new Distance(0);
+
                     @Override
                     protected Boolean doInBackground(Void... voids) {
-                        while (!distanceLoaded) {
+                        while (!(DataHandler.getInstance().detailedStatsReady(d)
+                                && newFragment.hasLoaded())) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         return null;
@@ -176,8 +173,7 @@ public class Stats extends ActionBarActivity implements Serializable {
                     @Override
                     protected void onPostExecute(Boolean b) {
                         super.onPostExecute(b);
-                        newFragment.setValues(distanceToday, distanceWeek, distanceMonth, distanceTotal,
-                                distanceValues);
+                        newFragment.setValues(DataHandler.getInstance().getDetailedStats(d));
                         newFragment.hideLoading();
                     }
                 }.execute();
@@ -213,6 +209,7 @@ public class Stats extends ActionBarActivity implements Serializable {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -232,83 +229,6 @@ public class Stats extends ActionBarActivity implements Serializable {
         Intent intent = new Intent(this, OverallStats.class);
         startActivity(intent);
     }
-    public void getValues() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-
-                    speedToday = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.DAY));
-                    speedWeek = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.WEEK));
-                    speedMonth = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.THIRTYDAYS));
-                    speedTotal = (Speed) DataHandler.getInstance().getData(new Speed(MetricData.FOREVER));
-
-                    // Create speed object and mark it with current time.
-                    // Then request an array of speed average values for last 30 days.
-                    Speed mySpeed = new Speed(0);
-                    mySpeed.setTimeStamp(System.currentTimeMillis());
-                    Data[] avgSpeedPerDay = DataHandler.getInstance().getPerDay(mySpeed, 30);
-                    DataPoint[] speedPoints = getDataPoints(avgSpeedPerDay);
-                    speedValues = new LineGraphSeries(speedPoints);
-
-                    speedLoaded = true;
-                    System.out.println("SPEED LOADED");
-
-
-                    fuelToday = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.DAY));
-                    fuelWeek = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.WEEK));
-                    fuelMonth = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.THIRTYDAYS));
-                    fuelTotal = (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.FOREVER));
-
-                    Fuel myFuel = new Fuel(0);
-                    myFuel.setTimeStamp(System.currentTimeMillis());
-                    Data[] avgFuelPerDay = DataHandler.getInstance().getPerDay(myFuel, 30);
-                    DataPoint[] fuelPoints = getDataPoints(avgFuelPerDay);
-                    fuelValues = new LineGraphSeries(fuelPoints);
-
-                    fuelLoaded = true;
-                    System.out.println("FUEL LOADED");
-
-
-                    distanceToday = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.DAY));
-                    distanceWeek = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.WEEK));
-                    distanceMonth = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.THIRTYDAYS));
-                    distanceTotal = (Distance) DataHandler.getInstance().getData(new Distance(MetricData.FOREVER));
-
-                    Distance myDistance = new Distance(0);
-                    myDistance.setTimeStamp(System.currentTimeMillis());
-                    Data[] avgDistancePerDay = DataHandler.getInstance().getPerDay(myDistance, 30);
-                    DataPoint[] distancePoints = getDataPoints(avgDistancePerDay);
-                    distanceValues = new LineGraphSeries(distancePoints);
-
-                    distanceLoaded = true;
-                    System.out.println("DISTANCE LOADED");
-                }
-                catch (NotLoggedInException nLIE){
-                    System.out.println("NotLoggedInException: " + nLIE.getMessage());
-                    Intent intent = new Intent(Stats.this, MainActivity.class);
-                    startActivity(intent);
-                }
-            }
-        }).start();
-    }
-
-    public DataPoint[] getDataPoints(Data[] data) {
-
-        DataPoint[] dataPoints = new DataPoint[30];
-        for (int i = 0; i < 30; i++) {
-            if (data[i].getValue() == null) {
-                System.out.println("Assuming 0 at null value at pos: " + i );
-                dataPoints[i] = new DataPoint(i + 1, 0);
-            } else {
-                if(!speedLoaded || !fuelLoaded)
-                    dataPoints[i] = new DataPoint(i + 1, (Double)(data[i]).getValue());
-                else
-                    dataPoints[i] = new DataPoint(i + 1, (Long)(data[i]).getValue());
-            }
-        }
-        return dataPoints;
-    }
 
     public void logout(MenuItem item){
         Intent intent = new Intent(Stats.this, MainActivity.class);
@@ -316,22 +236,12 @@ public class Stats extends ActionBarActivity implements Serializable {
     }
 
     public void contact(MenuItem item){
-        fragment = new Contact();
+     /*   fragment = new Contact();
         transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.StatsView2, fragment);
         transaction.addToBackStack(null);
         transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-        transaction.commit();
-    }
-
-    public Speed getTotalSpeed(){
-        return speedTotal;
-    }
-    public Fuel getTotalFuel(){
-        return fuelTotal;
-    }
-    public Distance getTotalDistance(){
-        return distanceTotal;
+        transaction.commit();*/
     }
 }
 
