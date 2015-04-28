@@ -78,7 +78,6 @@ public class MainActivity extends ActionBarActivity
         // create a file to store data
         if (file == null || !file.exists())
         {
-            //file = new File(getFilesDir(), FILE_NAME);
             try
             {
                 file.createNewFile();
