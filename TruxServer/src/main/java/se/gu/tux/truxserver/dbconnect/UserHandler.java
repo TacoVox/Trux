@@ -74,7 +74,6 @@ public class UserHandler {
      */
     public Data login(User u)
     {
-        long userid = -1;
         String passwd = null;
         
         DBConnector dbc = ConnectionPool.gI().getDBC();
@@ -93,7 +92,7 @@ public class UserHandler {
 	    
 	    while (rs.next())
 	    {
-                userid = rs.getLong("userid");
+                u.setUserId(rs.getLong("userid"));
                 passwd = rs.getString("password");
                 
 		break;
@@ -107,10 +106,10 @@ public class UserHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
         
-        if(u.passwordMatch(passwd) && userid != -1) {
+        if(u.passwordMatch(passwd) && u.getUserId() != -1) {
             ProtocolMessage pm = new ProtocolMessage(ProtocolMessage.Type.LOGIN_SUCCESS);
             
-            pm.setUserId(userid);
+            pm.setUserId(u.getUserId());
             pm.setSessionId(SessionHandler.gI().startSession(u));
             
             return pm;
@@ -124,7 +123,7 @@ public class UserHandler {
      * @param u
      * @return 
      */
-    public Data autoLogin(User u)
+    public Data autoLogin(ProtocolMessage pm)
     {
         long userid = -1;
         String passwd = null;
@@ -136,13 +135,13 @@ public class UserHandler {
 	{
             String selectStmnt = "SELECT user.userid, user.password, session.sessionid" +
                     " FROM user, session WHERE user.userid = session.userid AND"
-                    + " user.userid = ? AND session.sessionid = ?";
+                    + " user.userid = ? AND session.sessionid = ? AND session.endtime IS NULL;";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, u.getUserId()); 
-            pst.setLong(2, u.getSessionId());
+            pst.setLong(1, pm.getUserId()); 
+            pst.setLong(2, pm.getSessionId());
             
 	    ResultSet rs = pst.executeQuery();
 	    
@@ -163,14 +162,14 @@ public class UserHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
         
-        if(u.passwordMatch(passwd) && sessionid == u.getSessionId() 
-                && userid == u.getUserId()) {
-            ProtocolMessage pm = new ProtocolMessage(ProtocolMessage.Type.LOGIN_SUCCESS);
+        if(pm.getMessage().equals(passwd) && sessionid == pm.getSessionId() 
+                && userid == pm.getUserId()) {
+            ProtocolMessage m = new ProtocolMessage(ProtocolMessage.Type.LOGIN_SUCCESS);
             
-            pm.setUserId(userid);
-            pm.setSessionId(SessionHandler.gI().startSession(u));
+            m.setUserId(userid);
+            m.setSessionId(sessionid);
             
-            return pm;
+            return m;
         }
         else
             return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
