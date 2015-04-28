@@ -22,6 +22,7 @@ public class MetricData extends Data
     /**
      * Constructor.
      */
+    public MetricData(){}
     public MetricData(long tf){
         this.tf = tf;
     }
