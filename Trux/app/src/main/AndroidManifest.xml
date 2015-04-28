@@ -15,6 +15,7 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -60,6 +61,10 @@
         <activity
             android:name="se.gu.tux.trux.gui.detailedStatistics.StatsWindows"
             android:label="@string/title_activity_stats_windows" >
+        </activity>
+        <activity
+            android:name="se.gu.tux.trux.gui.ItemMenu"
+            android:label="@string/title_activity_item_menu" >
         </activity>
     </application>
 

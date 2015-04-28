@@ -23,7 +23,7 @@ import se.gu.tux.trux.gui.simpleStats.SimpleStats;
 import tux.gu.se.trux.R;
 
 
-public class DriverHomeScreen extends ActionBarActivity {
+public class DriverHomeScreen extends ItemMenu {
 
 
     Fragment fragment;
@@ -36,14 +36,14 @@ public class DriverHomeScreen extends ActionBarActivity {
     }
 
 
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_driver_home_screen, menu);
         return true;
     }
-
+*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -76,7 +76,7 @@ public class DriverHomeScreen extends ActionBarActivity {
         }
         **/
     }
-
+/*
     public void logout(MenuItem item){
 
         AsyncTask<Void, Void, Boolean> check = new Logout().execute();
@@ -136,5 +136,5 @@ public class DriverHomeScreen extends ActionBarActivity {
             return success;
         }
     }
-
+*/
 }
