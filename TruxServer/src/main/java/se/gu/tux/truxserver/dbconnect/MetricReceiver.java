@@ -111,6 +111,9 @@ public class MetricReceiver {
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 
+            Logger.gI().addDebug("Timestamp: " + Long.toString(md.getTimeStamp()));
+            Logger.gI().addDebug("Timeframe: " + Long.toString(md.getTimeFrame()));
+            
             pst.setLong(1, md.getUserId());
             
             if(md.getTimeFrame() == MetricData.FOREVER)

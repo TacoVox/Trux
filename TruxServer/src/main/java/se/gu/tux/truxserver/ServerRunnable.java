@@ -10,6 +10,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -75,6 +76,8 @@ public class ServerRunnable implements Runnable {
 				// Debugging output
 				if (d.getValue() != null) {
 					Logger.gI().addDebug(d.getValue().toString());
+                                        if(d instanceof MetricData)
+                                            Logger.gI().addDebug("TS: " + Long.toString(d.getTimeStamp()));
 				} else {
 					Logger.gI().addDebug(connectionId + ": Received object with null value from " + cs.getInetAddress());
 				}
