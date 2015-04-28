@@ -176,41 +176,6 @@ public class UserHandler {
     }
     
     /**
-     * Method to register a user to our system.
-     * 
-     * @param u a filled in user object which will be stored
-     * 
-     * @return a ProtocolMessage indicating the success
-     */
-    public ProtocolMessage register(User u)
-    {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
-        try
-        {   
-            PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO user(username, password, firstname, lastname) " + 
-                            "VALUES(?, ?, ?, ?)");
-            
-            pst.setString(1, u.getUsername());
-            pst.setString(2, u.getPasswordHash());
-            pst.setString(3, u.getFirstName());
-            pst.setString(4, u.getLastName());
-	
-            pst.executeUpdate();
-            
-            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-        }
-        catch (Exception e)
-        {
-            Logger.gI().addError(e.getLocalizedMessage());
-        }
-        finally {
-            ConnectionPool.gI().releaseDBC(dbc);
-        }
-        return new ProtocolMessage(ProtocolMessage.Type.ERROR);
-    }
-    
-    /**
      * Method for getting user data from the DB.
      * 
      * @param u a scaletton user object -> will be filled in
@@ -263,5 +228,42 @@ public class UserHandler {
             return u;
         else
             return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+    }
+    
+    /**
+     * Method to register a user to our system.
+     * 
+     * @param u a filled in user object which will be stored
+     * 
+     * @return a ProtocolMessage indicating the success
+     */
+    public ProtocolMessage register(User u)
+    {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "INSERT INTO register, (username, password, firstname, lastname, "
+                            + "email, timestamp) VALUES(?, ?, ?, ?, ?, ?)");
+            
+            pst.setString(1, u.getUsername());
+            pst.setString(2, u.getPasswordHash());
+            pst.setString(3, u.getFirstName());
+            pst.setString(4, u.getLastName());
+            pst.setString(5, u.getEmail());
+            pst.setLong(6, System.currentTimeMillis());
+	
+            pst.executeUpdate();
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
 }
