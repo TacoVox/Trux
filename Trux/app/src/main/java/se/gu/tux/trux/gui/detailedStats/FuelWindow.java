@@ -19,6 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.datastructure.DetailedStatsBundle;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Speed;
@@ -33,22 +34,15 @@ public class FuelWindow extends DetailedStatsFragment {
     TextView fuelTextViewToday, fuelTextViewWeek, fuelTextViewMonth, fuelTextViewTotal;
     GraphView fuelGraph;
 
-    public void setValues(final MetricData fuelToday, final MetricData fuelWeek, final MetricData fuelMonth,
-                          final MetricData fuelTotal, final LineGraphSeries fuelValues) {
-        if (fuelToday.getValue() != null && fuelWeek.getValue() != null
-                && fuelMonth.getValue() != null && fuelTotal.getValue() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    fuelTextViewToday.setText(new Long(Math.round((Double) fuelToday.getValue())).toString());
-                    fuelTextViewWeek.setText(new Long(Math.round((Double) fuelWeek.getValue())).toString());
-                    fuelTextViewMonth.setText(new Long(Math.round((Double) fuelMonth.getValue())).toString());
-                    fuelTextViewTotal.setText(new Long(Math.round((Double) fuelTotal.getValue())).toString());
-
-                    fuelGraph.addSeries(fuelValues);
-                }
-            });
-
+    @Override
+    public void setValues(DetailedStatsBundle stats) {
+        if (stats != null) {
+            fuelTextViewToday.setText(new Long(Math.round((Double) stats.getToday().getValue())).toString());
+            fuelTextViewWeek.setText(new Long(Math.round((Double) stats.getWeek().getValue())).toString());
+            fuelTextViewMonth.setText(new Long(Math.round((Double) stats.getMonth().getValue())).toString());
+            fuelTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString());
+            LineGraphSeries fuelValues = new LineGraphSeries(stats.getGraphPoints());
+            fuelGraph.addSeries(fuelValues);
         }
     }
 
