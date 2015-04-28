@@ -57,4 +57,6 @@
 
     <string name="contact">Here we will have information about the contact</string>
 
+    <string name="about">Here we will have information about the application</string>
+
 </resources>

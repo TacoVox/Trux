@@ -22,6 +22,7 @@ import se.gu.tux.trux.appplication.LoginService;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.gui.detailedStats.Contact;
 import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
@@ -241,7 +242,14 @@ public class MainActivity extends ActionBarActivity
         }
     };
 
-
+    public void goContact(MenuItem item){
+        newFragment = new Contact();
+        transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.mainActivity, newFragment);
+        transaction.addToBackStack(null);
+        transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+        transaction.commit();
+    }
 
     @Override
     public void onBackPressed() {

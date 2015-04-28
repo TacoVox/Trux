@@ -89,4 +89,13 @@ public class DriverHomeScreen extends ActionBarActivity {
     }
 
 
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            this.finish();
+        } else {
+            getFragmentManager().popBackStack();
+        }
+    }
+
 }
