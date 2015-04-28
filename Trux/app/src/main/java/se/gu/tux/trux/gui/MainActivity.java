@@ -167,6 +167,7 @@ public class MainActivity extends ActionBarActivity
 
         if (isAllowed)
         {
+            // findViewById(R.id.loadingPanel).setVisibility(View.GONE);
             Intent intent = new Intent(this, DriverHomeScreen.class);
             startActivity(intent);
         }
