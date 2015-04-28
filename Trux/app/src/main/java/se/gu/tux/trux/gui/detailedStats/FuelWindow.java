@@ -85,4 +85,9 @@ public class FuelWindow extends DetailedStatsFragment {
             // something to handle the NPE.
         }
     }
+
+
+    public void hideLoading() {
+        getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+    }
 }

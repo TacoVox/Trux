@@ -2,11 +2,11 @@ package se.gu.tux.trux.appplication;
 
 
 import android.content.Context;
+import android.content.Intent;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,7 +17,6 @@ import java.security.NoSuchAlgorithmException;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
-import se.gu.tux.trux.gui.MainActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.ServerConnector;
 
@@ -37,12 +36,8 @@ public class LoginService
     // file input and output streams
     private Context context;
 
-    // file object to store user info, used to read from
-    // when the user checks the box to kept logged in
-    private File file;
 
-    // file name
-    private static final String fileName = "trux_user_config";
+    private String fileName = "";
 
 
     /**
@@ -50,15 +45,14 @@ public class LoginService
      *
      * @param context   The Context object to be used.
      */
-    public LoginService(Context context)
+    public LoginService(Context context, String fileName)
     {
         // initialise user
         user = new User();
         // get the context
         this.context = context;
-        // create a file to store data
-        file = new File(context.getFilesDir(), fileName);
-
+        // get the file name
+        this.fileName = fileName;
     }
 
 
@@ -71,7 +65,7 @@ public class LoginService
      * @param password      The user's password.
      * @return              true if login successful, false otherwise
      */
-    public boolean isAllowed(String username, String password)
+    public boolean login(String username, String password, Long sessionId, Long userId, Short keepFlag)
     {
         // set username in user object
         user.setUsername(username);
@@ -82,18 +76,37 @@ public class LoginService
         user.setPasswordHash(hashPass);
 
         // set session ID, -1 for a new login session
-        user.setSessionId(-1);
-        // set this user in DataHandler for future reference
+        user.setSessionId(sessionId);
+
+        // set user ID
+        user.setUserId(userId);
+
+        // check if the user wants to stay logged in
+        if (keepFlag == 1)
+        {
+            user.setStayLoggedIn(true);
+        }
+        else
+        {
+            user.setStayLoggedIn(false);
+        }
+
+        // set this user in DataHandler for use in ServerConnector
+        // when called to answer query
         DataHandler.getInstance().setUser(user);
 
-        Data response = null;
+        ProtocolMessage response = null;
 
         try
         {
             // check if this user is allowed to login
-            response = (Data) ServerConnector.getInstance().answerQuery(user);
+            response = (ProtocolMessage) ServerConnector.getInstance().answerQuery(user);
         }
         catch (NotLoggedInException e)
+        {
+            e.printStackTrace();
+        }
+        catch (ClassCastException e)
         {
             e.printStackTrace();
         }
@@ -104,15 +117,22 @@ public class LoginService
         System.out.println("user ID: " + response.getUserId());
         System.out.println("----------------------------------------");
 
-        if (response instanceof User)
+        if (response.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
         {
             // if the login is approved, set the user in DataHandler
             // now the user has a valid session ID
-            DataHandler.getInstance().setUser((User) response);
+            user.setUsername(username);
+            user.setPasswordHash(hashPass);
+            user.setSessionId(response.getSessionId());
+            user.setUserId(response.getUserId());
+
+            DataHandler.getInstance().setUser(user);
 
             String userInfo = DataHandler.getInstance().getUser().getUsername() + ":" +
                             DataHandler.getInstance().getUser().getPasswordHash() + ":" +
-                            DataHandler.getInstance().getUser().getSessionId();
+                            DataHandler.getInstance().getUser().getSessionId() + ":" +
+                            DataHandler.getInstance().getUser().getUserId() + ":" +
+                            DataHandler.getInstance().getUser().getStayLoggedIn();
 
             // save user info to file
             writeToFile(userInfo);
@@ -124,7 +144,7 @@ public class LoginService
             return false;
         }
 
-    } // end isAllowed()
+    } // end login()
 
 
     /**
@@ -132,14 +152,21 @@ public class LoginService
      */
     public void logout()
     {
+        ProtocolMessage pm = null;
         try
         {
             // send a protocol message with a request to log out
-            ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.LOGOUT_REQUEST));
+            pm = (ProtocolMessage) ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.LOGOUT_REQUEST));
+
         }
         catch (NotLoggedInException e)
         {
             e.printStackTrace();
+        }
+        if(pm != null &&pm.getType() == ProtocolMessage.Type.SUCCESS){
+            //Create anonymous instance - we don't need it after that
+            new File(fileName).delete();
+            DataHandler.getInstance().setUser(null);
         }
     }
 
@@ -169,6 +196,7 @@ public class LoginService
             //This bytes[] has bytes in decimal format;
             //Convert it to hexadecimal format
             StringBuilder sb = new StringBuilder();
+
             for(int i=0; i< bytes.length ;i++)
             {
                 sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
@@ -200,15 +228,19 @@ public class LoginService
             OutputStreamWriter outputStreamWriter =
                     new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
 
-            outputStreamWriter.write(data);
-
             System.out.println("-------- writing to file ----------");
 
+            // write data
+            outputStreamWriter.write(data);
+            // make sure data is written
+            outputStreamWriter.flush();
+            // close output stream
             outputStreamWriter.close();
         }
         catch (IOException e)
         {
             e.printStackTrace();
+            System.out.println("-------- ERROR: writing to file ----------");
         }
     }
 
@@ -221,7 +253,7 @@ public class LoginService
     public String[] readFromFile()
     {
         // the array to be returned
-        String[] ret = null;
+        String[] results = null;
 
         try
         {
@@ -238,35 +270,39 @@ public class LoginService
 
                 StringBuilder stringBuilder = new StringBuilder();
 
+                System.out.println("-------- reading from file ----------");
+
                 // read the data
                 while ( (receiveString = bufferedReader.readLine()) != null )
                 {
                     stringBuilder.append(receiveString);
                 }
 
-                System.out.println("-------- reading from file ----------");
-
                 inputStream.close();
 
-                ret = stringBuilder.toString().split(":");
+                results = stringBuilder.toString().split(":");
 
                 System.out.println("-------- user info in file -------------");
-                System.out.println("username: " + ret[0]);
-                System.out.println("password hash: " + ret[1]);
-                System.out.println("session ID: " + ret[2]);
+                System.out.println("username: " + results[0]);
+                System.out.println("password hash: " + results[1]);
+                System.out.println("session ID: " + results[2]);
+                System.out.println("user ID: " + results[3]);
+                System.out.println("stay logged in? : " + results[4]);
                 System.out.println("----------------------------------------");
             }
         }
         catch (FileNotFoundException e)
         {
             e.printStackTrace();
+            System.out.println("-------- ERROR: reading from file ----------");
         }
         catch (IOException e)
         {
             e.printStackTrace();
+            System.out.println("-------- ERROR: reading from file ----------");
         }
 
-        return ret;
+        return results;
     }
 
 

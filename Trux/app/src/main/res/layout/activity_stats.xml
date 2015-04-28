@@ -1,17 +1,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     tools:context="se.gu.tux.trux.Stats"
-    android:padding="5dp"
     android:background="#E0E0E0"
-    >
+    android:padding="10dp"
+    android:id="@+id/StatsView">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:padding="10dip"
+        android:background="@drawable/custom_border"
         android:weightSum="3"
-        android:id="@+id/StatsView">
+        android:id="@+id/StatsView2">
 
 
         <LinearLayout
@@ -36,7 +39,7 @@
                     android:text="@string/speed_button_text"
                     android:id="@+id/speed_button"
                     android:layout_weight="1"
-                    android:background="#3D3D3D"
+                    android:background="@drawable/button_clickable"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
 
@@ -46,7 +49,7 @@
                     android:text="@string/fuel_button_text"
                     android:id="@+id/fuel_button"
                     android:layout_weight="1"
-                    android:background="#3D3D3D"
+                    android:background="@drawable/button_clickable"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
             </LinearLayout>
@@ -64,7 +67,7 @@
                     android:text="@string/distance_traveled_text"
                     android:id="@+id/distance_traveled"
                     android:layout_weight="1"
-                    android:background="#3D3D3D"
+                    android:background="@drawable/button_clickable"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
 
@@ -74,7 +77,7 @@
                     android:text="@string/coming_soon_text"
                     android:id="@+id/button6"
                     android:layout_weight="1"
-                    android:background="#3D3D3D"
+                    android:background="@drawable/button_clickable"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
             </LinearLayout>
@@ -92,7 +95,7 @@
                     android:text="@string/coming_soon_text"
                     android:id="@+id/button7"
                     android:layout_weight="1"
-                    android:background="#3D3D3D"
+                    android:background="@drawable/button_clickable"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
 
@@ -102,7 +105,7 @@
                     android:text="@string/coming_soon_text"
                     android:id="@+id/button8"
                     android:layout_weight="1"
-                    android:background="#3D3D3D"
+                    android:background="@drawable/button_clickable"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"/>
             </LinearLayout>
@@ -114,7 +117,7 @@
             android:text="@string/overall_statistics_text"
             android:id="@+id/overall_button"
             android:layout_weight="1"
-            android:background="#3D3D3D"
+            android:background="@drawable/button_clickable"
             android:textColor="#E0E0E0"
             android:onClick="goToOverall"
             android:layout_margin="5dp"/>
@@ -125,10 +128,11 @@
             android:text="@string/compare_statistics_text"
             android:id="@+id/compare_statistics"
             android:layout_weight="1"
-            android:background="#3D3D3D"
+            android:background="@drawable/button_clickable"
             android:textColor="#E0E0E0"
             android:layout_margin="5dp"/>
 
     </LinearLayout>
+
 
 </RelativeLayout>
