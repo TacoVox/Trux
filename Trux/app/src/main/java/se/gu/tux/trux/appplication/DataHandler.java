@@ -1,23 +1,17 @@
 package se.gu.tux.trux.appplication;
 
-import android.content.Intent;
-
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.DetailedStatsBundle;
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.datastructure.User;
-import se.gu.tux.trux.gui.MainActivity;
-import se.gu.tux.trux.technical_services.IServerConnector;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
