@@ -22,6 +22,7 @@ import se.gu.tux.trux.appplication.LoginService;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.gui.detailedStats.Contact;
 import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
@@ -38,8 +39,6 @@ public class MainActivity extends ActionBarActivity
     TextView passField;
     Button btnRegister;
     CheckBox checkBox;
-
-    LoginService ls;
 
     private String[] userInfo;
 
@@ -63,7 +62,7 @@ public class MainActivity extends ActionBarActivity
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
         // Create login service
-        ls = new LoginService(this.getBaseContext(), FILE_NAME);
+        LoginService.createInstance(this.getBaseContext(), FILE_NAME);
 
         ServerConnector.gI().connect("www.derkahler.de");
         //IServerConnector.getInstance().connectTo("10.0.2.2");
@@ -92,7 +91,7 @@ public class MainActivity extends ActionBarActivity
         }
         else
         {
-            userInfo = ls.readFromFile();
+            userInfo = LoginService.getInstance().readFromFile();
         }
 
         if (userInfo != null && userInfo[4].equals("true"))
@@ -168,6 +167,7 @@ public class MainActivity extends ActionBarActivity
 
         if (isAllowed)
         {
+            // findViewById(R.id.loadingPanel).setVisibility(View.GONE);
             Intent intent = new Intent(this, DriverHomeScreen.class);
             startActivity(intent);
         }
@@ -243,7 +243,14 @@ public class MainActivity extends ActionBarActivity
         }
     };
 
-
+    public void goContact(MenuItem item){
+        newFragment = new Contact();
+        transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.mainActivity, newFragment);
+        transaction.addToBackStack(null);
+        transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+        transaction.commit();
+    }
 
     @Override
     public void onBackPressed() {
@@ -264,7 +271,7 @@ public class MainActivity extends ActionBarActivity
         protected Boolean doInBackground(String... strings)
         {
             boolean isAllowed =
-                    ls.login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
+                    LoginService.getInstance().login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
 
             return isAllowed;
         }

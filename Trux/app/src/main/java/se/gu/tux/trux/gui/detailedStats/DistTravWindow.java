@@ -19,6 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.datastructure.DetailedStatsBundle;
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
@@ -33,27 +34,22 @@ public class DistTravWindow extends DetailedStatsFragment {
     TextView distanceTextViewToday, distanceTextViewWeek, distanceTextViewMonth, distanceTextViewTotal;
     GraphView distanceGraph;
 
-    public void setValues(final MetricData distanceToday, final MetricData distanceWeek, final MetricData distanceMonth,
-                          final MetricData distanceTotal, final LineGraphSeries distanceValues) {
-        if (distanceToday.getValue() != null && distanceWeek.getValue() != null
-                && distanceMonth.getValue() != null && distanceTotal.getValue() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Long distToday = (Long) distanceToday.getValue() / 1000;
-                    Long distWeek = (Long) distanceWeek.getValue() / 1000;
-                    Long distMonth = (Long) distanceMonth.getValue() / 1000;
-                    Long distTotal = (Long) distanceTotal.getValue() / 1000;
 
-                    distanceTextViewToday.setText(distToday.toString());
-                    distanceTextViewWeek.setText(distWeek.toString());
-                    distanceTextViewMonth.setText(distMonth.toString());
-                    distanceTextViewTotal.setText(distTotal.toString());
+    @Override
+    public void setValues(final DetailedStatsBundle stats) {
+        if (stats != null) {
+            Long distToday = (Long) stats.getToday().getValue() / 1000;
+            Long distWeek = (Long) stats.getWeek().getValue() / 1000;
+            Long distMonth = (Long) stats.getMonth().getValue() / 1000;
+            Long distTotal = (Long) stats.getTotal().getValue() / 1000;
 
-                    distanceGraph.addSeries(distanceValues);
-                }
-            });
+            distanceTextViewToday.setText(distToday.toString());
+            distanceTextViewWeek.setText(distWeek.toString());
+            distanceTextViewMonth.setText(distMonth.toString());
+            distanceTextViewTotal.setText(distTotal.toString());
 
+            LineGraphSeries distanceValues = new LineGraphSeries(stats.getGraphPoints());
+            distanceGraph.addSeries(distanceValues);
         }
     }
 

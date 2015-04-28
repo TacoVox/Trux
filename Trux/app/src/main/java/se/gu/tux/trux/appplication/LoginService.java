@@ -23,7 +23,7 @@ import se.gu.tux.trux.technical_services.ServerConnector;
 /**
  * Created by ivryashkov on 2015-04-20.
  *
- * Handles the login to the application.
+ * Handles the login and logout to the application.
  *
  */
 public class LoginService
@@ -36,8 +36,11 @@ public class LoginService
     // file input and output streams
     private Context context;
 
-
+    // reference to the file name for storing user info
     private String fileName = "";
+
+
+    private static LoginService ls;
 
 
     /**
@@ -45,7 +48,7 @@ public class LoginService
      *
      * @param context   The Context object to be used.
      */
-    public LoginService(Context context, String fileName)
+    private LoginService(Context context, String fileName)
     {
         // initialise user
         user = new User();
@@ -56,6 +59,21 @@ public class LoginService
     }
 
 
+    public static void createInstance(Context context, String fileName)
+    {
+        if (ls == null)
+        {
+            ls = new LoginService(context, fileName);
+        }
+    }
+
+
+    public static LoginService getInstance()
+    {
+        return ls;
+    }
+
+
     /**
      * Checks if the user credentials are correct. Takes a String with the user's
      * username and a String with the user's password as parameters. Returns true if
@@ -63,6 +81,9 @@ public class LoginService
      *
      * @param username      The user's username.
      * @param password      The user's password.
+     * @param sessionId     The session Id.
+     * @param userId        The user Id.
+     * @param keepFlag      1 -- keep logged in, 0 -- otherwise
      * @return              true if login successful, false otherwise
      */
     public boolean login(String username, String password, Long sessionId, Long userId, Short keepFlag)
@@ -75,7 +96,7 @@ public class LoginService
         // set password hash in user object
         user.setPasswordHash(hashPass);
 
-        // set session ID, -1 for a new login session
+        // set session ID
         user.setSessionId(sessionId);
 
         // set user ID
@@ -150,9 +171,12 @@ public class LoginService
     /**
      * Logs out the user from the application.
      */
-    public void logout()
+    public boolean logout()
     {
+        boolean isLoggedOut = false;
+
         ProtocolMessage pm = null;
+
         try
         {
             // send a protocol message with a request to log out
@@ -163,11 +187,16 @@ public class LoginService
         {
             e.printStackTrace();
         }
-        if(pm != null &&pm.getType() == ProtocolMessage.Type.SUCCESS){
+
+        if (pm != null && pm.getType() == ProtocolMessage.Type.SUCCESS)
+        {
             //Create anonymous instance - we don't need it after that
             new File(fileName).delete();
             DataHandler.getInstance().setUser(null);
+            isLoggedOut = true;
         }
+
+        return isLoggedOut;
     }
 
 

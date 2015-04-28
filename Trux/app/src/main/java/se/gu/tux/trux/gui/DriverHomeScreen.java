@@ -3,12 +3,15 @@ package se.gu.tux.trux.gui;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
+import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.LoginService;
@@ -20,11 +23,10 @@ import se.gu.tux.trux.gui.simpleStats.SimpleStats;
 import tux.gu.se.trux.R;
 
 
-public class DriverHomeScreen extends ActionBarActivity {
+public class DriverHomeScreen extends ItemMenu {
 
 
     Fragment fragment;
-    LoginService logout;
     FragmentTransaction transaction;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +36,14 @@ public class DriverHomeScreen extends ActionBarActivity {
     }
 
 
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_driver_home_screen, menu);
         return true;
     }
-
+*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -74,11 +76,37 @@ public class DriverHomeScreen extends ActionBarActivity {
         }
         **/
     }
-
+/*
     public void logout(MenuItem item){
-        Intent intent = new Intent(DriverHomeScreen.this, MainActivity.class);
-        startActivity(intent);
+
+        AsyncTask<Void, Void, Boolean> check = new Logout().execute();
+
+        boolean loggedOut = false;
+
+        try
+        {
+            loggedOut = check.get();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        if (loggedOut)
+        {
+            Intent intent = new Intent(DriverHomeScreen.this, MainActivity.class);
+            startActivity(intent);
+        }
+        else
+        {
+            Intent intent = new Intent(DriverHomeScreen.this, MainActivity.class);
+            startActivity(intent);
+        }
     }
+
+
     public void contact(MenuItem item){
         fragment = new Contact();
         transaction = getFragmentManager().beginTransaction();
@@ -89,4 +117,24 @@ public class DriverHomeScreen extends ActionBarActivity {
     }
 
 
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            this.finish();
+        } else {
+            getFragmentManager().popBackStack();
+        }
+    }
+
+
+    private class Logout extends AsyncTask<Void, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(Void... voids)
+        {
+            boolean success = LoginService.getInstance().logout();
+            return success;
+        }
+    }
+*/
 }
