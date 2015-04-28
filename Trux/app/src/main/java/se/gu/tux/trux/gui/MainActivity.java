@@ -166,7 +166,7 @@ public class MainActivity extends ActionBarActivity
 
         if (isAllowed)
         {
-            // findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+            hideLoading();
             Intent intent = new Intent(this, DriverHomeScreen.class);
             startActivity(intent);
         }
@@ -300,7 +300,9 @@ public class MainActivity extends ActionBarActivity
         }
     } // end inner class
 
-
+    public void hideLoading() {
+        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+    }
     /*
     public void onStop() {
         // TODO
