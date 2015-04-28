@@ -1,10 +1,6 @@
 package se.gu.tux.trux.gui.detailedStats;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,19 +8,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.datastructure.DetailedStatsBundle;
-import se.gu.tux.trux.datastructure.Distance;
-import se.gu.tux.trux.datastructure.MetricData;
-import se.gu.tux.trux.datastructure.Speed;
-import se.gu.tux.trux.gui.MainActivity;
-import se.gu.tux.trux.technical_services.NotLoggedInException;
+import se.gu.tux.trux.appplication.DetailedStatsBundle;
 import tux.gu.se.trux.R;
 
 

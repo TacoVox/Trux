@@ -1,6 +1,8 @@
-package se.gu.tux.trux.datastructure;
+package se.gu.tux.trux.appplication;
 
 import com.jjoe64.graphview.series.DataPoint;
+
+import se.gu.tux.trux.datastructure.MetricData;
 
 /**
  * Created by jerker on 2015-04-28.
