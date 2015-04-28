@@ -4,6 +4,7 @@ package se.gu.tux.trux.gui.detailedStats;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -37,7 +38,7 @@ import tux.gu.se.trux.R;
 
 
 public class Stats extends ActionBarActivity implements Serializable {
-
+    Fragment fragment;
     DetailedStatsFragment newFragment;
     Button speedBtn, fuelBtn, distanceBtn, overallBtn;
     FragmentTransaction transaction;
@@ -308,6 +309,21 @@ public class Stats extends ActionBarActivity implements Serializable {
         }
         return dataPoints;
     }
+
+    public void logout(MenuItem item){
+        Intent intent = new Intent(Stats.this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    public void contact(MenuItem item){
+        fragment = new Contact();
+        transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.StatsView2, fragment);
+        transaction.addToBackStack(null);
+        transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+        transaction.commit();
+    }
+
     public Speed getTotalSpeed(){
         return speedTotal;
     }

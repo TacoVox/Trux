@@ -2,6 +2,7 @@ package se.gu.tux.trux.appplication;
 
 
 import android.content.Context;
+import android.content.Intent;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -151,14 +152,21 @@ public class LoginService
      */
     public void logout()
     {
+        ProtocolMessage pm = null;
         try
         {
             // send a protocol message with a request to log out
-            ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.LOGOUT_REQUEST));
+            pm = (ProtocolMessage) ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.LOGOUT_REQUEST));
+
         }
         catch (NotLoggedInException e)
         {
             e.printStackTrace();
+        }
+        if(pm != null &&pm.getType() == ProtocolMessage.Type.SUCCESS){
+            //Create anonymous instance - we don't need it after that
+            new File(fileName).delete();
+            DataHandler.getInstance().setUser(null);
         }
     }
 

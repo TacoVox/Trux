@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="se.gu.tux.trux.gui.DriverHomeScreen"
-    android:id="@+id/layout"
+
     android:padding="5dp"
     android:background="#E0E0E0">
 
@@ -13,6 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_margin="10dip"
+        android:id="@+id/driverhome"
         android:padding="10dip"
         android:background="@drawable/custom_border"
         android:weightSum="2">

@@ -13,7 +13,8 @@
         android:layout_height="fill_parent"
         android:padding="10dip"
         android:background="@drawable/custom_border"
-        android:weightSum="3">
+        android:weightSum="3"
+        android:id="@+id/StatsView2">
 
 
         <LinearLayout
