@@ -112,7 +112,12 @@ public class MetricReceiver {
                     selectStmnt);
 
             pst.setLong(1, md.getUserId());
-	    pst.setLong(2, (md.getTimeStamp() - md.getTimeFrame()));
+            
+            if(md.getTimeFrame() == MetricData.FOREVER)
+                pst.setLong(2, 0);
+            else
+                pst.setLong(2, (md.getTimeStamp() - md.getTimeFrame()));
+            
             pst.setLong(3, md.getTimeStamp()); 
             
             ResultSet rs = dbc.execSelect(md, pst);
@@ -200,7 +205,11 @@ public class MetricReceiver {
             pst.setLong(1, md.getUserId());
             pst.setLong(2, md.getTimeStamp());
             pst.setLong(3, md.getUserId());
-            pst.setLong(4, md.getTimeStamp() - md.getTimeFrame());          
+            
+            if(md.getTimeFrame() == MetricData.FOREVER)
+                pst.setLong(2, 0);
+            else
+                pst.setLong(2, (md.getTimeStamp() - md.getTimeFrame()));         
 	    
 	    ResultSet rs = dbc.execSelect(md, pst);
             
