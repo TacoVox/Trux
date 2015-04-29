@@ -28,7 +28,7 @@ public class DataHandler
 
     private RealTimeDataHandler realTimeDataHandler;
 
-    private User user;
+    private volatile User user;
 
     // Stores detailed stats with signal id as key
     private volatile HashMap<Integer, DetailedStatsBundle> detailedStats;
@@ -47,10 +47,11 @@ public class DataHandler
 
     /**
      * Returns an instance of the DataHandler object.
-     *
+     * TODO: note, removed synchronized on this while debugging stats data fetching.
+     * Maybe we'll bring it back some day.
      * @return      instance of DataHandler
      */
-    public synchronized static DataHandler getInstance()
+    public static DataHandler getInstance()
     {
         if (dataHandler == null)
         {
@@ -111,6 +112,8 @@ public class DataHandler
 
             detailedStats = new HashMap<Integer, DetailedStatsBundle>();
 
+            System.out.println("Fetching detailed stats.");
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -166,7 +169,7 @@ public class DataHandler
                         detailedStatsFetched = System.currentTimeMillis();
 
                     } catch (NotLoggedInException e) {
-
+                        System.out.println("Not logged in in datahandler cache");
                     }
                 }
             }).start();
@@ -181,8 +184,10 @@ public class DataHandler
     public boolean detailedStatsReady(MetricData md) {
         // See if there is a stats object in the hashmap
         if (detailedStats != null && detailedStats.get(md.getSignalId()) != null) {
+            //System.out.println("Stats were ready: " + md.getClass().getSimpleName());
             return true;
         }
+        //System.out.println("Stats were not ready: " + md.getClass().getSimpleName());
         return false;
     }
 
@@ -197,9 +202,11 @@ public class DataHandler
 
         // See if the stats are ready
         if (detailedStatsReady(md)) {
+            //System.out.println("Returning stats.");
             dStats = detailedStats.get(md.getSignalId());
+        } else {
+            //System.out.println("Returning null.");
         }
-
         return dStats;
     }
 
@@ -223,6 +230,8 @@ public class DataHandler
         metricData.settTimeFrame(MetricData.DAY);
 
         for(int i = 0; i < days; i++) {
+            // It seems we cannot send the exact same instance - guess some low-level details of java
+            // will cache it or whatever? Need to create a new one
             MetricData md = metricData;
             try {
                 md = metricData.getClass().newInstance();
@@ -233,28 +242,18 @@ public class DataHandler
                 e.printStackTrace();
             }
 
-            /* GregorianCalendar calBeginning = new GregorianCalendar(
-                    cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE),
-                    0, 0
-            );*/
-
-
             // Find timestamp for end of day
             GregorianCalendar calEnd = new GregorianCalendar(
                     cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE),
                     23, 59, 59
             );
-            /*System.out.println(calEnd.getTimeInMillis());
-            md.setTimeStamp(calEnd.getTimeInMillis());
 
-            TEST:::: */
             md.settTimeFrame(MetricData.DAY);
             md.setTimeStamp(calEnd.getTimeInMillis());
 
-
             // Get data from server
             perDay[i] = ServerConnector.gI().answerTimestampedQuery(md);
-            System.out.println("RESPONSE DATA: " + perDay[i].getValue());
+
             // Move forward one day
             cal.add(Calendar.DATE, +1);
         }
@@ -263,20 +262,15 @@ public class DataHandler
     }
 
 
-
-
-
     public DataPoint[] getDataPoints(Data[] data, MetricData md) {
 
         DataPoint[] dataPoints = new DataPoint[30];
         for (int i = 0; i < 30; i++) {
             if (data[i].getValue() == null) {
-                System.out.println("Assuming 0 at null value at pos: " + i );
                 dataPoints[i] = new DataPoint(i + 1, 0);
             } else {
                 if (md instanceof Speed || md instanceof Fuel) {
                     dataPoints[i] = new DataPoint(i + 1, (Double)(data[i]).getValue());
-                    System.out.println("ddddd: " + data[i].getValue());
                 } else {
                     dataPoints[i] = new DataPoint(i + 1, (Long)(data[i]).getValue());
                 }

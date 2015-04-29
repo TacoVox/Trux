@@ -176,13 +176,13 @@ public class ServerConnector {
                     try {
 
                         // Send and receive
-                        System.out.println("Sending query...: " + query.getTimeStamp());
+                        //System.out.println("Sending query...: " + query.getTimeStamp());
                         query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
                         query.setUserId(DataHandler.getInstance().getUser().getUserId());
                         out.writeObject(query);
                         answer = (Data)in.readObject();
 
-                        System.out.println("returned values: " + answer.getValue());
+                        //System.out.println("returned values: " + answer.getValue());
 
                         dataSent = true;
 

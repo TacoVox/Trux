@@ -6,98 +6,109 @@
     android:background="#E0E0E0">
 
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="10dip"
+        android:background="@drawable/custom_border"
+        android:weightSum="3">
+
+
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:padding="10dip"
-            android:background="@drawable/custom_border"
-            android:weightSum="3">
+            android:background="#FF3D3D3D"
+            android:layout_margin="5dp"
+            android:padding="5dip"
+            android:layout_weight="1">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/average_speed"
+                android:id="@+id/avg_speed"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"/>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="#FF3D3D3D"
-                android:layout_margin="5dp"
-                android:padding="5dip"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/average_speed"
-                    android:id="@+id/avg_speed"
-                    android:textSize="20dp"
-                    android:textColor="#E0E0E0"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:id="@+id/avg_speed_value"
-                    android:textSize="20dp"
-                    android:textColor="#E0E0E0"
-                    android:layout_marginLeft="10dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="#FF3D3D3D"
-                android:layout_margin="5dp"
-                android:padding="5dip"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/average_fuel"
-                    android:id="@+id/avg_fuel"
-                    android:textSize="20dp"
-                    android:textColor="#E0E0E0"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:id="@+id/avg_fuel_value"
-                    android:textSize="20dp"
-                    android:textColor="#E0E0E0"
-                    android:layout_marginLeft="10dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="#FF3D3D3D"
-                android:layout_margin="5dp"
-                android:padding="5dip"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/average_distance_traveled"
-                    android:id="@+id/avg_distance_traveled"
-                    android:textSize="20dp"
-                    android:textColor="#E0E0E0"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:id="@+id/avg_distance_traveled_value"
-                    android:textSize="20dp"
-                    android:textColor="#E0E0E0"
-                    android:layout_marginLeft="10dp"/>
-            </LinearLayout>
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/avg_speed_value"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"
+                android:layout_marginLeft="10dp"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#FF3D3D3D"
+            android:layout_margin="5dp"
+            android:padding="5dip"
+            android:layout_weight="1">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/average_fuel"
+                android:id="@+id/avg_fuel"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/avg_fuel_value"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"
+                android:layout_marginLeft="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#FF3D3D3D"
+            android:layout_margin="5dp"
+            android:padding="5dip"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/average_distance_traveled"
+                android:id="@+id/avg_distance_traveled"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:id="@+id/avg_distance_traveled_value"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"
+                android:layout_marginLeft="10dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#3D3D3D"
+        android:alpha="0.7"
+        android:gravity="center">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"/>
+    </RelativeLayout>
 </RelativeLayout>
 

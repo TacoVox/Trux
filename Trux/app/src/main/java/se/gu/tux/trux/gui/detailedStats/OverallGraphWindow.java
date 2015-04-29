@@ -11,17 +11,17 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import se.gu.tux.trux.appplication.DetailedStatsBundle;
 import tux.gu.se.trux.R;
 
 public class OverallGraphWindow extends Fragment {
-
-    View myFragmentView;
+    private GraphView speedGraph, fuelGraph, distGraph;
+    private View myFragmentView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,26 +31,42 @@ public class OverallGraphWindow extends Fragment {
         popFuelGraph(myFragmentView);
         popDTGraph(myFragmentView);
         popSpeedGraph(myFragmentView);
+        myFragmentView.findViewById(R.id.loadingPanel).bringToFront();
         return myFragmentView;
     }
 
+    public boolean hasLoaded() {
+        if (myFragmentView != null) return true;
+        return false;
+    }
+
+
+    public void setValues(DetailedStatsBundle speedBundle, DetailedStatsBundle fuelBundle,
+                          DetailedStatsBundle distBundle) {
+        if (speedBundle != null && speedGraph!= null) {
+            LineGraphSeries speedValues = new LineGraphSeries(speedBundle.getGraphPoints());
+            speedGraph.addSeries(speedValues);
+        }
+        if (fuelBundle != null && fuelGraph != null) {
+            LineGraphSeries fuelValues = new LineGraphSeries(fuelBundle.getGraphPoints());
+            fuelGraph.addSeries(fuelValues);
+        }
+        if (distBundle != null && distGraph != null) {
+            LineGraphSeries distValues = new LineGraphSeries(distBundle.getGraphPoints());
+            distGraph.addSeries(distValues);
+        }
+        if (myFragmentView != null) {
+            myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+        }
+    }
+
+
     private void popFuelGraph(View view) {
-
-        LineGraphSeries fuelValues = new LineGraphSeries(new DataPoint[]
-
-                {
-                        new DataPoint(0, 1),
-                        new DataPoint(1, 5),
-                        new DataPoint(2, 3),
-                        new DataPoint(3, 2),
-                        new DataPoint(4, 6)
-                });
-        GraphView fuelGraph = new GraphView(getActivity());
+        fuelGraph = new GraphView(getActivity());
         fuelGraph.setTitle("Fuel Consumption");
         fuelGraph.setTitleTextSize(40);
         fuelGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Consumption");
         fuelGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
-        fuelGraph.addSeries(fuelValues);
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.fuelGraphOverall);
@@ -61,22 +77,11 @@ public class OverallGraphWindow extends Fragment {
     }
 
     private void popSpeedGraph(View view) {
-
-        LineGraphSeries fuelValues = new LineGraphSeries(new DataPoint[]
-
-                {
-                        new DataPoint(0, 1),
-                        new DataPoint(1, 5),
-                        new DataPoint(2, 3),
-                        new DataPoint(3, 2),
-                        new DataPoint(4, 6)
-                });
-        GraphView speedGraph = new GraphView(getActivity());
+        speedGraph = new GraphView(getActivity());
         speedGraph.setTitle("Speed");
         speedGraph.setTitleTextSize(40);
         speedGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Speed");
         speedGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
-        speedGraph.addSeries(fuelValues);
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.speedGraphOverall);
@@ -87,27 +92,16 @@ public class OverallGraphWindow extends Fragment {
     }
 
     private void popDTGraph(View view) {
+        distGraph = new GraphView(getActivity());
 
-        LineGraphSeries fuelValues = new LineGraphSeries(new DataPoint[]
-
-                {
-                        new DataPoint(0, 1),
-                        new DataPoint(1, 5),
-                        new DataPoint(2, 3),
-                        new DataPoint(3, 2),
-                        new DataPoint(4, 6)
-                });
-        GraphView dTGraph = new GraphView(getActivity());
-
-        dTGraph.setTitle("Distance Traveled");
-        dTGraph.setTitleTextSize(40);
-        dTGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Distance");
-        dTGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
-        dTGraph.addSeries(fuelValues);
+        distGraph.setTitle("Distance Traveled");
+        distGraph.setTitleTextSize(40);
+        distGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Distance");
+        distGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.dTGraphOverall);
-            layout.addView(dTGraph);
+            layout.addView(distGraph);
         } catch (NullPointerException e) {
             // something to handle the NPE.
         }
