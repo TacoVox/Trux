@@ -127,9 +127,11 @@ public class MetricReceiver {
             
 	    while (rs.next())
 	    {
-		md.setValue(rs.getDouble("avg"));
+		md.setValue((Double)rs.getDouble("avg"));
 		break;
 	    }
+            
+            Logger.gI().addDebug("After query: " + Double.toString((Double)md.getValue()));
 	}
 	catch (Exception e)
 	{
@@ -210,9 +212,9 @@ public class MetricReceiver {
             pst.setLong(3, md.getUserId());
             
             if(md.getTimeFrame() == MetricData.FOREVER)
-                pst.setLong(2, 0);
+                pst.setLong(4, 0);
             else
-                pst.setLong(2, (md.getTimeStamp() - md.getTimeFrame()));         
+                pst.setLong(4, (md.getTimeStamp() - md.getTimeFrame()));         
 	    
 	    ResultSet rs = dbc.execSelect(md, pst);
             
