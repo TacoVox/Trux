@@ -292,6 +292,12 @@ public class MainActivity extends ItemMenu
         ProtocolMessage msg = null;
 
         @Override
+        protected void onPreExecute()
+        {
+            Toast.makeText(getApplicationContext(), "Auto-logging in. Please wait...", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
         protected ProtocolMessage doInBackground(ProtocolMessage... protocolMessages)
         {
             try
@@ -305,6 +311,13 @@ public class MainActivity extends ItemMenu
 
             return msg;
         }
+
+        @Override
+        protected void onPostExecute(ProtocolMessage protocolMessage)
+        {
+            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
+        }
+
     } // end inner class
 
 

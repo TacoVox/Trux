@@ -207,7 +207,7 @@ public class LoginService
      * @param password      The user's password.
      * @return              String
      */
-    private String createHash(String password)
+    public String createHash(String password)
     {
         String generatedPassword = "";
 
