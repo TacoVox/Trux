@@ -119,7 +119,6 @@
             android:layout_weight="1"
             android:background="@drawable/button_clickable"
             android:textColor="#E0E0E0"
-            android:onClick="goToOverall"
             android:layout_margin="5dp"/>
 
         <Button

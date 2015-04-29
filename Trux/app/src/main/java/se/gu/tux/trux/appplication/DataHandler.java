@@ -28,7 +28,7 @@ public class DataHandler
 
     private RealTimeDataHandler realTimeDataHandler;
 
-    private User user;
+    private volatile User user;
 
     // Stores detailed stats with signal id as key
     private volatile HashMap<Integer, DetailedStatsBundle> detailedStats;
@@ -47,7 +47,8 @@ public class DataHandler
 
     /**
      * Returns an instance of the DataHandler object.
-     *
+     * TODO: note, removed synchronized on this while debugging stats data fetching.
+     * Maybe we'll bring it back some day.
      * @return      instance of DataHandler
      */
     public static DataHandler getInstance()
@@ -168,7 +169,7 @@ public class DataHandler
                         detailedStatsFetched = System.currentTimeMillis();
 
                     } catch (NotLoggedInException e) {
-
+                        System.out.println("Not logged in in datahandler cache");
                     }
                 }
             }).start();
@@ -183,10 +184,10 @@ public class DataHandler
     public boolean detailedStatsReady(MetricData md) {
         // See if there is a stats object in the hashmap
         if (detailedStats != null && detailedStats.get(md.getSignalId()) != null) {
-            System.out.println("Stats were ready: " + md.getClass().getSimpleName());
+            //System.out.println("Stats were ready: " + md.getClass().getSimpleName());
             return true;
         }
-        System.out.println("Stats were not ready: " + md.getClass().getSimpleName());
+        //System.out.println("Stats were not ready: " + md.getClass().getSimpleName());
         return false;
     }
 
@@ -201,10 +202,10 @@ public class DataHandler
 
         // See if the stats are ready
         if (detailedStatsReady(md)) {
-            System.out.println("Returning stats.");
+            //System.out.println("Returning stats.");
             dStats = detailedStats.get(md.getSignalId());
         } else {
-            System.out.println("Returning null.");
+            //System.out.println("Returning null.");
         }
         return dStats;
     }

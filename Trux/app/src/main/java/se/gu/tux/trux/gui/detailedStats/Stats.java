@@ -61,6 +61,7 @@ public class Stats extends ItemMenu implements Serializable {
         speedBtn.setOnClickListener(btnOnClick);
         fuelBtn.setOnClickListener(btnOnClick);
         distanceBtn.setOnClickListener(btnOnClick);
+        overallBtn.setOnClickListener(btnOnClick);
 
         // Tell data handler to start downloading all stats
         //DataHandler.getInstance().cacheDetailedStats();;
@@ -220,8 +221,6 @@ public class Stats extends ItemMenu implements Serializable {
             }
         }
     };
-
-
 
     @Override
     public void onBackPressed() {
