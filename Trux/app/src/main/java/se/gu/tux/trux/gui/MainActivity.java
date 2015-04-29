@@ -52,7 +52,7 @@ public class MainActivity extends ItemMenu
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mainActivityActive = true;
         // Add login form
         userField = (TextView) findViewById(R.id.username);
         passField = (TextView) findViewById(R.id.password);
@@ -100,30 +100,21 @@ public class MainActivity extends ItemMenu
         }
     }
 
-
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public void onPause(){
+        super.onPause();
+        mainActivityActive = false;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        
-        return super.onOptionsItemSelected(item);
+    public void onResume(){
+        super.onResume();
+        mainActivityActive = true;
     }
-
+    public void onStop(){
+        super.onStop();
+        mainActivityActive = false;
+    }
 
     public void goToHome(View view)
     {
@@ -242,15 +233,18 @@ public class MainActivity extends ItemMenu
         }
     };
 
-    public void goContact(MenuItem item){
-        newFragment = new Contact();
-        transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.mainActivity, newFragment);
-        transaction.addToBackStack(null);
-        transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-        transaction.commit();
+    public void goAbout(MenuItem item){
+        goToAbout(item);
     }
+    public void goSettings(MenuItem item){
+        goToSettings(item);
+    }
+    public void goContact(MenuItem item){
+        goToContact(item);
+    }
+    public void goLogout(MenuItem item){
 
+    }
     @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() == 0) {

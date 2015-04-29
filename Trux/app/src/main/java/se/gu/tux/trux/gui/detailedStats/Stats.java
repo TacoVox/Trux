@@ -24,6 +24,7 @@ import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.gui.ItemMenu;
 import se.gu.tux.trux.gui.MainActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
@@ -37,7 +38,7 @@ import tux.gu.se.trux.R;
  */
 
 
-public class Stats extends ActionBarActivity implements Serializable {
+public class Stats extends ItemMenu implements Serializable {
     //volatile Fragment fragment;
     private volatile DetailedStatsFragment speedFragment, fuelFragment, distFragment;
     private Button speedBtn, fuelBtn, distanceBtn, overallBtn;
@@ -48,7 +49,8 @@ public class Stats extends ActionBarActivity implements Serializable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
-
+        statsActive = true;
+        System.out.println("Stats = true --------------------------------------------");
 
         speedBtn = (Button) findViewById(R.id.speed_button);
         fuelBtn = (Button) findViewById(R.id.fuel_button);
@@ -65,11 +67,26 @@ public class Stats extends ActionBarActivity implements Serializable {
     }
 
     @Override
+    public void onStop(){
+        super.onStop();
+        statsActive = false;
+        System.out.println("Stats = false --------------------------------------------");
+    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        statsActive = false;
+        System.out.println("Stats = false --------------------------------------------");
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-
+        statsActive = true;
+        System.out.println("Stats = true --------------------------------------------");
         // Tell data handler to start downloading all stats
         DataHandler.getInstance().cacheDetailedStats();;
+
     }
 
     class ButtonListener implements Button.OnClickListener {
@@ -217,14 +234,6 @@ public class Stats extends ActionBarActivity implements Serializable {
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_stats, menu);
-        return true;
-    }
-
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -239,6 +248,23 @@ public class Stats extends ActionBarActivity implements Serializable {
         return super.onOptionsItemSelected(item);
     }
 
+    public void goLogout(MenuItem item){
+        logout(item);
+    }
+
+    public void goSettings(MenuItem item){
+        goToSettings(item);
+    }
+
+    public void goAbout(MenuItem item){
+        goToAbout(item);
+    }
+
+    public void goContact(MenuItem item){
+        goToContact(item);
+    }
+
+/*
     public void goToOverall(View view) {
         Intent intent = new Intent(this, OverallStats.class);
         startActivity(intent);
@@ -248,7 +274,7 @@ public class Stats extends ActionBarActivity implements Serializable {
         Intent intent = new Intent(Stats.this, MainActivity.class);
         startActivity(intent);
     }
-
+*/
     public void contact(MenuItem item){
      /*   fragment = new Contact();
         transaction = getFragmentManager().beginTransaction();
