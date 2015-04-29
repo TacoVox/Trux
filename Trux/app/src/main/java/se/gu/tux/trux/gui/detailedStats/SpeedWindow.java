@@ -37,13 +37,10 @@ public class SpeedWindow extends DetailedStatsFragment {
     private void popSpeedGraph(View view) {
 
         speedGraph = new GraphView(getActivity());
-        speedGraph.setTitle("Speed");
-        speedGraph.setTitleTextSize(40);
         speedGraph.getViewport().setXAxisBoundsManual(true);
         speedGraph.getViewport().setMaxX(30);
-        speedGraph.getGridLabelRenderer().setNumHorizontalLabels(30);
-        speedGraph.getViewport().setScrollable(true);
-        speedGraph.getViewport().setScalable(true);
+        speedGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        speedGraph.getGridLabelRenderer().setVerticalLabelsVisible(false);
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.SpeedGraph);
