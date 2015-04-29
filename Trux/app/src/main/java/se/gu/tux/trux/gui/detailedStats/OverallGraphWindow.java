@@ -28,9 +28,10 @@ public class OverallGraphWindow extends Fragment {
                              Bundle savedInstanceState) {
 
         myFragmentView = inflater.inflate(R.layout.fragment_overall_graph_window, container, false);
+        popSpeedGraph(myFragmentView);
         popFuelGraph(myFragmentView);
         popDTGraph(myFragmentView);
-        popSpeedGraph(myFragmentView);
+
         myFragmentView.findViewById(R.id.loadingPanel).bringToFront();
         return myFragmentView;
     }
@@ -68,6 +69,13 @@ public class OverallGraphWindow extends Fragment {
         fuelGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Consumption");
         fuelGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
+        fuelGraph.getViewport().setXAxisBoundsManual(true);
+        fuelGraph.getViewport().setMaxX(30);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 0, 100, 0);
+        fuelGraph.setLayoutParams(lp);
+
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.fuelGraphOverall);
             layout.addView(fuelGraph);
@@ -82,6 +90,13 @@ public class OverallGraphWindow extends Fragment {
         speedGraph.setTitleTextSize(40);
         speedGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Speed");
         speedGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
+
+        speedGraph.getViewport().setXAxisBoundsManual(true);
+        speedGraph.getViewport().setMaxX(30);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 0, 100, 0);
+        speedGraph.setLayoutParams(lp);
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.speedGraphOverall);
@@ -98,6 +113,13 @@ public class OverallGraphWindow extends Fragment {
         distGraph.setTitleTextSize(40);
         distGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Distance");
         distGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
+
+        distGraph.getViewport().setXAxisBoundsManual(true);
+        distGraph.getViewport().setMaxX(30);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 0, 100, 0);
+        distGraph.setLayoutParams(lp);
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.dTGraphOverall);
