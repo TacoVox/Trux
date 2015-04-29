@@ -1,6 +1,8 @@
 package se.gu.tux.trux.gui;
 
+import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -69,6 +71,8 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
         confirmPassword = (EditText) view.findViewById(R.id.verPasswordInput);
         termsAndCond = (CheckBox) view.findViewById(R.id.agreeButton);
         registerButton = (Button) view.findViewById(R.id.registerButton);
+
+        // set listener to the button
         registerButton.setOnClickListener(this);
 
         // return the view
@@ -102,6 +106,7 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
             // set session Id to REGISTER_REQUEST for the server
             user.setSessionId(User.REGISTER_REQUEST);
 
+            // set user in data handler
             DataHandler.getInstance().setUser(user);
 
             // start async task to register
@@ -115,23 +120,32 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
             {
                 success = task.get();
             }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-            catch (ExecutionException e)
-            {
-                e.printStackTrace();
-            }
+            catch (InterruptedException e)  { e.printStackTrace(); }
+            catch (ExecutionException e)    { e.printStackTrace(); }
 
             // if successful registration, go back to main screen
             if (success.getType() == ProtocolMessage.Type.SUCCESS)
             {
-                Toast.makeText(getActivity(), "You have now been registered. Thank You for joining our community.",
-                        Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder confirmDialog = new AlertDialog.Builder(getActivity().getBaseContext());
 
-                FragmentManager fm = getActivity().getFragmentManager();
-                fm.popBackStack();
+                confirmDialog.setMessage("You have now been registered. To confirm registration, " +
+                "please go to the e-mail you provided and click on the link. To enjoy our services, " +
+                "login with your username and password. Have a nice day!")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i)
+                            {
+                                // dismiss the dialog box
+                                dialog.dismiss();
+                                // get the transaction manager
+                                FragmentManager fm = getActivity().getFragmentManager();
+                                // go back to main screen
+                                fm.popBackStack();
+                            }
+                        }).create();
+
+                confirmDialog.show();
             }
             else
             {
