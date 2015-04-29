@@ -161,8 +161,14 @@ public class MainActivity extends ItemMenu
 
         if (isAllowed)
         {
+            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(this, DriverHomeScreen.class);
             startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Login failed. Please try again.", Toast.LENGTH_SHORT).show();
         }
 
     } // end goToHome()
@@ -209,14 +215,18 @@ public class MainActivity extends ItemMenu
 
         if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
         {
+            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(this, DriverHomeScreen.class);
             startActivity(intent);
         }
         else
         {
-            System.out.println("-------- ERROR: login fail ----------");
+            Toast.makeText(getApplicationContext(), "Problem logging in. Message: " +
+                    msg.getMessage() + ". Please try again.", Toast.LENGTH_SHORT).show();
         }
-    }
+
+    } // end autoLogin()
 
 
 
@@ -277,12 +287,6 @@ public class MainActivity extends ItemMenu
 
             return isAllowed;
         }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean)
-        {
-            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
-        }
         
     } // end inner class
 
@@ -315,13 +319,9 @@ public class MainActivity extends ItemMenu
             return msg;
         }
 
-        @Override
-        protected void onPostExecute(ProtocolMessage protocolMessage)
-        {
-            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
-        }
-
     } // end inner class
+
+
     public void showAlert(View view){
 
         AlertDialog.Builder logInAlert = new AlertDialog.Builder(this);

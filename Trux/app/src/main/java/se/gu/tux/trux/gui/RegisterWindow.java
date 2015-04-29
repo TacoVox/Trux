@@ -113,20 +113,20 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
             AsyncTask<User, Void, ProtocolMessage> task = new RegisterCheck().execute(user);
 
             // the protocol message for response
-            ProtocolMessage success = null;
+            ProtocolMessage message = null;
 
             // get the response
             try
             {
-                success = task.get();
+                message = task.get();
             }
             catch (InterruptedException e)  { e.printStackTrace(); }
             catch (ExecutionException e)    { e.printStackTrace(); }
 
             // if successful registration, go back to main screen
-            if (success.getType() == ProtocolMessage.Type.SUCCESS)
+            if (message.getType() == ProtocolMessage.Type.SUCCESS)
             {
-                AlertDialog.Builder confirmDialog = new AlertDialog.Builder(getActivity().getBaseContext());
+                AlertDialog.Builder confirmDialog = new AlertDialog.Builder(view.getContext());
 
                 confirmDialog.setMessage("You have now been registered. To confirm registration, " +
                 "please go to the e-mail you provided and click on the link. To enjoy our services, " +
@@ -149,15 +149,32 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
             }
             else
             {
-                Toast.makeText(getActivity(), "Problem with main server. Please try later.",
+                Toast.makeText(getActivity(), message.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
 
         }
         else
         {
-            Toast.makeText(getActivity(), "Something went wrong during registration. Please contact " +
-                    "app developers or try again later.", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder errorDialog = new AlertDialog.Builder(view.getContext());
+
+            errorDialog.setMessage("There was a problem while registering. Please try " +
+            "again later. If the problem persists, please contact the development team. Have a nice day!")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i)
+                        {
+                            // dismiss the dialog box
+                            dialog.dismiss();
+                            // get the transaction manager
+                            FragmentManager fm = getActivity().getFragmentManager();
+                            // go back to main screen
+                            fm.popBackStack();
+                        }
+                    }).create();
+
+            errorDialog.show();
         }
 
     } // end registerUser()
