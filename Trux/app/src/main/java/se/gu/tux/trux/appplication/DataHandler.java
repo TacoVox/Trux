@@ -33,7 +33,7 @@ public class DataHandler
     // Stores detailed stats with signal id as key
     private volatile HashMap<Integer, DetailedStatsBundle> detailedStats;
     // Stores time stamp
-    private long detailedStatsFetched = 0;
+    private volatile long detailedStatsFetched = 0;
 
 
     /**
@@ -106,7 +106,7 @@ public class DataHandler
      */
     public void cacheDetailedStats() {
         // Only fetch if they aren't there or aren't up to date
-        if (detailedStats != null ||
+        if (detailedStats == null ||
                 System.currentTimeMillis() - detailedStatsFetched > 1000 * 60 * 15) {
 
             detailedStats = new HashMap<Integer, DetailedStatsBundle>();
