@@ -37,10 +37,15 @@ public class ServerConnector {
      */
     private static ServerConnector instance = null;
     private ServerConnector() { queue = new LinkedBlockingDeque<>(); }
-    public synchronized static ServerConnector getInstance()
+    public static ServerConnector getInstance()
     {
         if (instance == null) {
-            instance = new ServerConnector();
+            synchronized (ServerConnector.class) {
+                // Yes, double check!
+                if (instance == null) {
+                    instance = new ServerConnector();
+                }
+            }
         }
         return instance;
     }
