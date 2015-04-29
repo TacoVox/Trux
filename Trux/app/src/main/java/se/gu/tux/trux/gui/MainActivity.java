@@ -1,7 +1,9 @@
 package se.gu.tux.trux.gui;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -132,6 +134,7 @@ public class MainActivity extends ItemMenu
 
         if (username.isEmpty() || password.isEmpty())
         {
+            showAlert(view);
             // TODO
             // something wrong with credentials, display info to user
             // refresh app, ask for login again
@@ -319,6 +322,19 @@ public class MainActivity extends ItemMenu
         }
 
     } // end inner class
+    public void showAlert(View view){
+
+        AlertDialog.Builder logInAlert = new AlertDialog.Builder(this);
+        logInAlert.setMessage("Invalid Username Or Password")
+                .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        logInAlert.show();
+    }
 
 
     /*
