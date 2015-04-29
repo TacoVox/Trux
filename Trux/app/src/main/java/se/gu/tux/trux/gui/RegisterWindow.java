@@ -126,7 +126,7 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
             // if successful registration, go back to main screen
             if (success.getType() == ProtocolMessage.Type.SUCCESS)
             {
-                AlertDialog.Builder confirmDialog = new AlertDialog.Builder(getActivity().getBaseContext());
+                AlertDialog.Builder confirmDialog = new AlertDialog.Builder(view.getContext());
 
                 confirmDialog.setMessage("You have now been registered. To confirm registration, " +
                 "please go to the e-mail you provided and click on the link. To enjoy our services, " +
