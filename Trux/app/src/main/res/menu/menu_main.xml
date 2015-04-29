@@ -7,5 +7,5 @@
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_contact" android:title="@string/action_contact"
         android:orderInCategory="100" app:showAsAction="never"
-        android:onClick="goContact"/>
+       />
 </menu>
