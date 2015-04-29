@@ -60,6 +60,8 @@
     <string name="about">Here we will have information about the application</string>
     <string name="title_activity_item_menu">ItemMenu</string>
 
-    <string name="hello_world">Hello world!</string>
+
+
+    <string name="settings">Here we will have settings later</string>
 
 </resources>
