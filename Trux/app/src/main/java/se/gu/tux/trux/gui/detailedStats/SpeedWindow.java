@@ -41,8 +41,10 @@ public class SpeedWindow extends DetailedStatsFragment {
         speedGraph.setTitleTextSize(40);
         speedGraph.getViewport().setXAxisBoundsManual(true);
         speedGraph.getViewport().setMaxX(30);
-        speedGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Speed");
-        speedGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
+        speedGraph.getGridLabelRenderer().setNumHorizontalLabels(30);
+        speedGraph.getViewport().setScrollable(true);
+        speedGraph.getViewport().setScalable(true);
+
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.SpeedGraph);
             layout.addView(speedGraph);

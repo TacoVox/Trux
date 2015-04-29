@@ -64,8 +64,6 @@ public class DistTravWindow extends DetailedStatsFragment {
         distanceGraph.setTitleTextSize(40);
         distanceGraph.getViewport().setXAxisBoundsManual(true);
         distanceGraph.getViewport().setMaxX(30);
-        distanceGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Distance");
-        distanceGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.DistanceGraph);

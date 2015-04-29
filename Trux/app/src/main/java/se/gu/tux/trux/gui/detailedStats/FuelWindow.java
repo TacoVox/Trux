@@ -58,8 +58,6 @@ public class FuelWindow extends DetailedStatsFragment {
         fuelGraph.setTitleTextSize(40);
         fuelGraph.getViewport().setXAxisBoundsManual(true);
         fuelGraph.getViewport().setMaxX(30);
-        fuelGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Consumption");
-        fuelGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.FuelGraph);
