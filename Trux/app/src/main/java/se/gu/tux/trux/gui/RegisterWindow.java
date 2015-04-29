@@ -40,7 +40,6 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
     private EditText password;
     private EditText confirmPassword;
     private CheckBox termsAndCond;
-    private Button registerButton;
 
     // the view for this fragment
     private View view;
@@ -51,7 +50,6 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
     private String sLastName;
     private String sEmail;
     private String sPassword;
-    private String sConfirmPass;
 
 
     @Override
@@ -70,7 +68,7 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
         password = (EditText) view.findViewById(R.id.passwordInput);
         confirmPassword = (EditText) view.findViewById(R.id.verPasswordInput);
         termsAndCond = (CheckBox) view.findViewById(R.id.agreeButton);
-        registerButton = (Button) view.findViewById(R.id.registerButton);
+        Button registerButton = (Button) view.findViewById(R.id.registerButton);
 
         // set listener to the button
         registerButton.setOnClickListener(this);
@@ -89,7 +87,6 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
         boolean check = checkCredentials();
 
         // if valid, send a request to register to the server
-        // else display an appropriate message
         if (check)
         {
             // create a User object to send to the server
@@ -120,10 +117,10 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
             {
                 message = task.get();
             }
-            catch (InterruptedException e)  { e.printStackTrace(); }
-            catch (ExecutionException e)    { e.printStackTrace(); }
+            catch (InterruptedException | ExecutionException e)  { e.printStackTrace(); }
 
             // if successful registration, go back to main screen
+            assert message != null;
             if (message.getType() == ProtocolMessage.Type.SUCCESS)
             {
                 AlertDialog.Builder confirmDialog = new AlertDialog.Builder(view.getContext());
@@ -152,10 +149,11 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
                 Toast.makeText(getActivity(), message.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
-
         }
         else
         {
+            // the credentials were not valid or there was some other
+            // error, display message to user
             AlertDialog.Builder errorDialog = new AlertDialog.Builder(view.getContext());
 
             errorDialog.setMessage("There was a problem while registering. Please try " +
@@ -253,13 +251,12 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
         }
 
         // get the confirmed password
-        sConfirmPass = confirmPassword.getText().toString();
+        String sConfirmPass = confirmPassword.getText().toString();
         // check if the two passwords match
         if (!sConfirmPass.equals(sPassword))
         {
             confirmPassword.setBackgroundColor(Color.RED);
             Toast.makeText(getActivity(), "Please make sure passwords match.", Toast.LENGTH_SHORT).show();
-            sConfirmPass = "";
             isVerified = false;
         }
 
@@ -274,8 +271,13 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
 
     } // end check()
 
+    
 
-
+    /**
+     * Performs action when button is clicked. Overriden method.
+     *
+     * @param view      The view.
+     */
     @Override
     public void onClick(View view)
     {
