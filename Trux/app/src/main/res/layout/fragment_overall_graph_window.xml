@@ -6,36 +6,49 @@
     <!-- TODO: Update blank fragment layout -->
     <TextView android:layout_width="match_parent" android:layout_height="match_parent"
         android:text="" />
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="3">
-
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/fuelGraphOverall"
-        android:layout_weight="1">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="3">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/fuelGraphOverall"
+            android:layout_weight="1">
+
+            </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/speedGraphOverall"
+            android:layout_weight="1">
 
         </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/dTGraphOverall"
+            android:layout_weight="1">
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/speedGraphOverall"
-        android:layout_weight="1">
+        android:background="#3D3D3D"
+        android:alpha="0.7"
+        android:gravity="center">
 
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/dTGraphOverall"
-        android:layout_weight="1">
-
-    </LinearLayout>
-</LinearLayout>
-
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"/>
+    </RelativeLayout>
 </FrameLayout>

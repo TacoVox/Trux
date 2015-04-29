@@ -71,7 +71,7 @@ public class FuelWindow extends DetailedStatsFragment {
 
 
     public void hideLoading() {
-        getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+        myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
     }
 
     @Override
