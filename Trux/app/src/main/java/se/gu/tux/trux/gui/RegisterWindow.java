@@ -128,19 +128,19 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
                 confirmDialog.setMessage("You have now been registered. To confirm registration, " +
                 "please go to the e-mail you provided and click on the link. To enjoy our services, " +
                 "login with your username and password. Have a nice day!")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener()
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i)
                         {
-                            @Override
-                            public void onClick(DialogInterface dialog, int i)
-                            {
-                                // dismiss the dialog box
-                                dialog.dismiss();
-                                // get the transaction manager
-                                FragmentManager fm = getActivity().getFragmentManager();
-                                // go back to main screen
-                                fm.popBackStack();
-                            }
-                        }).create();
+                            // dismiss the dialog box
+                            dialog.dismiss();
+                            // get the transaction manager
+                            FragmentManager fm = getActivity().getFragmentManager();
+                            // go back to main screen
+                            fm.popBackStack();
+                        }
+                    }).create();
 
                 confirmDialog.show();
             }
@@ -158,19 +158,15 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
 
             errorDialog.setMessage("There was a problem while registering. Please try " +
             "again later. If the problem persists, please contact the development team. Have a nice day!")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener()
+                .setPositiveButton("OK", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i)
                     {
-                        @Override
-                        public void onClick(DialogInterface dialog, int i)
-                        {
-                            // dismiss the dialog box
-                            dialog.dismiss();
-                            // get the transaction manager
-                            FragmentManager fm = getActivity().getFragmentManager();
-                            // go back to main screen
-                            fm.popBackStack();
-                        }
-                    }).create();
+                        // dismiss the dialog box
+                        dialog.dismiss();
+                    }
+                }).create();
 
             errorDialog.show();
         }
