@@ -271,7 +271,7 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
 
     } // end check()
 
-    
+
 
     /**
      * Performs action when button is clicked. Overriden method.
