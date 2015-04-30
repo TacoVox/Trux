@@ -30,6 +30,9 @@ public class FuelWindow extends DetailedStatsFragment {
             fuelTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString());
             LineGraphSeries fuelValues = new LineGraphSeries(stats.getGraphPoints());
             fuelGraph.addSeries(fuelValues);
+            fuelGraph.invalidate();
+            fuelGraph.getViewport().setMaxY(800);
+
         }
     }
 
@@ -58,8 +61,6 @@ public class FuelWindow extends DetailedStatsFragment {
         fuelGraph.setTitleTextSize(40);
         fuelGraph.getViewport().setXAxisBoundsManual(true);
         fuelGraph.getViewport().setMaxX(30);
-        fuelGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Consumption");
-        fuelGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.FuelGraph);
@@ -71,7 +72,7 @@ public class FuelWindow extends DetailedStatsFragment {
 
 
     public void hideLoading() {
-        getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+        myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
     }
 
     @Override
