@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.detailedStats;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,12 +38,11 @@ public class SpeedWindow extends DetailedStatsFragment {
     private void popSpeedGraph(View view) {
 
         speedGraph = new GraphView(getActivity());
-        speedGraph.setTitle("Speed");
-        speedGraph.setTitleTextSize(40);
         speedGraph.getViewport().setXAxisBoundsManual(true);
-        speedGraph.getViewport().setMaxX(30);
-        speedGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Speed");
-        speedGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
+        speedGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        speedGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
+        speedGraph.getGridLabelRenderer().setPadding(50);
+
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.SpeedGraph);
             layout.addView(speedGraph);
@@ -60,7 +60,8 @@ public class SpeedWindow extends DetailedStatsFragment {
             speedTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString());
             LineGraphSeries speedValues = new LineGraphSeries(stats.getGraphPoints());
             speedGraph.addSeries(speedValues);
-            speedGraph.invalidate();
+            speedGraph.getViewport().setMaxX(30);
+            speedGraph.getViewport().setMaxY(150);
         }
     }
 

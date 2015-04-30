@@ -47,19 +47,24 @@ public class DataHandler
 
     /**
      * Returns an instance of the DataHandler object.
-     * TODO: note, removed synchronized on this while debugging stats data fetching.
-     * Maybe we'll bring it back some day.
+     * Note, removed synchronized on this while debugging stats data fetching.
+     * Later realized that maybe we can use double check locking just for the instantiation
+     *
      * @return      instance of DataHandler
      */
     public static DataHandler getInstance()
     {
+        // YES, there should be two if checks
         if (dataHandler == null)
         {
-            dataHandler = new DataHandler();
+            synchronized (DataHandler.class) {
+                if (dataHandler == null) {
+                    dataHandler = new DataHandler();
+                }
+            }
+
         }
-
         return dataHandler;
-
     } // end getInstance()
 
     /**
@@ -279,16 +284,23 @@ public class DataHandler
         return dataPoints;
     }
 
-
-
     public void setUser(User user)
     {
+        if (user == null || this.user != user) {
+            // The user has changed or been removed due to logout, so cleanup the session data
+            cleanupSessionData();
+        }
         this.user = user;
     }
 
     public User getUser()
     {
         return user;
+    }
+
+    public void cleanupSessionData() {
+        detailedStats = null;
+        detailedStatsFetched = 0;
     }
 
 } // end class DataHandler

@@ -3,17 +3,18 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#E0E0E0"
-    android:padding="5dp"
     tools:context="se.gu.tux.trux.gui.detailedStats.SpeedWindow">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:padding="10dp"
-        android:background="@drawable/custom_border"
         android:weightSum="2">
 
+        <!--
+        android:padding="10dp"
+        android:background="@drawable/custom_border"
+        -->
 
         <LinearLayout
             android:orientation="vertical"
@@ -26,7 +27,7 @@
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background= "#FF3D3D3D"
+                android:background= "@drawable/label_border"
                 android:layout_margin="5dp"
                 android:padding="10dp"
                 android:layout_weight="1">
@@ -55,7 +56,7 @@
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background= "#FF3D3D3D"
+                android:background= "@drawable/label_border"
                 android:layout_margin="5dp"
                 android:padding="10dp"
                 android:layout_weight="1">
@@ -84,7 +85,7 @@
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background= "#FF3D3D3D"
+                android:background= "@drawable/label_border"
                 android:layout_margin="5dp"
                 android:padding="10dp"
                 android:layout_weight="1">
@@ -113,7 +114,7 @@
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background= "#FF3D3D3D"
+                android:background= "@drawable/label_border"
                 android:layout_margin="5dp"
                 android:padding="10dp"
                 android:layout_weight="1">
@@ -144,6 +145,8 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:background= "@drawable/graph_border"
+        android:layout_margin="5dp"
         android:id="@+id/SpeedGraph"
         android:layout_weight="1">
     </LinearLayout>
