@@ -244,7 +244,7 @@ public class UserHandler {
         try
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO register, (registerid, username, password, firstname, lastname, "
+                    "INSERT INTO register (registerid, username, password, firstname, lastname, "
                             + "email, timestamp) VALUES(?, ?, ?, ?, ?, ?, ?)");
             
             pst.setInt(1, u.getEmail().hashCode());
@@ -268,6 +268,6 @@ public class UserHandler {
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
-        return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Username is already taken. Please select another one.");
     }
 }

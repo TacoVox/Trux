@@ -14,13 +14,19 @@ import java.util.concurrent.ExecutionException;
 import se.gu.tux.trux.appplication.LoginService;
 import se.gu.tux.trux.gui.detailedStats.About;
 import se.gu.tux.trux.gui.detailedStats.Contact;
+import se.gu.tux.trux.gui.detailedStats.Settings;
 import tux.gu.se.trux.R;
 
 public class ItemMenu extends ActionBarActivity
 {
     Fragment newFragment;
     FragmentTransaction transaction;
-    
+
+   public Boolean mainActivityActive = false;
+   public Boolean driverHomeScreenActive = false;
+   public Boolean statsActive = false;
+   public Boolean simpleStatsActive = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -42,30 +48,54 @@ public class ItemMenu extends ActionBarActivity
     {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings)
+        {
             return true;
         }
 
 
         return super.onOptionsItemSelected(item);
     }
-/*
+
     public void goToSettings(MenuItem item)
     {
-        newFragment = new Settings();
+         newFragment = new Settings();
         transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.StatsView2, newFragment);
+        if(driverHomeScreenActive) {
+            transaction.replace(R.id.driverhome, newFragment);
+        }
+        else if (mainActivityActive){
+            transaction.replace(R.id.mainActivity, newFragment);
+        }
+        else if(statsActive){
+            transaction.replace(R.id.StatsView, newFragment);
+        }
+        else if(simpleStatsActive){
+
+        }
         transaction.addToBackStack(null);
         transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
         transaction.commit();
     }
-*/
+
+
     public void goToAbout(MenuItem item)
     {
 
         newFragment = new About();
         transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.driverhome, newFragment);
+        if(driverHomeScreenActive) {
+            transaction.replace(R.id.driverhome, newFragment);
+        }
+        else if (mainActivityActive){
+            transaction.replace(R.id.mainActivity, newFragment);
+        }
+        else if(statsActive){
+            transaction.replace(R.id.StatsView, newFragment);
+        }
+        else if(simpleStatsActive){
+
+        }
         transaction.addToBackStack(null);
         transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
         transaction.commit();
@@ -74,7 +104,18 @@ public class ItemMenu extends ActionBarActivity
     {
         newFragment = new Contact();
         transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.driverhome, newFragment);
+        if(driverHomeScreenActive) {
+            transaction.replace(R.id.driverhome, newFragment);
+        }
+        else if (mainActivityActive){
+            transaction.replace(R.id.mainActivity, newFragment);
+        }
+        else if(statsActive){
+            transaction.replace(R.id.StatsView, newFragment);
+        }
+        else if(simpleStatsActive){
+
+        }
         transaction.addToBackStack(null);
         transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
         transaction.commit();

@@ -127,9 +127,11 @@ public class MetricReceiver {
             
 	    while (rs.next())
 	    {
-		md.setValue(rs.getDouble("avg"));
+		md.setValue((Double)rs.getDouble("avg"));
 		break;
 	    }
+            
+            Logger.gI().addDebug("After query: " + Double.toString((Double)md.getValue()));
 	}
 	catch (Exception e)
 	{
@@ -197,30 +199,41 @@ public class MetricReceiver {
         
         try
 	{
-            String selectStmnt = "SELECT (SELECT value FROM " + type + " WHERE "
-                    + "userid = ? ORDER BY (timestamp - ?) DESC LIMIT 1) "
-                    + "- (SELECT (value * - 1) FROM " + type + " WHERE "
-                    + "userid = ? ORDER BY (timestamp - ?) ASC LIMIT 1) AS diff";
+            long val = 0;
+            
+            String selectStmnt = "SELECT value FROM " + type + " WHERE "
+                    + "userid = ? AND timestamp < ? ORDER BY timestamp DESC LIMIT 1";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
             pst.setLong(1, md.getUserId());
-            pst.setLong(2, md.getTimeStamp());
-            pst.setLong(3, md.getUserId());
-            
-            if(md.getTimeFrame() == MetricData.FOREVER)
-                pst.setLong(2, 0);
-            else
-                pst.setLong(2, (md.getTimeStamp() - md.getTimeFrame()));         
+            pst.setLong(2, md.getTimeStamp());        
 	    
 	    ResultSet rs = dbc.execSelect(md, pst);
             
 	    while (rs.next())
 	    {
-		md.setValue(rs.getLong("diff"));
+		val = rs.getLong("value");
 		break;
 	    }
+            
+            if(md.getTimeFrame() == MetricData.FOREVER)
+                pst.setLong(2, 0);
+            else
+                pst.setLong(2, (md.getTimeStamp() - md.getTimeFrame())); 
+            
+            rs = dbc.execSelect(md, pst);
+            
+	    while (rs.next())
+	    {
+		val -= rs.getLong("value");
+		break;
+	    }
+            
+            md.setValue(val);
+            
+            return md;
 	}
 	catch (Exception e)
 	{

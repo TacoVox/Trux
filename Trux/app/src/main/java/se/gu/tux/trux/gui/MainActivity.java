@@ -1,7 +1,9 @@
 package se.gu.tux.trux.gui;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -52,7 +54,7 @@ public class MainActivity extends ItemMenu
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mainActivityActive = true;
         // Add login form
         userField = (TextView) findViewById(R.id.username);
         passField = (TextView) findViewById(R.id.password);
@@ -100,30 +102,21 @@ public class MainActivity extends ItemMenu
         }
     }
 
-
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public void onPause(){
+        super.onPause();
+        mainActivityActive = false;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        
-        return super.onOptionsItemSelected(item);
+    public void onResume(){
+        super.onResume();
+        mainActivityActive = true;
     }
-
+    public void onStop(){
+        super.onStop();
+        mainActivityActive = false;
+    }
 
     public void goToHome(View view)
     {
@@ -141,6 +134,7 @@ public class MainActivity extends ItemMenu
 
         if (username.isEmpty() || password.isEmpty())
         {
+            showAlert(view);
             // TODO
             // something wrong with credentials, display info to user
             // refresh app, ask for login again
@@ -167,8 +161,14 @@ public class MainActivity extends ItemMenu
 
         if (isAllowed)
         {
+            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(this, DriverHomeScreen.class);
             startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Login failed. Please try again.", Toast.LENGTH_SHORT).show();
         }
 
     } // end goToHome()
@@ -215,14 +215,18 @@ public class MainActivity extends ItemMenu
 
         if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
         {
+            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
+
             Intent intent = new Intent(this, DriverHomeScreen.class);
             startActivity(intent);
         }
         else
         {
-            System.out.println("-------- ERROR: login fail ----------");
+            Toast.makeText(getApplicationContext(), "Problem logging in. Message: " +
+                    msg.getMessage() + ". Please try again.", Toast.LENGTH_SHORT).show();
         }
-    }
+
+    } // end autoLogin()
 
 
 
@@ -242,15 +246,18 @@ public class MainActivity extends ItemMenu
         }
     };
 
-    public void goContact(MenuItem item){
-        newFragment = new Contact();
-        transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.mainActivity, newFragment);
-        transaction.addToBackStack(null);
-        transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-        transaction.commit();
+    public void goAbout(MenuItem item){
+        goToAbout(item);
     }
+    public void goSettings(MenuItem item){
+        goToSettings(item);
+    }
+    public void goContact(MenuItem item){
+        goToContact(item);
+    }
+    public void goLogout(MenuItem item){
 
+    }
     @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() == 0) {
@@ -280,12 +287,6 @@ public class MainActivity extends ItemMenu
 
             return isAllowed;
         }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean)
-        {
-            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
-        }
         
     } // end inner class
 
@@ -296,6 +297,12 @@ public class MainActivity extends ItemMenu
     private class AutoLoginCheck extends AsyncTask<ProtocolMessage, Void, ProtocolMessage>
     {
         ProtocolMessage msg = null;
+
+        @Override
+        protected void onPreExecute()
+        {
+            Toast.makeText(getApplicationContext(), "Auto-logging in. Please wait...", Toast.LENGTH_SHORT).show();
+        }
 
         @Override
         protected ProtocolMessage doInBackground(ProtocolMessage... protocolMessages)
@@ -311,7 +318,23 @@ public class MainActivity extends ItemMenu
 
             return msg;
         }
+
     } // end inner class
+
+
+    public void showAlert(View view){
+
+        AlertDialog.Builder logInAlert = new AlertDialog.Builder(this);
+        logInAlert.setMessage("Invalid Username Or Password")
+                .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        logInAlert.show();
+    }
 
 
     /*
