@@ -190,10 +190,13 @@ public class LoginService
 
         if (pm != null && pm.getType() == ProtocolMessage.Type.SUCCESS)
         {
+            System.out.println("Deleting file!");
             //Create anonymous instance - we don't need it after that
             new File(fileName).delete();
             DataHandler.getInstance().setUser(null);
             isLoggedOut = true;
+        } else {
+            System.out.println("Received something else than sucess when trying to log out...!");
         }
 
         return isLoggedOut;

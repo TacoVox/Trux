@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -91,10 +92,17 @@ public class BaseAppActivity extends ActionBarActivity
 
         if (check)
         {
+            // Right now we don't care about the result, hence the same actions
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
             startActivity(new Intent(this, MainActivity.class));
         }
         else
         {
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
             startActivity(new Intent(this, MainActivity.class));
         }
 

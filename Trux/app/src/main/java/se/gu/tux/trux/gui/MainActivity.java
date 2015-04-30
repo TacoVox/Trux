@@ -80,11 +80,14 @@ public class MainActivity extends BaseAppActivity
         file = new File(getFilesDir(), FILE_NAME);
 
         // create a file to store data
-        if (file == null || !file.exists())
+        if (!file.exists())
         {
             try
             {
+                System.out.println("File does not exist, clearing user info");
                 file.createNewFile();
+                // If user logged out now, make sure no user details are cached.
+                userInfo = null;
             }
             catch (IOException e)
             {
@@ -94,6 +97,7 @@ public class MainActivity extends BaseAppActivity
         }
         else
         {
+            System.out.println("File exists, loading user info");
             userInfo = LoginService.getInstance().readFromFile();
         }
 
