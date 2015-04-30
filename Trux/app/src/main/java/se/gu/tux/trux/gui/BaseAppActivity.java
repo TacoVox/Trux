@@ -11,6 +11,7 @@ import android.widget.Toast;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.LoginService;
+
 import tux.gu.se.trux.R;
 
 /**
@@ -21,7 +22,6 @@ import tux.gu.se.trux.R;
  */
 public class BaseAppActivity extends ActionBarActivity
 {
-
 
 
     @Override
@@ -36,7 +36,7 @@ public class BaseAppActivity extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu)
     {
         // inflate menu
-        getMenuInflater().inflate(R.menu.menu_item_menu, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         // return menu
         return super.onCreateOptionsMenu(menu);
     }
@@ -66,7 +66,8 @@ public class BaseAppActivity extends ActionBarActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
+
+    } // end onOptionsItemSelected()
 
 
 

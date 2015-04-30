@@ -7,7 +7,8 @@ import android.os.Bundle;
 import se.gu.tux.trux.gui.simpleStats.FragmentPageAdapterSimpleUI;
 import tux.gu.se.trux.R;
 
-public class SimpleStats extends FragmentActivity {
+public class SimpleStats extends FragmentActivity
+{
 
     ViewPager viewpager;
     FragmentPageAdapterSimpleUI ft;

@@ -33,7 +33,7 @@ import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 
-public class MainActivity extends ItemMenu
+public class MainActivity extends BaseAppActivity
 {
     Fragment newFragment;
     FragmentTransaction transaction;
@@ -50,11 +50,13 @@ public class MainActivity extends ItemMenu
 
     private File file;
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mainActivityActive = true;
+
         // Add login form
         userField = (TextView) findViewById(R.id.username);
         passField = (TextView) findViewById(R.id.password);
@@ -64,11 +66,10 @@ public class MainActivity extends ItemMenu
 
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
+        ServerConnector.gI().connect("www.derkahler.de");
+
         // Create login service
         LoginService.createInstance(this.getBaseContext(), FILE_NAME);
-
-        ServerConnector.gI().connect("www.derkahler.de");
-        //IServerConnector.getInstance().connectTo("10.0.2.2");
 
         // Just make sure a AGA data parser is created
         AGADataParser.getInstance();
@@ -105,18 +106,18 @@ public class MainActivity extends ItemMenu
     @Override
     public void onPause(){
         super.onPause();
-        mainActivityActive = false;
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        mainActivityActive = true;
     }
+
+    @Override
     public void onStop(){
         super.onStop();
-        mainActivityActive = false;
     }
+
 
     public void goToHome(View view)
     {
@@ -246,18 +247,7 @@ public class MainActivity extends ItemMenu
         }
     };
 
-    public void goAbout(MenuItem item){
-        goToAbout(item);
-    }
-    public void goSettings(MenuItem item){
-        goToSettings(item);
-    }
-    public void goContact(MenuItem item){
-        goToContact(item);
-    }
-    public void goLogout(MenuItem item){
 
-    }
     @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() == 0) {
@@ -335,16 +325,6 @@ public class MainActivity extends ItemMenu
                 .create();
         logInAlert.show();
     }
-
-
-    /*
-    public void onStop() {
-        // TODO
-        // clean-up on stop
-        System.out.println("ONSTOP....!");
-    }
-    */
-
 
 
 } // end class
