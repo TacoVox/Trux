@@ -1,0 +1,139 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="se.gu.tux.trux.Stats"
+    android:background="#E0E0E0"
+    android:padding="5dp"
+    android:id="@+id/StatsView">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/StatsView2"
+        android:weightSum="3">
+
+        <!--
+        android:padding="10dip"
+        android:background="@drawable/custom_border"
+        -->
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="1"
+            android:weightSum="3">
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:weightSum="2">
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="@string/speed_button_text"
+                    android:id="@+id/speed_button"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_clickable_new"
+                    android:textColor="#E0E0E0"
+                    android:layout_margin="5dp"/>
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="@string/fuel_button_text"
+                    android:id="@+id/fuel_button"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_clickable_new"
+                    android:textColor="#E0E0E0"
+                    android:layout_margin="5dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:weightSum="2">
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="@string/distance_traveled_text"
+                    android:id="@+id/distance_traveled"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_clickable_new"
+                    android:textColor="#E0E0E0"
+                    android:layout_margin="5dp"/>
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="@string/coming_soon_text"
+                    android:id="@+id/button6"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_clickable_new"
+                    android:textColor="#E0E0E0"
+                    android:layout_margin="5dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:weightSum="2">
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="@string/coming_soon_text"
+                    android:id="@+id/button7"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_clickable_new"
+                    android:textColor="#E0E0E0"
+                    android:layout_margin="5dp"/>
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="@string/coming_soon_text"
+                    android:id="@+id/button8"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_clickable_new"
+                    android:textColor="#E0E0E0"
+                    android:layout_margin="5dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="@string/overall_statistics_text"
+            android:id="@+id/overall_button"
+            android:layout_weight="1"
+            android:background="@drawable/button_clickable_new"
+            android:textColor="#E0E0E0"
+            android:layout_margin="5dp"/>
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="@string/compare_statistics_text"
+            android:id="@+id/compare_statistics"
+            android:layout_weight="1"
+            android:background="@drawable/button_clickable_new"
+            android:textColor="#E0E0E0"
+            android:layout_margin="5dp"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

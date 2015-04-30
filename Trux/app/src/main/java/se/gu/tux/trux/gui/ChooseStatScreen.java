@@ -1,24 +1,29 @@
-package tux.gu.se.trux;
+package se.gu.tux.trux.gui;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import se.gu.tux.trux.gui.detailedStats.Stats;
+import se.gu.tux.trux.gui.simpleStats.SimpleStats;
+import tux.gu.se.trux.R;
 
-public class MainActivity extends ActionBarActivity {
+public class ChooseStatScreen extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_choose_stat_screen);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_choose_stat_screen, menu);
         return true;
     }
 
@@ -35,5 +40,15 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void goToStats(View view){
+        Intent intent = new Intent(this, Stats.class);
+        startActivity(intent);
+    }
+
+    public void goToSimpleStats(View view){
+        Intent intent = new Intent(this, SimpleStats.class);
+        startActivity(intent);
     }
 }

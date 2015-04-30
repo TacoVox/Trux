@@ -2,19 +2,56 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tux.gu.se.trux" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/truck"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:name="se.gu.tux.trux.gui.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="se.gu.tux.trux.gui.DriverHomeScreen"
+            android:label="Trux - Home"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="se.gu.tux.trux.gui.detailedStats.Stats"
+            android:label="Trux - Stats"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.PICK_ACTIVITY" />
+            </intent-filter>
+        </activity>
+        <activity android:name="se.gu.tux.trux.gui.simpleStats.SimpleStats"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="se.gu.tux.trux.gui.detailedStats.OverallStats"
+            android:label="@string/title_activity_overall_stats"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="se.gu.tux.trux.gui.ChooseStatScreen"
+            android:label="@string/title_activity_choose_stat_screen"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="se.gu.tux.trux.gui.ItemMenu"
+            android:label="@string/title_activity_item_menu" >
         </activity>
     </application>
 
