@@ -268,6 +268,6 @@ public class UserHandler {
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
-        return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Username is already taken. Please select another one.");
     }
 }
