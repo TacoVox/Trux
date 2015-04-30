@@ -22,7 +22,7 @@ public class DistTravWindow extends DetailedStatsFragment {
 
 
     @Override
-    public void setValues(final DetailedStatsBundle stats) {
+    public void setValues(DetailedStatsBundle stats) {
         if (stats != null) {
             Long distToday = (Long) stats.getToday().getValue() / 1000;
             Long distWeek = (Long) stats.getWeek().getValue() / 1000;
@@ -39,6 +39,7 @@ public class DistTravWindow extends DetailedStatsFragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class DistTravWindow extends DetailedStatsFragment {
         distanceTextViewTotal = (TextView) myFragmentView.findViewById(R.id.avg_total_distance_traveled_value);
 
         popDistanceGraph(myFragmentView);
-
+        myFragmentView.findViewById(R.id.loadingPanel).bringToFront();
         return myFragmentView;
 
 

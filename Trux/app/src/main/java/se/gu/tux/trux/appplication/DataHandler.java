@@ -272,12 +272,20 @@ public class DataHandler
         DataPoint[] dataPoints = new DataPoint[30];
         for (int i = 0; i < 30; i++) {
             if (data[i].getValue() == null) {
-                dataPoints[i] = new DataPoint(i + 1, 0);
+                dataPoints[i] = new DataPoint(i + 1, new Double(0.0));
             } else {
                 if (md instanceof Speed || md instanceof Fuel) {
-                    dataPoints[i] = new DataPoint(i + 1, (Double)(data[i]).getValue());
-                } else {
-                    dataPoints[i] = new DataPoint(i + 1, (Long)(data[i]).getValue());
+                    dataPoints[i] = new DataPoint(i + 1, (Double)data[i].getValue());
+                } else if (md instanceof Distance ){
+                    // Distance are in m so divide by 1000 to get some more reasonable values
+                    if ((Long)data[i].getValue() == 0) {
+                        dataPoints[i] = new DataPoint(i + 1, new Double(0.0));
+                    } else {
+                        dataPoints[i] = new DataPoint(i + 1, new Double((Long)data[i].getValue() / 1000));
+                    }
+                    System.out.println("datapoint " + i + ": " + dataPoints[i].getY());
+                    //dataPoints[i] = new DataPoint(i + 1, new Double(i));
+                    //System.out.println("datapoint " + i + ": " + dataPoints[i].getY());
                 }
             }
         }

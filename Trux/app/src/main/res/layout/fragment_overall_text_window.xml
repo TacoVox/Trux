@@ -90,7 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:id="@+id/avg_distance_traveled_value"
+                android:id="@+id/total_distance_traveled_value"
                 android:textSize="20dp"
                 android:textColor="#E0E0E0"
                 android:layout_marginLeft="10dp"/>
