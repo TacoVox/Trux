@@ -33,18 +33,28 @@ public class DriverHomeScreen extends ItemMenu {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_home_screen);
-
+        driverHomeScreenActive = true;
+        System.out.println("DriverHomeScreen = True---------------------------------------");
     }
-
-
-/*
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_driver_home_screen, menu);
-        return true;
+    public void onStop(){
+        super.onStop();
+        driverHomeScreenActive = false;
+        System.out.println("DriverHomeScreen = false---------------------------------------");
     }
-*/
+    @Override
+    public void onResume(){
+        super.onResume();
+        driverHomeScreenActive = true;
+        System.out.println("DriverHomeScreen = true---------------------------------------");
+    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        driverHomeScreenActive = false;
+        System.out.println("DriverHomeScreen = false---------------------------------------");
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -75,20 +85,20 @@ public class DriverHomeScreen extends ItemMenu {
         }
     }
     public void goLogout(MenuItem item){
-           super.logout(item);
+           logout(item);
 
     }
-    /*
+
     public void goSettings(MenuItem item){
-        super.goToSettings
+        goToSettings(item);
     }
-*/
+
     public void goAbout(MenuItem item){
-        super.goToAbout(item);
+        goToAbout(item);
     }
 
     public void goContact(MenuItem item){
-        super.goToContact(item);
+        goToContact(item);
     }
 
 

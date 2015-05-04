@@ -24,6 +24,7 @@ import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.gui.ItemMenu;
 import se.gu.tux.trux.gui.MainActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
@@ -37,9 +38,9 @@ import tux.gu.se.trux.R;
  */
 
 
-public class Stats extends ActionBarActivity implements Serializable {
+public class Stats extends ItemMenu implements Serializable {
     //volatile Fragment fragment;
-    private volatile DetailedStatsFragment newFragment;
+    private volatile DetailedStatsFragment speedFragment, fuelFragment, distFragment;
     private Button speedBtn, fuelBtn, distanceBtn, overallBtn;
     private FragmentTransaction transaction;
 
@@ -48,7 +49,8 @@ public class Stats extends ActionBarActivity implements Serializable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
-
+        statsActive = true;
+        System.out.println("Stats = true --------------------------------------------");
 
         speedBtn = (Button) findViewById(R.id.speed_button);
         fuelBtn = (Button) findViewById(R.id.fuel_button);
@@ -59,17 +61,33 @@ public class Stats extends ActionBarActivity implements Serializable {
         speedBtn.setOnClickListener(btnOnClick);
         fuelBtn.setOnClickListener(btnOnClick);
         distanceBtn.setOnClickListener(btnOnClick);
+        overallBtn.setOnClickListener(btnOnClick);
 
         // Tell data handler to start downloading all stats
-        DataHandler.getInstance().cacheDetailedStats();;
+        //DataHandler.getInstance().cacheDetailedStats();;
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        statsActive = false;
+        System.out.println("Stats = false --------------------------------------------");
+    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        statsActive = false;
+        System.out.println("Stats = false --------------------------------------------");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        statsActive = true;
+        System.out.println("Stats = true --------------------------------------------");
         // Tell data handler to start downloading all stats
         DataHandler.getInstance().cacheDetailedStats();;
+
     }
 
     class ButtonListener implements Button.OnClickListener {
@@ -87,10 +105,11 @@ public class Stats extends ActionBarActivity implements Serializable {
             // or something - cache them and also let the wrapper object contain a timestamp -
             // that way if they are older than say 15 minutes, update them : ))
 
-            newFragment = null;
 
             if (v == speedBtn) {
-                newFragment = new SpeedWindow();
+                if (speedFragment == null) {
+                    speedFragment = new SpeedWindow();
+                }
 
                 // Make sure values are set once they are loaded
                 AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
@@ -99,7 +118,7 @@ public class Stats extends ActionBarActivity implements Serializable {
                     @Override
                     protected Boolean doInBackground(Void... voids) {
                         while (!(DataHandler.getInstance().detailedStatsReady(s)
-                                && newFragment.hasLoaded())) {
+                                && speedFragment.hasLoaded())) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         return null;
@@ -113,16 +132,21 @@ public class Stats extends ActionBarActivity implements Serializable {
                     @Override
                     protected void onPostExecute(Boolean b) {
                         super.onPostExecute(b);
-                        newFragment.setValues(DataHandler.getInstance().getDetailedStats(s));
-                        newFragment.hideLoading();
+                        speedFragment.setValues(DataHandler.getInstance().getDetailedStats(s));
+                        speedFragment.hideLoading();
                     }
                 }.execute();
 
-
+                transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.StatsView, speedFragment);
+                transaction.addToBackStack(null);
+                transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+                transaction.commit();
 
             } else if (v == fuelBtn) {
-
-                newFragment = new FuelWindow();
+                if (fuelFragment == null) {
+                    fuelFragment = new FuelWindow();
+                }
 
                 AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
                     Fuel f = new Fuel(0);
@@ -130,7 +154,7 @@ public class Stats extends ActionBarActivity implements Serializable {
                     @Override
                     protected Boolean doInBackground(Void... voids) {
                         while (!(DataHandler.getInstance().detailedStatsReady(f)
-                                && newFragment.hasLoaded())) {
+                                && fuelFragment.hasLoaded())) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         return null;
@@ -144,14 +168,21 @@ public class Stats extends ActionBarActivity implements Serializable {
                     @Override
                     protected void onPostExecute(Boolean b) {
                         super.onPostExecute(b);
-                        newFragment.setValues(DataHandler.getInstance().getDetailedStats(f));
-                        newFragment.hideLoading();
+                        fuelFragment.setValues(DataHandler.getInstance().getDetailedStats(f));
+                        fuelFragment.hideLoading();
                     }
                 }.execute();
-                
+
+                transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.StatsView, fuelFragment);
+                transaction.addToBackStack(null);
+                transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+                transaction.commit();
+
             } else if (v == distanceBtn) {
-                
-                newFragment = new DistTravWindow();
+                if (distFragment == null) {
+                    distFragment = new DistTravWindow();
+                }
 
                 AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
                     Distance d = new Distance(0);
@@ -159,7 +190,7 @@ public class Stats extends ActionBarActivity implements Serializable {
                     @Override
                     protected Boolean doInBackground(Void... voids) {
                         while (!(DataHandler.getInstance().detailedStatsReady(d)
-                                && newFragment.hasLoaded())) {
+                                && distFragment.hasLoaded())) {
                             try { Thread.sleep(100); } catch (InterruptedException e) {}
                         }
                         return null;
@@ -173,24 +204,23 @@ public class Stats extends ActionBarActivity implements Serializable {
                     @Override
                     protected void onPostExecute(Boolean b) {
                         super.onPostExecute(b);
-                        newFragment.setValues(DataHandler.getInstance().getDetailedStats(d));
-                        newFragment.hideLoading();
+                        distFragment.setValues(DataHandler.getInstance().getDetailedStats(d));
+                        distFragment.hideLoading();
                     }
                 }.execute();
+
+                transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.StatsView, distFragment);
+                transaction.addToBackStack(null);
+                transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+                transaction.commit();
+
             } else if (v == overallBtn){
                 Intent intent = new Intent(Stats.this, OverallStats.class);
                 startActivity(intent);
             }
-
-            transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.StatsView, newFragment);
-            transaction.addToBackStack(null);
-            transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-            transaction.commit();
         }
     };
-
-
 
     @Override
     public void onBackPressed() {
@@ -199,14 +229,6 @@ public class Stats extends ActionBarActivity implements Serializable {
         } else {
             getFragmentManager().popBackStack();
         }
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_stats, menu);
-        return true;
     }
 
 
@@ -225,6 +247,23 @@ public class Stats extends ActionBarActivity implements Serializable {
         return super.onOptionsItemSelected(item);
     }
 
+    public void goLogout(MenuItem item){
+        logout(item);
+    }
+
+    public void goSettings(MenuItem item){
+        goToSettings(item);
+    }
+
+    public void goAbout(MenuItem item){
+        goToAbout(item);
+    }
+
+    public void goContact(MenuItem item){
+        goToContact(item);
+    }
+
+/*
     public void goToOverall(View view) {
         Intent intent = new Intent(this, OverallStats.class);
         startActivity(intent);
@@ -234,7 +273,7 @@ public class Stats extends ActionBarActivity implements Serializable {
         Intent intent = new Intent(Stats.this, MainActivity.class);
         startActivity(intent);
     }
-
+*/
     public void contact(MenuItem item){
      /*   fragment = new Contact();
         transaction = getFragmentManager().beginTransaction();

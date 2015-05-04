@@ -28,12 +28,12 @@ public class DataHandler
 
     private RealTimeDataHandler realTimeDataHandler;
 
-    private User user;
+    private volatile User user;
 
     // Stores detailed stats with signal id as key
     private volatile HashMap<Integer, DetailedStatsBundle> detailedStats;
     // Stores time stamp
-    private long detailedStatsFetched = 0;
+    private volatile long detailedStatsFetched = 0;
 
 
     /**
@@ -47,18 +47,24 @@ public class DataHandler
 
     /**
      * Returns an instance of the DataHandler object.
+     * Note, removed synchronized on this while debugging stats data fetching.
+     * Later realized that maybe we can use double check locking just for the instantiation
      *
      * @return      instance of DataHandler
      */
-    public synchronized static DataHandler getInstance()
+    public static DataHandler getInstance()
     {
+        // YES, there should be two if checks
         if (dataHandler == null)
         {
-            dataHandler = new DataHandler();
+            synchronized (DataHandler.class) {
+                if (dataHandler == null) {
+                    dataHandler = new DataHandler();
+                }
+            }
+
         }
-
         return dataHandler;
-
     } // end getInstance()
 
     /**
@@ -106,10 +112,12 @@ public class DataHandler
      */
     public void cacheDetailedStats() {
         // Only fetch if they aren't there or aren't up to date
-        if (detailedStats != null ||
+        if (detailedStats == null ||
                 System.currentTimeMillis() - detailedStatsFetched > 1000 * 60 * 15) {
 
             detailedStats = new HashMap<Integer, DetailedStatsBundle>();
+
+            System.out.println("Fetching detailed stats.");
 
             new Thread(new Runnable() {
                 @Override
@@ -166,7 +174,7 @@ public class DataHandler
                         detailedStatsFetched = System.currentTimeMillis();
 
                     } catch (NotLoggedInException e) {
-
+                        System.out.println("Not logged in in datahandler cache");
                     }
                 }
             }).start();
@@ -181,8 +189,10 @@ public class DataHandler
     public boolean detailedStatsReady(MetricData md) {
         // See if there is a stats object in the hashmap
         if (detailedStats != null && detailedStats.get(md.getSignalId()) != null) {
+            //System.out.println("Stats were ready: " + md.getClass().getSimpleName());
             return true;
         }
+        //System.out.println("Stats were not ready: " + md.getClass().getSimpleName());
         return false;
     }
 
@@ -197,9 +207,11 @@ public class DataHandler
 
         // See if the stats are ready
         if (detailedStatsReady(md)) {
+            //System.out.println("Returning stats.");
             dStats = detailedStats.get(md.getSignalId());
+        } else {
+            //System.out.println("Returning null.");
         }
-
         return dStats;
     }
 
@@ -223,6 +235,8 @@ public class DataHandler
         metricData.settTimeFrame(MetricData.DAY);
 
         for(int i = 0; i < days; i++) {
+            // It seems we cannot send the exact same instance - guess some low-level details of java
+            // will cache it or whatever? Need to create a new one
             MetricData md = metricData;
             try {
                 md = metricData.getClass().newInstance();
@@ -233,28 +247,18 @@ public class DataHandler
                 e.printStackTrace();
             }
 
-            /* GregorianCalendar calBeginning = new GregorianCalendar(
-                    cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE),
-                    0, 0
-            );*/
-
-
             // Find timestamp for end of day
             GregorianCalendar calEnd = new GregorianCalendar(
                     cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE),
                     23, 59, 59
             );
-            /*System.out.println(calEnd.getTimeInMillis());
-            md.setTimeStamp(calEnd.getTimeInMillis());
 
-            TEST:::: */
             md.settTimeFrame(MetricData.DAY);
             md.setTimeStamp(calEnd.getTimeInMillis());
 
-
             // Get data from server
             perDay[i] = ServerConnector.gI().answerTimestampedQuery(md);
-            System.out.println("RESPONSE DATA: " + perDay[i].getValue());
+
             // Move forward one day
             cal.add(Calendar.DATE, +1);
         }
@@ -263,38 +267,48 @@ public class DataHandler
     }
 
 
-
-
-
     public DataPoint[] getDataPoints(Data[] data, MetricData md) {
 
         DataPoint[] dataPoints = new DataPoint[30];
         for (int i = 0; i < 30; i++) {
             if (data[i].getValue() == null) {
-                System.out.println("Assuming 0 at null value at pos: " + i );
-                dataPoints[i] = new DataPoint(i + 1, 0);
+                dataPoints[i] = new DataPoint(i + 1, new Double(0.0));
             } else {
                 if (md instanceof Speed || md instanceof Fuel) {
-                    dataPoints[i] = new DataPoint(i + 1, (Double)(data[i]).getValue());
-                    System.out.println("ddddd: " + data[i].getValue());
-                } else {
-                    dataPoints[i] = new DataPoint(i + 1, (Long)(data[i]).getValue());
+                    dataPoints[i] = new DataPoint(i + 1, (Double)data[i].getValue());
+                } else if (md instanceof Distance ){
+                    // Distance are in m so divide by 1000 to get some more reasonable values
+                    if ((Long)data[i].getValue() == 0) {
+                        dataPoints[i] = new DataPoint(i + 1, new Double(0.0));
+                    } else {
+                        dataPoints[i] = new DataPoint(i + 1, new Double((Long)data[i].getValue() / 1000));
+                    }
+                    System.out.println("datapoint " + i + ": " + dataPoints[i].getY());
+                    //dataPoints[i] = new DataPoint(i + 1, new Double(i));
+                    //System.out.println("datapoint " + i + ": " + dataPoints[i].getY());
                 }
             }
         }
         return dataPoints;
     }
 
-
-
     public void setUser(User user)
     {
+        if (user == null || this.user != user) {
+            // The user has changed or been removed due to logout, so cleanup the session data
+            cleanupSessionData();
+        }
         this.user = user;
     }
 
     public User getUser()
     {
         return user;
+    }
+
+    public void cleanupSessionData() {
+        detailedStats = null;
+        detailedStatsFetched = 0;
     }
 
 } // end class DataHandler
