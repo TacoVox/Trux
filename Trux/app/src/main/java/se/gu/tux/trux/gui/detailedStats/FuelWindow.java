@@ -24,10 +24,10 @@ public class FuelWindow extends DetailedStatsFragment {
     @Override
     public void setValues(DetailedStatsBundle stats) {
         if (stats != null) {
-            fuelTextViewToday.setText(new Long(Math.round((Double) stats.getToday().getValue())).toString());
-            fuelTextViewWeek.setText(new Long(Math.round((Double) stats.getWeek().getValue())).toString());
-            fuelTextViewMonth.setText(new Long(Math.round((Double) stats.getMonth().getValue())).toString());
-            fuelTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString());
+            fuelTextViewToday.setText(new Long(Math.round((Double) stats.getToday().getValue())).toString() + " L/h");
+            fuelTextViewWeek.setText(new Long(Math.round((Double) stats.getWeek().getValue())).toString() + " L/h");
+            fuelTextViewMonth.setText(new Long(Math.round((Double) stats.getMonth().getValue())).toString() + " L/h");
+            fuelTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString() + " L/h");
             LineGraphSeries fuelValues = new LineGraphSeries(stats.getGraphPoints());
             fuelGraph.addSeries(fuelValues);
             fuelGraph.invalidate();

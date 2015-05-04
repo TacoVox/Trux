@@ -179,7 +179,7 @@
                 android:layout_margin="5dp"
                 android:text="@string/register_button_title"
                 android:textColor="#E0E0E0"
-                android:background="@drawable/button_clickable"
+                android:background="@drawable/button_clickable_new"
                 android:id="@+id/registerButton"/>
 
         </LinearLayout>
