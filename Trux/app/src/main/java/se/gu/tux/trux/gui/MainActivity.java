@@ -264,7 +264,6 @@ public class MainActivity extends BaseAppActivity
             transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.mainActivity, newFragment);
             transaction.addToBackStack(null);
-            transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
             transaction.commit();
         }
     };
