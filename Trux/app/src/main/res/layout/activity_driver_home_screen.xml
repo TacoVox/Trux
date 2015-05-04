@@ -12,10 +12,6 @@
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_margin="10dip"
-
-        android:padding="10dip"
-        android:background="@drawable/custom_border"
         android:weightSum="2">
 
         <Button
@@ -23,7 +19,7 @@
             android:layout_height="fill_parent"
             android:text="@string/community_text"
             android:id="@+id/communityBtn"
-            android:background="@drawable/button_clickable"
+            android:background="@drawable/button_clickable_new"
             android:textColor="#E0E0E0"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
@@ -42,7 +38,7 @@
                 android:layout_height="fill_parent"
                 android:text="@string/profile_text"
                 android:id="@+id/profileBtn"
-                android:background="@drawable/button_clickable"
+                android:background="@drawable/button_clickable_new"
                 android:textColor="#E0E0E0"
                 android:layout_weight="1"
                 android:layout_margin="5dp"/>
@@ -52,7 +48,7 @@
                 android:layout_height="fill_parent"
                 android:text="@string/statistics_text"
                 android:id="@+id/statsBtn"
-                android:background="@drawable/button_clickable"
+                android:background="@drawable/button_clickable_new"
                 android:textColor="#E0E0E0"
                 android:layout_weight="1"
                 android:onClick="goToStats"
