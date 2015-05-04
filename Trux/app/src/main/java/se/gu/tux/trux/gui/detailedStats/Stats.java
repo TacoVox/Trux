@@ -152,7 +152,7 @@ public class Stats extends BaseAppActivity implements Serializable
                 }.execute();
 
                 transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.StatsView, speedFragment);
+                transaction.replace(R.id.StatsView2, speedFragment);
                 transaction.addToBackStack(null);
                 transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
                 transaction.commit();
@@ -188,7 +188,7 @@ public class Stats extends BaseAppActivity implements Serializable
                 }.execute();
 
                 transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.StatsView, fuelFragment);
+                transaction.replace(R.id.StatsView2, fuelFragment);
                 transaction.addToBackStack(null);
                 transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
                 transaction.commit();
@@ -224,7 +224,7 @@ public class Stats extends BaseAppActivity implements Serializable
                 }.execute();
 
                 transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.StatsView, distFragment);
+                transaction.replace(R.id.StatsView2, distFragment);
                 transaction.addToBackStack(null);
                 transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
                 transaction.commit();
