@@ -21,6 +21,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import se.gu.tux.truxserver.config.Config;
 
 /**
  *
@@ -77,7 +78,7 @@ public class EMailSender {
 
         Transport transport = getMailSession.getTransport("smtp");
         
-        transport.connect("smtp.gmail.com", "tacovox@gmail.com", "picknicker");
+        transport.connect("smtp.gmail.com", Config.gI().getGmailUser(), Config.gI().getGmailPass());
         transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
         transport.close();
         } catch (Exception e) {
