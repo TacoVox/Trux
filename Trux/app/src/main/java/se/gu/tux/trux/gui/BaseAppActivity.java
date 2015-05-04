@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.LoginService;
+
 import tux.gu.se.trux.R;
 
 /**
@@ -21,7 +23,6 @@ import tux.gu.se.trux.R;
  */
 public class BaseAppActivity extends ActionBarActivity
 {
-
 
 
     @Override
@@ -36,7 +37,7 @@ public class BaseAppActivity extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu)
     {
         // inflate menu
-        getMenuInflater().inflate(R.menu.menu_item_menu, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         // return menu
         return super.onCreateOptionsMenu(menu);
     }
@@ -66,7 +67,8 @@ public class BaseAppActivity extends ActionBarActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
+
+    } // end onOptionsItemSelected()
 
 
 
@@ -90,10 +92,17 @@ public class BaseAppActivity extends ActionBarActivity
 
         if (check)
         {
+            // Right now we don't care about the result, hence the same actions
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
             startActivity(new Intent(this, MainActivity.class));
         }
         else
         {
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
             startActivity(new Intent(this, MainActivity.class));
         }
 

@@ -172,7 +172,9 @@ public class ServerConnector {
                         !(query.getSessionId() == User.LOGIN_REQUEST ||
                         query.getSessionId() == User.REGISTER_REQUEST ||
                         (query instanceof ProtocolMessage && ((ProtocolMessage) query).getType()
-                                == ProtocolMessage.Type.AUTO_LOGIN_REQUEST))) {
+                                == ProtocolMessage.Type.AUTO_LOGIN_REQUEST) ||
+                        (query instanceof ProtocolMessage && ((ProtocolMessage) query).getType()
+                                == ProtocolMessage.Type.LOGOUT_REQUEST))) {
                     throw new NotLoggedInException();
                 }
 
