@@ -190,9 +190,10 @@ public class LoginService
 
         if (pm != null && pm.getType() == ProtocolMessage.Type.SUCCESS)
         {
-            System.out.println("Deleting file!");
-            //Create anonymous instance - we don't need it after that
-            new File(fileName).delete();
+
+            // Clear the user details file
+            writeToFile("LOGGED_OUT");
+
             DataHandler.getInstance().setUser(null);
             isLoggedOut = true;
         } else {
@@ -314,9 +315,14 @@ public class LoginService
 
                 results = stringBuilder.toString().split(":");
 
-                if (results.length < 5)
+                if (results.length == 1) {
+                    // It most likely says LOGGED_OUT
+                    results = null;
+                }
+                else if (results.length < 5)
                 {
-                    new File(fileName).delete();
+                    // Invalid! Replace it with LOGGED_OUT
+                    writeToFile("LOGGED_OUT");
                     results = null;
                 }
                 else

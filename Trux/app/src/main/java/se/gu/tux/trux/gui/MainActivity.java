@@ -106,6 +106,8 @@ public class MainActivity extends BaseAppActivity
         {
             System.out.println("File exists, loading user info");
             userInfo = LoginService.getInstance().readFromFile();
+            // userInfo will be set to null here if the file existed but didn't contain all
+            // user details = the user had logged out
         }
 
         if (userInfo != null && userInfo[4].equals("true"))
