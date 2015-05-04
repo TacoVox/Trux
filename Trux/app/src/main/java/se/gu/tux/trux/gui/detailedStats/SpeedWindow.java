@@ -1,6 +1,5 @@
 package se.gu.tux.trux.gui.detailedStats;
 
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,10 +53,10 @@ public class SpeedWindow extends DetailedStatsFragment {
     @Override
     public void setValues(DetailedStatsBundle stats) {
         if (stats != null) {
-            speedTextViewToday.setText(new Long(Math.round((Double) stats.getToday().getValue())).toString());
-            speedTextViewWeek.setText(new Long(Math.round((Double) stats.getWeek().getValue())).toString());
-            speedTextViewMonth.setText(new Long(Math.round((Double) stats.getMonth().getValue())).toString());
-            speedTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString());
+            speedTextViewToday.setText(new Long(Math.round((Double) stats.getToday().getValue())).toString() + " km/h");
+            speedTextViewWeek.setText(new Long(Math.round((Double) stats.getWeek().getValue())).toString() + " km/h");
+            speedTextViewMonth.setText(new Long(Math.round((Double) stats.getMonth().getValue())).toString() + " km/h");
+            speedTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString() + " km/h");
             LineGraphSeries speedValues = new LineGraphSeries(stats.getGraphPoints());
             speedGraph.addSeries(speedValues);
             speedGraph.getViewport().setMaxX(30);

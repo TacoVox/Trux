@@ -1,0 +1,103 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="se.gu.tux.trux.Stats"
+    android:background="#E0E0E0"
+    android:orientation="vertical"
+    android:id="@+id/stats_view_container"
+    android:layout_margin="5dp">
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="5dp"
+            android:text="Speed"/>
+
+        <Button
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="5dp"
+            android:text="Fuel"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="5dp"
+            android:text="Distance"/>
+
+        <Button
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="5dp"
+            android:text="Coming Soon"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <Button
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="5dp"
+            android:text="Coming Soon"/>
+
+        <Button
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="5dp"
+            android:text="Coming Soon"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="2">
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="Overall Statistics"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="2">
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="Compare Statistics"/>
+    </LinearLayout>
+
+
+</LinearLayout>

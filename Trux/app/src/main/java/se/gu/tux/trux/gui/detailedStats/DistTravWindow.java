@@ -29,10 +29,10 @@ public class DistTravWindow extends DetailedStatsFragment {
             Long distMonth = (Long) stats.getMonth().getValue() / 1000;
             Long distTotal = (Long) stats.getTotal().getValue() / 1000;
 
-            distanceTextViewToday.setText(distToday.toString());
-            distanceTextViewWeek.setText(distWeek.toString());
-            distanceTextViewMonth.setText(distMonth.toString());
-            distanceTextViewTotal.setText(distTotal.toString());
+            distanceTextViewToday.setText(distToday.toString() + " km");
+            distanceTextViewWeek.setText(distWeek.toString() + " km");
+            distanceTextViewMonth.setText(distMonth.toString() + " km");
+            distanceTextViewTotal.setText(distTotal.toString() + " km");
 
             LineGraphSeries distanceValues = new LineGraphSeries(stats.getGraphPoints());
             distanceGraph.addSeries(distanceValues);
