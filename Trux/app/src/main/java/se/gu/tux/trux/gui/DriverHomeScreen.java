@@ -9,6 +9,7 @@ import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.gui.detailedStats.Stats;
 import se.gu.tux.trux.gui.simpleStats.SimpleStats;
+import se.gu.tux.trux.gui.statistics_i.IStatisticsActivity;
 import tux.gu.se.trux.R;
 
 
@@ -56,7 +57,10 @@ public class DriverHomeScreen extends BaseAppActivity
 
     public void goToStats(View view)
     {
-        Intent rich = new Intent(DriverHomeScreen.this, Stats.class);
+        // for testing only
+        Intent rich = new Intent(DriverHomeScreen.this, IStatisticsActivity.class);
+
+        //Intent rich = new Intent(DriverHomeScreen.this, Stats.class);
         Intent simple = new Intent(DriverHomeScreen.this, SimpleStats.class);
 
         try

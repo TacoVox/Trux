@@ -84,6 +84,10 @@
             android:name="se.gu.tux.trux.gui.community.FragmentPageAdapterCommunity"
             android:label="@string/title_activity_fragment_page_adapter_community" >
         </activity>
+        <activity
+            android:name="se.gu.tux.trux.gui.statistics_i.IStatisticsActivity"
+            android:label="@string/coming_soon_text" >
+        </activity>
     </application>
 
 </manifest>
