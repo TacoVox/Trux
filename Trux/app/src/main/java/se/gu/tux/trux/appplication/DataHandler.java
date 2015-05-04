@@ -283,7 +283,7 @@ public class DataHandler
                     } else {
                         dataPoints[i] = new DataPoint(i + 1, new Double((Long)data[i].getValue() / 1000));
                     }
-                    System.out.println("datapoint " + i + ": " + dataPoints[i].getY());
+                    //System.out.println("datapoint " + i + ": " + dataPoints[i].getY());
                     //dataPoints[i] = new DataPoint(i + 1, new Double(i));
                     //System.out.println("datapoint " + i + ": " + dataPoints[i].getY());
                 }

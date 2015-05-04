@@ -36,7 +36,7 @@ public class OverallTextWindow extends Fragment {
 
         speedTextViewTotal = (TextView) myFragmentView.findViewById(R.id.avg_speed_value);
         fuelTextViewTotal = (TextView) myFragmentView.findViewById(R.id.avg_fuel_value);
-        distanceTextViewTotal = (TextView) myFragmentView.findViewById(R.id.total_distance_traveled_value);
+        distanceTextViewTotal = (TextView) myFragmentView.findViewById(R.id.avg_distance_value);
         myFragmentView.findViewById(R.id.loadingPanel).bringToFront();
         return myFragmentView;
     }
@@ -50,16 +50,15 @@ public class OverallTextWindow extends Fragment {
                           DetailedStatsBundle distBundle) {
         if (speedBundle != null && speedTextViewTotal != null) {
             speedTextViewTotal.setText(
-                    new Long(Math.round((Double) speedBundle.getTotal().getValue())).toString());
+                    new Long(Math.round((Double) speedBundle.getTotal().getValue())).toString() + " km/h");
         }
         if (fuelBundle != null && fuelTextViewTotal != null) {
             fuelTextViewTotal.setText(
-                    new Long(Math.round((Double) fuelBundle.getTotal().getValue())).toString());
+                    new Long(Math.round((Double) fuelBundle.getTotal().getValue())).toString() + " L/h");
         }
         if (distBundle != null && distanceTextViewTotal != null) {
             Long distTotal = (Long) distBundle.getTotal().getValue() / 1000;
-            System.out.println(distBundle.getTotal().getValue().toString());
-            distanceTextViewTotal.setText(distTotal.toString());
+            distanceTextViewTotal.setText(distTotal.toString() + " km");
         }
         if (myFragmentView != null) {
             myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);

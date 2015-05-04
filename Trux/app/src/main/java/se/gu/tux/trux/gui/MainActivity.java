@@ -2,6 +2,7 @@ package se.gu.tux.trux.gui;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,7 +34,7 @@ import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 
-public class MainActivity extends ItemMenu
+public class MainActivity extends BaseAppActivity
 {
     Fragment newFragment;
     FragmentTransaction transaction;
@@ -47,14 +48,22 @@ public class MainActivity extends ItemMenu
 
     // file name
     private static final String FILE_NAME = "trux_user_config";
+    // layout id
+    private static final int LAYOUT_ID = R.layout.activity_main;
 
     private File file;
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        // set layout for this view
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mainActivityActive = true;
+        setContentView(LAYOUT_ID);
+
+        // set current view
+        setCurrentViewId(LAYOUT_ID);
+
         // Add login form
         userField = (TextView) findViewById(R.id.username);
         passField = (TextView) findViewById(R.id.password);
@@ -64,11 +73,10 @@ public class MainActivity extends ItemMenu
 
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
+        ServerConnector.gI().connect("www.derkahler.de");
+
         // Create login service
         LoginService.createInstance(this.getBaseContext(), FILE_NAME);
-
-        ServerConnector.gI().connect("www.derkahler.de");
-        //IServerConnector.getInstance().connectTo("10.0.2.2");
 
         // Just make sure a AGA data parser is created
         AGADataParser.getInstance();
@@ -79,11 +87,14 @@ public class MainActivity extends ItemMenu
         file = new File(getFilesDir(), FILE_NAME);
 
         // create a file to store data
-        if (file == null || !file.exists())
+        if (!file.exists())
         {
             try
             {
+                System.out.println("File does not exist, clearing user info");
                 file.createNewFile();
+                // If user logged out now, make sure no user details are cached.
+                userInfo = null;
             }
             catch (IOException e)
             {
@@ -93,6 +104,7 @@ public class MainActivity extends ItemMenu
         }
         else
         {
+            System.out.println("File exists, loading user info");
             userInfo = LoginService.getInstance().readFromFile();
         }
 
@@ -105,18 +117,20 @@ public class MainActivity extends ItemMenu
     @Override
     public void onPause(){
         super.onPause();
-        mainActivityActive = false;
     }
 
     @Override
-    public void onResume(){
+    public void onResume()
+    {
+        setCurrentViewId(LAYOUT_ID);
         super.onResume();
-        mainActivityActive = true;
     }
+
+    @Override
     public void onStop(){
         super.onStop();
-        mainActivityActive = false;
     }
+
 
     public void goToHome(View view)
     {
@@ -161,14 +175,19 @@ public class MainActivity extends ItemMenu
 
         if (isAllowed)
         {
-            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
+            showToast("You are now logged in.");
 
             Intent intent = new Intent(this, DriverHomeScreen.class);
+            // Make sure there is no history for the back button
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         else
         {
-            Toast.makeText(getApplicationContext(), "Login failed. Please try again.", Toast.LENGTH_SHORT).show();
+            showToast("Login failed. Please try again.");
         }
 
     } // end goToHome()
@@ -215,15 +234,19 @@ public class MainActivity extends ItemMenu
 
         if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
         {
-            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
+            showToast("You are now logged in.");
 
             Intent intent = new Intent(this, DriverHomeScreen.class);
+            // Make sure there is no history for the back button
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         else
         {
-            Toast.makeText(getApplicationContext(), "Problem logging in. Message: " +
-                    msg.getMessage() + ". Please try again.", Toast.LENGTH_SHORT).show();
+            showToast("Problem logging in.\nMessage: " + msg.getMessage() + ".\nPlease try again.");
         }
 
     } // end autoLogin()
@@ -246,18 +269,7 @@ public class MainActivity extends ItemMenu
         }
     };
 
-    public void goAbout(MenuItem item){
-        goToAbout(item);
-    }
-    public void goSettings(MenuItem item){
-        goToSettings(item);
-    }
-    public void goContact(MenuItem item){
-        goToContact(item);
-    }
-    public void goLogout(MenuItem item){
 
-    }
     @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() == 0) {
@@ -335,16 +347,6 @@ public class MainActivity extends ItemMenu
                 .create();
         logInAlert.show();
     }
-
-
-    /*
-    public void onStop() {
-        // TODO
-        // clean-up on stop
-        System.out.println("ONSTOP....!");
-    }
-    */
-
 
 
 } // end class

@@ -172,7 +172,11 @@ public class ServerConnector {
                         !(query.getSessionId() == User.LOGIN_REQUEST ||
                         query.getSessionId() == User.REGISTER_REQUEST ||
                         (query instanceof ProtocolMessage && ((ProtocolMessage) query).getType()
-                                == ProtocolMessage.Type.AUTO_LOGIN_REQUEST))) {
+                                == ProtocolMessage.Type.AUTO_LOGIN_REQUEST) ||
+                        (query instanceof ProtocolMessage && ((ProtocolMessage) query).getType()
+                                == ProtocolMessage.Type.LOGOUT_REQUEST))) {
+                    System.out.println("Not logged in: filtering "
+                            + query.getClass().getSimpleName() + ": " + query.getValue());
                     throw new NotLoggedInException();
                 }
 
@@ -229,8 +233,11 @@ public class ServerConnector {
                     synchronized(this) {
                         System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
                         cs = new Socket(serverAddress, 12000);
+                        System.out.println("Connecting output stream...");
                         out = new ObjectOutputStream(cs.getOutputStream());
+                        System.out.println("Connecting input stream...");
                         in = new ObjectInputStream(cs.getInputStream());
+                        System.out.println("Connected.");
                     }
                 } catch (IOException e) {
                     // Problem connecting.
