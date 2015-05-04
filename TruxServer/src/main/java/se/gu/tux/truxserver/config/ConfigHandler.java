@@ -152,6 +152,12 @@ public class ConfigHandler {
             System.out.println("How many DB connections should be opened at the same time?");
             properties.setProperty("maxdbconnections", br.readLine());
             
+            System.out.println("Which GMail account do you want to use?");
+            properties.setProperty("gmailUser", br.readLine());
+            
+            System.out.println("What is the password of this account?");
+            properties.setProperty("gmailPass", br.readLine());
+            
             properties.store(newfile, null);
         }
         catch(IOException ioe)
@@ -180,5 +186,7 @@ public class ConfigHandler {
         Config.gI().setCleanupInterval(Integer.parseInt(properties.getProperty("cleanupinterval")));
         Config.gI().setSessionTimeout(Integer.parseInt(properties.getProperty("sessiontimeout")));
         Config.gI().setMaxNoDBConnections(Short.parseShort(properties.getProperty("maxdbconnections")));
+        Config.gI().setGmailUser(properties.getProperty("gmailUser"));
+        Config.gI().setGmailUser(properties.getProperty("gmailPass"));
     }
 }

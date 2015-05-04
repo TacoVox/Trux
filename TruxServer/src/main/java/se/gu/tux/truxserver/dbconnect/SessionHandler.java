@@ -245,7 +245,7 @@ public class SessionHandler {
             pst.setLong(2, System.currentTimeMillis() -
                     Config.gI().getSessionTimeout() * 60000);
             pst.setLong(3, System.currentTimeMillis() -
-                    168 * 60 * 60000);
+                    168 * 60000);
 	    
             pst.executeUpdate();
             
