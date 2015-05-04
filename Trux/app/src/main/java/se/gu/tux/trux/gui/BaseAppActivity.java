@@ -92,20 +92,20 @@ public class BaseAppActivity extends ActionBarActivity
 
         if (check)
         {
-            // Right now we don't care about the result, hence the same actions
-            if (getFragmentManager().getBackStackEntryCount() > 0) {
-                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            }
-            startActivity(new Intent(this, MainActivity.class));
+          // TODO: react to successful or failed logout attempt
         }
         else
         {
-            if (getFragmentManager().getBackStackEntryCount() > 0) {
-                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            }
-            startActivity(new Intent(this, MainActivity.class));
+
         }
 
+        // Make sure there is no history for the back button
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     } // end logout()
 
 
