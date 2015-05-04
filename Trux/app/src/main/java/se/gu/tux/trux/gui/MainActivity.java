@@ -2,6 +2,7 @@ package se.gu.tux.trux.gui;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,6 +48,8 @@ public class MainActivity extends BaseAppActivity
 
     // file name
     private static final String FILE_NAME = "trux_user_config";
+    // layout id
+    private static final int LAYOUT_ID = R.layout.activity_main;
 
     private File file;
 
@@ -54,8 +57,12 @@ public class MainActivity extends BaseAppActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        // set layout for this view
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(LAYOUT_ID);
+
+        // set current view
+        setCurrentViewId(LAYOUT_ID);
 
         // Add login form
         userField = (TextView) findViewById(R.id.username);
@@ -113,7 +120,9 @@ public class MainActivity extends BaseAppActivity
     }
 
     @Override
-    public void onResume(){
+    public void onResume()
+    {
+        setCurrentViewId(LAYOUT_ID);
         super.onResume();
     }
 
@@ -166,14 +175,19 @@ public class MainActivity extends BaseAppActivity
 
         if (isAllowed)
         {
-            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
+            showToast("You are now logged in.");
 
             Intent intent = new Intent(this, DriverHomeScreen.class);
+            // Make sure there is no history for the back button
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         else
         {
-            Toast.makeText(getApplicationContext(), "Login failed. Please try again.", Toast.LENGTH_SHORT).show();
+            showToast("Login failed. Please try again.");
         }
 
     } // end goToHome()
@@ -220,15 +234,19 @@ public class MainActivity extends BaseAppActivity
 
         if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
         {
-            Toast.makeText(getApplicationContext(), "You are now logged in.", Toast.LENGTH_SHORT).show();
+            showToast("You are now logged in.");
 
             Intent intent = new Intent(this, DriverHomeScreen.class);
+            // Make sure there is no history for the back button
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         else
         {
-            Toast.makeText(getApplicationContext(), "Problem logging in. Message: " +
-                    msg.getMessage() + ". Please try again.", Toast.LENGTH_SHORT).show();
+            showToast("Problem logging in.\nMessage: " + msg.getMessage() + ".\nPlease try again.");
         }
 
     } // end autoLogin()

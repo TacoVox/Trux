@@ -15,12 +15,19 @@ import tux.gu.se.trux.R;
 public class DriverHomeScreen extends BaseAppActivity
 {
 
+    // layout id
+    private static final int LAYOUT_ID = R.layout.activity_driver_home_screen;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        // set layout for this view
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_home_screen);
+        setContentView(LAYOUT_ID);
+
+        // set current view
+        setCurrentViewId(LAYOUT_ID);
     }
 
 
@@ -34,6 +41,7 @@ public class DriverHomeScreen extends BaseAppActivity
     @Override
     public void onResume()
     {
+        setCurrentViewId(LAYOUT_ID);
         super.onResume();
     }
 
@@ -72,18 +80,19 @@ public class DriverHomeScreen extends BaseAppActivity
 
     //These lines are commented-out for now when we are doing the super.class to hold the menu items
 
-/*
+
 
     @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() == 0) {
-            this.finish();
+            // From the driver home screen, just hide the app if back is pressed if nothing else
+            // is showing
+            moveTaskToBack(true);
         } else {
             getFragmentManager().popBackStack();
         }
     }
 
-*/
 
 
 } // end class
