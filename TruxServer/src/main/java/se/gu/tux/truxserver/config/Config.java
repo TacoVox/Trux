@@ -56,6 +56,8 @@ public class Config {
     private int cleanupInterval;
     private int sessionTimeout;
     private short maxNoDBConnections;
+    private String gmailUser;
+    private String gmailPass;
 
     public String getDbaddress() {
         return dbaddress;
@@ -127,5 +129,21 @@ public class Config {
 
     public void setSessionTimeout(int sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
+    }
+    
+        public String getGmailUser() {
+        return gmailUser;
+    }
+
+    public void setGmailUser(String gmailUser) {
+        this.gmailUser = gmailUser;
+    }
+
+    public String getGmailPass() {
+        return gmailPass;
+    }
+
+    public void setGmailPass(String gmailPass) {
+        this.gmailPass = gmailPass;
     }
 }
