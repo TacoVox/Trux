@@ -57,24 +57,26 @@ public class BaseAppActivity extends ActionBarActivity
 
         if (id == R.id.action_settings)
         {
-            startActivity(new Intent(this, SettingsMenuActivity.class));
+            Intent intent = new Intent(this, SettingsMenuActivity.class);
+            startActivity(intent);
         }
         else if (id == R.id.action_about)
         {
-            startActivity(new Intent(this, AboutMenuActivity.class));
+            Intent intent = new Intent(this, AboutMenuActivity.class);
+            startActivity(intent);
         }
         else if (id == R.id.action_contact)
         {
-            startActivity(new Intent(this, ContactMenuActivity.class));
+            Intent intent = new Intent(this, ContactMenuActivity.class);
+            startActivity(intent);
         }
         else if (id == R.id.action_help)
         {
             // get the current view id and the about data for it
-            String[] dialogData = getAboutData(getCurrentViewId());
+            String[] dialogData = getHelpData(getCurrentViewId());
 
             // display a dialog with the about information
             showDialogBox(dialogData[0], dialogData[1]);
-
         }
         else if (id == R.id.action_logout)
         {
@@ -125,7 +127,7 @@ public class BaseAppActivity extends ActionBarActivity
             return;
         }
         // make a toast and show
-        Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -172,7 +174,7 @@ public class BaseAppActivity extends ActionBarActivity
      * @param viewID    The current view id showing.
      * @return          String[]
      */
-    private String[] getAboutData(int viewID)
+    private String[] getHelpData(int viewID)
     {
         // the array to return
         String[] aboutData = new String[2];
@@ -197,7 +199,7 @@ public class BaseAppActivity extends ActionBarActivity
         // return the array
         return aboutData;
 
-    } // end getAboutData()
+    } // end getHelpData()
 
 
 
