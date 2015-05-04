@@ -46,12 +46,19 @@ public class Stats extends BaseAppActivity implements Serializable
     private Button speedBtn, fuelBtn, distanceBtn, overallBtn;
     private FragmentTransaction transaction;
 
+    // layout id
+    private static final int LAYOUT_ID = R.layout.activity_stats;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        // set layout for this view
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stats);
+        setContentView(LAYOUT_ID);
+
+        // set current view
+        setCurrentViewId(LAYOUT_ID);
 
         speedBtn = (Button) findViewById(R.id.speed_button);
         fuelBtn = (Button) findViewById(R.id.fuel_button);
@@ -87,6 +94,9 @@ public class Stats extends BaseAppActivity implements Serializable
     protected void onResume()
     {
         super.onResume();
+
+        // set current view
+        setCurrentViewId(LAYOUT_ID);
 
         // Tell data handler to start downloading all stats
         DataHandler.getInstance().cacheDetailedStats();;

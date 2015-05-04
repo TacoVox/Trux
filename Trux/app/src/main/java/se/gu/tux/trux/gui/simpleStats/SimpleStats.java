@@ -13,6 +13,8 @@ public class SimpleStats extends FragmentActivity
     ViewPager viewpager;
     FragmentPageAdapterSimpleUI ft;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
