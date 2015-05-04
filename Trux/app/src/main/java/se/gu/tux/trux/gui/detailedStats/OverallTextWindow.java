@@ -58,7 +58,7 @@ public class OverallTextWindow extends Fragment {
         }
         if (distBundle != null && distanceTextViewTotal != null) {
             Long distTotal = (Long) distBundle.getTotal().getValue() / 1000;
-            System.out.println(distBundle.getTotal().getValue().toString());
+            //System.out.println(distBundle.getTotal().getValue().toString());
             distanceTextViewTotal.setText(distTotal.toString());
         }
         if (myFragmentView != null) {
