@@ -15,12 +15,19 @@ import tux.gu.se.trux.R;
 public class DriverHomeScreen extends BaseAppActivity
 {
 
+    // layout id
+    private static final int LAYOUT_ID = R.layout.activity_driver_home_screen;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        // set layout for this view
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_home_screen);
+        setContentView(LAYOUT_ID);
+
+        // set current view
+        setCurrentViewId(LAYOUT_ID);
     }
 
 
@@ -34,6 +41,7 @@ public class DriverHomeScreen extends BaseAppActivity
     @Override
     public void onResume()
     {
+        setCurrentViewId(LAYOUT_ID);
         super.onResume();
     }
 
