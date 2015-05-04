@@ -4,7 +4,6 @@
     android:layout_height="fill_parent"
     tools:context="se.gu.tux.trux.Stats"
     android:background="#E0E0E0"
-    android:padding="5dp"
     android:id="@+id/StatsView">
 
     <LinearLayout
@@ -12,6 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/StatsView2"
+        android:layout_margin="5dp"
         android:weightSum="3">
 
         <!--
