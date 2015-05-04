@@ -2,6 +2,7 @@ package se.gu.tux.trux.gui;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -177,6 +178,11 @@ public class MainActivity extends BaseAppActivity
             showToast("You are now logged in.");
 
             Intent intent = new Intent(this, DriverHomeScreen.class);
+            // Make sure there is no history for the back button
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         else
@@ -231,6 +237,11 @@ public class MainActivity extends BaseAppActivity
             showToast("You are now logged in.");
 
             Intent intent = new Intent(this, DriverHomeScreen.class);
+            // Make sure there is no history for the back button
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         else

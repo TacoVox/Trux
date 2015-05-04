@@ -80,18 +80,19 @@ public class DriverHomeScreen extends BaseAppActivity
 
     //These lines are commented-out for now when we are doing the super.class to hold the menu items
 
-/*
+
 
     @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() == 0) {
-            this.finish();
+            // From the driver home screen, just hide the app if back is pressed if nothing else
+            // is showing
+            moveTaskToBack(true);
         } else {
             getFragmentManager().popBackStack();
         }
     }
 
-*/
 
 
 } // end class
