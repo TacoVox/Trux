@@ -20,7 +20,7 @@ import tux.gu.se.trux.R;
 /**
  * Handles the statistics screen and display of fragments.
  */
-public class Stats extends BaseAppActivity implements Serializable, Button.OnClickListener
+public class Stats extends BaseAppActivity implements Serializable, View.OnClickListener
 {
     //volatile Fragment fragment;
     private volatile DetailedStatsFragment speedFragment, fuelFragment, distFragment;
@@ -88,10 +88,12 @@ public class Stats extends BaseAppActivity implements Serializable, Button.OnCli
     @Override
     public void onClick(View view)
     {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
 
-        if (view.getId() == speedBtn.getId())
+        if (view.getId() == R.id.speed_button)
         {
+            showToast("Speed button in Stats.class clicked");
+
             if (speedFragment == null)
             {
                 speedFragment = new SpeedWindow();
@@ -130,8 +132,10 @@ public class Stats extends BaseAppActivity implements Serializable, Button.OnCli
             transaction.replace(R.id.stats_view_container, speedFragment);
 
         }
-        else if (view.getId() == fuelBtn.getId())
+        else if (view.getId() == R.id.fuel_button)
         {
+            showToast("Fuel button in Stats.class clicked");
+
             if (fuelFragment == null)
             {
                 fuelFragment = new FuelWindow();
@@ -168,8 +172,10 @@ public class Stats extends BaseAppActivity implements Serializable, Button.OnCli
             transaction.replace(R.id.stats_view_container, fuelFragment);
 
         }
-        else if (view.getId() == distanceBtn.getId())
+        else if (view.getId() == R.id.distance_traveled)
         {
+            showToast("Distance button in Stats.class clicked");
+
             if (distFragment == null)
             {
                 distFragment = new DistTravWindow();
@@ -206,8 +212,10 @@ public class Stats extends BaseAppActivity implements Serializable, Button.OnCli
             transaction.replace(R.id.stats_view_container, distFragment);
 
         }
-        else if (view.getId() == overallBtn.getId())
+        else if (view.getId() == R.id.overall_button)
         {
+            showToast("Overall button in Stats.class clicked");
+
             Intent intent = new Intent(Stats.this, OverallStats.class);
             startActivity(intent);
         }
@@ -215,7 +223,7 @@ public class Stats extends BaseAppActivity implements Serializable, Button.OnCli
         // add to back stack for access
         transaction.addToBackStack(null);
         // set transition
-        //transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+        transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
         // commit transaction
         transaction.commit();
 
