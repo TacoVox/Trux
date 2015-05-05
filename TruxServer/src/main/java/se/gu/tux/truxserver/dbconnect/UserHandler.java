@@ -207,7 +207,7 @@ public class UserHandler {
 	    
             pst.setString(1, u.getUsername());
 	    
-            ResultSet rs = pst.executeQuery();
+            ResultSet rs = dbc.execSelect(u, pst);
 	    
             if(rs == null)
                 return new ProtocolMessage(ProtocolMessage.Type.ERROR);
@@ -230,7 +230,7 @@ public class UserHandler {
 	    
             pst.setLong(1, u.getUserId());
 	    
-            rs = pst.executeQuery();
+            rs = dbc.execSelect(u, pst);
             
             List friends = new ArrayList<Long>();
             
