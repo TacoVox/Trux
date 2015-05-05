@@ -26,6 +26,8 @@ public class Location extends MetricData {
         return loc;
     }
     
+    public Location() {}
+    
     public Location(double lat, double lng) {
         loc = new double[2];
         

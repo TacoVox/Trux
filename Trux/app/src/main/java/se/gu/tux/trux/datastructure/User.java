@@ -17,7 +17,7 @@ public class User extends Data
 	private String lastName;
         private String email;
         private boolean stayLoggedIn;
-        private long friends[];
+        private Long friends[];
 
 	public boolean passwordMatch(String hash) {
 		return hash.equals(passwordHash);
@@ -87,11 +87,11 @@ public class User extends Data
         this.email = email;
     }
 
-    public long[] getFriends() {
+    public Long[] getFriends() {
         return friends;
     }
 
-    public void setFriends(long[] friends) {
+    public void setFriends(Long[] friends) {
         this.friends = friends;
     }
 }
