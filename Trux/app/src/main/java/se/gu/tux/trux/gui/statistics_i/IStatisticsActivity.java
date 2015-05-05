@@ -106,7 +106,7 @@ public class IStatisticsActivity extends BaseAppActivity implements Serializable
     {
         FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
 
-        if (view == SPEED_BTN)
+        if (view == SPEED_BUTTON)
         {
             showToast("Speed button in Stats.class clicked");
 
@@ -148,7 +148,7 @@ public class IStatisticsActivity extends BaseAppActivity implements Serializable
             transaction.replace(R.id.activity_statistics_i_container, speedFragment);
 
         }
-        else if (view == FUEL_BTN)
+        else if (view == FUEL_BUTTON)
         {
             showToast("Fuel button in Stats.class clicked");
 
@@ -188,7 +188,7 @@ public class IStatisticsActivity extends BaseAppActivity implements Serializable
             transaction.replace(R.id.activity_statistics_i_container, fuelFragment);
 
         }
-        else if (view == DISTANC_BTN)
+        else if (view == DISTANCE_TRAVELED)
         {
             showToast("Distance button in Stats.class clicked");
 
@@ -228,13 +228,13 @@ public class IStatisticsActivity extends BaseAppActivity implements Serializable
             transaction.replace(R.id.activity_statistics_i_container, distFragment);
 
         }
-        /*else if (view == OVERALL_BTN)
+        else if (view == OVERALL_BTN)
         {
             showToast("Overall button in Stats.class clicked");
 
             Intent intent = new Intent(this, OverallStats.class);
             startActivity(intent);
-        }*/
+        }
 
         // add to back stack for access
         transaction.addToBackStack(null);

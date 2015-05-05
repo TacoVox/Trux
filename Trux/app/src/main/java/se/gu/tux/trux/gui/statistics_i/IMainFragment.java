@@ -31,23 +31,23 @@ public class IMainFragment extends Fragment implements IStatisticsActivity.Stati
                              Bundle savedInstanceState)
     {
         // inflate the view
-        View view = inflater.inflate(R.layout.statistics_i_fragment_main, container, false);
+        View view = inflater.inflate(R.layout.activity_stats, container, false);
 
         // get components for this view
-        //Button speedBtn = (Button) view.findViewById(SPEED_BTN);
-        //Button fuelBtn = (Button) view.findViewById(FUEL_BTN);
-        //Button distanceBtn = (Button) view.findViewById(DISTANC_BTN);
-        //Button overallBtn = (Button) view.findViewById(OVERALL_BTN);
+        Button speedBtn = (Button) view.findViewById(SPEED_BTN);
+        Button fuelBtn = (Button) view.findViewById(FUEL_BTN);
+        Button distanceBtn = (Button) view.findViewById(DISTANC_BTN);
+        Button overallBtn = (Button) view.findViewById(OVERALL_BTN);
 
-        Button speedBtn = (Button) view.findViewById(SPEED_BUTTON);
-        Button fuelBtn = (Button) view.findViewById(FUEL_BUTTON);
-        Button distanceBtn = (Button) view.findViewById(DISTANC_BUTTON);
+        //Button speedBtn = (Button) view.findViewById(SPEED_BUTTON);
+        //Button fuelBtn = (Button) view.findViewById(FUEL_BUTTON);
+        //Button distanceBtn = (Button) view.findViewById(DISTANC_BUTTON);
 
         // set listener for buttons
         speedBtn.setOnClickListener(this);
         fuelBtn.setOnClickListener(this);
         distanceBtn.setOnClickListener(this);
-        //overallBtn.setOnClickListener(this);
+        overallBtn.setOnClickListener(this);
 
         // return the view
         return view;
