@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import se.gu.tux.trux.gui.BaseAppActivity;
 import se.gu.tux.trux.gui.statistics_i.IStatisticsActivity;
@@ -19,7 +20,7 @@ import tux.gu.se.trux.R;
  * Handles the main activity and screens.
  */
 @SuppressWarnings("deprecation")
-public class IMainActivity extends BaseAppActivity implements ActionBar.TabListener
+public class IMainActivity extends BaseAppActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
 
     // constants
@@ -30,8 +31,8 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
     IMainPagerAdapter pagerAdapter;
     ViewPager viewPager;
 
-    ArrayList<Fragment> fragmentArrayList;
-
+    List<Fragment> fragmentArrayList;
+    static ActionBar actionBar;
 
 
     @Override
@@ -63,23 +64,19 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
         // set adapter and view pager
         pagerAdapter = new IMainPagerAdapter(getSupportFragmentManager(), fragmentArrayList);
 
-        final ActionBar actionBar = getSupportActionBar();
+        // get action bar
+        actionBar = getSupportActionBar();
 
-        // Specify that we will be displaying tabs in the action bar.
+        // specify that we will be displaying tabs in the action bar.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        viewPager.setOnPageChangeListener(
-                new ViewPager.SimpleOnPageChangeListener() {
-                    @Override
-                    public void onPageSelected(int position) {
-                        // When swiping between pages, select the
-                        // corresponding tab.
-                        actionBar.setSelectedNavigationItem(position);
-                    }
-                });
-
+        // set page listener
+        viewPager.setOnPageChangeListener(this);
+        // set adapter
         viewPager.setAdapter(pagerAdapter);
 
+        // adding tabs here for now
+        // TODO: create tabs in separate method
         actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_home).setTabListener(this));
         actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_community).setTabListener(this));
         actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_statistics).setTabListener(this));
@@ -87,7 +84,21 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
     }
 
 
-
+    /**
+     * Handles calls from child fragments components.
+     *
+     * For now maybe this is better since we don't have many components in the main
+     * activity (UI view). In total perhaps we will have 4-5 fragments * 2-4 components
+     * worst-case = 20 -- which is not so bad, considering not all calls
+     * will be important maybe we get around 10-12 expected calls --> then it is better
+     * to handle calls here (as a wrap up)
+     *
+     * TODO: discuss this ^
+     *
+     * TODO: handle calls
+     *
+     * @param id    The view id.
+     */
     public void onFragmentViewClick(int id)
     {
         if (id == STATS_BUTTON)
@@ -102,6 +113,12 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
     }
 
 
+    /******************************************************************************
+     *
+     * Override methods below required by implemented interfaces TabListener and
+     * OnPageChangeListener. Do not insert outside methods in between.
+     *
+     */
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
     {
@@ -109,11 +126,37 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
         viewPager.setCurrentItem(tab.getPosition());
     }
 
+
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {}
 
+
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {}
+
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+
+    @Override
+    public void onPageSelected(int position)
+    {
+        // when swiping between pages, select the
+        // corresponding tab.
+        actionBar.setSelectedNavigationItem(position);
+    }
+
+
+    @Override
+    public void onPageScrollStateChanged(int state) {}
+
+    /********************************************************************************
+     *
+     * End override methods.
+     *
+     */
+
 
 
 } // end class
