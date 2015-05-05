@@ -41,7 +41,7 @@ public class Location extends MetricData {
         loc[0] = lat;
     }
     
-    public void setLongtitude(double lng) {
+    public void setLongitude(double lng) {
         loc[1] = lng;
     }
     
