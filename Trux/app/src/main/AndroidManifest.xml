@@ -94,7 +94,6 @@
             android:name="se.gu.tux.trux.gui.community.Community_main"
             android:label="@string/title_activity_community_main" >
         </activity>
-<<<<<<< HEAD
         <activity
             android:name="se.gu.tux.trux.gui.community.FragmentPageAdapterCommunity"
             android:label="@string/title_activity_fragment_page_adapter_community" >
@@ -103,12 +102,15 @@
             android:name="se.gu.tux.trux.gui.statistics_i.IStatisticsActivity"
             android:label="@string/coming_soon_text" >
         </activity>
-=======
+        <activity
+            android:name="se.gu.tux.trux.gui.main_i.IMainActivity"
+            android:label="@string/coming_soon_text" >
+        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCbI5lHKz2EEGWe3X4ozbVuLbHXVy458Cw"/>
->>>>>>> 99e43c656a5c40bafde0fd3fa396acd7dffde132
+
     </application>
 
 </manifest>
