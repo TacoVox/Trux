@@ -20,7 +20,7 @@ package se.gu.tux.trux.datastructure;
  * @author jonas
  */
 public class Friend extends Data {
-    private long userID;
+    private long userid;
     private long profilePic;
     
     private String username;
@@ -29,12 +29,26 @@ public class Friend extends Data {
     
     private Location currentLoc;
 
-    public long getUserID() {
-        return userID;
+    public Friend(String username) {
+        this.username = username;
+    }
+    
+    public Friend(long userid) {
+        this.userid = userid;
+    }
+    
+    public Friend(String username, String firstname, String lanstname) {
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+    }
+    
+    public long getUserid() {
+        return userid;
     }
 
-    public void setUserID(long userID) {
-        this.userID = userID;
+    public void setUserid(long userID) {
+        this.userid = userID;
     }
 
     public long getProfilePic() {
@@ -79,12 +93,12 @@ public class Friend extends Data {
 
     @Override
     public Object getValue() {
-        return userID;
+        return userid;
     }
 
     @Override
     public void setValue(Object value) {
-        setUserID((Long)value);
+        setUserid((Long)value);
     }
 
     @Override

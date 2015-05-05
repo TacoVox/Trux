@@ -22,7 +22,13 @@ import java.awt.image.BufferedImage;
  * @author jonas
  */
 public class Picture extends Data {
-    BufferedImage img;
+    private long pictureid;
+    
+    private BufferedImage img;
+    
+    public Picture(long pictureid) {
+        this.pictureid = pictureid;
+    }
 
     public BufferedImage getImg() {
         return img;
@@ -30,6 +36,14 @@ public class Picture extends Data {
 
     public void setImg(BufferedImage img) {
         this.img = img;
+    }
+
+    public long getPictureid() {
+        return pictureid;
+    }
+
+    public void setPictureid(long pictureid) {
+        this.pictureid = pictureid;
     }
     
     @Override
