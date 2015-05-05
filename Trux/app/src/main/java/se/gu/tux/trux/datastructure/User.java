@@ -15,8 +15,9 @@ public class User extends Data
 	private String passwordHash;
 	private String firstName;
 	private String lastName;
-    private String email;
-    private boolean stayLoggedIn;
+        private String email;
+        private boolean stayLoggedIn;
+        private long friends[];
 
 	public boolean passwordMatch(String hash) {
 		return hash.equals(passwordHash);
@@ -84,5 +85,13 @@ public class User extends Data
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public long[] getFriends() {
+        return friends;
+    }
+
+    public void setFriends(long[] friends) {
+        this.friends = friends;
     }
 }
