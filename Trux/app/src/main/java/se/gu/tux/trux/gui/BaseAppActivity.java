@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import java.util.concurrent.ExecutionException;
 
+import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.LoginService;
 
 import tux.gu.se.trux.R;
@@ -28,8 +29,7 @@ public class BaseAppActivity extends ActionBarActivity
 
     // keeps track of the current view showing on the screen
     private static int currentViewId;
-
-
+    private MenuItem logoutItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,11 +44,25 @@ public class BaseAppActivity extends ActionBarActivity
     {
         // inflate menu
         getMenuInflater().inflate(R.menu.menu, menu);
+        logoutItem = menu.getItem(4);
+
+        validateOptions();
         // return menu
         return super.onCreateOptionsMenu(menu);
     }
 
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        validateOptions();
+        return true;
+    }
 
+    public void validateOptions() {
+        if (DataHandler.getInstance().isLoggedIn()) {
+            logoutItem.setEnabled(true);
+        } else {
+            logoutItem.setEnabled(false);
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -223,12 +237,14 @@ public class BaseAppActivity extends ActionBarActivity
 
         if (check)
         {
-          // TODO: react to successful or failed logout attempt
+          // TODO: react to successful or failed logout attempt?
         }
         else
         {
 
         }
+
+
 
         // Make sure there is no history for the back button
         if (getFragmentManager().getBackStackEntryCount() > 0) {
@@ -261,6 +277,5 @@ public class BaseAppActivity extends ActionBarActivity
         }
 
     } // end inner class
-
 
 } // end class

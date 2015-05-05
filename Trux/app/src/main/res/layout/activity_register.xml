@@ -4,8 +4,8 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:id="@+id/registerWindow"
-    tools:context="se.gu.tux.trux.gui.RegisterWindow"
+    android:id="@+id/registerActivity"
+    tools:context="se.gu.tux.trux.gui.RegisterActivity"
     android:weightSum="8"
     android:padding="10dp"
     android:background="#E0E0E0">

@@ -95,6 +95,10 @@
             android:label="@string/title_activity_community_main" >
         </activity>
         <activity
+            android:name="se.gu.tux.trux.gui.RegisterActivity"
+            android:label="@string/title_activity_register" >
+        </activity>
+        <activity
             android:name="se.gu.tux.trux.gui.community.FragmentPageAdapterCommunity"
             android:label="@string/title_activity_fragment_page_adapter_community" >
         </activity>
