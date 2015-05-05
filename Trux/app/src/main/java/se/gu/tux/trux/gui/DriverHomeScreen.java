@@ -7,6 +7,7 @@ import android.view.View;
 
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.gui.community.Community_main;
 import se.gu.tux.trux.gui.detailedStats.Stats;
 import se.gu.tux.trux.gui.simpleStats.SimpleStats;
 import se.gu.tux.trux.gui.statistics_i.IStatisticsActivity;
@@ -54,6 +55,9 @@ public class DriverHomeScreen extends BaseAppActivity
     }
 
 
+    public void goToCommunity(View view){
+        startActivity(new Intent(this, Community_main.class));
+    }
 
     public void goToStats(View view)
     {
