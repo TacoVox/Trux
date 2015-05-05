@@ -17,6 +17,8 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
@@ -219,6 +221,25 @@ public class UserHandler {
                 
 		break;
 	    }
+            
+            selectStmnt = "SELECT friendid" +
+                    " FROM isfriendwith WHERE userid = ?";
+            
+            pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setLong(1, u.getUserId());
+	    
+            rs = pst.executeQuery();
+            
+            List friends = new ArrayList<Long>();
+            
+	    while (rs.next())
+	    {
+                friends.add(rs.getLong("friendid"));
+	    }
+            
+            u.setFriends((Long[])friends.toArray());
 	}
 	catch (Exception e)
 	{
