@@ -16,6 +16,7 @@
 package se.gu.tux.truxserver.dataswitch;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
@@ -63,8 +64,8 @@ public class DataSwitcher {
     public Data handleData(Data d) {
         if (d instanceof MetricData)
             return MetricSwitcher.gI().handleMetricData((MetricData)d);
-        else if (d instanceof User)
-            return UserSwitcher.gI().handleUser((User) d);
+        else if (d instanceof User || d instanceof Friend)
+            return UserSwitcher.gI().handleUser(d);
         else if (d instanceof ProtocolMessage)
             return MessageSwitcher.gI().handleMessage((ProtocolMessage) d);
         else

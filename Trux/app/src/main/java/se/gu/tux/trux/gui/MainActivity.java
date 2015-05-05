@@ -37,7 +37,6 @@ public class MainActivity extends BaseAppActivity
 
     TextView userField;
     TextView passField;
-    Button btnRegister;
     CheckBox checkBox;
 
     private String[] userInfo;
@@ -63,9 +62,6 @@ public class MainActivity extends BaseAppActivity
         // Add login form
         userField = (TextView) findViewById(R.id.username);
         passField = (TextView) findViewById(R.id.password);
-
-        btnRegister = (Button) findViewById(R.id.register);
-        btnRegister.setOnClickListener(btnOnClick);
 
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
@@ -129,6 +125,13 @@ public class MainActivity extends BaseAppActivity
         super.onStop();
     }
 
+
+    public void goToRegister(View view)
+    {
+        // Start new activity
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
+    }
 
     public void goToHome(View view)
     {
@@ -259,20 +262,6 @@ public class MainActivity extends BaseAppActivity
 
 
 
-
-    Button.OnClickListener btnOnClick = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (v == btnRegister) {
-                newFragment = new RegisterWindow();
-            }
-
-            transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.mainActivity, newFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
-    };
 
 
     @Override

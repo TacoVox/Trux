@@ -77,6 +77,9 @@ public class IStatisticsActivity extends BaseAppActivity implements Serializable
         super.onResume();
         // set current view showing
         setCurrentViewId(LAYOUT_ID);
+
+        // Tell DataHandler to start fetching detailed stats (unless they are cached)
+        DataHandler.getInstance().cacheDetailedStats();
     }
 
 
@@ -86,7 +89,9 @@ public class IStatisticsActivity extends BaseAppActivity implements Serializable
         // if nothing in back stack when back button clicked, finish this activity
         // else go back to this activity main screen, not home screen, maybe user
         // wants to check some other statistics
-        if (getFragmentManager().getBackStackEntryCount() == 0)
+        // NOTE back stack count 1 means on the menu, so finish this activity from there as well
+        if (getFragmentManager().getBackStackEntryCount() == 0 ||
+                getFragmentManager().getBackStackEntryCount() == 1)
         {
             this.finish();
         }
@@ -108,136 +113,40 @@ public class IStatisticsActivity extends BaseAppActivity implements Serializable
 
         if (view == SPEED_BUTTON)
         {
-            showToast("Speed button in Stats.class clicked");
-
             if (speedFragment == null)
             {
                 speedFragment = new SpeedWindow();
             }
-
-            // Make sure values are set once they are loaded
-            AsyncTask myTask = new AsyncTask<Void, Void, Boolean>()
-            {
-                Speed s = new Speed(0);
-
-                @Override
-                protected Boolean doInBackground(Void... voids)
-                {
-                    while (!(DataHandler.getInstance().detailedStatsReady(s)
-                            && speedFragment.hasLoaded()))
-                    {
-                        try { Thread.sleep(100); } catch (InterruptedException e) {}
-                    }
-                    return null;
-                }
-
-                @Override
-                public void onPreExecute() {
-                    super.onPreExecute();
-                }
-
-                @Override
-                protected void onPostExecute(Boolean b)
-                {
-                    super.onPostExecute(b);
-                    speedFragment.setValues(DataHandler.getInstance().getDetailedStats(s));
-                    speedFragment.hideLoading();
-                }
-            }.execute();
-
             transaction.replace(R.id.activity_statistics_i_container, speedFragment);
-
+            // add to back stack for access
+            transaction.addToBackStack(null);
         }
         else if (view == FUEL_BUTTON)
         {
-            showToast("Fuel button in Stats.class clicked");
-
             if (fuelFragment == null)
             {
                 fuelFragment = new FuelWindow();
             }
-
-            AsyncTask myTask = new AsyncTask<Void, Void, Boolean>()
-            {
-                Fuel f = new Fuel(0);
-
-                @Override
-                protected Boolean doInBackground(Void... voids)
-                {
-                    while (!(DataHandler.getInstance().detailedStatsReady(f)
-                            && fuelFragment.hasLoaded()))
-                    {
-                        try { Thread.sleep(100); } catch (InterruptedException e) {}
-                    }
-                    return null;
-                }
-
-                @Override
-                public void onPreExecute() {
-                    super.onPreExecute();
-                }
-
-                @Override
-                protected void onPostExecute(Boolean b) {
-                    super.onPostExecute(b);
-                    fuelFragment.setValues(DataHandler.getInstance().getDetailedStats(f));
-                    fuelFragment.hideLoading();
-                }
-            }.execute();
-
             transaction.replace(R.id.activity_statistics_i_container, fuelFragment);
-
+            // add to back stack for access
+            transaction.addToBackStack(null);
         }
         else if (view == DISTANCE_TRAVELED)
         {
-            showToast("Distance button in Stats.class clicked");
-
             if (distFragment == null)
             {
                 distFragment = new DistTravWindow();
             }
-
-            AsyncTask myTask = new AsyncTask<Void, Void, Boolean>()
-            {
-                Distance d = new Distance(0);
-
-                @Override
-                protected Boolean doInBackground(Void... voids)
-                {
-                    while (!(DataHandler.getInstance().detailedStatsReady(d)
-                            && distFragment.hasLoaded()))
-                    {
-                        try { Thread.sleep(100); } catch (InterruptedException e) {}
-                    }
-                    return null;
-                }
-
-                @Override
-                public void onPreExecute() {
-                    super.onPreExecute();
-                }
-
-                @Override
-                protected void onPostExecute(Boolean b) {
-                    super.onPostExecute(b);
-                    distFragment.setValues(DataHandler.getInstance().getDetailedStats(d));
-                    distFragment.hideLoading();
-                }
-            }.execute();
-
             transaction.replace(R.id.activity_statistics_i_container, distFragment);
-
+            // add to back stack for access
+            transaction.addToBackStack(null);
         }
         else if (view == OVERALL_BTN)
         {
-            showToast("Overall button in Stats.class clicked");
-
             Intent intent = new Intent(this, OverallStats.class);
             startActivity(intent);
         }
 
-        // add to back stack for access
-        transaction.addToBackStack(null);
         // set transition
         transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
         // commit transaction
