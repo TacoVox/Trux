@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.detailedStats;
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -23,7 +24,7 @@ import tux.gu.se.trux.R;
 public class Stats extends BaseAppActivity implements Serializable, View.OnClickListener
 {
     //volatile Fragment fragment;
-    private volatile DetailedStatsFragment speedFragment, fuelFragment, distFragment;
+    private Fragment speedFragment, fuelFragment, distFragment;
     private Button speedBtn, fuelBtn, distanceBtn, overallBtn;
 
     // layout id
@@ -89,7 +90,7 @@ public class Stats extends BaseAppActivity implements Serializable, View.OnClick
     public void onClick(View view)
     {
         FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
-
+/*
         if (view.getId() == R.id.speed_button)
         {
             showToast("Speed button in Stats.class clicked");
@@ -226,7 +227,7 @@ public class Stats extends BaseAppActivity implements Serializable, View.OnClick
         transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
         // commit transaction
         transaction.commit();
-
+*/
     } // end onClick()
 
 
