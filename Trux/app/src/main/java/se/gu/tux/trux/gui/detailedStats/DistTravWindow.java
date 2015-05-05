@@ -1,5 +1,8 @@
 package se.gu.tux.trux.gui.detailedStats;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,18 +13,19 @@ import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.DetailedStatsBundle;
+import se.gu.tux.trux.datastructure.Distance;
 import tux.gu.se.trux.R;
 
 
-public class DistTravWindow extends DetailedStatsFragment {
+public class DistTravWindow extends Fragment {
 
     View myFragmentView;
     TextView distanceTextViewToday, distanceTextViewWeek, distanceTextViewMonth, distanceTextViewTotal;
     GraphView distanceGraph;
 
 
-    @Override
     public void setValues(DetailedStatsBundle stats) {
         if (stats != null) {
             Long distToday = (Long) stats.getToday().getValue() / 1000;
@@ -74,14 +78,47 @@ public class DistTravWindow extends DetailedStatsFragment {
         }
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        myFragmentView = getView();
+
+        AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
+            Distance d = new Distance(0);
+
+            @Override
+            protected Boolean doInBackground(Void... voids)
+            {
+                while (!(DataHandler.getInstance().detailedStatsReady(d)))
+                {
+                    try {
+                        Thread.sleep(100);
+                        // Stop waiting if fragment was cancelled
+                        if (!isVisible()) {
+                            cancel(true);
+                        }
+                    } catch (InterruptedException e) {
+                        System.out.println("Wait interrupted.");
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(Boolean b) {
+                super.onPostExecute(b);
+                setValues(DataHandler.getInstance().getDetailedStats(d));
+                hideLoading();
+            }
+        }.execute();
+    }
 
     public void hideLoading() {
         myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-    }
-
-    @Override
-    public boolean hasLoaded() {
-        if (distanceTextViewToday != null) return true;
-        return false;
     }
 }

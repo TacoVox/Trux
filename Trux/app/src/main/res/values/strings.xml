@@ -18,6 +18,7 @@
 
     <string name="login">Login</string>
     <string name="autoLogin">Keep me logged in</string>
+    <string name="title_activity_register">Register</string>
 
     <string name="speed_button_text">Speed</string>
     <string name="fuel_button_text">Fuel</string>
