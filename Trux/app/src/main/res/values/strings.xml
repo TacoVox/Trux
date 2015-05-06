@@ -63,13 +63,10 @@
 
     <string name="loading">Loading...</string>
 
-
     <string name="contact">Here we will have information about the contact</string>
 
     <string name="about">Here we will have information about the application</string>
     <string name="title_activity_item_menu">ItemMenu</string>
-
-
 
     <string name="settings">Here we will have settings later</string>
     <string name="action_help">Help</string>
@@ -78,6 +75,8 @@
     <string name="title_activity_fragment_page_adapter_community">FragmentPageAdapterCommunity</string>
 
     <string name="title_activity_test_map">TestMap</string>
-    <string name="hello_world">Hello World</string>
+
+    <string name="welcome">Welcome to Trux!</string>
+    <string name="welcomeMessage">A community for truck drivers.</string>
 
 </resources>
