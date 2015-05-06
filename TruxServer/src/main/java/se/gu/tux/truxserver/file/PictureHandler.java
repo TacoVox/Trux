@@ -1,7 +1,3 @@
-package se.gu.tux.truxserver.file;
-
-import se.gu.tux.trux.datastructure.Picture;
-
 /*
  * Copyright 2015 jonas.
  *
@@ -17,6 +13,18 @@ import se.gu.tux.trux.datastructure.Picture;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package se.gu.tux.truxserver.file;
+
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.imageio.ImageIO;
+import se.gu.tux.trux.datastructure.Picture;
+import se.gu.tux.truxserver.logger.Logger;
 
 /**
  *
@@ -44,11 +52,39 @@ public class PictureHandler {
      */
     private PictureHandler() {}
     
-    public void savePicture() {
-        
+    public void savePicture(Picture p) {
+            
     }
     
     public Picture receivePicture() {
         return null;
     }
+
+    private BufferedImage decodePicture(byte[] imgData) {
+        try {
+            InputStream in = new ByteArrayInputStream(imgData);
+            return ImageIO.read(in);
+        } catch(IOException e) {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        
+        return null;
+    }
+    
+    private byte[] encodePicture(BufferedImage img) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(img, "jpg", baos );
+            baos.flush();
+            byte[] imgData = baos.toByteArray();
+            baos.close();
+            
+            return imgData;
+ 
+        } catch(IOException e) {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        
+        return null;
+    }	
 }
