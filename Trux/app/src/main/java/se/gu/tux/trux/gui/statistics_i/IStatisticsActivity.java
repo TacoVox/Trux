@@ -1,6 +1,6 @@
 package se.gu.tux.trux.gui.statistics_i;
 
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -60,7 +60,7 @@ public class IStatisticsActivity extends BaseAppActivity implements Serializable
         // set current view showing
         setCurrentViewId(LAYOUT_ID);
 
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.activity_statistics_i_container, new IMainFragment());
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
@@ -105,7 +105,7 @@ public class IStatisticsActivity extends BaseAppActivity implements Serializable
      */
     public void onFragmentViewClick(int view)
     {
-        FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
 
         if (view == SPEED_BUTTON)
         {

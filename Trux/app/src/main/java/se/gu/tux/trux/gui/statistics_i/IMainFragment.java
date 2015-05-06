@@ -1,6 +1,6 @@
 package se.gu.tux.trux.gui.statistics_i;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
