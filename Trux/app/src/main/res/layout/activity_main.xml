@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/login"
                     android:id="@+id/login"
-                    android:background="@drawable/button_clickable"
+                    android:background="@drawable/button_clickable_new"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"
                     android:onClick="goToHome"
@@ -76,9 +76,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Register"
-                    android:background="@drawable/button_clickable"
+                    android:background="@drawable/button_clickable_new"
                     android:textColor="#E0E0E0"
                     android:layout_margin="5dp"
+                    android:onClick="goToRegister"
                     android:id="@+id/register"
                     android:layout_weight="1"/>
             </LinearLayout>
@@ -91,4 +92,4 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</FrameLayout>

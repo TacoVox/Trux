@@ -27,6 +27,7 @@ public class OverallStats extends FragmentActivity {
         ft = new FragmentPageAdapterOverall(getSupportFragmentManager());
         viewpager.setAdapter(ft);
 
+        /*
         Thread t = new Thread(new Runnable() {
             Speed s = new Speed(0);
             Fuel f = new Fuel(0);
@@ -56,7 +57,7 @@ public class OverallStats extends FragmentActivity {
                 });
             }
         });
-        t.start();
+        t.start();*/
 
 
         /*viewpager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {

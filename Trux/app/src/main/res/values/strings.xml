@@ -3,6 +3,14 @@
 
     <string name="app_name">Trux</string>
 
+    <string name="main_screen_help">To login, please fill in your username and password
+    in the corresponding fields. Click on the Login button.\nIf you miss one, please click
+    on the Register button to create an account.\nHave a nice day!</string>
+
+    <string name="driver_home_screen_help">To check profile, click on the Profile button.\n
+    To check community, click on the Community button.\nTo check statistics, click on the
+    Statistics button.\nHave a nice day!</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
     <string name="action_contact">Contact</string>
@@ -10,6 +18,7 @@
 
     <string name="login">Login</string>
     <string name="autoLogin">Keep me logged in</string>
+    <string name="title_activity_register">Register</string>
 
     <string name="speed_button_text">Speed</string>
     <string name="fuel_button_text">Fuel</string>
@@ -17,7 +26,7 @@
 
     <string name="title_activity_speed">Speed</string>
 
-    <string name="coming_soon_text">Coming Soon</string>
+    <string name="coming_soon_text">COMING SOON</string>
     <string name="overall_statistics_text">Overall Statistics</string>
     <string name="compare_statistics_text">Compare Statistics</string>
     <string name="community_text">Community</string>
@@ -63,5 +72,12 @@
 
 
     <string name="settings">Here we will have settings later</string>
+    <string name="action_help">Help</string>
+    <string name="title_activity_community_main">Community_main</string>
+
+    <string name="title_activity_fragment_page_adapter_community">FragmentPageAdapterCommunity</string>
+
+    <string name="title_activity_test_map">TestMap</string>
+    <string name="hello_world">Hello World</string>
 
 </resources>

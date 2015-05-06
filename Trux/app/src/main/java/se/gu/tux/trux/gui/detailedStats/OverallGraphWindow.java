@@ -1,5 +1,7 @@
 package se.gu.tux.trux.gui.detailedStats;
 
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,7 +13,11 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.DetailedStatsBundle;
+import se.gu.tux.trux.datastructure.Distance;
+import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.Speed;
 import tux.gu.se.trux.R;
 
 public class OverallGraphWindow extends Fragment {
@@ -36,10 +42,55 @@ public class OverallGraphWindow extends Fragment {
         return myFragmentView;
     }
 
-    public boolean hasLoaded() {
-        if (myFragmentView != null) return true;
-        return false;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        myFragmentView = getView();
+
+        // Make sure values are set once they are loaded
+        AsyncTask myTask = new AsyncTask<Void, Void, Boolean>()
+        {
+            Speed s = new Speed(0);
+            Fuel f = new Fuel(0);
+            Distance d = new Distance(0);
+
+            @Override
+            protected Boolean doInBackground(Void... voids)
+            {
+                while (!(DataHandler.getInstance().detailedStatsReady(s)
+                        && DataHandler.getInstance().detailedStatsReady(f)
+                        && DataHandler.getInstance().detailedStatsReady(d))) {
+                    try {
+                        Thread.sleep(100);
+                        // Stop waiting if fragment was cancelled
+                        if (!isVisible()) {
+                            cancel(true);
+                        }
+                    } catch (InterruptedException e) {
+                        System.out.println("Wait interrupted.");
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(Boolean b)
+            {
+                super.onPostExecute(b);
+                setValues(DataHandler.getInstance().getDetailedStats(s),
+                        DataHandler.getInstance().getDetailedStats(f),
+                        DataHandler.getInstance().getDetailedStats(d));
+            }
+        }.execute();
     }
+
+
 
 
     public void setValues(DetailedStatsBundle speedBundle, DetailedStatsBundle fuelBundle,

@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="se.gu.tux.trux.gui.detailedStats.DistanceTraveledWindow"
-    android:padding="10dp"
+    android:padding="5dp"
     android:background="#E0E0E0">
 
 
@@ -10,18 +10,16 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:padding="10dip"
-        android:background="@drawable/custom_border"
-        android:weightSum="3">
+        android:weightSum="6">
 
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="#FF3D3D3D"
+            android:background= "@drawable/label_border"
             android:layout_margin="5dp"
-            android:padding="5dip"
+            android:padding="20dip"
             android:layout_weight="1">
 
             <TextView
@@ -29,14 +27,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/average_speed"
                 android:id="@+id/avg_speed"
+                android:layout_gravity="center"
                 android:textSize="20dp"
                 android:textColor="#E0E0E0"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="@string/loading"
                 android:id="@+id/avg_speed_value"
+                android:layout_gravity="center"
                 android:textSize="20dp"
                 android:textColor="#E0E0E0"
                 android:layout_marginLeft="10dp"/>
@@ -46,9 +46,9 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="#FF3D3D3D"
+            android:background= "@drawable/label_border"
             android:layout_margin="5dp"
-            android:padding="5dip"
+            android:padding="20dip"
             android:layout_weight="1">
 
             <TextView
@@ -56,14 +56,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/average_fuel"
                 android:id="@+id/avg_fuel"
+                android:layout_gravity="center"
                 android:textSize="20dp"
                 android:textColor="#E0E0E0"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="@string/loading"
                 android:id="@+id/avg_fuel_value"
+                android:layout_gravity="center"
                 android:textSize="20dp"
                 android:textColor="#E0E0E0"
                 android:layout_marginLeft="10dp"/>
@@ -73,24 +75,113 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="#FF3D3D3D"
+            android:background= "@drawable/label_border"
             android:layout_margin="5dp"
-            android:padding="5dip"
+            android:padding="20dip"
             android:layout_weight="1">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/average_distance_traveled"
-                android:id="@+id/avg_distance_traveled"
+                android:id="@+id/avg_distance"
+                android:layout_gravity="center"
                 android:textSize="20dp"
                 android:textColor="#E0E0E0"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
-                android:id="@+id/total_distance_traveled_value"
+                android:text="@string/loading"
+                android:id="@+id/avg_distance_value"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"
+                android:layout_marginLeft="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background= "@drawable/label_border"
+            android:layout_margin="5dp"
+            android:padding="20dip"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/coming_soon_text"
+                android:id="@+id/commingSoon1"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:id="@+id/commingSoon2"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"
+                android:layout_marginLeft="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background= "@drawable/label_border"
+            android:layout_margin="5dp"
+            android:padding="20dip"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/coming_soon_text"
+                android:id="@+id/commingSoon3"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:id="@+id/commingSoon4"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"
+                android:layout_marginLeft="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background= "@drawable/label_border"
+            android:layout_margin="5dp"
+            android:padding="20dip"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/coming_soon_text"
+                android:id="@+id/commingSoon5"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:textColor="#E0E0E0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:id="@+id/commingSoon6"
+                android:layout_gravity="center"
                 android:textSize="20dp"
                 android:textColor="#E0E0E0"
                 android:layout_marginLeft="10dp"/>

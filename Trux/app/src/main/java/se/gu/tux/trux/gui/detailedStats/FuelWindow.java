@@ -1,5 +1,8 @@
 package se.gu.tux.trux.gui.detailedStats;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,24 +13,25 @@ import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.DetailedStatsBundle;
+import se.gu.tux.trux.datastructure.Fuel;
 import tux.gu.se.trux.R;
 
 
-public class FuelWindow extends DetailedStatsFragment {
+public class FuelWindow extends Fragment {
 
     View myFragmentView;
 
     TextView fuelTextViewToday, fuelTextViewWeek, fuelTextViewMonth, fuelTextViewTotal;
     GraphView fuelGraph;
 
-    @Override
     public void setValues(DetailedStatsBundle stats) {
         if (stats != null) {
-            fuelTextViewToday.setText(new Long(Math.round((Double) stats.getToday().getValue())).toString());
-            fuelTextViewWeek.setText(new Long(Math.round((Double) stats.getWeek().getValue())).toString());
-            fuelTextViewMonth.setText(new Long(Math.round((Double) stats.getMonth().getValue())).toString());
-            fuelTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString());
+            fuelTextViewToday.setText(new Long(Math.round((Double) stats.getToday().getValue())).toString() + " L/h");
+            fuelTextViewWeek.setText(new Long(Math.round((Double) stats.getWeek().getValue())).toString() + " L/h");
+            fuelTextViewMonth.setText(new Long(Math.round((Double) stats.getMonth().getValue())).toString() + " L/h");
+            fuelTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString() + " L/h");
             LineGraphSeries fuelValues = new LineGraphSeries(stats.getGraphPoints());
             fuelGraph.addSeries(fuelValues);
             fuelGraph.invalidate();
@@ -51,8 +55,50 @@ public class FuelWindow extends DetailedStatsFragment {
 
         return myFragmentView;
 
-
     }
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        myFragmentView = getView();
+
+        AsyncTask myTask = new AsyncTask<Void, Void, Boolean>()
+        {
+            Fuel f = new Fuel(0);
+
+            @Override
+            protected Boolean doInBackground(Void... voids)
+            {
+                while (!(DataHandler.getInstance().detailedStatsReady(f)))
+                {
+                    try {
+                        Thread.sleep(100);
+                        // Stop waiting if fragment was cancelled
+                        if (!isVisible()) {
+                            cancel(true);
+                        }
+                    } catch (InterruptedException e) {
+                        System.out.println("Wait interrupted.");
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(Boolean b) {
+                super.onPostExecute(b);
+                setValues(DataHandler.getInstance().getDetailedStats(f));
+                hideLoading();
+            }
+        }.execute();
+    }
+
 
     private void popFuelGraph(View view) {
 
@@ -73,11 +119,5 @@ public class FuelWindow extends DetailedStatsFragment {
 
     public void hideLoading() {
         myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-    }
-
-    @Override
-    public boolean hasLoaded() {
-        if (fuelTextViewToday != null) return true;
-        return false;
     }
 }
