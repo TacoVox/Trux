@@ -14,6 +14,7 @@ import java.util.List;
 
 import se.gu.tux.trux.gui.BaseAppActivity;
 import se.gu.tux.trux.gui.community.Community_main;
+import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.detailedStats.OverallStats;
 import se.gu.tux.trux.gui.statistics_i.IStatisticsActivity;
 import tux.gu.se.trux.R;
@@ -32,6 +33,7 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
     private static final int MAP_VIEW = R.id.fragment_main_i_image_view;
     private static final int DETAILS_BUTTON = R.id.fm_i_statistics_detailed_button;
+    private static final int FRIENDS_BUTTON = R.id.friendButton;
 
 
     IMainPagerAdapter pagerAdapter;
@@ -117,6 +119,11 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
         else if (id == DETAILS_BUTTON)
         {
             Intent intent = new Intent(this, IStatisticsActivity.class);
+            startActivity(intent);
+        }
+        else if (id == FRIENDS_BUTTON)
+        {
+            Intent intent = new Intent(this, FriendsWindow.class);
             startActivity(intent);
         }
         else

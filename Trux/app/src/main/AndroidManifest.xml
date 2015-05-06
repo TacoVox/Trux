@@ -93,12 +93,10 @@
             android:name="se.gu.tux.trux.gui.community.Community_main"
             android:label="@string/title_activity_community_main" >
         </activity>
-
         <activity
             android:name="se.gu.tux.trux.gui.RegisterActivity"
             android:label="@string/title_activity_register" >
         </activity>
-
         <activity
             android:name="se.gu.tux.trux.gui.community.FragmentPageAdapterCommunity"
             android:label="@string/title_activity_fragment_page_adapter_community" >
@@ -107,7 +105,6 @@
             android:name="se.gu.tux.trux.gui.statistics_i.IStatisticsActivity"
             android:label="@string/coming_soon_text" >
         </activity>
-
         <activity
             android:name="se.gu.tux.trux.gui.main_i.IMainActivity"
             android:label="@string/coming_soon_text" >
@@ -115,11 +112,12 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCbI5lHKz2EEGWe3X4ozbVuLbHXVy458Cw"/>
+            android:value="AIzaSyCbI5lHKz2EEGWe3X4ozbVuLbHXVy458Cw" />
 
-
-
-
+        <activity
+            android:name="se.gu.tux.trux.gui.community.FriendsWindow"
+            android:label="@string/title_activity_friends_window" >
+        </activity>
     </application>
 
 </manifest>

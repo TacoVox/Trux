@@ -23,7 +23,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/community_button"
         android:fadingEdge="vertical"
-        android:text="some community feature"
+        android:text="friends"
+        android:id="@+id/friendButton"
         android:layout_marginBottom="10dp"/>
 
     <Button
