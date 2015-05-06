@@ -1,6 +1,9 @@
 package se.gu.tux.trux.gui.main_i;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -69,6 +72,8 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
 
         // specify that we will be displaying tabs in the action bar.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.WHITE));
 
         // set page listener
         viewPager.setOnPageChangeListener(this);
