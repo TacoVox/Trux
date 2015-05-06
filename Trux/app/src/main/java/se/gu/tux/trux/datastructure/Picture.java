@@ -22,18 +22,18 @@ package se.gu.tux.trux.datastructure;
 public class Picture extends Data {
     private long pictureid;
     
-    private String img;
+    private byte[] imgData;
     
     public Picture(long pictureid) {
         this.pictureid = pictureid;
     }
 
-    public String getImg() {
-        return img;
+    public byte[] getImg() {
+        return imgData;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setImg(byte[] imgData) {
+        this.imgData = imgData;
     }
 
     public long getPictureid() {
@@ -51,7 +51,7 @@ public class Picture extends Data {
 
     @Override
     public void setValue(Object value) {
-        setImg((String) value);
+        setImg((byte[]) value);
     }
 
     @Override
