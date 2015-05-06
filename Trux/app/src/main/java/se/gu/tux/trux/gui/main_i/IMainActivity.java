@@ -3,7 +3,6 @@ package se.gu.tux.trux.gui.main_i;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.gu.tux.trux.gui.BaseAppActivity;
+import se.gu.tux.trux.gui.community.Community_main;
+import se.gu.tux.trux.gui.detailedStats.OverallStats;
 import se.gu.tux.trux.gui.statistics_i.IStatisticsActivity;
 import tux.gu.se.trux.R;
 
@@ -29,6 +30,8 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
     // constants
     private static final int LAYOUT_ID = R.layout.activity_main_i;
     private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
+    private static final int MAP_VIEW = R.id.fragment_main_i_image_view;
+    //private static final int DETAILS_BUTTON = R.id.fm_i_statistics_detailed_button;
 
 
     IMainPagerAdapter pagerAdapter;
@@ -72,7 +75,7 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
 
         // specify that we will be displaying tabs in the action bar.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
+        // set background color for the tabs
         actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.WHITE));
 
         // set page listener
@@ -111,6 +114,16 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
             Intent intent = new Intent(this, IStatisticsActivity.class);
             startActivity(intent);
         }
+        else if (id == MAP_VIEW)
+        {
+            Intent intent = new Intent(this, Community_main.class);
+            startActivity(intent);
+        }/*
+        else if (id == DETAILS_BUTTON)
+        {
+            Intent intent = new Intent(this, OverallStats.class);
+            startActivity(intent);
+        }*/
         else
         {
             showToast("Something is wrong. Called from IMainActivity.class.");
@@ -161,7 +174,6 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
      * End override methods.
      *
      */
-
 
 
 } // end class
