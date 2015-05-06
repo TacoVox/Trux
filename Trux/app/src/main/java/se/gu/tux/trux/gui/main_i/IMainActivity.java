@@ -29,9 +29,9 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
 
     // constants
     private static final int LAYOUT_ID = R.layout.activity_main_i;
-    private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
+    //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
     private static final int MAP_VIEW = R.id.fragment_main_i_image_view;
-    //private static final int DETAILS_BUTTON = R.id.fm_i_statistics_detailed_button;
+    private static final int DETAILS_BUTTON = R.id.fm_i_statistics_detailed_button;
 
 
     IMainPagerAdapter pagerAdapter;
@@ -109,21 +109,16 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
      */
     public void onFragmentViewClick(int id)
     {
-        if (id == STATS_BUTTON)
+        if (id == MAP_VIEW)
+        {
+            Intent intent = new Intent(this, Community_main.class);
+            startActivity(intent);
+        }
+        else if (id == DETAILS_BUTTON)
         {
             Intent intent = new Intent(this, IStatisticsActivity.class);
             startActivity(intent);
         }
-        else if (id == MAP_VIEW)
-        {
-            Intent intent = new Intent(this, Community_main.class);
-            startActivity(intent);
-        }/*
-        else if (id == DETAILS_BUTTON)
-        {
-            Intent intent = new Intent(this, OverallStats.class);
-            startActivity(intent);
-        }*/
         else
         {
             showToast("Something is wrong. Called from IMainActivity.class.");
