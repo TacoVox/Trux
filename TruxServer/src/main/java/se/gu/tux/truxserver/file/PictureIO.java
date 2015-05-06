@@ -61,12 +61,15 @@ public class PictureIO {
     
     public ProtocolMessage saveProfilePicture(Picture p) {
         BufferedImage img = decodePicture(p.getImg());
-        p.setPictureid(PictureHandler.gI().savePicPath(p, storeOnFS(img)));
+        p.setPictureid(PictureHandler.gI().savePicturePath(p, storeOnFS(img)));
         return PictureHandler.gI().setProfilePicture(p);
     }
     
-    public Picture receiveProfilePicture() {
-        return null;
+    public Picture receiveProfilePicture(Picture p) {
+        BufferedImage img = getFromFS(PictureHandler.gI().getProfilePicturePath(p));
+        p.setImg(encodePicture(img));
+        
+        return p;
     }
     
     private String storeOnFS(BufferedImage img) {
@@ -100,6 +103,12 @@ public class PictureIO {
     }
     
     private BufferedImage getFromFS(String path) {
+        try {
+            return ImageIO.read(new File(path));
+        } catch (IOException e) {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        
         return null;
     }
 
