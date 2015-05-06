@@ -20,8 +20,7 @@ import se.gu.tux.truxserver.logger.Logger;
  *
  * @author tville
  */
-public class TruxServer
-{
+public class TruxServer {
 
     private Thread serverHandlerThread;
     private Thread mainThread;
@@ -40,7 +39,7 @@ public class TruxServer
      * down the whole application.
      */
     public synchronized void terminate() {
-    	// Interrupt the main thread waiting for keyboard input.
+        // Interrupt the main thread waiting for keyboard input.
         // It will handle the interrupt properly.
         mainThread.interrupt();
     }
@@ -71,14 +70,14 @@ public class TruxServer
             cleanupThread = new Thread(new CleanupRunnable(Config.gI().getCleanupInterval()));
             cleanupThread.start();
 
-	    	// Start the server pool - start it in a wrapping thread so we can
+            // Start the server pool - start it in a wrapping thread so we can
             // interrupt it with keyboard input from the main thread.
             sh = new ServerHandler(this);
             serverHandlerThread = new Thread(sh);
             serverHandlerThread.start();
             Logger.gI().addMsg("Trux Server started.\nq followed by enter quits.");
 
-	    	// While thread not interrupted, 
+            // While thread not interrupted, 
             // Check keyboard input for interruption or possibly options
             try {
                 while (isRunning && hasNextLine()) {
@@ -111,7 +110,7 @@ public class TruxServer
      * @throws IOException
      */
     private boolean hasNextLine() throws InterruptedException {
-    	// Check if input is available every 100 ms. Throw InterruptedException
+        // Check if input is available every 100 ms. Throw InterruptedException
         // if interrupted.
         try {
             while (System.in.available() == 0) {

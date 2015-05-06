@@ -14,8 +14,7 @@ import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
-public class ServerRunnable implements Runnable
-{
+public class ServerRunnable implements Runnable {
 
     private boolean isRunning = true;
     private Socket cs = null;
@@ -52,7 +51,7 @@ public class ServerRunnable implements Runnable
         while (isRunning) {
             try {
 
-				// Receive data.
+                // Receive data.
                 // Since we are using the thread pool, when the thread pool shuts down it calls
                 // interrupt() on all threads - if we managed the threads manually we could just
                 // close the socket which would abort a blocking read, here instead we have set 
@@ -60,7 +59,7 @@ public class ServerRunnable implements Runnable
                 Data d = null;
                 while (d == null && !currentThread.isInterrupted()) {
                     try {
-						// Read data - this blocks until the defined soTimeout, then repeats
+                        // Read data - this blocks until the defined soTimeout, then repeats
                         // So we do nothing on the exception, it's just catched there to keep the 
                         // loop running at regular intervals
                         d = (Data) in.readObject();
@@ -122,7 +121,7 @@ public class ServerRunnable implements Runnable
      * Cleanly shut down this server runnable
      */
     public void shutDown() {
-		// Could be called by closing socket from the outside, but also
+        // Could be called by closing socket from the outside, but also
         // from the stream input being interrupted
         if (cs != null && cs.isConnected()) {
             try {

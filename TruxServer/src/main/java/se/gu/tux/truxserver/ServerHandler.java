@@ -9,9 +9,10 @@ import java.util.concurrent.Executors;
 
 import se.gu.tux.truxserver.logger.Logger;
 
-public class ServerHandler implements Runnable
-{
+public class ServerHandler implements Runnable {
+
     // Determines if the main loop should continue
+
     private boolean isRunning = true;
     // Server socket waits for connections
     private ServerSocket ss;
@@ -38,11 +39,11 @@ public class ServerHandler implements Runnable
             truxServer.terminate();
         }
 
-    	// As long as the server is running - wait for connections, on connection
+        // As long as the server is running - wait for connections, on connection
         // let the next server thread available handle the connection		
         while (isRunning()) {
 
-    		// An accepted incoming connection is handled in the thread pool
+            // An accepted incoming connection is handled in the thread pool
             try {
                 Logger.gI().addDebug("Waiting for next connection...");
                 Socket cs = ss.accept();
@@ -55,7 +56,7 @@ public class ServerHandler implements Runnable
 
             } catch (SocketException e) {
 
-    			// This can happen naturally when using stopServer() to shut down 
+                // This can happen naturally when using stopServer() to shut down 
                 // server. If so, isRunning is false. So if isRunning is true here,
                 // socket was closed some other way and we need to make a nice shutdown
                 if (isRunning()) {
