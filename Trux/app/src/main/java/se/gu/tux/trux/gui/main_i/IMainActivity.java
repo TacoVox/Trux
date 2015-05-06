@@ -60,7 +60,10 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
         // create fragments
         Fragment welcomeFragment = new IWelcomeFragment();
         Fragment communityFragment = new ICommunityFragment();
-        Fragment statsFragment = new IStatisticsFragment();
+
+        //Fragment statsFragment = new IStatisticsFragment();
+        Fragment statsFragment = new StatisticsMainFragment();
+
 
         // add fragments to array
         fragmentArrayList.add(welcomeFragment);
