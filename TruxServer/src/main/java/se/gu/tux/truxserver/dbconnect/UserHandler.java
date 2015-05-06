@@ -189,11 +189,7 @@ public class UserHandler {
      */
     public Data getUser(User u)
     {
-        int userid = -1;
         String passwd = null;
-        String firstname = null;
-        String lastname = null;
-        int sessionid = -1;
         
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
