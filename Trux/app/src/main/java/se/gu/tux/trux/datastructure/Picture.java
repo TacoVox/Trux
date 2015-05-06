@@ -15,8 +15,6 @@
  */
 package se.gu.tux.trux.datastructure;
 
-import java.awt.image.BufferedImage;
-
 /**
  *
  * @author jonas
