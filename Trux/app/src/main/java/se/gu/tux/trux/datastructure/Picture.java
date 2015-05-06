@@ -15,12 +15,14 @@
  */
 package se.gu.tux.trux.datastructure;
 
-import java.awt.image.BufferedImage;
+//import java.awt.image.BufferedImage;
 
 /**
  *
  * @author jonas
  */
+
+/*
 public class Picture extends Data {
     private long pictureid;
     
@@ -61,3 +63,4 @@ public class Picture extends Data {
         return true;
     }
 }
+*/
