@@ -19,6 +19,7 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.logger.Logger;
@@ -46,7 +47,7 @@ public class PictureHandler {
     /**
      * Non-static part.
      */
-    public long savePicPath(Picture pic, String path) {
+    public long savePicturePath(Picture pic, String path) {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
@@ -96,5 +97,29 @@ public class PictureHandler {
         }
         
 	return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+    }
+    
+    public String getProfilePicturePath(Picture p) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "SELECT path FROM picture, profilepicture" +
+                    " WHERE picture.pictureid = profilepicture.pictureid "
+                    + "AND profilepicture.userid = ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(selectStmnt);
+            
+            pst.setLong(1, p.getUserId());
+            
+            ResultSet rs = dbc.execSelect(p, pst);
+            
+	    while (rs.next())
+		return rs.getString("path");
+        } catch (SQLException e) {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        
+        return null;
     }
 }
