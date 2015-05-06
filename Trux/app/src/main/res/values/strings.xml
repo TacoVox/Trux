@@ -78,5 +78,6 @@
     <string name="title_activity_fragment_page_adapter_community">FragmentPageAdapterCommunity</string>
 
     <string name="title_activity_test_map">TestMap</string>
+    <string name="hello_world">Hello World</string>
 
 </resources>
