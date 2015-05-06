@@ -3,31 +3,40 @@ package se.gu.tux.trux.gui.community;
 
 
 import android.app.FragmentManager;
+import android.content.Context;
+import android.location.Criteria;
 import android.location.Location;
 
 
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
 import org.slf4j.Marker;
 
+import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.datastructure.User;
 import tux.gu.se.trux.R;
 
 public class MapFrag extends Fragment implements OnMapReadyCallback {
 
     GoogleMap mMap;
-
+    User user;
+    Friend friend;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,9 +58,14 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         @Override
         public void onMyLocationChange(Location location) {
             LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+            System.out.println("Inside onMyLocationChange");
+            if(mMap == null) {
+                System.out.println("Map is null ");
+            }
             if(mMap != null){
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
-                mMap.addMarker(new MarkerOptions().position(loc));
+                System.out.println("Position is changed");
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 13));
+                mMap.addMarker(new MarkerOptions().position(loc).title("Here You Are"));
             }
         }
     };
@@ -60,34 +74,15 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.setOnMyLocationChangeListener(myLocationChangeListener);
         System.out.println("Adding on location change listener...");
+
+
     }
-
-
-
-
-
-
-
-
-
-
 /*
-    private com.google.android.gms.maps.MapFragment getLocation() {
-        while (!isGooglePlayServicesAvailable()) {
-            System.out.println("GooglePlay is not available");
-        }
-        if (mMap == null) {
-            mMap = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMap();
-            mMap.setMyLocationEnabled(true);
-            if (mMap != null) {
-                setUpMap();
-            }
-
-        }
-    }
-
     private void setUpMap(){
         mMap.setMyLocationEnabled(true);
 
@@ -108,7 +103,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(20));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
 
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You Are Here"));
     }

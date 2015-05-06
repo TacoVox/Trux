@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
 package se.gu.tux.trux.datastructure;
 
 import java.awt.image.BufferedImage;
@@ -20,7 +21,7 @@ import java.awt.image.BufferedImage;
 /**
  *
  * @author jonas
- */
+ *//*
 public class Picture extends Data {
     private long pictureid;
     
@@ -61,3 +62,4 @@ public class Picture extends Data {
         return true;
     }
 }
+*/
