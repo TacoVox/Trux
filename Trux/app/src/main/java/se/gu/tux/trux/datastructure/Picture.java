@@ -24,17 +24,17 @@ import java.awt.image.BufferedImage;
 public class Picture extends Data {
     private long pictureid;
     
-    private BufferedImage img;
+    private String img;
     
     public Picture(long pictureid) {
         this.pictureid = pictureid;
     }
 
-    public BufferedImage getImg() {
+    public String getImg() {
         return img;
     }
 
-    public void setImg(BufferedImage img) {
+    public void setImg(String img) {
         this.img = img;
     }
 
@@ -53,7 +53,7 @@ public class Picture extends Data {
 
     @Override
     public void setValue(Object value) {
-        setImg((BufferedImage) value);
+        setImg((String) value);
     }
 
     @Override
