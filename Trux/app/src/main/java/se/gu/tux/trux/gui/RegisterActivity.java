@@ -29,8 +29,9 @@ import tux.gu.se.trux.R;
 /**
  * Handles the registering for a new user.
  */
-public class RegisterWindow extends Fragment implements View.OnClickListener
+public class RegisterActivity extends BaseAppActivity implements View.OnClickListener
 {
+    private static final int LAYOUT_ID = R.layout.activity_register;
 
     // private fields for user info when registering
     private EditText username;
@@ -41,9 +42,6 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
     private EditText confirmPassword;
     private CheckBox termsAndCond;
 
-    // the view for this fragment
-    private View view;
-
     // private fields to store data provided by user
     private String sUsername;
     private String sFirstName;
@@ -51,30 +49,26 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
     private String sEmail;
     private String sPassword;
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
-    {
-        // inflate the view, calling this here so we can use the view
-        // to find the components for it
-        view = inflater.inflate(R.layout.fragment_register_window, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(LAYOUT_ID);
+        // set current view
+        setCurrentViewId(LAYOUT_ID);
 
         // find components
-        username = (EditText) view.findViewById(R.id.userNameInput);
-        firstName = (EditText) view.findViewById(R.id.firstNameInput);
-        lastName = (EditText) view.findViewById(R.id.lastNameInput);
-        email = (EditText) view.findViewById(R.id.emailInput);
-        password = (EditText) view.findViewById(R.id.passwordInput);
-        confirmPassword = (EditText) view.findViewById(R.id.verPasswordInput);
-        termsAndCond = (CheckBox) view.findViewById(R.id.agreeButton);
-        Button registerButton = (Button) view.findViewById(R.id.registerButton);
+        username = (EditText) findViewById(R.id.userNameInput);
+        firstName = (EditText) findViewById(R.id.firstNameInput);
+        lastName = (EditText) findViewById(R.id.lastNameInput);
+        email = (EditText) findViewById(R.id.emailInput);
+        password = (EditText) findViewById(R.id.passwordInput);
+        confirmPassword = (EditText) findViewById(R.id.verPasswordInput);
+        termsAndCond = (CheckBox) findViewById(R.id.agreeButton);
+        Button registerButton = (Button) findViewById(R.id.registerButton);
 
         // set listener to the button
         registerButton.setOnClickListener(this);
-
-        // return the view
-        return view;
     }
 
 
@@ -123,7 +117,7 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
             assert message != null;
             if (message.getType() == ProtocolMessage.Type.SUCCESS)
             {
-                AlertDialog.Builder confirmDialog = new AlertDialog.Builder(view.getContext());
+                AlertDialog.Builder confirmDialog = new AlertDialog.Builder(this);
 
                 confirmDialog.setMessage("You have now been registered. To confirm registration, " +
                 "please go to the e-mail you provided and click on the link. To enjoy our services, " +
@@ -135,10 +129,8 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
                         {
                             // dismiss the dialog box
                             dialog.dismiss();
-                            // get the transaction manager
-                            FragmentManager fm = getActivity().getFragmentManager();
-                            // go back to main screen
-                            fm.popBackStack();
+                            // This activity is now finished
+                            finish();
                         }
                     }).create();
 
@@ -146,15 +138,15 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
             }
             else
             {
-                Toast.makeText(getActivity(), message.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                // Problem discovered by the server, show it to the user
+                showToast(message.getMessage());
             }
         }
         else
         {
             // the credentials were not valid or there was some other
             // error, display message to user
-            AlertDialog.Builder errorDialog = new AlertDialog.Builder(view.getContext());
+            AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
 
             errorDialog.setMessage("There was a problem while registering. Please try " +
             "again later. If the problem persists, please contact the development team. Have a nice day!")
@@ -190,7 +182,7 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
         if (sUsername.length() < 3)
         {
             username.setBackgroundColor(Color.RED);
-            Toast.makeText(getActivity(), "Username must be at least 3 characters long.", Toast.LENGTH_SHORT).show();
+            showToast("Username must be at least 3 characters long.");
             sUsername = "";
             isVerified = false;
         }
@@ -201,7 +193,7 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
         if (sFirstName.isEmpty())
         {
             firstName.setBackgroundColor(Color.RED);
-            Toast.makeText(getActivity(), "First name can not be empty.", Toast.LENGTH_SHORT).show();
+            showToast("First name can not be empty.");
             sFirstName = "";
             isVerified = false;
         }
@@ -212,7 +204,7 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
         if (sLastName.isEmpty())
         {
             lastName.setBackgroundColor(Color.RED);
-            Toast.makeText(getActivity(), "Last name can not be empty.", Toast.LENGTH_SHORT).show();
+            showToast("Last name can not be empty.");
             sLastName = "";
             isVerified = false;
         }
@@ -230,7 +222,7 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
         if (!sEmail.matches(regex1))
         {
             email.setBackgroundColor(Color.RED);
-            Toast.makeText(getActivity(), "Please check e-mail address.", Toast.LENGTH_SHORT).show();
+            showToast("Please check e-mail address.");
             sEmail = "";
             isVerified = false;
         }
@@ -241,7 +233,7 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
         if (sPassword.isEmpty() || sPassword.length() < 6)
         {
             password.setBackgroundColor(Color.RED);
-            Toast.makeText(getActivity(), "Password must be at least 6 characters long.", Toast.LENGTH_SHORT).show();
+            showToast("Password must be at least 6 characters long.");
             sPassword = "";
             isVerified = false;
         }
@@ -252,14 +244,14 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
         if (!sConfirmPass.equals(sPassword))
         {
             confirmPassword.setBackgroundColor(Color.RED);
-            Toast.makeText(getActivity(), "Please make sure passwords match.", Toast.LENGTH_SHORT).show();
+            showToast("Please make sure passwords match.");
             isVerified = false;
         }
 
         // check if the user agrees to the terms and conditions
         if (!termsAndCond.isChecked())
         {
-            Toast.makeText(getActivity(), "Please agree to the terms and conditions to register.", Toast.LENGTH_SHORT).show();
+            showToast( "Please agree to the terms and conditions to register.");
             isVerified = false;
         }
 
@@ -296,7 +288,7 @@ public class RegisterWindow extends Fragment implements View.OnClickListener
         @Override
         protected void onPreExecute()
         {
-            Toast.makeText(getActivity(), "Sending request to register. Please wait...", Toast.LENGTH_SHORT).show();
+            showToast("Sending request to register. Please wait...");
         }
 
         @Override

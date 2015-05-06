@@ -17,8 +17,12 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.datastructure.Location;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 
@@ -203,7 +207,7 @@ public class UserHandler {
 	    
             pst.setString(1, u.getUsername());
 	    
-            ResultSet rs = pst.executeQuery();
+            ResultSet rs = dbc.execSelect(u, pst);
 	    
             if(rs == null)
                 return new ProtocolMessage(ProtocolMessage.Type.ERROR);
@@ -217,6 +221,25 @@ public class UserHandler {
                 
 		break;
 	    }
+            
+            selectStmnt = "SELECT friendid" +
+                    " FROM isfriendwith WHERE userid = ?";
+            
+            pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setLong(1, u.getUserId());
+	    
+            rs = dbc.execSelect(u, pst);
+            
+            List friends = new ArrayList<Long>();
+            
+	    while (rs.next())
+	    {
+                friends.add(rs.getLong("friendid"));
+	    }
+            
+            u.setFriends((Long[])friends.toArray());
 	}
 	catch (Exception e)
 	{
@@ -269,5 +292,51 @@ public class UserHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Username is already taken. Please select another one.");
+    }
+    
+    public Data getFriend(Friend f)
+    {
+        Location loc = new Location();
+        loc.setUserId(f.getUserid());
+        
+        f.setCurrentLoc((Location)MetricReceiver.gI().getMetric(loc));
+        
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "SELECT username, firstname, lastname" +
+                    " FROM user WHERE userid = ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setLong(1, f.getUserid());
+	    
+            ResultSet rs = pst.executeQuery();
+	    
+            if(rs == null)
+                return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+            
+	    while (rs.next())
+	    {
+                f.setUsername(rs.getString("username"));
+                f.setFirstname(rs.getString("firstname"));
+                f.setLastname(rs.getString("lastname"));
+                
+		break;
+	    }
+            
+            return f;
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Something went wrong while fetching information for your friend - plase contact Jerker");
     }
 }

@@ -8,11 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,10 +19,9 @@ import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.LoginService;
-import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
-import se.gu.tux.trux.gui.detailedStats.Contact;
+import se.gu.tux.trux.gui.main_i.IMainActivity;
 import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
@@ -41,7 +36,6 @@ public class MainActivity extends BaseAppActivity
 
     TextView userField;
     TextView passField;
-    Button btnRegister;
     CheckBox checkBox;
 
     private String[] userInfo;
@@ -67,9 +61,6 @@ public class MainActivity extends BaseAppActivity
         // Add login form
         userField = (TextView) findViewById(R.id.username);
         passField = (TextView) findViewById(R.id.password);
-
-        btnRegister = (Button) findViewById(R.id.register);
-        btnRegister.setOnClickListener(btnOnClick);
 
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
@@ -106,6 +97,8 @@ public class MainActivity extends BaseAppActivity
         {
             System.out.println("File exists, loading user info");
             userInfo = LoginService.getInstance().readFromFile();
+            // userInfo will be set to null here if the file existed but didn't contain all
+            // user details = the user had logged out
         }
 
         if (userInfo != null && userInfo[4].equals("true"))
@@ -131,6 +124,13 @@ public class MainActivity extends BaseAppActivity
         super.onStop();
     }
 
+
+    public void goToRegister(View view)
+    {
+        // Start new activity
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
+    }
 
     public void goToHome(View view)
     {
@@ -177,7 +177,11 @@ public class MainActivity extends BaseAppActivity
         {
             showToast("You are now logged in.");
 
-            Intent intent = new Intent(this, DriverHomeScreen.class);
+            //Intent intent = new Intent(this, DriverHomeScreen.class);
+
+            // for testing
+            Intent intent = new Intent(this, IMainActivity.class);
+
             // Make sure there is no history for the back button
             if (getFragmentManager().getBackStackEntryCount() > 0) {
                 getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -236,7 +240,11 @@ public class MainActivity extends BaseAppActivity
         {
             showToast("You are now logged in.");
 
-            Intent intent = new Intent(this, DriverHomeScreen.class);
+            //Intent intent = new Intent(this, DriverHomeScreen.class);
+
+            // for testing
+            Intent intent = new Intent(this, IMainActivity.class);
+
             // Make sure there is no history for the back button
             if (getFragmentManager().getBackStackEntryCount() > 0) {
                 getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -253,21 +261,6 @@ public class MainActivity extends BaseAppActivity
 
 
 
-
-    Button.OnClickListener btnOnClick = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (v == btnRegister) {
-                newFragment = new RegisterWindow();
-            }
-
-            transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.mainActivity, newFragment);
-            transaction.addToBackStack(null);
-            transaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-            transaction.commit();
-        }
-    };
 
 
     @Override

@@ -18,6 +18,7 @@
 
     <string name="login">Login</string>
     <string name="autoLogin">Keep me logged in</string>
+    <string name="title_activity_register">Register</string>
 
     <string name="speed_button_text">Speed</string>
     <string name="fuel_button_text">Fuel</string>
@@ -72,5 +73,11 @@
 
     <string name="settings">Here we will have settings later</string>
     <string name="action_help">Help</string>
+    <string name="title_activity_community_main">Community_main</string>
+
+    <string name="title_activity_fragment_page_adapter_community">FragmentPageAdapterCommunity</string>
+
+    <string name="title_activity_test_map">TestMap</string>
+    <string name="hello_world">Hello World</string>
 
 </resources>

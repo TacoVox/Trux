@@ -16,6 +16,7 @@
 package se.gu.tux.truxserver.dataswitch;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.truxserver.dbconnect.UserHandler;
 
@@ -44,14 +45,17 @@ public class UserSwitcher {
      */
     private UserSwitcher() {}
     
-    protected Data handleUser(User ud) {
-    	//Do something.
-        //Session null
-        if(ud.getSessionId() == User.LOGIN_REQUEST)
-            return UserHandler.gI().login(ud);
-        else if(ud.getSessionId() == User.REGISTER_REQUEST)
-            return UserHandler.gI().register(ud);
-        else
-            return UserHandler.gI().getUser(ud);
+    protected Data handleUser(Data ud) {
+        if(ud instanceof User) {
+            if(ud.getSessionId() == User.LOGIN_REQUEST)
+                return UserHandler.gI().login((User)ud);
+            else if(ud.getSessionId() == User.REGISTER_REQUEST)
+                return UserHandler.gI().register((User)ud);
+            else
+                return UserHandler.gI().getUser((User)ud);
+        } else if (ud instanceof Friend) {
+            return UserHandler.gI().getFriend((Friend)ud);
+        } else
+            return null;
     }
 }

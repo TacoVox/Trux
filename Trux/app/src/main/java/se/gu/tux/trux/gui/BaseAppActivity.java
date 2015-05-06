@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import java.util.concurrent.ExecutionException;
 
+import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.LoginService;
 
 import tux.gu.se.trux.R;
@@ -28,8 +29,7 @@ public class BaseAppActivity extends ActionBarActivity
 
     // keeps track of the current view showing on the screen
     private static int currentViewId;
-
-
+    private MenuItem logoutItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,11 +44,25 @@ public class BaseAppActivity extends ActionBarActivity
     {
         // inflate menu
         getMenuInflater().inflate(R.menu.menu, menu);
+        logoutItem = menu.getItem(4);
+
+        validateOptions();
         // return menu
         return super.onCreateOptionsMenu(menu);
     }
 
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        validateOptions();
+        return true;
+    }
 
+    public void validateOptions() {
+        if (DataHandler.getInstance().isLoggedIn()) {
+            logoutItem.setEnabled(true);
+        } else {
+            logoutItem.setEnabled(false);
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -57,24 +71,26 @@ public class BaseAppActivity extends ActionBarActivity
 
         if (id == R.id.action_settings)
         {
-            startActivity(new Intent(this, SettingsMenuActivity.class));
+            Intent intent = new Intent(this, SettingsMenuActivity.class);
+            startActivity(intent);
         }
         else if (id == R.id.action_about)
         {
-            startActivity(new Intent(this, AboutMenuActivity.class));
+            Intent intent = new Intent(this, AboutMenuActivity.class);
+            startActivity(intent);
         }
         else if (id == R.id.action_contact)
         {
-            startActivity(new Intent(this, ContactMenuActivity.class));
+            Intent intent = new Intent(this, ContactMenuActivity.class);
+            startActivity(intent);
         }
         else if (id == R.id.action_help)
         {
             // get the current view id and the about data for it
-            String[] dialogData = getAboutData(getCurrentViewId());
+            String[] dialogData = getHelpData(getCurrentViewId());
 
             // display a dialog with the about information
             showDialogBox(dialogData[0], dialogData[1]);
-
         }
         else if (id == R.id.action_logout)
         {
@@ -125,7 +141,7 @@ public class BaseAppActivity extends ActionBarActivity
             return;
         }
         // make a toast and show
-        Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -172,7 +188,7 @@ public class BaseAppActivity extends ActionBarActivity
      * @param viewID    The current view id showing.
      * @return          String[]
      */
-    private String[] getAboutData(int viewID)
+    private String[] getHelpData(int viewID)
     {
         // the array to return
         String[] aboutData = new String[2];
@@ -197,7 +213,7 @@ public class BaseAppActivity extends ActionBarActivity
         // return the array
         return aboutData;
 
-    } // end getAboutData()
+    } // end getHelpData()
 
 
 
@@ -221,12 +237,14 @@ public class BaseAppActivity extends ActionBarActivity
 
         if (check)
         {
-          // TODO: react to successful or failed logout attempt
+          // TODO: react to successful or failed logout attempt?
         }
         else
         {
 
         }
+
+
 
         // Make sure there is no history for the back button
         if (getFragmentManager().getBackStackEntryCount() > 0) {
@@ -259,6 +277,5 @@ public class BaseAppActivity extends ActionBarActivity
         }
 
     } // end inner class
-
 
 } // end class
