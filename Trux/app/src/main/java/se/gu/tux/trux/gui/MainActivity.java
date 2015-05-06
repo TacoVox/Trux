@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +21,7 @@ import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.LoginService;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.gui.main_i.IMainActivity;
 import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
@@ -177,7 +177,11 @@ public class MainActivity extends BaseAppActivity
         {
             showToast("You are now logged in.");
 
-            Intent intent = new Intent(this, DriverHomeScreen.class);
+            //Intent intent = new Intent(this, DriverHomeScreen.class);
+
+            // for testing
+            Intent intent = new Intent(this, IMainActivity.class);
+
             // Make sure there is no history for the back button
             if (getFragmentManager().getBackStackEntryCount() > 0) {
                 getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -236,7 +240,11 @@ public class MainActivity extends BaseAppActivity
         {
             showToast("You are now logged in.");
 
-            Intent intent = new Intent(this, DriverHomeScreen.class);
+            //Intent intent = new Intent(this, DriverHomeScreen.class);
+
+            // for testing
+            Intent intent = new Intent(this, IMainActivity.class);
+
             // Make sure there is no history for the back button
             if (getFragmentManager().getBackStackEntryCount() > 0) {
                 getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);

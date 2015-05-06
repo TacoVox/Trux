@@ -2,15 +2,11 @@ package se.gu.tux.trux.gui.statistics_i;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import java.io.Serializable;
 
 import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.datastructure.Distance;
-import se.gu.tux.trux.datastructure.Fuel;
-import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.gui.BaseAppActivity;
 import se.gu.tux.trux.gui.detailedStats.DistTravWindow;
 import se.gu.tux.trux.gui.detailedStats.FuelWindow;
@@ -40,9 +36,9 @@ public class IStatisticsActivity extends BaseAppActivity implements Serializable
     // constants
     private static final int LAYOUT_ID = R.layout.activity_statistics_i;
 
-    private static final int SPEED_BTN = R.id.activity_statistics_i_speed_button;
-    private static final int FUEL_BTN = R.id.activity_statistics_i_fuel_button;
-    private static final int DISTANC_BTN = R.id.activity_statistics_i_distance_button;
+    //private static final int SPEED_BTN = R.id.activity_statistics_i_speed_button;
+    //private static final int FUEL_BTN = R.id.activity_statistics_i_fuel_button;
+    //private static final int DISTANC_BTN = R.id.activity_statistics_i_distance_button;
 
     private static final int SPEED_BUTTON = R.id.speed_button;
     private static final int FUEL_BUTTON = R.id.fuel_button;
