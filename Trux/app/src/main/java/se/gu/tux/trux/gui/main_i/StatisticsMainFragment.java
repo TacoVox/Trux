@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -24,6 +23,8 @@ import tux.gu.se.trux.R;
 
 /**
  * Created by ivryashkov on 2015-05-06.
+ *
+ * Handles the main statistics fragment. Holds a spinner
  */
 public class StatisticsMainFragment extends Fragment implements AdapterView.OnItemSelectedListener
 {
@@ -74,20 +75,37 @@ public class StatisticsMainFragment extends Fragment implements AdapterView.OnIt
     public void onNothingSelected(AdapterView<?> adapterView) {}
 
 
+    /**
+     * Custom spinner adapter. Loads a custom view for each spinner item.
+     */
     class SpinnerAdapter extends ArrayAdapter<String>
     {
-
+        // holds the titles for each spinner item
         String[] titles;
 
+        /**
+         * Constructor. Takes the context to which to apply, the layout for
+         * the spinner objects and the titles for each row. Simply makes a call
+         * to super with same parameters.
+         *
+         * @param context       The context to apply.
+         * @param resource      The spinner layout
+         * @param objects       The titles for each row in spinner.
+         */
         public SpinnerAdapter(Context context, int resource, String[] objects)
         {
+            // make a call to super
             super(context, resource, objects);
+            // save the titles for future reference
             titles = objects;
         }
+
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent)
         {
+            // here instead of returning super with default android layout
+            // we call a helper method to return a custom view
             return getSpinnerItemView(position, convertView, parent);
         }
 
@@ -95,10 +113,22 @@ public class StatisticsMainFragment extends Fragment implements AdapterView.OnIt
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent)
         {
+            // here instead of returning super with default android layout
+            // we call a helper method to return a custom view
+            // NOTE: required a call here as well, this happens when clicked on the
+            // spinner to display items
             return getSpinnerItemView(position, convertView, parent);
         }
 
 
+        /**
+         * Helper method to customise the view for each spinner item.
+         *
+         * @param position      The current item position.
+         * @param convertView   Not used, maybe can be removed.
+         * @param parent        The parent view group to which this component belongs.
+         * @return              The custom View.
+         */
         private View getSpinnerItemView(int position, View convertView, ViewGroup parent)
         {
             View row = layoutInflater.inflate(R.layout.spinner_item, parent, false);
