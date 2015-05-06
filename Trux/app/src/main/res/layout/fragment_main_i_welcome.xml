@@ -5,7 +5,8 @@
     android:orientation="vertical"
     android:background="@android:color/white"
     android:layout_gravity="center"
-    android:padding="10dp">
+    android:paddingRight="5dp"
+    android:paddingLeft="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,6 +54,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/button_clickable_new"
         android:textColor="#E0E0E0"
-        android:text="some other info"/>
+        android:text="some other info"
+        android:layout_marginBottom="5dp"/>
 
 </LinearLayout>
