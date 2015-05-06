@@ -27,7 +27,6 @@ public class SimpleSpeedWindow extends Fragment
     TimerTask timer;
 
     class myTask extends TimerTask {
-
         public void run() {
                 try {
                     final Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
