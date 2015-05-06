@@ -29,8 +29,6 @@ public class StatisticsMainFragment extends Fragment implements AdapterView.OnIt
 {
     String[] spinnerItemsTitles = {"Overall", "Speed", "Distance traveled"};
 
-    private Spinner spinner;
-
     List<Fragment> fragmentList;
     LayoutInflater layoutInflater;
 
@@ -41,7 +39,7 @@ public class StatisticsMainFragment extends Fragment implements AdapterView.OnIt
         layoutInflater = inflater;
         View view = inflater.inflate(R.layout.fragment_statistics_main_view, container, false);
 
-        spinner = (Spinner) view.findViewById(R.id.fragment_statistics_spinner);
+        Spinner spinner = (Spinner) view.findViewById(R.id.fragment_statistics_spinner);
 
         DataHandler.getInstance().cacheDetailedStats();
 
@@ -53,7 +51,7 @@ public class StatisticsMainFragment extends Fragment implements AdapterView.OnIt
         //ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_spinner_item, list);
         ArrayAdapter<String> dataAdapter = new SpinnerAdapter(view.getContext(), R.layout.spinner_item, spinnerItemsTitles);
 
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dataAdapter.setDropDownViewResource(R.layout.spinner_item);
 
         spinner.setAdapter(dataAdapter);
 
@@ -90,6 +88,19 @@ public class StatisticsMainFragment extends Fragment implements AdapterView.OnIt
         @Override
         public View getView(int position, View convertView, ViewGroup parent)
         {
+            return getSpinnerItemView(position, convertView, parent);
+        }
+
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent)
+        {
+            return getSpinnerItemView(position, convertView, parent);
+        }
+
+
+        private View getSpinnerItemView(int position, View convertView, ViewGroup parent)
+        {
             View row = layoutInflater.inflate(R.layout.spinner_item, parent, false);
             TextView rowText = (TextView) row.findViewById(R.id.spinner_item_text_view);
 
@@ -97,7 +108,8 @@ public class StatisticsMainFragment extends Fragment implements AdapterView.OnIt
 
             return row;
         }
-    }
+
+    } // end nested class
 
 
 } // end class
