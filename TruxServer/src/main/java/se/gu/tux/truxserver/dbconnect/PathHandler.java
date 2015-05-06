@@ -1,5 +1,3 @@
-package se.gu.tux.truxserver.dbconnect;
-
 /*
  * Copyright 2015 jonas.
  *
@@ -16,6 +14,14 @@ package se.gu.tux.truxserver.dbconnect;
  * limitations under the License.
  */
 
+
+package se.gu.tux.truxserver.dbconnect;
+
+import java.sql.PreparedStatement;
+import se.gu.tux.trux.datastructure.Location;
+import se.gu.tux.trux.datastructure.Picture;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.truxserver.logger.Logger;
 /**
  *
  * @author jonas
@@ -40,5 +46,30 @@ public class PathHandler {
     /**
      * Non-static part.
      */
-    
+    public ProtocolMessage savePicPath(Picture pic, String path) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                "INSERT INTO picture (path, timestamp, userid) "
+                    + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
+                
+            pst.setString(1,path);
+            pst.setLong(2, pic.getTimeStamp());
+            pst.setLong(3, pic.getUserId());
+            
+            dbc.execInsert(pic, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+	return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+    }
 }

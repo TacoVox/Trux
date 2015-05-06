@@ -16,14 +16,19 @@
 
 package se.gu.tux.truxserver.file;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.imageio.ImageIO;
+
 import se.gu.tux.trux.datastructure.Picture;
+import se.gu.tux.truxserver.dbconnect.PathHandler;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -50,13 +55,49 @@ public class PictureHandler {
     /**
      * Non-static part.
      */
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     private PictureHandler() {}
     
-    public void savePicture(Picture p) {
-            
+    public void saveProfilePicture(Picture p) {
+        BufferedImage img = decodePicture(p.getImg());
+        PathHandler.gI().savePicPath(p, storeOnFS(img));
     }
     
-    public Picture receivePicture() {
+    public Picture receiveProfilePicture() {
+        return null;
+    }
+    
+    private String storeOnFS(BufferedImage img) {
+        Date date = new Date();
+        String imgHash;
+        
+        if(img.hashCode() < 0)
+            imgHash = Integer.toString(-img.hashCode());
+        else
+            imgHash = Integer.toString(img.hashCode());
+        
+        String path = System.getProperty("user.dir") + "/files/pictures" +
+                dateFormat.format(date).toString();
+        
+        File dir = new File(path);
+        
+        if(!dir.exists())
+            dir.mkdirs();
+        
+        path += "/" + imgHash + ".png";
+        
+        File pic = new File(path);
+        
+        try {
+            ImageIO.write(img, "png", pic);
+        } catch(IOException e) {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        
+        return path;
+    }
+    
+    private BufferedImage getFromFS(String path) {
         return null;
     }
 
@@ -74,7 +115,7 @@ public class PictureHandler {
     private byte[] encodePicture(BufferedImage img) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(img, "jpg", baos );
+            ImageIO.write(img, "png", baos );
             baos.flush();
             byte[] imgData = baos.toByteArray();
             baos.close();
