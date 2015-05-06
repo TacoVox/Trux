@@ -15,7 +15,7 @@
  */
 package se.gu.tux.trux.datastructure;
 
-import java.awt.image.BufferedImage;
+//import java.awt.image.BufferedImage;
 
 /**
  *
@@ -24,19 +24,19 @@ import java.awt.image.BufferedImage;
 public class Picture extends Data {
     private long pictureid;
     
-    private BufferedImage img;
+  //  private BufferedImage img;
     
     public Picture(long pictureid) {
         this.pictureid = pictureid;
     }
 
-    public BufferedImage getImg() {
+ /*   public BufferedImage getImg() {
         return img;
     }
-
+*//*
     public void setImg(BufferedImage img) {
         this.img = img;
-    }
+    }*/
 
     public long getPictureid() {
         return pictureid;
@@ -45,15 +45,16 @@ public class Picture extends Data {
     public void setPictureid(long pictureid) {
         this.pictureid = pictureid;
     }
-    
+
     @Override
     public Object getValue() {
-        return getImg();
+        //return getImg();
+        return null;
     }
 
     @Override
     public void setValue(Object value) {
-        setImg((BufferedImage) value);
+        //setImg((BufferedImage) value);
     }
 
     @Override
