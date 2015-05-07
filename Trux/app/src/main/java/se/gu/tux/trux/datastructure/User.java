@@ -36,7 +36,7 @@ public class User extends Data
 	@Override
 	public boolean isOnServerSide() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public String getUsername() {

@@ -2,12 +2,15 @@ package se.gu.tux.trux.appplication;
 
 import com.jjoe64.graphview.series.DataPoint;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Distance;
+import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
@@ -309,6 +312,32 @@ public class DataHandler
     public void cleanupSessionData() {
         detailedStats = null;
         detailedStatsFetched = 0;
+    }
+
+    public Friend[] getFriends() throws NotLoggedInException {
+        Friend[] friends = null;
+
+        // Make sure we are logged in so we have a user
+        if (!isLoggedIn()) {
+            throw new NotLoggedInException();
+        }
+
+        // No friends / friends not set
+        if (user.getFriends() == null) {
+            System.out.println("Users friends was null.");
+            return null;
+        }
+
+        // Copy the array so we are sure no other thread messes with it during fetch
+        Long[] friendIds = Arrays.copyOf(user.getFriends(), user.getFriends().length);
+        if (friendIds != null) {
+            friends =  new Friend[friendIds.length];
+            for (int i = 0; i < friendIds.length; i++) {
+                friends[i] = (Friend)getData(new Friend(friendIds[i]));
+            }
+        }
+
+        return friends;
     }
 
 } // end class DataHandler

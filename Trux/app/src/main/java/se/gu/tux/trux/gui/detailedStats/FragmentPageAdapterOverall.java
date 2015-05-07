@@ -4,7 +4,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import se.gu.tux.trux.appplication.DetailedStatsBundle;
+import se.gu.tux.trux.gui.statistics.OverallGraphWindow;
 
 /**
  * Created by dennis on 2015-03-26.

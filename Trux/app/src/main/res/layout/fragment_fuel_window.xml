@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:background="#E0E0E0"
     android:padding="5dp"
-    tools:context="se.gu.tux.trux.gui.detailedStats.FuelWindow">
+    tools:context="se.gu.tux.trux.gui.statistics.FuelWindow">
 
     <LinearLayout
         android:orientation="vertical"

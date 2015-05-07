@@ -148,6 +148,15 @@ public class LoginService
             user.setUserId(response.getUserId());
 
             DataHandler.getInstance().setUser(user);
+            try
+            {
+                // Update the user with more detailed user data from the server
+                DataHandler.getInstance().setUser((User)DataHandler.getInstance().getData(user));
+            }
+            catch (NotLoggedInException e)
+            {
+                e.printStackTrace();
+            }
 
             String userInfo = DataHandler.getInstance().getUser().getUsername() + ":" +
                             DataHandler.getInstance().getUser().getPasswordHash() + ":" +
