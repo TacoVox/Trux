@@ -26,29 +26,31 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.imageio.ImageIO;
+import se.gu.tux.trux.datastructure.Data;
 
 import se.gu.tux.trux.datastructure.Picture;
-import se.gu.tux.truxserver.dbconnect.PathHandler;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.truxserver.dbconnect.PictureHandler;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
  *
  * @author jonas
  */
-public class PictureHandler {
+public class PictureIO {
     /**
      * Static part.
      */
-    private static PictureHandler ph;
+    private static PictureIO pio;
     
-    public static PictureHandler getInstance() {
-        if(ph == null)
-            ph = new PictureHandler();
+    public static PictureIO getInstance() {
+        if(pio == null)
+            pio = new PictureIO();
         
-        return ph;
+        return pio;
     }
     
-    public static PictureHandler gI() {
+    public static PictureIO gI() {
         return getInstance();
     }
     
@@ -56,15 +58,19 @@ public class PictureHandler {
      * Non-static part.
      */
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-    private PictureHandler() {}
+    private PictureIO() {}
     
-    public void saveProfilePicture(Picture p) {
+    public ProtocolMessage saveProfilePicture(Picture p) {
         BufferedImage img = decodePicture(p.getImg());
-        PathHandler.gI().savePicPath(p, storeOnFS(img));
+        p.setPictureid(PictureHandler.gI().savePicturePath(p, storeOnFS(img)));
+        return PictureHandler.gI().setProfilePicture(p);
     }
     
-    public Picture receiveProfilePicture() {
-        return null;
+    public Picture receiveProfilePicture(Picture p) {
+        BufferedImage img = getFromFS(PictureHandler.gI().getProfilePicturePath(p));
+        p.setImg(encodePicture(img));
+        
+        return p;
     }
     
     private String storeOnFS(BufferedImage img) {
@@ -98,6 +104,12 @@ public class PictureHandler {
     }
     
     private BufferedImage getFromFS(String path) {
+        try {
+            return ImageIO.read(new File(path));
+        } catch (IOException e) {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        
         return null;
     }
 

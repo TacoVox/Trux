@@ -15,6 +15,8 @@
  */
 package se.gu.tux.truxserver.logger;
 
+import se.gu.tux.truxserver.file.LogIO;
+
 /**
  *
  * @author jonas
@@ -47,11 +49,11 @@ public final class Logger {
     /**
      * Non-static parts of this class
      */
-    private FileHandler fh;
+    private LogIO lio;
     
     private Logger()
     {
-        fh = new FileHandler();
+        lio = new LogIO();
     }
     
     public void addError(String descr)
@@ -59,7 +61,7 @@ public final class Logger {
     	if (isVerbose) {
     		System.err.println(descr);
     	}
-        fh.appendText("ERROR: " + descr);
+        lio.appendText("ERROR: " + descr);
     }
     
     public void addDebug(String message)
@@ -67,7 +69,7 @@ public final class Logger {
     	if (isVerbose) {
     		System.out.println(message);
     	}
-        fh.appendText("DEBUG: " + message);
+        lio.appendText("DEBUG: " + message);
     }
     
     public void addMsg(String message)
@@ -75,7 +77,7 @@ public final class Logger {
     	if (isVerbose) {
     		System.out.println(message);
     	}
-        fh.appendText(message);
+        lio.appendText(message);
     }
     
     //Test purpose main method!
