@@ -71,7 +71,7 @@ public class DataSwitcher {
         else if (d instanceof ProtocolMessage)
             return MessageSwitcher.gI().handleMessage((ProtocolMessage) d);
         else if (d instanceof Picture)
-            return PictureIO.gI().handlePicture((Picture) d);
+            return PictureSwitcher.gI().handlePicture((Picture) d);
         else
             return null;
     }

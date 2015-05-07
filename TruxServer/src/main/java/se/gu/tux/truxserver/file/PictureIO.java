@@ -60,10 +60,6 @@ public class PictureIO {
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     private PictureIO() {}
     
-    public Data handlePicture(Picture p) {
-        return null;
-    }
-    
     public ProtocolMessage saveProfilePicture(Picture p) {
         BufferedImage img = decodePicture(p.getImg());
         p.setPictureid(PictureHandler.gI().savePicturePath(p, storeOnFS(img)));
