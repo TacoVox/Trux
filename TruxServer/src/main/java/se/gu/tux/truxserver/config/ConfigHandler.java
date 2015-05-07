@@ -1,12 +1,7 @@
 package se.gu.tux.truxserver.config;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 
 import java.util.Properties;
@@ -91,7 +86,7 @@ public class ConfigHandler {
      * Method for printing out the help screen.
      */
     private void printHelpScreen() {
-        System.out.println("TruxServer v1.1");
+        System.out.println("TruxServer v1.2");
         System.out.println("Helpscreen; The following commands for the TruxServer are available:");
         System.out.println("");
         System.out.println("-h or --help: prints this help screen.");
