@@ -71,9 +71,9 @@ public class EMailSender {
 
         generateMailMessage.setSubject("Confirm that you registered."
                 + "");
-        String emailBody = "This feature is soon available.<br> Try this link: "
+        String emailBody = "Welcome to Trux - the trucker community.<br>"
                 + "<a href=\"www.derkahler.de/trux/validate.php?id=" + accesscode +
-                "\">Confirm eMail</a><br><br>Regards, <br>Jonas";
+                "\">Click here to confirm eMail and account.</a><br><br>Cheers, <br>Jonas";
         
         generateMailMessage.setContent(emailBody, "text/html");
 
