@@ -15,8 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.appplication.LoginService;
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.LoginService;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.gui.base.BaseAppActivity;

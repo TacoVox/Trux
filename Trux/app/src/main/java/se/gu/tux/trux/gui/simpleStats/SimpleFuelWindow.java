@@ -10,9 +10,8 @@ import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Fuel;
-import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 

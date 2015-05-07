@@ -13,8 +13,8 @@ import android.widget.Toast;
 
 import java.util.concurrent.ExecutionException;
 
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.appplication.LoginService;
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.LoginService;
 
 import se.gu.tux.trux.gui.main_home.MainActivity;
 import tux.gu.se.trux.R;

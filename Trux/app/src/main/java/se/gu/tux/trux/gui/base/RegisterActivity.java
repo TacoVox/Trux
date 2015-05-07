@@ -1,7 +1,5 @@
 package se.gu.tux.trux.gui.base;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,8 +10,8 @@ import android.widget.EditText;
 
 import java.util.concurrent.ExecutionException;
 
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.appplication.LoginService;
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.LoginService;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
@@ -112,24 +110,10 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
             assert message != null;
             if (message.getType() == ProtocolMessage.Type.SUCCESS)
             {
-                AlertDialog.Builder confirmDialog = new AlertDialog.Builder(this);
-
-                confirmDialog.setMessage("You have now been registered. To confirm registration, " +
-                "please go to the e-mail you provided and click on the link. To enjoy our services, " +
-                "login with your username and password. Have a nice day!")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int i)
-                        {
-                            // dismiss the dialog box
-                            dialog.dismiss();
-                            // This activity is now finished
-                            finish();
-                        }
-                    }).create();
-
-                confirmDialog.show();
+                showDialogBox("Registration successful!",
+                        "You have now been registered. To confirm registration, " +
+                                "please go to the e-mail you provided and click on the link. To enjoy our services, " +
+                                "login with your username and password. Have a nice day!");
             }
             else
             {
@@ -141,21 +125,9 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
         {
             // the credentials were not valid or there was some other
             // error, display message to user
-            AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
-
-            errorDialog.setMessage("There was a problem while registering. Please try " +
-            "again later. If the problem persists, please contact the development team. Have a nice day!")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i)
-                    {
-                        // dismiss the dialog box
-                        dialog.dismiss();
-                    }
-                }).create();
-
-            errorDialog.show();
+            showDialogBox("Registration failed!",
+                    "There was a problem while registering. Please try " +
+                            "again later. If the problem persists, please contact the development team. Have a nice day!");
         }
 
     } // end registerUser()

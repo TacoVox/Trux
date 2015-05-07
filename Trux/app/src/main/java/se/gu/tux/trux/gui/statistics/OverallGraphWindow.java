@@ -10,11 +10,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.appplication.DetailedStatsBundle;
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.DetailedStatsBundle;
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Speed;
