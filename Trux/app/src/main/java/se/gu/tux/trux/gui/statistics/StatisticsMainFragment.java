@@ -6,69 +6,86 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 /**
- * Created by ivryashkov on 2015-05-06.
+ * Created by ivryashkov on 2015-05-07.
  *
- * Handles the main statistics fragment. Holds a spinner
+ * Handles the main fragment for the statistics. Shows the appropriate
+ * views depending on the driving mode -- in motion or not.
  */
-public class StatisticsMainFragment extends Fragment implements AdapterView.OnItemSelectedListener
+public class StatisticsMainFragment extends Fragment
 {
-    String[] spinnerItemsTitles = {"Overall", "Speed", "Distance traveled", "Fuel"};
 
-    List<Fragment> fragmentList;
-    LayoutInflater layoutInflater;
+    // to check if in driving mode or not
+    Speed speed;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        layoutInflater = inflater;
-        View view = inflater.inflate(R.layout.fragment_main_statistics, container, false);
+        View view = inflater.inflate(R.layout.fragment_statistics_main, container, false);
 
-        Spinner spinner = (Spinner) view.findViewById(R.id.fragment_statistics_spinner);
-
+        // start fetching data for the statistics
         DataHandler.getInstance().cacheDetailedStats();
 
-        fragmentList = new ArrayList<>();
-        fragmentList.add(new OverallGraphWindow());
-        fragmentList.add(new SpeedWindow());
-        fragmentList.add(new DistTravWindow());
-        fragmentList.add(new FuelWindow());
+        // check if in driving mode by getting a speed object
+        try
+        {
+            speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
+        }
+        catch (NotLoggedInException e) { e.printStackTrace(); }
 
-        //ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_spinner_item, list);
-        ArrayAdapter<String> dataAdapter = new StatisticsMainSpinnerAdapter(view.getContext(), R.layout.spinner_item, spinnerItemsTitles);
 
-        dataAdapter.setDropDownViewResource(R.layout.spinner_item);
-
-        spinner.setAdapter(dataAdapter);
-
-        spinner.setOnItemSelectedListener(this);
+        if (speed.getValue() != null && ((Double) speed.getValue()) > 5)
+        {
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.statistics_main_container, new StatisticsSimpleFragment());
+            fragmentTransaction.commit();
+        }
+        else
+        {
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.statistics_main_container, new StatisticsDetailedFragment());
+            fragmentTransaction.commit();
+        }
 
         return view;
     }
 
 
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
+    public void onResume()
     {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.statistics_frame_container, fragmentList.get(i));
-        fragmentTransaction.commit();
+        super.onResume();
+
+        // check if in driving mode by getting a speed object
+        try
+        {
+            speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
+        }
+        catch (NotLoggedInException e) { e.printStackTrace(); }
+
+
+        if (speed.getValue() != null && ((Double) speed.getValue()) > 5)
+        {
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.statistics_main_container, new StatisticsSimpleFragment());
+            fragmentTransaction.commit();
+        }
+        else
+        {
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.statistics_main_container, new StatisticsDetailedFragment());
+            fragmentTransaction.commit();
+        }
     }
-
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {}
 
 
 } // end class

@@ -1,4 +1,4 @@
-package se.gu.tux.trux.gui.main_home;
+package se.gu.tux.trux.gui.statistics;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,17 +11,18 @@ import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.gui.main_home.HomeActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 /**
  * Created by ivryashkov on 2015-05-05.
  */
-public class IStatisticsFragment extends Fragment implements View.OnClickListener
+public class StatisticsSimpleFragment extends Fragment implements View.OnClickListener
 {
     private TextView currentSpeed;
     private TextView currentFuel;
@@ -71,7 +72,7 @@ public class IStatisticsFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_main_i_statistics, container, false);
+        View view = inflater.inflate(R.layout.fragment_statistics_simple, container, false);
 
         // get the components
         Button statsButton = (Button) view.findViewById(R.id.fm_i_statistics_detailed_button);
@@ -79,8 +80,8 @@ public class IStatisticsFragment extends Fragment implements View.OnClickListene
         statsButton.setOnClickListener(this);
 
         currentSpeed = (TextView) view.findViewById(R.id.currentSpeed);
-        currentSpeed = (TextView) view.findViewById(R.id.currentFuel);
-        currentSpeed = (TextView) view.findViewById(R.id.currentDistance);
+        currentFuel = (TextView) view.findViewById(R.id.currentFuel);
+        currentDistance = (TextView) view.findViewById(R.id.currentDistance);
 
         t = new Timer();
         timer = new myTask();

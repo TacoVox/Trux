@@ -1,8 +1,7 @@
-package se.gu.tux.trux.appplication;
+package se.gu.tux.trux.application;
 
 import com.jjoe64.graphview.series.DataPoint;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -13,6 +12,7 @@ import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
@@ -35,6 +35,8 @@ public class DataHandler
 
     // Stores detailed stats with signal id as key
     private volatile HashMap<Integer, DetailedStatsBundle> detailedStats;
+    // Stores detailed stats with signal id as key
+    private volatile HashMap<Long, Picture> imageCache;
     // Stores time stamp
     private volatile long detailedStatsFetched = 0;
 
@@ -329,7 +331,7 @@ public class DataHandler
         }
 
         // Copy the array so we are sure no other thread messes with it during fetch
-        Long[] friendIds = Arrays.copyOf(user.getFriends(), user.getFriends().length);
+        long[] friendIds = Arrays.copyOf(user.getFriends(), user.getFriends().length);
         if (friendIds != null) {
             friends =  new Friend[friendIds.length];
             for (int i = 0; i < friendIds.length; i++) {
@@ -338,6 +340,11 @@ public class DataHandler
         }
 
         return friends;
+    }
+
+
+    public Picture getPicture() {
+        return null;
     }
 
 } // end class DataHandler

@@ -13,8 +13,8 @@ import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.appplication.DetailedStatsBundle;
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.DetailedStatsBundle;
 import se.gu.tux.trux.datastructure.Distance;
 import tux.gu.se.trux.R;
 

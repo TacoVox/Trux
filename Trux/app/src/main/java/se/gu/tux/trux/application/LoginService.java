@@ -1,11 +1,9 @@
-package se.gu.tux.trux.appplication;
+package se.gu.tux.trux.application;
 
 
 import android.content.Context;
-import android.content.Intent;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -148,10 +146,23 @@ public class LoginService
             user.setUserId(response.getUserId());
 
             DataHandler.getInstance().setUser(user);
+
+            // Then we need to get the detailed user info from server
+            // - by sending a user object, and unfortunately we have to make a new object to be able
+            // to get a proper reply from the server, probably due to some low-level caching
+            User u = new User();
+            u.setUsername(username);
+            u.setSessionId(response.getSessionId());
+            u.setUserId(response.getUserId());
             try
             {
                 // Update the user with more detailed user data from the server
-                DataHandler.getInstance().setUser((User)DataHandler.getInstance().getData(user));
+                Data d = DataHandler.getInstance().getData(u);
+                if (d instanceof ProtocolMessage) {
+                    System.out.println(((ProtocolMessage) d).getMessage() + ((ProtocolMessage) d).getType());
+                } else if (d instanceof User) {
+                    DataHandler.getInstance().setUser((User)d);
+                }
             }
             catch (NotLoggedInException e)
             {

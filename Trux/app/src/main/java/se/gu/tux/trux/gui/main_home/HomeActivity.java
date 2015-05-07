@@ -30,7 +30,6 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
     private static final int MAP_VIEW = R.id.fragment_main_i_image_view;
-    private static final int DETAILS_BUTTON = R.id.fm_i_statistics_detailed_button;
     private static final int FRIENDS_BUTTON = R.id.friendButton;
 
 
@@ -91,16 +90,9 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     }
 
 
+
     /**
      * Handles calls from child fragments components.
-     *
-     * For now maybe this is better since we don't have many components in the main
-     * activity (UI view). In total perhaps we will have 4-5 fragments * 2-4 components
-     * worst-case = 20 -- which is not so bad, considering not all calls
-     * will be important maybe we get around 10-12 expected calls --> then it is better
-     * to handle calls here (as a wrap up)
-     *
-     * TODO: discuss this ^
      *
      * TODO: handle calls
      *
@@ -125,12 +117,26 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     }
 
 
-    /******************************************************************************
-     *
-     * Override methods below required by implemented interfaces TabListener and
-     * OnPageChangeListener. Do not insert outside methods in between.
-     *
-     */
+
+    @Override
+    public void onBackPressed()
+    {
+        if (getFragmentManager().getBackStackEntryCount() == 0)
+        {
+            this.finish();
+        }
+        else
+        {
+            getFragmentManager().popBackStack();
+        }
+    }
+
+
+
+    /*****************************************************************************************
+     * Override methods below required by implemented interfaces TabListener and             *
+     * OnPageChangeListener. Do not insert outside methods in between.                       *
+     *****************************************************************************************/
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
     {
@@ -138,18 +144,14 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         viewPager.setCurrentItem(tab.getPosition());
     }
 
-
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {}
-
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {}
 
-
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
-
 
     @Override
     public void onPageSelected(int position)
@@ -159,15 +161,13 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         actionBar.setSelectedNavigationItem(position);
     }
 
-
     @Override
     public void onPageScrollStateChanged(int state) {}
 
-    /********************************************************************************
-     *
-     * End override methods.
-     *
-     */
+    /***************************************************************************************
+     * End override methods.                                                               *
+     ***************************************************************************************/
+
 
 
 } // end class

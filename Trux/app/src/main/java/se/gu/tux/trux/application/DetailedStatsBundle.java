@@ -1,4 +1,4 @@
-package se.gu.tux.trux.appplication;
+package se.gu.tux.trux.application;
 
 import com.jjoe64.graphview.series.DataPoint;
 

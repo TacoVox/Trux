@@ -13,8 +13,8 @@ import android.widget.Toast;
 
 import java.util.concurrent.ExecutionException;
 
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.appplication.LoginService;
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.LoginService;
 
 import se.gu.tux.trux.gui.main_home.MainActivity;
 import tux.gu.se.trux.R;
@@ -54,7 +54,7 @@ public class BaseAppActivity extends ActionBarActivity
 
     public boolean onPrepareOptionsMenu (Menu menu) {
         validateOptions();
-        return true;
+        return super.onPrepareOptionsMenu(menu);
     }
 
     public void validateOptions() {
