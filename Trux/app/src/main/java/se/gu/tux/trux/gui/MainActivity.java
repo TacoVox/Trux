@@ -315,6 +315,11 @@ public class MainActivity extends BaseAppActivity
             try
             {
                 msg = (ProtocolMessage) ServerConnector.gI().answerQuery(protocolMessages[0]);
+                if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS) {
+                    // Also update the user info by making a request for a User object
+                    DataHandler.getInstance().setUser((User)DataHandler.getInstance().getData(
+                            DataHandler.getInstance().getUser()));
+                }
             }
             catch (NotLoggedInException e)
             {

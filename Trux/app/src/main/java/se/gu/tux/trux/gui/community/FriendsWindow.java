@@ -97,7 +97,10 @@ class FriendAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return friends.length;
+        if (friends != null) {
+            return friends.length;
+        }
+        return 0;
     }
 
     @Override
@@ -112,6 +115,9 @@ class FriendAdapter extends BaseAdapter {
 
     public void setFriends(Friend[] friends) {
         this.friends = friends;
+        for (Friend f : friends) {
+            System.out.println(f.getUsername());
+        }
         notifyDataSetChanged();
     }
 

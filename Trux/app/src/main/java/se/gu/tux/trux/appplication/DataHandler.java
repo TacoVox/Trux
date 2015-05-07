@@ -321,6 +321,13 @@ public class DataHandler
         if (!isLoggedIn()) {
             throw new NotLoggedInException();
         }
+
+        // No friends / friends not set
+        if (user.getFriends() == null) {
+            System.out.println("Users friends was null.");
+            return null;
+        }
+
         // Copy the array so we are sure no other thread messes with it during fetch
         Long[] friendIds = Arrays.copyOf(user.getFriends(), user.getFriends().length);
         if (friendIds != null) {
