@@ -1,11 +1,9 @@
-package se.gu.tux.trux.appplication;
+package se.gu.tux.trux.application;
 
 
 import android.content.Context;
-import android.content.Intent;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;

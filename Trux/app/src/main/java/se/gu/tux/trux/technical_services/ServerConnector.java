@@ -1,21 +1,13 @@
 package se.gu.tux.trux.technical_services;
 
-import android.os.AsyncTask;
-
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
-import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 

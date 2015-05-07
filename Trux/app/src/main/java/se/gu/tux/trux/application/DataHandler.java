@@ -1,8 +1,7 @@
-package se.gu.tux.trux.appplication;
+package se.gu.tux.trux.application;
 
 import com.jjoe64.graphview.series.DataPoint;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;

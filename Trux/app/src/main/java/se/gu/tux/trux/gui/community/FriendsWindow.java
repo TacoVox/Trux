@@ -2,18 +2,15 @@ package se.gu.tux.trux.gui.community;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;

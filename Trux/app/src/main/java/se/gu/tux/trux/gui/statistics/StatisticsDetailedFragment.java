@@ -13,9 +13,6 @@ import android.widget.Spinner;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.datastructure.Speed;
-import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 /**
