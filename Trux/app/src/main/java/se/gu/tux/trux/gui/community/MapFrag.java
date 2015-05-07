@@ -2,7 +2,7 @@ package se.gu.tux.trux.gui.community;
 
 
 
-import android.app.FragmentManager;
+
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -15,30 +15,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Timer;
+import java.util.TimerTask;
 
-import org.slf4j.Marker;
-
+import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Friend;
-import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 public class MapFrag extends Fragment implements OnMapReadyCallback {
 
     GoogleMap mMap;
-    User user;
-    Friend friend;
+    Friend friend[];
 
-    @Override
+    Timer t;
+    popFriends timer;
+    boolean hasMarker = false;
+
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -47,25 +49,21 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        //Setting a Mapfragment so that it calls to the getMapAsync which is connected to onMapReady
         MapFragment f = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map);
         f.getMapAsync(this);
-
         return view;
 
     }
-
+    //A listner which listen to the location of the user
     private GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
         @Override
         public void onMyLocationChange(Location location) {
             LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-            System.out.println("Inside onMyLocationChange");
-            if(mMap == null) {
-                System.out.println("Map is null ");
-            }
             if(mMap != null){
-                System.out.println("Position is changed");
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 13));
-                mMap.addMarker(new MarkerOptions().position(loc).title("Here You Are"));
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(loc));
+
             }
         }
     };
@@ -73,48 +71,76 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        //Makes it possible for the map to locate the device
         mMap.setMyLocationEnabled(true);
+        //Gets the satelite pictures as a map
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setMapToolbarEnabled(false);
-        mMap.setOnMyLocationChangeListener(myLocationChangeListener);
-        System.out.println("Adding on location change listener...");
 
-
-    }
-/*
-    private void setUpMap(){
-        mMap.setMyLocationEnabled(true);
-
+        //These lines will give you the last known position of the device
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
         Criteria criteria = new Criteria();
-
         String provider = locationManager.getBestProvider(criteria, true);
-
         Location mylocation = locationManager.getLastKnownLocation(provider);
-
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-
         double latitude = mylocation.getLatitude();
         double longitude = mylocation.getLongitude();
-
         LatLng latLng = new LatLng(latitude, longitude);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
         mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
 
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You Are Here"));
+        mMap.setOnMyLocationChangeListener(myLocationChangeListener);
+
+        //Creats a timeTask which will uppdate the posion of the friendUsers
+        t = new Timer();
+        timer = new popFriends();
+        t.schedule(timer, 0, 10000);
+
     }
 
-    private boolean isGooglePlayServicesAvailable() {
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity());
-        if (ConnectionResult.SUCCESS == status) {
-            return true;
-        } else {
-            GooglePlayServicesUtil.getErrorDialog(status, getActivity(), 0).show();
-            return false;
+    class popFriends extends TimerTask {
+
+        public void run() {
+            try {
+                System.out.println("Inne i popFriends------------------------");
+                friend = DataHandler.getInstance().getFriends();
+                System.out.println("Here is the data from the friend: " + DataHandler.getInstance().getFriends().length);
+                if (friend.length > 0) {
+                    System.out.println("Inne i friend > 0 ------------------------");
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < friend.length; i++) {
+                                Friend temp = friend[i];
+                                System.out.println("Here is the friends ID: " + temp);
+                                for(int j = 0; j < friend.length; j++) {
+                                    if (temp.equals(friend[j].getUserid())) {
+                                        System.out.println("It finds the user id and finds the User----------");
+                                        double[] loc = friend[i].getCurrentLoc().getLoc();
+                                        LatLng latLng = new LatLng(loc[0], loc[1]);
+                                        if(hasMarker) {
+                                            mMap.clear();
+                                            hasMarker = false;
+                                        }
+                                        else
+                                            mMap.addMarker(new MarkerOptions().position(latLng).title(
+                                                    "Here is" + friend[i].getFirstname()));
+                                            hasMarker = true;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+            catch(NotLoggedInException nLIE){
+                System.out.println("NotLoggedInException: " + nLIE.getMessage());
+            }
         }
-    }*/
+    }
+    public void onStop(){
+        super.onStop();
+        t.cancel();
+    }
 }
