@@ -30,7 +30,6 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
     private static final int MAP_VIEW = R.id.fragment_main_i_image_view;
-    private static final int DETAILS_BUTTON = R.id.fm_i_statistics_detailed_button;
     private static final int FRIENDS_BUTTON = R.id.friendButton;
 
 

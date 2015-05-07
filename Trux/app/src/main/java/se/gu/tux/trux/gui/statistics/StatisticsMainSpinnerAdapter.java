@@ -1,9 +1,5 @@
 package se.gu.tux.trux.gui.statistics;
 
-/**
- * Created by ivryashkov on 2015-05-07.
- */
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,14 +10,18 @@ import android.widget.TextView;
 import tux.gu.se.trux.R;
 
 /**
+ * Created by ivryashkov on 2015-05-07.
+ *
  * Custom spinner adapter. Loads a custom view for each spinner item.
  */
 public class StatisticsMainSpinnerAdapter extends ArrayAdapter<String>
 {
-    // holds the titles for each spinner item
-    private static String[] titles;
 
-    private static Context context;
+    // holds the titles for each spinner item
+    private String[] titles;
+    // reference to the context
+    private Context context;
+
 
     /**
      * Constructor. Takes the context to which to apply, the layout for
@@ -82,4 +82,5 @@ public class StatisticsMainSpinnerAdapter extends ArrayAdapter<String>
         return row;
     }
 
-} // end nested class
+
+} // end class

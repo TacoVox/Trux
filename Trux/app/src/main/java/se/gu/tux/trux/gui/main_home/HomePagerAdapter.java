@@ -16,12 +16,22 @@ import java.util.List;
 public class HomePagerAdapter extends FragmentStatePagerAdapter
 {
 
-    private static ArrayList<Fragment> fragmentArrayList;
+    // the fragments to display
+    private ArrayList<Fragment> fragmentArrayList;
 
 
+    /**
+     * Constructor. Takes the fragment manager to use and a list with
+     * the fragments to display.
+     *
+     * @param fm            The fragment manager.
+     * @param arrayList     The fragments to display.
+     */
     public HomePagerAdapter(FragmentManager fm, List<Fragment> arrayList)
     {
+        // call super
         super(fm);
+        // get the fragments to display
         fragmentArrayList = (ArrayList) arrayList;
     }
 
