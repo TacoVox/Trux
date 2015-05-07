@@ -151,7 +151,12 @@ public class LoginService
             try
             {
                 // Update the user with more detailed user data from the server
-                DataHandler.getInstance().setUser((User)DataHandler.getInstance().getData(user));
+                Data d = DataHandler.getInstance().getData(user);
+                if (d instanceof ProtocolMessage) {
+                    System.out.println(((ProtocolMessage) d).getMessage());
+                } else if (d instanceof User) {
+                    DataHandler.getInstance().setUser((User)d);
+                }
             }
             catch (NotLoggedInException e)
             {

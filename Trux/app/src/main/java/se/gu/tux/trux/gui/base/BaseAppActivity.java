@@ -54,7 +54,7 @@ public class BaseAppActivity extends ActionBarActivity
 
     public boolean onPrepareOptionsMenu (Menu menu) {
         validateOptions();
-        return true;
+        return super.onPrepareOptionsMenu(menu);
     }
 
     public void validateOptions() {

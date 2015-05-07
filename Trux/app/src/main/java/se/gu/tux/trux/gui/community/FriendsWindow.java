@@ -15,10 +15,11 @@ import android.widget.TextView;
 
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
-public class FriendsWindow extends ActionBarActivity {
+public class FriendsWindow extends BaseAppActivity {
 
     private ListView friendsList;
     private FriendAdapter friendAdapter;
@@ -55,28 +56,6 @@ public class FriendsWindow extends ActionBarActivity {
             }
         }.execute();
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_friends_window, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }
 
@@ -115,9 +94,6 @@ class FriendAdapter extends BaseAdapter {
 
     public void setFriends(Friend[] friends) {
         this.friends = friends;
-        for (Friend f : friends) {
-            System.out.println(f.getUsername());
-        }
         notifyDataSetChanged();
     }
 
@@ -130,7 +106,7 @@ class FriendAdapter extends BaseAdapter {
 
         // TODO: Here just create a small asynctask that waits if the picture needs loading,
         // then just show it
-        text.setText(friends[position].getUsername());
+        text.setText(friends[position].getFirstname() + " " + friends[position].getLastname());
         return vi;
     }
 }

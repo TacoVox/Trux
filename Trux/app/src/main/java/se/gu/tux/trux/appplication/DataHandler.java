@@ -13,6 +13,7 @@ import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
@@ -35,6 +36,8 @@ public class DataHandler
 
     // Stores detailed stats with signal id as key
     private volatile HashMap<Integer, DetailedStatsBundle> detailedStats;
+    // Stores detailed stats with signal id as key
+    private volatile HashMap<Long, Picture> imageCache;
     // Stores time stamp
     private volatile long detailedStatsFetched = 0;
 
@@ -338,6 +341,11 @@ public class DataHandler
         }
 
         return friends;
+    }
+
+
+    public Picture getPicture() {
+        return null;
     }
 
 } // end class DataHandler
