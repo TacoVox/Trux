@@ -1,8 +1,6 @@
-package se.gu.tux.trux.gui.main_i;
+package se.gu.tux.trux.gui.main_home;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,11 +10,11 @@ import android.support.v7.app.ActionBar;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.gu.tux.trux.gui.BaseAppActivity;
+import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.Community_main;
 import se.gu.tux.trux.gui.community.FriendsWindow;
-import se.gu.tux.trux.gui.detailedStats.OverallStats;
-import se.gu.tux.trux.gui.statistics_i.IStatisticsActivity;
+import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
+import se.gu.tux.trux.gui.welcome.WelcomeMainFragment;
 import tux.gu.se.trux.R;
 
 /**
@@ -25,18 +23,18 @@ import tux.gu.se.trux.R;
  * Handles the main activity and screens.
  */
 @SuppressWarnings("deprecation")
-public class IMainActivity extends BaseAppActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener
+public class HomeActivity extends BaseAppActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
 
     // constants
-    private static final int LAYOUT_ID = R.layout.activity_main_i;
+    private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
     private static final int MAP_VIEW = R.id.fragment_main_i_image_view;
     private static final int DETAILS_BUTTON = R.id.fm_i_statistics_detailed_button;
     private static final int FRIENDS_BUTTON = R.id.friendButton;
 
 
-    IMainPagerAdapter pagerAdapter;
+    HomePagerAdapter pagerAdapter;
     ViewPager viewPager;
 
     List<Fragment> fragmentArrayList;
@@ -60,10 +58,8 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
         fragmentArrayList = new ArrayList<>();
 
         // create fragments
-        Fragment welcomeFragment = new IWelcomeFragment();
-        Fragment communityFragment = new ICommunityFragment();
-
-        //Fragment statsFragment = new IStatisticsFragment();
+        Fragment welcomeFragment = new WelcomeMainFragment();
+        Fragment communityFragment = new CommunityMainFragment();
         Fragment statsFragment = new StatisticsMainFragment();
 
 
@@ -73,15 +69,13 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
         fragmentArrayList.add(statsFragment);
 
         // set adapter and view pager
-        pagerAdapter = new IMainPagerAdapter(getSupportFragmentManager(), fragmentArrayList);
+        pagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), fragmentArrayList);
 
         // get action bar
         actionBar = getSupportActionBar();
 
         // specify that we will be displaying tabs in the action bar.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        // set background color for the tabs
-        actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.WHITE));
 
         // set page listener
         viewPager.setOnPageChangeListener(this);
@@ -117,11 +111,6 @@ public class IMainActivity extends BaseAppActivity implements ActionBar.TabListe
         if (id == MAP_VIEW)
         {
             Intent intent = new Intent(this, Community_main.class);
-            startActivity(intent);
-        }
-        else if (id == DETAILS_BUTTON)
-        {
-            Intent intent = new Intent(this, IStatisticsActivity.class);
             startActivity(intent);
         }
         else if (id == FRIENDS_BUTTON)

@@ -1,10 +1,8 @@
-package se.gu.tux.trux.gui;
+package se.gu.tux.trux.gui.main_home;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,7 +19,8 @@ import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.LoginService;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
-import se.gu.tux.trux.gui.main_i.IMainActivity;
+import se.gu.tux.trux.gui.base.BaseAppActivity;
+import se.gu.tux.trux.gui.base.RegisterActivity;
 import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
@@ -148,7 +147,7 @@ public class MainActivity extends BaseAppActivity
 
         if (username.isEmpty() || password.isEmpty())
         {
-            showAlert(view);
+            showDialogBox("Login failed", "Invalid username or password");
             // TODO
             // something wrong with credentials, display info to user
             // refresh app, ask for login again
@@ -177,10 +176,7 @@ public class MainActivity extends BaseAppActivity
         {
             showToast("You are now logged in.");
 
-            //Intent intent = new Intent(this, DriverHomeScreen.class);
-
-            // for testing
-            Intent intent = new Intent(this, IMainActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
 
             // Make sure there is no history for the back button
             if (getFragmentManager().getBackStackEntryCount() > 0) {
@@ -240,10 +236,7 @@ public class MainActivity extends BaseAppActivity
         {
             showToast("You are now logged in.");
 
-            //Intent intent = new Intent(this, DriverHomeScreen.class);
-
-            // for testing
-            Intent intent = new Intent(this, IMainActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
 
             // Make sure there is no history for the back button
             if (getFragmentManager().getBackStackEntryCount() > 0) {
@@ -261,16 +254,19 @@ public class MainActivity extends BaseAppActivity
 
 
 
-
-
     @Override
-    public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() == 0) {
+    public void onBackPressed()
+    {
+        if (getFragmentManager().getBackStackEntryCount() == 0)
+        {
             this.finish();
-        } else {
+        }
+        else
+        {
             getFragmentManager().popBackStack();
         }
     }
+
 
 
     /**
@@ -294,6 +290,7 @@ public class MainActivity extends BaseAppActivity
         }
         
     } // end inner class
+
 
 
     /**
@@ -330,21 +327,6 @@ public class MainActivity extends BaseAppActivity
         }
 
     } // end inner class
-
-
-    public void showAlert(View view){
-
-        AlertDialog.Builder logInAlert = new AlertDialog.Builder(this);
-        logInAlert.setMessage("Invalid Username Or Password")
-                .setPositiveButton("OK",new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        logInAlert.show();
-    }
 
 
 } // end class

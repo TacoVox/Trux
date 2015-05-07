@@ -6,7 +6,7 @@
     android:background="#E0E0E0"
     android:layout_gravity="center"
     android:id="@+id/mainActivity"
-    tools:context="se.gu.tux.trux.gui.MainActivity">
+    tools:context="se.gu.tux.trux.gui.main_home.MainActivity">
 
         <LinearLayout
             android:orientation="vertical"

@@ -1,4 +1,4 @@
-package se.gu.tux.trux.gui.main_i;
+package se.gu.tux.trux.gui.main_home;
 
 
 import android.support.v4.app.Fragment;
@@ -13,13 +13,13 @@ import java.util.List;
  *
  * Handles the display of the fragments in main activity.
  */
-public class IMainPagerAdapter extends FragmentStatePagerAdapter
+public class HomePagerAdapter extends FragmentStatePagerAdapter
 {
 
     private static ArrayList<Fragment> fragmentArrayList;
 
 
-    public IMainPagerAdapter(FragmentManager fm, List<Fragment> arrayList)
+    public HomePagerAdapter(FragmentManager fm, List<Fragment> arrayList)
     {
         super(fm);
         fragmentArrayList = (ArrayList) arrayList;

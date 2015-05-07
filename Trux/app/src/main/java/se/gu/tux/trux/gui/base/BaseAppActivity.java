@@ -1,4 +1,4 @@
-package se.gu.tux.trux.gui;
+package se.gu.tux.trux.gui.base;
 
 import android.app.AlertDialog;
 import android.app.FragmentManager;
@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.appplication.LoginService;
 
+import se.gu.tux.trux.gui.main_home.MainActivity;
 import tux.gu.se.trux.R;
 
 /**
@@ -199,14 +200,9 @@ public class BaseAppActivity extends ActionBarActivity
             aboutData[0] = "Main Screen";
             aboutData[1] = getResources().getString(R.string.main_screen_help);
         }
-        else if (viewID == R.layout.activity_driver_home_screen)
-        {
-            aboutData[0] = "Home Screen";
-            aboutData[1] = getResources().getString(R.string.driver_home_screen_help);
-        }
         else
         {
-            aboutData[0] = "No Help Available";
+            aboutData[0] = "No Help Available Yet";
             aboutData[1] = "No help information available yet for this screen.";
         }
 

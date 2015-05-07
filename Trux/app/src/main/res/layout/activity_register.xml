@@ -5,7 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:id="@+id/registerActivity"
-    tools:context="se.gu.tux.trux.gui.RegisterActivity"
+    tools:context="se.gu.tux.trux.gui.base.RegisterActivity"
     android:weightSum="8"
     android:padding="10dp"
     android:background="#E0E0E0">
