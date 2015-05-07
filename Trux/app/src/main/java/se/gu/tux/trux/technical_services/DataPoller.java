@@ -1,9 +1,6 @@
 package se.gu.tux.trux.technical_services;
 
-import se.gu.tux.trux.appplication.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.MetricData;
-import se.gu.tux.trux.datastructure.Speed;
 
 /**
  * Created by jerker on 2015-04-01.
