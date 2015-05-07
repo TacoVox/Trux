@@ -329,7 +329,7 @@ public class DataHandler
         }
 
         // Copy the array so we are sure no other thread messes with it during fetch
-        Long[] friendIds = Arrays.copyOf(user.getFriends(), user.getFriends().length);
+        long[] friendIds = Arrays.copyOf(user.getFriends(), user.getFriends().length);
         if (friendIds != null) {
             friends =  new Friend[friendIds.length];
             for (int i = 0; i < friendIds.length; i++) {
