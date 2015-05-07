@@ -26,7 +26,7 @@ public class Distance extends MetricData {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof Distance) {
+        if (o instanceof Distance && ((MetricData) o).getValue() != null) {
             return ((Distance) o).getValue().equals(distance);
         } else {
             return false;
