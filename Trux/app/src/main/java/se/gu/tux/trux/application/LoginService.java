@@ -161,6 +161,11 @@ public class LoginService
                 if (d instanceof ProtocolMessage) {
                     System.out.println(((ProtocolMessage) d).getMessage() + ((ProtocolMessage) d).getType());
                 } else if (d instanceof User) {
+
+                    // Once we get detailed user info back, be sure to set the password hash and
+                    // stay logged in flag as well before it is written to the file
+                    ((User) d).setStayLoggedIn(user.getStayLoggedIn());
+                    ((User) d).setPasswordHash(user.getPasswordHash());
                     DataHandler.getInstance().setUser((User)d);
                 }
             }
