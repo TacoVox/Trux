@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui.community;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,11 +13,15 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 public class FriendsWindow extends ActionBarActivity {
 
-    ListView friendsList;
+    private ListView friendsList;
+    private FriendAdapter friendAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +29,33 @@ public class FriendsWindow extends ActionBarActivity {
         setContentView(R.layout.activity_friends_window);
 
         friendsList = (ListView) findViewById(R.id.friendsList);
-        friendsList.setAdapter(new yourAdapter(this, new String[] { "data1",
-                "data2" }));
-    }
+        friendAdapter = new FriendAdapter(this, new Friend[0]);
+        friendsList.setAdapter(friendAdapter);
 
+        new AsyncTask() {
+
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                Friend[] friends = null;
+                try {
+                    friends = DataHandler.getInstance().getFriends();
+                } catch (NotLoggedInException e) {
+                    System.out.println("Trying to fetch friends while not logged in!");
+                    cancel(true);
+                }
+
+                final Friend[] finalFriends = friends;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        friendAdapter.setFriends(finalFriends);
+                    }
+                });
+                return null;
+            }
+        }.execute();
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -52,46 +80,51 @@ public class FriendsWindow extends ActionBarActivity {
     }
 }
 
-class yourAdapter extends BaseAdapter {
+class FriendAdapter extends BaseAdapter {
 
     Context context;
-    String[] data;
+
+    Friend[] friends;
     private static LayoutInflater inflater = null;
 
-    public yourAdapter(Context context, String[] data) {
+    public FriendAdapter(Context context, Friend[] friends) {
         // TODO Auto-generated constructor stub
         this.context = context;
-        this.data = data;
+        this.friends = friends;
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        // TODO Auto-generated method stub
-        return data.length;
+        return friends.length;
     }
 
     @Override
     public Object getItem(int position) {
-        // TODO Auto-generated method stub
-        return data[position];
+        return friends[position];
     }
 
     @Override
     public long getItemId(int position) {
-        // TODO Auto-generated method stub
         return position;
+    }
+
+    public void setFriends(Friend[] friends) {
+        this.friends = friends;
+        notifyDataSetChanged();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // TODO Auto-generated method stub
         View vi = convertView;
         if (vi == null)
             vi = inflater.inflate(R.layout.friend_row, null);
         TextView text = (TextView) vi.findViewById(R.id.friendName);
-        text.setText(data[position]);
+
+        // TODO: Here just create a small asynctask that waits if the picture needs loading,
+        // then just show it
+        text.setText(friends[position].getUsername());
         return vi;
     }
 }
