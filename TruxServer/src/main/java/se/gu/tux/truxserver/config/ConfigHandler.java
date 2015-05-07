@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 
 import java.util.Properties;
+import se.gu.tux.truxserver.file.ConfigIO;
 
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -103,19 +104,11 @@ public class ConfigHandler {
      * @param path Path to a valid .conf file
      */
     private void loadConfig(String path) {
-        properties = new Properties();
+        properties = ConfigIO.gI().loadConfig(path);
 
-        try {
-            InputStream input = new FileInputStream(path);
-
-            properties.load(input);
-        } catch (IOException ioe) {
-            Logger.gI().addError("No config file found:\n"
-                    + ioe.toString() + "\n Creating a new file.");
-
+        if(properties == null)
             newFile(path);
-        }
-
+        
         parseConfiguration();
     }
 
@@ -127,12 +120,7 @@ public class ConfigHandler {
     private void newFile(String path) {
         System.out.println("Creating a config file...");
 
-        File dir = new File(System.getProperty("user.dir") + "/config");
-        if (!dir.isDirectory()) {
-            dir.mkdir();
-        }
         try {
-            OutputStream newfile = new FileOutputStream(path);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -177,7 +165,7 @@ public class ConfigHandler {
             System.out.println("What is the password of this account?");
             properties.setProperty("gmailpass", br.readLine());
 
-            properties.store(newfile, null);
+            ConfigIO.gI().createConfig(properties);
         } catch (IOException ioe) {
             Logger.gI().addError("Cannot create a new config file:\n"
                     + ioe.toString());
