@@ -16,8 +16,18 @@
 
 package se.gu.tux.truxserver.file;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
+
+import se.gu.tux.truxserver.logger.Logger;
+
 /**
- *
+ * Class responsible for reading and writing to a .conf file.
  * @author jonas
  */
 public class ConfigIO {
@@ -35,5 +45,46 @@ public class ConfigIO {
     
     public static ConfigIO gI() {
         return getInstance();
+    }
+    
+    /**
+     * Non-static part.
+     */
+    
+    /**
+     * Constructor.
+     */
+    private ConfigIO() {}
+    
+    public Properties loadConfig(String path) {
+        Properties p = new Properties();
+
+        try {
+            InputStream input = new FileInputStream(path);
+
+            p.load(input);
+        } catch (IOException ioe) {
+            Logger.gI().addError("No config file found:\n"
+                    + ioe.toString() + "\n Creating a new file.");
+        }
+        
+        return p;
+    }
+    
+    public void createConfig(Properties p) {
+        String path = System.getProperty("user.dir") + "/config";
+        
+        File dir = new File(path);
+        if (!dir.isDirectory()) {
+            dir.mkdir();
+        }
+        
+        try {
+            OutputStream newfile = new FileOutputStream(path + "server.conf");
+        
+            p.store(newfile, null);
+        } catch (Exception e) {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
     }
 }
