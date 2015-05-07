@@ -313,9 +313,12 @@ public class MainActivity extends BaseAppActivity
             {
                 msg = (ProtocolMessage) ServerConnector.gI().answerQuery(protocolMessages[0]);
                 if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS) {
+                    System.out.println("Current user: "  + DataHandler.getInstance().getUser().getUserId());
                     // Also update the user info by making a request for a User object
                     DataHandler.getInstance().setUser((User)DataHandler.getInstance().getData(
                             DataHandler.getInstance().getUser()));
+                    System.out.println("Current user: "  + DataHandler.getInstance().getUser().getUserId());
+                    System.out.println("Current friends: "  + DataHandler.getInstance().getUser().getFriends());
                 }
             }
             catch (NotLoggedInException e)
