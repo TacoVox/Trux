@@ -1,4 +1,4 @@
-package se.gu.tux.trux.gui.main_i;
+package se.gu.tux.trux.gui.main_home;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -93,7 +93,7 @@ public class IStatisticsFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View view)
     {
-        ( (IMainActivity) getActivity() ).onFragmentViewClick(view.getId());
+        ( (HomeActivity) getActivity() ).onFragmentViewClick(view.getId());
     }
 
 

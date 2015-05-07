@@ -1,4 +1,4 @@
-package se.gu.tux.trux.gui;
+package se.gu.tux.trux.gui.base;
 
 import android.os.Bundle;
 

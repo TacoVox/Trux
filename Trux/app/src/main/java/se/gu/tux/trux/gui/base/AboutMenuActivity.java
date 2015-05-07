@@ -1,4 +1,4 @@
-package se.gu.tux.trux.gui;
+package se.gu.tux.trux.gui.base;
 
 import android.os.Bundle;
 
@@ -7,14 +7,14 @@ import tux.gu.se.trux.R;
 /**
  * Created by ivryashkov on 2015-04-30.
  */
-public class SettingsMenuActivity extends BaseAppActivity
+public class AboutMenuActivity extends BaseAppActivity
 {
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings_menu_activity);
+        setContentView(R.layout.about_menu_activity);
     }
 
 

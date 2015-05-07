@@ -1,4 +1,4 @@
-package se.gu.tux.trux.gui.detailedStats;
+package se.gu.tux.trux.gui.statistics;
 
 import android.app.Activity;
 import android.os.AsyncTask;

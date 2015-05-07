@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#E0E0E0"
-    tools:context="se.gu.tux.trux.gui.detailedStats.DistTravWindow">
+    tools:context="se.gu.tux.trux.gui.statistics.DistTravWindow">
 
     <LinearLayout
         android:orientation="vertical"
