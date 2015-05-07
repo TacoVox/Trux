@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import se.gu.tux.trux.application.DataHandler;
 import tux.gu.se.trux.R;
 
 /**
@@ -19,6 +20,11 @@ public class WelcomeMainFragment extends Fragment
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_main_welcome, container, false);
+
+        // start fetching data for the statistics
+        // do it here instead of in StatisticsMainFragment, this fragment will always be
+        // loaded first and so reduce waiting time when in statistics view
+        DataHandler.getInstance().cacheDetailedStats();
 
         return view;
     }
