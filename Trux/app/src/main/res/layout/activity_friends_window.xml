@@ -36,6 +36,30 @@
             android:id="@+id/friendsList"
             android:scrollbars="vertical"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="You have no friends :("
+            android:id="@+id/noFriends"
+            android:layout_gravity="center"
+            android:gravity="center" />
+
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#3D3D3D"
+        android:alpha="0.7"
+        android:gravity="center">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:id="@+id/progressBar" />
+
+    </RelativeLayout>
 </RelativeLayout>
