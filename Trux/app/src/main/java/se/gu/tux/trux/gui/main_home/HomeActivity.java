@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.gu.tux.trux.gui.base.BaseAppActivity;
+import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.Community_main;
 import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
@@ -31,6 +32,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
     private static final int MAP_VIEW = R.id.fragment_main_i_image_view;
     private static final int FRIENDS_BUTTON = R.id.friendButton;
+    private static final int PROFILE_BUTTON = R.id.fragment_main_profile_button;
 
 
     private ViewPager viewPager;
@@ -99,6 +101,11 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         else if (id == FRIENDS_BUTTON)
         {
             Intent intent = new Intent(this, FriendsWindow.class);
+            startActivity(intent);
+        }
+        else if (id == PROFILE_BUTTON)
+        {
+            Intent intent = new Intent(this, CommunityProfileActivity.class);
             startActivity(intent);
         }
         else

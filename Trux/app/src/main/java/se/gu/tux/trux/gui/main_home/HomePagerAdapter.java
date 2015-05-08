@@ -32,7 +32,7 @@ public class HomePagerAdapter extends FragmentStatePagerAdapter
         // call super
         super(fm);
         // get the fragments to display
-        fragmentArrayList = (ArrayList) arrayList;
+        fragmentArrayList = (ArrayList<Fragment>) arrayList;
     }
 
 
