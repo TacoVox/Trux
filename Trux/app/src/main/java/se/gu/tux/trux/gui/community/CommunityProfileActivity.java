@@ -1,7 +1,6 @@
 package se.gu.tux.trux.gui.community;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -13,6 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.gui.base.BaseAppActivity;
@@ -31,10 +32,10 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     // wants to upload pictures -- 1 is for image, 2 is for videos (! i think)
     private static final int PICK_IMAGE = 1;
 
-    byte[] imageData;
-    Bitmap bitmap;
-    Button uploadPic;
-    ImageView imageView;
+    private byte[] imageData;
+    private Bitmap bitmap;
+    private Button uploadPic;
+    private ImageView imageView;
 
 
     @Override
@@ -78,52 +79,28 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         // call super
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode)
+        // check if data is not null
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null)
         {
-            case PICK_IMAGE:
-                if (resultCode == RESULT_OK)
-                {
-                    // get the bitmap data
-                    bitmap = getPath(data.getData());
-                    // set this image as profile
-                    imageView.setImageBitmap(bitmap);
-                    // upload image to server
-                    //uploadPicture();
-                }
-                break;
+            Uri uri = data.getData();
 
-            default:
-                showToast("Could not select image");
-                break;
+            try
+            {
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+
+                imageView.setImageBitmap(bitmap);
+
+                System.out.println("--------- uploading picture ------------");
+                uploadPicture();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
         }
+
     }
 
-
-
-    /**
-     * Helper method. Gets the bitmap data for the image.
-     *
-     * @param uri       The uri.
-     * @return          The bitmap data for the image.
-     */
-    private Bitmap getPath(Uri uri)
-    {
-        String[] projection = { MediaStore.Images.Media.DATA };
-
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-
-        cursor.moveToFirst();
-
-        String filePath = cursor.getString(column_index);
-
-        cursor.close();
-        // Convert file path into bitmap image
-
-        // return the bitmap
-        return BitmapFactory.decodeFile(filePath);
-    }
 
 
     /**
@@ -148,6 +125,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     }
 
 
+
     /**
      * Helper method. Uploads an image to the server.
      */
@@ -168,6 +146,10 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
         if (result)
         {
+            System.out.println("--------- decoding byte array ------------");
+            Bitmap bm = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+            System.out.println("--------- setting image ------------");
+            imageView.setImageBitmap(bm);
             return true;
         }
         else
@@ -201,15 +183,16 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
             // get image byte data
             imageData = bos.toByteArray();
+            System.out.println("--------- byte array image: " + Arrays.toString(imageData) + " ------------");
 
-            // return true if we have some data
-            if (imageData != null)
+            // return false if no data
+            if (imageData == null)
             {
-                return true;
+                return false;
             }
 
-            // false otherwise
-            return false;
+            // true otherwise
+            return true;
         }
 
     } // end inner class
