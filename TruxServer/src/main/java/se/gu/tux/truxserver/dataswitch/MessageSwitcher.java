@@ -56,7 +56,7 @@ public class MessageSwitcher {
         else if(pm.getType() == ProtocolMessage.Type.PEOPLE_SEARCH)
             return null;
         else if(pm.getType() == ProtocolMessage.Type.FRIEND_REQUEST)
-            return null;
+            return UserHandler.gI().sendFriendRequest(pm);
         else if(pm.getType() == ProtocolMessage.Type.FRIEND_REMOVE)
             return null;
         

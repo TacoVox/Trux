@@ -371,7 +371,7 @@ public class UserHandler {
         }
     }
     
-    public void sendFriendRequest(ProtocolMessage pm) {
+    public ProtocolMessage sendFriendRequest(ProtocolMessage pm) {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
@@ -385,10 +385,14 @@ public class UserHandler {
             pst.setLong(3, System.currentTimeMillis());
 	
             dbc.execInsert(pm, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         }
         catch (Exception e)
         {
             Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
         }
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
