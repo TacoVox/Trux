@@ -69,6 +69,7 @@ public class PictureIO {
     public Picture receiveProfilePicture(Picture p) {
         BufferedImage img = getFromFS(PictureHandler.gI().getProfilePicturePath(p));
         p.setImg(encodePicture(img));
+        p.setTimeStamp(System.currentTimeMillis());
         
         return p;
     }

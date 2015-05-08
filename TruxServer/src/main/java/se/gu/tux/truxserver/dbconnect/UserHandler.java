@@ -188,20 +188,18 @@ public class UserHandler {
      * @return either a filled in user object on success or a ProtocolMessage indicating an ERROR
      */
     public Data getUser(User u)
-    {
-        String passwd = null;
-        
+    {   
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
 	{
-            String selectStmnt = "SELECT userid, password, firstname, lastname" +
-                    " FROM user WHERE username = ?";
+            String selectStmnt = "SELECT userid, firstname, lastname" +
+                    " FROM user WHERE userid = ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setString(1, u.getUsername());
+            pst.setLong(1, u.getUserId());
 	    
             ResultSet rs = dbc.execSelect(u, pst);
 	    
@@ -211,7 +209,6 @@ public class UserHandler {
 	    while (rs.next())
 	    {
                 u.setUserId(rs.getLong("userid"));
-                passwd = rs.getString("password");
                 u.setFirstName(rs.getString("firstname"));
                 u.setLastName(rs.getString("lastname"));
                 
@@ -235,19 +232,23 @@ public class UserHandler {
                 friends.add(rs.getLong("friendid"));
 	    }
             
-            u.setFriends((Long[])friends.toArray());
+            long[] ready = new long[friends.size()];
+            
+            for(int i = 0; i < friends.size(); i++)
+                ready[i] = (long)friends.get(i);
+            
+            u.setFriends(ready);
+            
+            return u;
 	}
 	catch (Exception e)
 	{
 	    Logger.gI().addError(e.getLocalizedMessage());
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
-        if(u.passwordMatch(passwd))
-            return u;
-        else
-            return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
     
     /**
