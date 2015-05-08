@@ -4,9 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/white"
-    android:layout_gravity="center"
-    android:paddingRight="5dp"
-    android:paddingLeft="5dp">
+    android:layout_gravity="center">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,20 +39,29 @@
 
     </LinearLayout>
 
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="unread messages: 5"
-        android:background="@drawable/button_clickable_new"
-        android:textColor="#E0E0E0"
-        android:layout_marginBottom="5dp"/>
+        android:orientation="horizontal"
+        android:id="@+id/homeButtons">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_clickable_new"
-        android:textColor="#E0E0E0"
-        android:text="some other info"
-        android:layout_marginBottom="5dp"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TODO"
+            android:background="@drawable/homescreen_button"
+            android:textColor="#E0E0E0"
+            android:layout_weight="1"
+            android:layout_marginRight="1dp"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/homescreen_button"
+            android:textColor="#E0E0E0"
+            android:text="TODO"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
 
 </LinearLayout>
