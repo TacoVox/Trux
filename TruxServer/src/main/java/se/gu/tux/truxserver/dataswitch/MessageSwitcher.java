@@ -53,6 +53,12 @@ public class MessageSwitcher {
             return UserHandler.gI().autoLogin(pm);
         else if(pm.getType() == ProtocolMessage.Type.LOGOUT_REQUEST)
             return SessionHandler.gI().endSession(pm);
+        else if(pm.getType() == ProtocolMessage.Type.PEOPLE_SEARCH)
+            return null;
+        else if(pm.getType() == ProtocolMessage.Type.FRIEND_REQUEST)
+            return null;
+        else if(pm.getType() == ProtocolMessage.Type.FRIEND_REMOVE)
+            return null;
         
         return pm;
     }
