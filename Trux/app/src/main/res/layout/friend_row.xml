@@ -8,7 +8,7 @@
     <ImageView
         android:layout_width="80sp"
         android:layout_height="80sp"
-        android:id="@+id/imageView2"
+        android:id="@+id/friendPicture"
         android:layout_margin="5dp"
         android:layout_gravity="center_vertical" />
 
