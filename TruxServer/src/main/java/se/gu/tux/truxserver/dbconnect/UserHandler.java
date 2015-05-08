@@ -336,4 +336,38 @@ public class UserHandler {
         
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Something went wrong while fetching information for your friend - plase contact Jerker");
     }
+    
+    public void findUser(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        String name = "%" + pm.getMessage() + "%";
+        
+        try
+	{
+            String selectStmnt = "SELECT username, firstname, lastname" +
+                    " FROM user WHERE username LIKE ? OR "
+                    + "firstname LIKE ? OR lastname LIKE ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setString(1, name);
+            pst.setString(2, name);
+            pst.setString(3, name);
+	    
+            ResultSet rs = dbc.execSelect(pm, pst);
+            
+	    while (rs.next())
+	    {
+		break;
+	    }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
 }
