@@ -26,7 +26,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.imageio.ImageIO;
-import se.gu.tux.trux.datastructure.Data;
 
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
@@ -83,7 +82,7 @@ public class PictureIO {
         else
             imgHash = Integer.toString(img.hashCode());
         
-        String path = System.getProperty("user.dir") + "/files/pictures" +
+        String path = System.getProperty("user.dir") + "/files/pictures/" +
                 dateFormat.format(date).toString();
         
         File dir = new File(path);
@@ -141,4 +140,14 @@ public class PictureIO {
         
         return null;
     }	
+    
+    public static void main(String args[]) {
+        BufferedImage a = PictureIO.gI().getFromFS("C:\\Users\\Jonas\\Desktop\\Screen_shot_2010-01-30_at_2.17.06_AM.png");
+        
+        byte[] b = PictureIO.gI().encodePicture(a);
+        
+        BufferedImage c = PictureIO.gI().decodePicture(b);
+        
+        PictureIO.gI().storeOnFS(c);
+    }
 }
