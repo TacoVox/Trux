@@ -343,8 +343,18 @@ public class DataHandler
     }
 
 
-    public Picture getPicture() {
-        return null;
+    public Picture getPicture(Long pictureId) throws NotLoggedInException {
+        if (imageCache == null) {
+            imageCache = new HashMap<Long, Picture>();
+        }
+        /*if (pictureId == 0) {
+            return null;
+        }*/
+        if (imageCache.get(pictureId) == null) {
+            // Try to fecth it
+            imageCache.put(pictureId, (Picture)getData(new Picture(pictureId)));
+        }
+        return imageCache.get(pictureId);
     }
 
 } // end class DataHandler
