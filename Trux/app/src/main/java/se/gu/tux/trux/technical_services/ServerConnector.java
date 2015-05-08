@@ -227,6 +227,7 @@ public class ServerConnector {
                         cs = new Socket(serverAddress, 12000);
                         System.out.println("Connecting output stream...");
                         out = new ObjectOutputStream(cs.getOutputStream());
+                        out.flush();
                         System.out.println("Connecting input stream...");
                         in = new ObjectInputStream(cs.getInputStream());
                         System.out.println("Connected.");

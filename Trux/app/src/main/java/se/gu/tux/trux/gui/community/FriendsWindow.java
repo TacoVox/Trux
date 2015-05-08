@@ -29,7 +29,7 @@ public class FriendsWindow extends BaseAppActivity {
         friendsList = (ListView) findViewById(R.id.friendsList);
         friendAdapter = new FriendAdapter(this, new Friend[0]);
         friendsList.setAdapter(friendAdapter);
-
+        friendsList.setEmptyView(findViewById(R.id.noFriends));
         new AsyncTask() {
 
             @Override
@@ -47,6 +47,7 @@ public class FriendsWindow extends BaseAppActivity {
                     @Override
                     public void run() {
                         friendAdapter.setFriends(finalFriends);
+                        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                     }
                 });
                 return null;
@@ -96,14 +97,15 @@ class FriendAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View vi = convertView;
-        if (vi == null)
-            vi = inflater.inflate(R.layout.friend_row, null);
-        TextView text = (TextView) vi.findViewById(R.id.friendName);
+        View view = convertView;
+        if (view == null)
+            view = inflater.inflate(R.layout.friend_row, null);
+        TextView text = (TextView) view.findViewById(R.id.friendName);
 
         // TODO: Here just create a small asynctask that waits if the picture needs loading,
         // then just show it
+
         text.setText(friends[position].getFirstname() + " " + friends[position].getLastname());
-        return vi;
+        return view;
     }
 }
