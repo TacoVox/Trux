@@ -370,4 +370,55 @@ public class UserHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
     }
+    
+    public void sendFriendRequest(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "INSERT INTO friendrequest (userid, friendid, timestamp) "
+                            + "VALUES(?, ?, ?)");
+            
+            pst.setLong(1, pm.getUserId());
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, System.currentTimeMillis());
+	
+            dbc.execInsert(pm, pst);
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
+    
+    public void unfriendUser(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String updateStmnt = "DELETE FROM isfriendwith " +
+                    "WHERE userid = ? AND friendid = ? OR userid = ? AND friendid = ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+	    
+            pst.setLong(1, pm.getUserId());
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, pm.getUserId());
+            pst.setLong(4, Long.parseLong(pm.getMessage()));
+	    
+            dbc.execInsert(pm, pst);
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
 }
