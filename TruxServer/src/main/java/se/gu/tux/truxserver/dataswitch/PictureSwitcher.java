@@ -17,6 +17,7 @@ package se.gu.tux.truxserver.dataswitch;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Picture;
+import se.gu.tux.truxserver.file.PictureIO;
 
 /**
  *
@@ -45,6 +46,9 @@ public class PictureSwitcher {
     private PictureSwitcher() {}
     
     public Data handlePicture(Picture p) {
-        return p;
+        if (p.getImg() == null)
+            return PictureIO.gI().receiveProfilePicture(p);
+        else
+            return PictureIO.gI().saveProfilePicture(p);
     }
 }
