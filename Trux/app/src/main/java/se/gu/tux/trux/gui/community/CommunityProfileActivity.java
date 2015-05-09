@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
@@ -37,6 +38,16 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     private Button uploadPic;
     private ImageView imageView;
 
+    private Button editUsername;
+    private Button editFirstName;
+    private Button editLastName;
+    private Button editEmail;
+
+    private EditText eUsername;
+    private EditText eFirstName;
+    private EditText eLastName;
+    private EditText eEmail;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -52,8 +63,27 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         uploadPic = (Button) findViewById(R.id.profile_upload_picture_button);
         imageView = (ImageView) findViewById(R.id.profile_picture_container);
 
+        editUsername = (Button) findViewById(R.id.profile_username_edit_button);
+        editFirstName = (Button) findViewById(R.id.profile_firstname_edit_button);
+        editLastName = (Button) findViewById(R.id.profile_lastname_edit_button);
+        editEmail = (Button) findViewById(R.id.profile_email_edit_button);
+
+        eUsername = (EditText) findViewById(R.id.profile_username);
+        eFirstName = (EditText) findViewById(R.id.profile_first_name);
+        eLastName = (EditText) findViewById(R.id.profile_last_name);
+        eEmail = (EditText) findViewById(R.id.profile_email);
+
+        eUsername.setEnabled(false);
+        eFirstName.setEnabled(false);
+        eLastName.setEnabled(false);
+        eEmail.setEnabled(false);
+
         // set listener to buttons
         uploadPic.setOnClickListener(this);
+        editUsername.setOnClickListener(this);
+        editFirstName.setOnClickListener(this);
+        editLastName.setOnClickListener(this);
+        editEmail.setOnClickListener(this);
     }
 
 
@@ -68,6 +98,22 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
             showToast("Upload Profile Picture button clicked");
 
             selectPicture(PICK_IMAGE);
+        }
+        else if (id == editUsername.getId())
+        {
+            eUsername.setEnabled(true);
+        }
+        else if (id == editFirstName.getId())
+        {
+            eFirstName.setEnabled(true);
+        }
+        else if (id == editLastName.getId())
+        {
+            eLastName.setEnabled(true);
+        }
+        else if (id == editEmail.getId())
+        {
+            eEmail.setEnabled(true);
         }
     }
 
