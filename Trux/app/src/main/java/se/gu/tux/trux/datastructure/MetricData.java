@@ -61,7 +61,7 @@ public class MetricData extends Data
     }
 
     public boolean equals(Object o) {
-        if (o instanceof MetricData) {
+        if (o instanceof MetricData && ((MetricData) o).getValue() != null) {
             return ((MetricData)o).getValue().equals(value);
         } else {
             return false;

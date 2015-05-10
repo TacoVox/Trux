@@ -3,13 +3,14 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#E0E0E0"
-    tools:context="se.gu.tux.trux.gui.detailedStats.FuelWindow">
+    tools:context="se.gu.tux.trux.gui.statistics.FuelWindow">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:weightSum="2">
+        android:weightSum="2"
+        android:background="@drawable/image_view">
 
         <!--
         android:padding="10dp"

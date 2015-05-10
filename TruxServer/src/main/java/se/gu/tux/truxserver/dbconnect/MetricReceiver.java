@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.Location;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Speed;
 
@@ -79,14 +80,14 @@ public class MetricReceiver {
             md.setValue((Double) 0.0);
             
             return getAverage(md);
-        }
-        else if(md instanceof Distance) {
+        } else if(md instanceof Distance) {
             //Set the value to a default 0
             md.setValue(new Long(0));
             
             return getDiff(md);
-        }
-        else
+        } else if(md instanceof Location) {
+            return getLocation((Location)md);
+        } else
             return null;
     }
     
@@ -199,30 +200,41 @@ public class MetricReceiver {
         
         try
 	{
-            String selectStmnt = "SELECT (SELECT value FROM " + type + " WHERE "
-                    + "userid = ? ORDER BY (timestamp - ?) DESC LIMIT 1) "
-                    + "- (SELECT (value * - 1) FROM " + type + " WHERE "
-                    + "userid = ? ORDER BY (timestamp - ?) ASC LIMIT 1) AS diff";
+            long val = 0;
+            
+            String selectStmnt = "SELECT value FROM " + type + " WHERE "
+                    + "userid = ? AND timestamp < ? ORDER BY timestamp DESC LIMIT 1";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
             pst.setLong(1, md.getUserId());
-            pst.setLong(2, md.getTimeStamp());
-            pst.setLong(3, md.getUserId());
-            
-            if(md.getTimeFrame() == MetricData.FOREVER)
-                pst.setLong(4, 0);
-            else
-                pst.setLong(4, (md.getTimeStamp() - md.getTimeFrame()));         
+            pst.setLong(2, md.getTimeStamp());        
 	    
 	    ResultSet rs = dbc.execSelect(md, pst);
             
 	    while (rs.next())
 	    {
-		md.setValue(rs.getLong("diff"));
+		val = rs.getLong("value");
 		break;
 	    }
+            
+            if(md.getTimeFrame() == MetricData.FOREVER)
+                pst.setLong(2, 0);
+            else
+                pst.setLong(2, (md.getTimeStamp() - md.getTimeFrame())); 
+            
+            rs = dbc.execSelect(md, pst);
+            
+	    while (rs.next())
+	    {
+		val -= rs.getLong("value");
+		break;
+	    }
+            
+            md.setValue(val);
+            
+            return md;
 	}
 	catch (Exception e)
 	{
@@ -233,5 +245,50 @@ public class MetricReceiver {
         }
         
         return md;
+    }
+    
+    private Location getLocation(Location loc) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+
+        try
+	{
+            long val = 0;
+            
+            String selectStmnt = "SELECT latitude, longitude FROM location WHERE "
+                    + "userid = ? AND timestamp < ? ORDER BY timestamp DESC LIMIT 1";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setLong(1, loc.getUserId());
+            pst.setLong(2, System.currentTimeMillis());        
+	    
+	    ResultSet rs = dbc.execSelect(loc, pst);
+            
+	    while (rs.next())
+	    {
+		val = rs.getLong("value");
+		break;
+	    }
+            
+            rs = dbc.execSelect(loc, pst);
+            
+	    while (rs.next())
+	    {
+		loc.setLatitude(rs.getDouble("latitude"));
+                loc.setLongitude(rs.getDouble("longitude"));
+		break;
+            }
+            
+            return loc;
+            
+        } catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        return loc;
     }
 }

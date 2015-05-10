@@ -21,6 +21,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import se.gu.tux.truxserver.config.Config;
+import se.gu.tux.truxserver.config.ConfigHandler;
 
 /**
  *
@@ -69,15 +71,21 @@ public class EMailSender {
 
         generateMailMessage.setSubject("Confirm that you registered."
                 + "");
-        String emailBody = "This feature is soon available.<br> Try this link: "
-                + "<a href=\"www.derkahler.de/trux/index.php?id=" + accesscode +
-                "\">Confirm eMail</a><br><br> Regards, <br>Jonas";
+        String emailBody = "Welcome to Trux - the trucker community.<br>"
+                + "<a href=\"www.derkahler.de/trux/validate.php?id=" + accesscode +
+                "\">Click here to confirm eMail and account.</a><br><br>Cheers, <br>Jonas";
         
         generateMailMessage.setContent(emailBody, "text/html");
 
         Transport transport = getMailSession.getTransport("smtp");
         
-        transport.connect("smtp.gmail.com", "tacovox@gmail.com", "picknicker");
+        ConfigHandler.gI();
+        System.out.println(Config.gI().getDbaddress());
+        System.out.println(Config.gI().getGmailPass());
+        System.out.println(Config.gI().getGmailUser());
+        
+        transport.connect("smtp.gmail.com", Config.gI().getGmailUser(), Config.gI().getGmailPass());
+        
         transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
         transport.close();
         } catch (Exception e) {

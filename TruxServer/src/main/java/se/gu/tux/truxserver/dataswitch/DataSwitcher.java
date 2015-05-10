@@ -16,11 +16,14 @@
 package se.gu.tux.truxserver.dataswitch;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 
 import se.gu.tux.truxserver.dbconnect.MetricInserter;
+import se.gu.tux.truxserver.file.PictureIO;
 
 /**
  *
@@ -63,10 +66,12 @@ public class DataSwitcher {
     public Data handleData(Data d) {
         if (d instanceof MetricData)
             return MetricSwitcher.gI().handleMetricData((MetricData)d);
-        else if (d instanceof User)
-            return UserSwitcher.gI().handleUser((User) d);
+        else if (d instanceof User || d instanceof Friend)
+            return UserSwitcher.gI().handleUser(d);
         else if (d instanceof ProtocolMessage)
             return MessageSwitcher.gI().handleMessage((ProtocolMessage) d);
+        else if (d instanceof Picture)
+            return PictureSwitcher.gI().handlePicture((Picture) d);
         else
             return null;
     }

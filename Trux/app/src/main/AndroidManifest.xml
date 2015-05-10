@@ -4,55 +4,120 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/truck"
+        android:icon="@mipmap/truxicon"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/CustomActionBarTheme" >
+
+
+        <!-- META DATA -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCbI5lHKz2EEGWe3X4ozbVuLbHXVy458Cw" />
+
+
+        <!-- ACTIVITIES -->
+        <!-- Base App Activity -->
+        <activity android:name="se.gu.tux.trux.gui.base.BaseAppActivity" ></activity>
+
+        <!-- Main Activity -->
         <activity
-            android:name="se.gu.tux.trux.gui.MainActivity"
+            android:name="se.gu.tux.trux.gui.main_home.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- About Menu Activity -->
         <activity
-            android:name="se.gu.tux.trux.gui.DriverHomeScreen"
-            android:label="Trux - Home"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
+            android:name="se.gu.tux.trux.gui.base.AboutMenuActivity"
+            android:label="About">
         </activity>
+
+        <!-- Contact Menu Activity -->
         <activity
-            android:name="se.gu.tux.trux.gui.detailedStats.Stats"
-            android:label="Trux - Stats"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.PICK_ACTIVITY" />
-            </intent-filter>
+            android:name="se.gu.tux.trux.gui.base.ContactMenuActivity"
+            android:label="Contact">
         </activity>
-        <activity android:name="se.gu.tux.trux.gui.simpleStats.SimpleStats"
-            android:screenOrientation="portrait">
+
+        <!-- Settings Menu Activity -->
+        <activity
+            android:name="se.gu.tux.trux.gui.base.SettingsMenuActivity"
+            android:label="Settings">
         </activity>
+
+        <!-- Register Activity -->
+        <activity
+            android:name="se.gu.tux.trux.gui.base.RegisterActivity"
+            android:label="@string/title_activity_register"
+            android:parentActivityName="se.gu.tux.trux.gui.main_home.MainActivity">
+        </activity>
+
+        <!-- Home Activity and its children activities go here below -->
+        <activity
+            android:name="se.gu.tux.trux.gui.main_home.HomeActivity"
+            android:label="Home">
+        </activity>
+
+        <!-- FriendWindow Activity -->
+        <activity
+            android:name="se.gu.tux.trux.gui.community.FriendsWindow"
+            android:label="Friends">
+        </activity>
+
+        <!-- Community Profile Activity -->
+        <activity
+            android:name="se.gu.tux.trux.gui.community.CommunityProfileActivity"
+            android:label="Community Profile">
+        </activity>
+        <!-- End Home Activity -->
+
+
+        <!-- UNDER DEVELOPMENT -->
+        <!-- Below activities are not used at the moment or are under development. Remove later! -->
+        <activity
+            android:name="se.gu.tux.trux.gui.simpleStats.SimpleStats"
+            android:screenOrientation="portrait" >
+        </activity>
+
         <activity
             android:name="se.gu.tux.trux.gui.detailedStats.OverallStats"
-            android:label="@string/title_activity_overall_stats"
-            android:screenOrientation="portrait">
+            android:label="@string/title_activity_overall_stats">
         </activity>
+
         <activity
-            android:name="se.gu.tux.trux.gui.ChooseStatScreen"
-            android:label="@string/title_activity_choose_stat_screen"
-            android:screenOrientation="portrait">
+            android:name="se.gu.tux.trux.gui.community.FragmentPageAdapterCommunity"
+            android:label="@string/title_activity_fragment_page_adapter_community" >
         </activity>
+        <!---->
+
         <activity
-            android:name="se.gu.tux.trux.gui.ItemMenu"
-            android:label="@string/title_activity_item_menu" >
+            android:name="se.gu.tux.trux.gui.community.Community_main"
+            android:label="@string/title_activity_community_main" >
         </activity>
+        <!-- End unused or under development activities -->
+
+
     </application>
 
 </manifest>

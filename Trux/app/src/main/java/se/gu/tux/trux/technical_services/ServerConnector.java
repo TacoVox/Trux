@@ -1,21 +1,13 @@
 package se.gu.tux.trux.technical_services;
 
-import android.os.AsyncTask;
-
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
-import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 
@@ -172,7 +164,11 @@ public class ServerConnector {
                         !(query.getSessionId() == User.LOGIN_REQUEST ||
                         query.getSessionId() == User.REGISTER_REQUEST ||
                         (query instanceof ProtocolMessage && ((ProtocolMessage) query).getType()
-                                == ProtocolMessage.Type.AUTO_LOGIN_REQUEST))) {
+                                == ProtocolMessage.Type.AUTO_LOGIN_REQUEST) ||
+                        (query instanceof ProtocolMessage && ((ProtocolMessage) query).getType()
+                                == ProtocolMessage.Type.LOGOUT_REQUEST))) {
+                    System.out.println("Not logged in: filtering "
+                            + query.getClass().getSimpleName() + ": " + query.getValue());
                     throw new NotLoggedInException();
                 }
 
@@ -229,8 +225,12 @@ public class ServerConnector {
                     synchronized(this) {
                         System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
                         cs = new Socket(serverAddress, 12000);
+                        System.out.println("Connecting output stream...");
                         out = new ObjectOutputStream(cs.getOutputStream());
+                        out.flush();
+                        System.out.println("Connecting input stream...");
                         in = new ObjectInputStream(cs.getInputStream());
+                        System.out.println("Connected.");
                     }
                 } catch (IOException e) {
                     // Problem connecting.

@@ -1,15 +1,9 @@
 package se.gu.tux.trux.gui.detailedStats;
 
-import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 
-import se.gu.tux.trux.appplication.DataHandler;
-import se.gu.tux.trux.datastructure.Distance;
-import se.gu.tux.trux.datastructure.Fuel;
-import se.gu.tux.trux.datastructure.Speed;
-import se.gu.tux.trux.gui.detailedStats.FragmentPageAdapterOverall;
 import tux.gu.se.trux.R;
 
 public class OverallStats extends FragmentActivity {
@@ -27,6 +21,7 @@ public class OverallStats extends FragmentActivity {
         ft = new FragmentPageAdapterOverall(getSupportFragmentManager());
         viewpager.setAdapter(ft);
 
+        /*
         Thread t = new Thread(new Runnable() {
             Speed s = new Speed(0);
             Fuel f = new Fuel(0);
@@ -56,7 +51,7 @@ public class OverallStats extends FragmentActivity {
                 });
             }
         });
-        t.start();
+        t.start();*/
 
 
         /*viewpager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
