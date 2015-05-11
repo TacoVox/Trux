@@ -72,8 +72,8 @@ public class TruxServer {
 
             // Start the server pool - start it in a wrapping thread so we can
             // interrupt it with keyboard input from the main thread.
-            //sh = new ServerHandler(this, Config.gI().getPort(), Config.gI().getConnectionTimeout());
-            sh = new ServerHandler(this, Config.gI().getPort(), 60 * 15);
+            //sh = new ServerHandler(this, Config.gI().getServerPort(), Config.gI().getConnectionTimeout());
+            sh = new ServerHandler(this, 12000, 60 * 15);
             
             serverHandlerThread = new Thread(sh);
             serverHandlerThread.start();
