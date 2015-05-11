@@ -11,6 +11,7 @@ import java.net.SocketTimeoutException;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -77,8 +78,10 @@ public class ServerRunnable implements Runnable {
                     }
                 }
 
-                // If thread was interrupted while waiting for input, just shut down
-                if (currentThread.isInterrupted() || timedOut) {
+                // If thread was interrupted while waiting for input, just shut down.
+                // The same goes for if connection timeout was reached or the client said goodbye.
+                if (currentThread.isInterrupted() || timedOut || 
+                		(d instanceof ProtocolMessage && d.getType() == ProtocolMessage.Type.GOODBYE) ) {
                     Logger.gI().addMsg(connectionId + ": Thread interrupted, shutting down...");
                     shutDown();
                     return;

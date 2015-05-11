@@ -121,6 +121,13 @@ public class MainActivity extends BaseAppActivity
     @Override
     public void onStop(){
         super.onStop();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ServerConnector.gI().disconnect();
+            }
+        }).start();
+
     }
 
 
