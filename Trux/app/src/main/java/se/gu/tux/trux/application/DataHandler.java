@@ -350,6 +350,13 @@ public class DataHandler
         /*if (pictureId == 0) {
             return null;
         }*/
+
+        // Empty cache if it is really big
+        if (imageCache.size() > 500) {
+            imageCache.clear();
+        }
+
+        // See if the image is not yet cached
         if (imageCache.get(pictureId) == null) {
             // Try to fecth it
             imageCache.put(pictureId, (Picture)getData(new Picture(pictureId)));

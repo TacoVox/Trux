@@ -11,6 +11,7 @@ public class User extends Data
 	 */
 	public static final long LOGIN_REQUEST = -1;
 	public static final long REGISTER_REQUEST = -2;
+
 	private String username;
 	private String passwordHash;
 	private String firstName;
@@ -18,6 +19,8 @@ public class User extends Data
     private String email;
     private boolean stayLoggedIn;
     private long[] friends;
+    private long profilePic;
+
 
 	public boolean passwordMatch(String hash) {
 		return hash.equals(passwordHash);
@@ -93,5 +96,13 @@ public class User extends Data
 
     public void setFriends(long[] friends) {
         this.friends = friends;
+    }
+
+    public long getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(long profilePic) {
+        this.profilePic = profilePic;
     }
 }
