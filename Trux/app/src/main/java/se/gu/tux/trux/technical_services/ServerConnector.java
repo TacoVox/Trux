@@ -1,5 +1,7 @@
 package se.gu.tux.trux.technical_services;
 
+import android.net.wifi.WifiConfiguration;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -145,6 +147,8 @@ public class ServerConnector {
         public void shutDown() {
             if (cs != null) try {
                 cs.close();
+                in.close();
+                out.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -198,6 +202,7 @@ public class ServerConnector {
                     System.out.println("SendQuery requesting connect...");
                     boolean connectedInTime = connect(timeOut);
                     if (!connectedInTime) {
+                        System.out.println("Connection timed out, giving up.");
                         return null;
                     }
                 }
@@ -215,13 +220,20 @@ public class ServerConnector {
                     try {
 
                         // Send and receive
-                        //System.out.println("Sending query...: " + query.getTimeStamp());
-                        query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
-                        query.setUserId(DataHandler.getInstance().getUser().getUserId());
+                        //System.out.println("Sending query...: " + query.getClass().getSimpleName());
+
+                        // Set user id and session id if it's not a goodbye message
+                        if (!(query instanceof ProtocolMessage &&
+                                ((ProtocolMessage) query).getType() == ProtocolMessage.Type.GOODBYE)) {
+                            //System.out.println("Setting user and session id...");
+                            query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
+                            query.setUserId(DataHandler.getInstance().getUser().getUserId());
+                        }
+
                         out.writeObject(query);
                         answer = (Data)in.readObject();
 
-                        //System.out.println("returned values: " + answer.getValue());
+                        //System.out.println("Returned type: " + answer.getClass().getSimpleName());
 
                         dataSent = true;
 
@@ -229,7 +241,8 @@ public class ServerConnector {
 
                         // Server probably shut down or we lost connection. Close sockets so we are sure
                         // to try to reconnect in the next iteration of while loop
-                        System.out.println("IOEXception in sendQuery.");
+                        System.out.println("IOEXception in sendQuery: ");
+                        e.printStackTrace();
                         try {
                             cs.close();
                             in.close();
@@ -283,6 +296,7 @@ public class ServerConnector {
                         // Stop trying if we reach timeout
                         time += 10;
                         if (time > timeOut && timeOut != -1) {
+                            System.err.println("Connect stopped trying.");
                             return false;
                         }
                     } catch (InterruptedException e1) {
