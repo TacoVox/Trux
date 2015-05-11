@@ -19,9 +19,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
-import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.Picture;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
+import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 /**
@@ -35,7 +38,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
     // the action to perform in the activity when the user
     // wants to upload pictures -- 1 is for image, 2 is for videos (! i think)
-    private static final int PICK_IMAGE = 1;
+    private static final int SELECT_IMAGE = 1;
 
     // keeps track whether the user edited profile or not
     private boolean isEdited;
@@ -114,6 +117,9 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         saveChanges.setOnClickListener(this);
         cancel.setOnClickListener(this);
 
+        // set the profile pic and details
+        setProfile();
+
     } // end onCreate()
 
 
@@ -141,7 +147,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
         if (id == uploadPic.getId())
         {
-            selectPicture(PICK_IMAGE);
+            selectPicture(SELECT_IMAGE);
         }
         else if (id == editUsername.getId())
         {
@@ -169,12 +175,14 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         }
         else if (id == saveChanges.getId())
         {
+            /*
             if (isEdited)
             {
                 if (checkValues())  { saveChanges(); }
                 else                { showToast("Please check values and try again");}
             }
             else { showToast("No changes made"); }
+            */
         }
         else if (id == cancel.getId())
         {
@@ -192,18 +200,19 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         super.onActivityResult(requestCode, resultCode, data);
 
         // check if data is not null
-        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null)
+        if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null)
         {
+            // get the uri address for the picture
             Uri uri = data.getData();
 
             try
             {
+                // get the bitmap data
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-
+                // set profile picture in profile page
                 imageView.setImageBitmap(bitmap);
-
-                System.out.println("--------- uploading picture ------------");
-                uploadPicture();
+                // send picture to server
+                uploadPicture(bitmap);
             }
             catch (IOException e)
             {
@@ -222,6 +231,41 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     {
         finish();
     }
+
+
+
+    /**
+     * Sets the profile picture and details.
+     */
+    private void setProfile()
+    {
+        // get the profile picture
+        Picture pic = null;
+
+        AsyncTask<Void, Void, Picture> fetchImageTask = new FetchImageTask().execute();
+
+        try
+        {
+            pic = fetchImageTask.get();
+        }
+        catch (InterruptedException | ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+
+        byte[] b = pic.getImg();
+
+        if (b != null)
+        {
+            System.out.println("--------- decoding byte array ------------");
+            Bitmap bm = BitmapFactory.decodeByteArray(pic.getImg(), 0, pic.getImg().length);
+
+            System.out.println("--------- setting image ------------");
+            imageView.setImageBitmap(bm);
+        }
+
+    } // end setProfile()
+
 
 
     /**
@@ -286,7 +330,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     /**
      * Helper method. Saves the changes to the user profile.
      */
-    private void saveChanges()
+/*    private void saveChanges()
     {
         // user object to send to server
         User user = new User();
@@ -303,7 +347,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         user.setLastName(sLastName);
         user.setEmail(sEmail);
     }
-
+*/
 
 
     /**
@@ -332,33 +376,39 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     /**
      * Helper method. Uploads an image to the server.
      */
-    private boolean uploadPicture()
+    private boolean uploadPicture(Bitmap bitmap)
     {
-        AsyncTask<Void, Void, Boolean> task = new UploadImage().execute();
+        System.out.println("--------- calling uploadPicture() ------------");
+        // open byte output stream
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        // compress image
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        // get image byte data
+        imageData = bos.toByteArray();
+        System.out.println("--------- byte array image: " + Arrays.toString(imageData) + " ------------");
+
+        // create picture object
+        Picture uploadPicture = new Picture(0);
+
+        if (imageData != null)
+        {
+            uploadPicture.setImg(imageData);
+        }
+
+        AsyncTask<Picture, Void, Boolean> uploadTask = new UploadPictureTask().execute(uploadPicture);
 
         boolean result = false;
 
         try
         {
-             result = task.get();
+             result = uploadTask.get();
         }
         catch (InterruptedException | ExecutionException e)
         {
             e.printStackTrace();
         }
 
-        if (result)
-        {
-            System.out.println("--------- decoding byte array ------------");
-            Bitmap bm = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-            System.out.println("--------- setting image ------------");
-            imageView.setImageBitmap(bm);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return result;
 
     } // end uploadPicture()
 
@@ -367,7 +417,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     /**
      * Private class to upload an image from phone gallery.
      */
-    private class UploadImage extends AsyncTask<Void, Void, Boolean>
+    private class UploadPictureTask extends AsyncTask<Picture, Void, Boolean>
     {
         @Override
         protected void onPreExecute()
@@ -376,24 +426,73 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         }
 
         @Override
-        protected Boolean doInBackground(Void... voids)
+        protected Boolean doInBackground(Picture... pictures)
         {
-            // open byte output stream
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            // compress image
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-            // get image byte data
-            imageData = bos.toByteArray();
-            System.out.println("--------- byte array image: " + Arrays.toString(imageData) + " ------------");
+            ProtocolMessage response = null;
 
-            // return false if no data
-            if (imageData == null)
+            try
             {
-                return false;
+                response = (ProtocolMessage) ServerConnector.getInstance().answerQuery(pictures[0]);
+            }
+            catch (NotLoggedInException e)
+            {
+                e.printStackTrace();
             }
 
-            // true otherwise
-            return true;
+            return response != null && response.getType() == ProtocolMessage.Type.SUCCESS;
+        }
+
+    } // end inner class
+
+
+
+    /**
+     * Private class to save changes to profile.
+     */
+    private class SaveChangesTask extends AsyncTask<User, Void, Boolean>
+    {
+
+        @Override
+        protected Boolean doInBackground(User... users)
+        {
+            return null;
+        }
+
+    } // end inner class
+
+
+
+    /**
+     * Private class to fetch the profile picture.
+     */
+    private class FetchImageTask extends AsyncTask<Void, Void, Picture>
+    {
+        @Override
+        protected void onPreExecute()
+        {
+            showToast("Fetching image for profile picture...");
+        }
+
+        @Override
+        protected Picture doInBackground(Void... voids)
+        {
+            Picture image = null;
+
+            try
+            {
+                image = (Picture) ServerConnector.getInstance().answerQuery(new Picture(0));
+            }
+            catch (NotLoggedInException e)
+            {
+                e.printStackTrace();
+            }
+
+            if (image != null)
+            {
+                return image;
+            }
+
+            return null;
         }
 
     } // end inner class

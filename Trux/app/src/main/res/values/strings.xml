@@ -61,5 +61,17 @@
     <string name="title_activity_friends_window">FriendsWindow</string>
     <string name="hello_world">Hello world!</string>
     <string name="profile_button_edit_text">Edit</string>
+    <string name="speed_graph_explanation">
+        The graph shows your average speed over the last thirty days.
+            \nBased on km/h.
+    </string>
+    <string name="distance_graph_explanation">
+        The graph shows your average distance traveled over the last thirty days.
+            \nShowed in 1000 km.
+    </string>
+    <string name="fuel_graph_explanation">
+        The graph shows your average fuel consumption over the last thirty days.
+            \nBased on litres/h.
+    </string>
 
 </resources>
