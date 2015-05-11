@@ -56,12 +56,22 @@ public class PictureIO {
     /**
      * Non-static part.
      */
-    private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+    private final DateFormat year = new SimpleDateFormat("yyyy");
+    private final DateFormat month = new SimpleDateFormat("MM");
+    private final DateFormat day = new SimpleDateFormat("dd");
+    
     private PictureIO() {}
     
     public ProtocolMessage saveProfilePicture(Picture p) {
         BufferedImage img = decodePicture(p.getImg());
-        p.setPictureid(PictureHandler.gI().savePicturePath(p, storeOnFS(img)));
+        
+        String path = storeOnFS(img);
+        Logger.gI().addDebug("The new path :" + path);
+        
+        p.setPictureid(PictureHandler.gI().savePicturePath(p, path));
+        
+        Logger.gI().addDebug("Picture ID: " + p.getPictureid());
+        
         return PictureHandler.gI().setProfilePicture(p);
     }
     
@@ -82,19 +92,40 @@ public class PictureIO {
         else
             imgHash = Integer.toString(img.hashCode());
         
+        
+        //Check for year
         String path = System.getProperty("user.dir") + "/files/pictures/" +
-                dateFormat.format(date).toString();
+                year.format(date).toString();
         
         File dir = new File(path);
         
         if(!dir.exists())
             dir.mkdirs();
         
-        path += "/" + imgHash + ".png";
+        //Check for month
+        path += "/" + month.format(date).toString();
         
+        dir = new File(path);
+        
+        if(!dir.exists())
+            dir.mkdirs();
+        
+        //Check for day
+        path += "/" + day.format(date).toString();
+        
+        dir = new File(path);
+        
+        if(!dir.exists())
+            dir.mkdirs();
+        
+        
+        //Create file for picture
         File pic = new File(path);
         
         try {
+            if(!pic.exists())
+                pic.createNewFile();
+            
             ImageIO.write(img, "png", pic);
         } catch(IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());
@@ -105,6 +136,7 @@ public class PictureIO {
     
     private BufferedImage getFromFS(String path) {
         try {
+            Logger.gI().addDebug(path);
             return ImageIO.read(new File(path));
         } catch (IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());
