@@ -40,6 +40,8 @@ public class DistTravWindow extends Fragment {
 
             LineGraphSeries distanceValues = new LineGraphSeries(stats.getGraphPoints());
             distanceGraph.addSeries(distanceValues);
+            distanceGraph.getViewport().setMaxX(30);
+            distanceGraph.getViewport().setMaxY(50);
         }
     }
 
@@ -65,10 +67,11 @@ public class DistTravWindow extends Fragment {
     private void popDistanceGraph(View view) {
 
         distanceGraph = new GraphView(getActivity());
-        distanceGraph.setTitle("Distance Traveled");
         distanceGraph.setTitleTextSize(40);
         distanceGraph.getViewport().setXAxisBoundsManual(true);
-        distanceGraph.getViewport().setMaxX(30);
+        distanceGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        distanceGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
+        distanceGraph.getGridLabelRenderer().setPadding(50);
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.DistanceGraph);
