@@ -11,6 +11,7 @@ import android.location.Location;
 
 
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -128,32 +129,14 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                                 System.out.println("Here is the friends ID: " + temp);
                                 for(int j = 0; j < friend.length; j++) {
                                     if (temp == friend[j].getUserid()) {
-                                        try {
-                                            picture[j] = DataHandler.getInstance()
-                                                    .getPicture(friend[j].getProfilePic());
-                                            System.out.println("It finds the user id and finds the User----------");
-                                            double[] loc = friend[j].getCurrentLoc().getLoc();
-                                            LatLng latLng = new LatLng(loc[0], loc[1]);
-                                            if(hasMarker) {
-                                                mMap.clear();
-                                                hasMarker = false;
-                                            }
-                                            else
-                                            if(picture != null && picture[j] != null){
-                                                Bitmap bmp;
-                                                BitmapFactory.Options options = new BitmapFactory.Options();
-                                                bmp = BitmapFactory.decodeByteArray(picture[j].getImg(), 0,
-                                                        picture[j].getImg().length, options);
-
-                                                mMap.addMarker(new MarkerOptions().position(latLng).title(
-                                                        "Here is" + friend[j].getFirstname())
-                                                        .icon(BitmapDescriptorFactory.fromBitmap(bmp)));
-                                                hasMarker = true;
-                                            }
+                                        /*try {
+                                            new AsyncTask() {
+                                                picture[j] = DataHandler.getInstance().getPicture(friend[j].getProfilePic());
+                                            }.execute();
                                         }
                                         catch (NotLoggedInException nLIE){
                                             System.out.println("NotLoggedInException: " + nLIE.getMessage());
-                                        }
+                                        }*/
 
                                     }
                                 }
