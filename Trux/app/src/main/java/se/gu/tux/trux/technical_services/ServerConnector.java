@@ -220,7 +220,7 @@ public class ServerConnector {
                     try {
 
                         // Send and receive
-                        System.out.println("Sending query...: " + query.getClass().getSimpleName());
+                        //System.out.println("Sending query...: " + query.getClass().getSimpleName());
 
                         // Set user id and session id if it's not a goodbye message
                         if (!(query instanceof ProtocolMessage &&
@@ -233,7 +233,7 @@ public class ServerConnector {
                         out.writeObject(query);
                         answer = (Data)in.readObject();
 
-                        System.out.println("Returned type: " + answer.getClass().getSimpleName());
+                        //System.out.println("Returned type: " + answer.getClass().getSimpleName());
 
                         dataSent = true;
 
