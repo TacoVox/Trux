@@ -81,7 +81,7 @@ public class ServerRunnable implements Runnable {
                 // If thread was interrupted while waiting for input, just shut down.
                 // The same goes for if connection timeout was reached or the client said goodbye.
                 if (currentThread.isInterrupted() || timedOut || 
-                		(d instanceof ProtocolMessage && d.getType() == ProtocolMessage.Type.GOODBYE) ) {
+                		(d instanceof ProtocolMessage && ((ProtocolMessage)d).getType() == ProtocolMessage.Type.GOODBYE) ) {
                     Logger.gI().addMsg(connectionId + ": Thread interrupted, shutting down...");
                     shutDown();
                     return;
