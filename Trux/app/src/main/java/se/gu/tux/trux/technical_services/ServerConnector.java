@@ -229,7 +229,7 @@ public class ServerConnector {
 
                         // Server probably shut down or we lost connection. Close sockets so we are sure
                         // to try to reconnect in the next iteration of while loop
-                        System.out.println("IOEXception in sendQuery.");
+                        System.out.println("IOEXception in sendQuery: " + e.getMessage());
                         try {
                             cs.close();
                             in.close();
