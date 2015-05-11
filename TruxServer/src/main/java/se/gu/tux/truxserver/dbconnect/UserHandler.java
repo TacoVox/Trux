@@ -239,7 +239,7 @@ public class UserHandler {
             
             u.setFriends(ready);
             
-            //u.set
+            u.setProfilePic(PictureHandler.gI().getProfilePictureID(u));
             
             return u;
 	}
