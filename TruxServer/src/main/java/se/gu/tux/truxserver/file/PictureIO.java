@@ -56,9 +56,7 @@ public class PictureIO {
     /**
      * Non-static part.
      */
-    private final DateFormat year = new SimpleDateFormat("yyyy");
-    private final DateFormat month = new SimpleDateFormat("MM");
-    private final DateFormat day = new SimpleDateFormat("dd");
+    private final DateFormat dateformat = new SimpleDateFormat("yyyy/MM/dd");
     
     private PictureIO() {}
     
@@ -93,39 +91,14 @@ public class PictureIO {
             imgHash = Integer.toString(img.hashCode());
         
         
-        //Check for year
         String path = System.getProperty("user.dir") + "/files/pictures/" +
-                year.format(date).toString();
+                dateformat.format(date).toString() + "/" + Long.toString(System.currentTimeMillis()) + ".png";
         
-        File dir = new File(path);
-        
-        if(!dir.exists())
-            dir.mkdirs();
-        
-        //Check for month
-        path += "/" + month.format(date).toString();
-        
-        dir = new File(path);
-        
-        if(!dir.exists())
-            dir.mkdirs();
-        
-        //Check for day
-        path += "/" + day.format(date).toString();
-        
-        dir = new File(path);
-        
-        if(!dir.exists())
-            dir.mkdirs();
-        
-        
-        //Create file for picture
         File pic = new File(path);
         
+        pic.mkdirs();
+        
         try {
-            if(!pic.exists())
-                pic.createNewFile();
-            
             ImageIO.write(img, "png", pic);
         } catch(IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());

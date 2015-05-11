@@ -87,7 +87,7 @@ public class PictureHandler {
             pst.setLong(1, pic.getUserId());
             pst.setLong(2, pic.getPictureid());
             
-            dbc.execInsert(pic, pst);
+            dbc.execReplace(pic, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         } catch (Exception e) {

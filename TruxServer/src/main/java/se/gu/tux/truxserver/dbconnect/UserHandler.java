@@ -290,6 +290,33 @@ public class UserHandler {
         }
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Username is already taken. Please select another one.");
     }
+        
+    public ProtocolMessage updateUser(User u) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "UPDATE user SET firstname = ?, lastname = ?, email = ? WHERE userid = ?");
+            
+            pst.setString(1, u.getFirstName());
+            pst.setString(2, u.getLastName());
+            pst.setString(3, u.getEmail());
+            pst.setLong(4, u.getUserId());
+	
+            dbc.execUpdate(u, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Update failed.");
+    }
     
     public Data getFriend(Friend f)
     {
@@ -415,7 +442,7 @@ public class UserHandler {
             pst.setLong(3, pm.getUserId());
             pst.setLong(4, Long.parseLong(pm.getMessage()));
 	    
-            dbc.execInsert(pm, pst);
+            dbc.execDelete(pm, pst);
 	}
 	catch (Exception e)
 	{
