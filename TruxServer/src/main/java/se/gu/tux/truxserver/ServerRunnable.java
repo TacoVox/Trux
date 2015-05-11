@@ -11,6 +11,7 @@ import java.net.SocketTimeoutException;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -22,10 +23,13 @@ public class ServerRunnable implements Runnable {
     private ObjectOutputStream out = null;
     private long connectionId;
     private Thread currentThread;
+    private long idleTime = 0;
+    private long maxIdleTime = 0;
 
-    public ServerRunnable(Socket cs, long connectionId) {
+    public ServerRunnable(Socket cs, long connectionId, long maxIdleTime) {
         this.cs = cs;
         this.connectionId = connectionId;
+        this.maxIdleTime = maxIdleTime;
     }
 
     @Override
@@ -57,19 +61,27 @@ public class ServerRunnable implements Runnable {
                 // close the socket which would abort a blocking read, here instead we have set 
                 // a soTimeout on the socket and regularly check if the thread has been interrupted.
                 Data d = null;
-                while (d == null && !currentThread.isInterrupted()) {
+                boolean timedOut = false;
+                while (d == null && !currentThread.isInterrupted() && !timedOut) {
                     try {
                         // Read data - this blocks until the defined soTimeout, then repeats
                         // So we do nothing on the exception, it's just catched there to keep the 
                         // loop running at regular intervals
                         d = (Data) in.readObject();
+                        idleTime = 0;
                         Logger.gI().addMsg(d.getClass().getSimpleName());
                     } catch (SocketTimeoutException e) {
+                    	idleTime++;
+                    	if (idleTime > maxIdleTime) {
+                    		timedOut = true;
+                    	}
                     }
                 }
 
-                // If thread was interrupted while waiting for input, just shut down
-                if (currentThread.isInterrupted()) {
+                // If thread was interrupted while waiting for input, just shut down.
+                // The same goes for if connection timeout was reached or the client said goodbye.
+                if (currentThread.isInterrupted() || timedOut || 
+                		(d instanceof ProtocolMessage && ((ProtocolMessage)d).getType() == ProtocolMessage.Type.GOODBYE) ) {
                     Logger.gI().addMsg(connectionId + ": Thread interrupted, shutting down...");
                     shutDown();
                     return;

@@ -30,10 +30,12 @@ public class CommunityMainFragment extends Fragment implements View.OnClickListe
         // get components
         ImageView imageView = (ImageView) view.findViewById(R.id.fragment_main_i_image_view);
         Button friendsButton = (Button) view.findViewById(R.id.friendButton);
+        Button profileButton = (Button) view.findViewById(R.id.fragment_main_profile_button);
 
         // set listener to components
         imageView.setOnClickListener(this);
         friendsButton.setOnClickListener(this);
+        profileButton.setOnClickListener(this);
 
         // return the view
         return view;

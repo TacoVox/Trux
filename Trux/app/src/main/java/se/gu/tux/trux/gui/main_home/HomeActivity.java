@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.gu.tux.trux.gui.base.BaseAppActivity;
+import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.Community_main;
 import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
@@ -31,13 +32,13 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
     private static final int MAP_VIEW = R.id.fragment_main_i_image_view;
     private static final int FRIENDS_BUTTON = R.id.friendButton;
+    private static final int PROFILE_BUTTON = R.id.fragment_main_profile_button;
 
 
-    HomePagerAdapter pagerAdapter;
-    ViewPager viewPager;
+    private ViewPager viewPager;
 
-    List<Fragment> fragmentArrayList;
-    static ActionBar actionBar;
+    private List<Fragment> fragmentArrayList;
+    private ActionBar actionBar;
 
 
     @Override
@@ -68,25 +69,17 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         fragmentArrayList.add(statsFragment);
 
         // set adapter and view pager
-        pagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), fragmentArrayList);
+        HomePagerAdapter pagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), fragmentArrayList);
 
         // get action bar
         actionBar = getSupportActionBar();
-
-        // specify that we will be displaying tabs in the action bar.
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        // initialise action bar
+        initActionBar(actionBar);
 
         // set page listener
         viewPager.setOnPageChangeListener(this);
         // set adapter
         viewPager.setAdapter(pagerAdapter);
-
-        // adding tabs here for now
-        // TODO: create tabs in separate method
-        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_home).setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_community).setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_statistics).setTabListener(this));
-
     }
 
 
@@ -110,6 +103,11 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
             Intent intent = new Intent(this, FriendsWindow.class);
             startActivity(intent);
         }
+        else if (id == PROFILE_BUTTON)
+        {
+            Intent intent = new Intent(this, CommunityProfileActivity.class);
+            startActivity(intent);
+        }
         else
         {
             showToast("Something is wrong. Called from IMainActivity.class.");
@@ -131,6 +129,25 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         }
     }
 
+
+    /**
+     * Helper method to initialise the action bar.
+     *
+     * @param actionBar     The action bar.
+     */
+    private void initActionBar(ActionBar actionBar)
+    {
+        // if null, return
+        if (actionBar == null) { return; }
+
+        // specify that we will be displaying tabs in the action bar.
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        // add tabs
+        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_home).setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_community).setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_statistics).setTabListener(this));
+    }
 
 
     /*****************************************************************************************

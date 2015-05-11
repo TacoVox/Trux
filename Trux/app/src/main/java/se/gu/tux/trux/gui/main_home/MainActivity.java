@@ -121,6 +121,13 @@ public class MainActivity extends BaseAppActivity
     @Override
     public void onStop(){
         super.onStop();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ServerConnector.gI().disconnect();
+            }
+        }).start();
+
     }
 
 
@@ -222,16 +229,14 @@ public class MainActivity extends BaseAppActivity
         {
             msg = check.get();
         }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-        catch (ExecutionException e)
+        catch (InterruptedException | ExecutionException e)
         {
             e.printStackTrace();
         }
 
-
+        // check message is not null
+        assert msg != null;
+        // if login successful
         if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
         {
             showToast("You are now logged in.");
@@ -283,10 +288,9 @@ public class MainActivity extends BaseAppActivity
         @Override
         protected Boolean doInBackground(String... strings)
         {
-            boolean isAllowed =
-                    LoginService.getInstance().login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
 
-            return isAllowed;
+            return LoginService.getInstance().login(strings[0], strings[1],
+                    Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
         }
         
     } // end inner class
@@ -298,12 +302,12 @@ public class MainActivity extends BaseAppActivity
      */
     private class AutoLoginCheck extends AsyncTask<ProtocolMessage, Void, ProtocolMessage>
     {
-        ProtocolMessage msg = null;
+        private ProtocolMessage pMessage = null;
 
         @Override
         protected void onPreExecute()
         {
-            Toast.makeText(getApplicationContext(), "Auto-logging in. Please wait...", Toast.LENGTH_SHORT).show();
+            showToast("Auto-logging in. Please wait...");
         }
 
         @Override
@@ -311,8 +315,8 @@ public class MainActivity extends BaseAppActivity
         {
             try
             {
-                msg = (ProtocolMessage) ServerConnector.gI().answerQuery(protocolMessages[0]);
-                if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS) {
+                pMessage = (ProtocolMessage) ServerConnector.gI().answerQuery(protocolMessages[0]);
+                if (pMessage.getType() == ProtocolMessage.Type.LOGIN_SUCCESS) {
                     System.out.println("Current user: "  + DataHandler.getInstance().getUser().getUserId());
                     // Also update the user info by making a request for a User object
                     DataHandler.getInstance().setUser((User)DataHandler.getInstance().getData(
@@ -326,7 +330,7 @@ public class MainActivity extends BaseAppActivity
                 e.printStackTrace();
             }
 
-            return msg;
+            return pMessage;
         }
 
     } // end inner class

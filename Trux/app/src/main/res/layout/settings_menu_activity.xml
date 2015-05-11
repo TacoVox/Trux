@@ -5,21 +5,9 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Setting Go Here"
-        android:textSize="40sp"/>
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="More Settings Here"
-        android:textSize="40sp"/>
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="And So On"
-        android:textSize="40sp"/>
+        android:text="@string/settings"
+        android:textSize="20sp"/>
 
 </LinearLayout>

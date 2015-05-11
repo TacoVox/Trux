@@ -60,5 +60,6 @@
     <string name="search_button_text">Search</string>
     <string name="title_activity_friends_window">FriendsWindow</string>
     <string name="hello_world">Hello world!</string>
+    <string name="profile_button_edit_text">Edit</string>
 
 </resources>
