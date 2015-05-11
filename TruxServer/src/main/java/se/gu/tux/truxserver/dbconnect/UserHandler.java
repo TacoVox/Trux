@@ -239,6 +239,8 @@ public class UserHandler {
             
             u.setFriends(ready);
             
+            //u.set
+            
             return u;
 	}
 	catch (Exception e)
@@ -350,6 +352,8 @@ public class UserHandler {
                 
 		break;
 	    }
+            
+            f.setProfilePic(PictureHandler.gI().getProfilePictureID(f));
             
             return f;
 	}
