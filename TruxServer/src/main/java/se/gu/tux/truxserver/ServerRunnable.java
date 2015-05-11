@@ -73,6 +73,7 @@ public class ServerRunnable implements Runnable {
                     } catch (SocketTimeoutException e) {
                     	idleTime++;
                     	if (idleTime > maxIdleTime) {
+                    		Logger.gI().addMsg(connectionId + ": Timed out!");
                     		timedOut = true;
                     	}
                     }
