@@ -93,25 +93,10 @@
         </activity>
         <!-- End Home Activity -->
 
-
-        <!-- UNDER DEVELOPMENT -->
-        <!-- Below activities are not used at the moment or are under development. Remove later! -->
-        <activity
-            android:name="se.gu.tux.trux.gui.simpleStats.SimpleStats"
-            android:screenOrientation="portrait" >
-        </activity>
-
-        <activity
-            android:name="se.gu.tux.trux.gui.detailedStats.OverallStats"
-            android:label="@string/title_activity_overall_stats">
-        </activity>
-
-
         <activity
             android:name="se.gu.tux.trux.gui.community.Community_main"
             android:label="@string/title_activity_community_main" >
         </activity>
-        <!-- End unused or under development activities -->
 
 
     </application>
