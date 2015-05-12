@@ -44,8 +44,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     // keeps track whether the user edited profile or not
     private boolean isPicEdited;
     private boolean isEdited;
-    // image data
-    private byte[] imageData;
     // bitmap data
     private Bitmap bitmap;
 
@@ -174,13 +172,20 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         }
         else if (id == saveChanges.getId())
         {
-
             if (isEdited || isPicEdited)
             {
-                if (checkValues())  { saveChanges(); }
-                else                { showToast("Please check values and try again");}
+                if (checkValues())
+                {
+                    saveChanges();
+                    cancel();
+                }
+                else { showToast("Please check values and try again");}
             }
-            else { showToast("No changes made"); }
+            else
+            {
+                showToast("No changes made. Returning to home screen.");
+                cancel();
+            }
         }
         else if (id == cancel.getId())
         {
@@ -249,7 +254,9 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
             e.printStackTrace();
         }
 
-        byte[] b = pic.getImg();
+        byte[] b = null;
+
+        if (pic != null) { b = pic.getImg(); }
 
         if (b != null)
         {
@@ -323,8 +330,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
      */
     private void saveChanges()
     {
-        boolean picIsUploaded;
-
         // user object to send to server
         User user = new User();
 
@@ -345,7 +350,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
         if (isPicEdited)
         {
-            picIsUploaded = uploadPicture(bitmap);
+            boolean picIsUploaded = uploadPicture(bitmap);
 
             if (picIsUploaded) { showToast("Picture uploaded"); }
         }
@@ -410,7 +415,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         // compress image
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
         // get image byte data
-        imageData = bos.toByteArray();
+        byte[] imageData = bos.toByteArray();
         System.out.println("--------- byte array image: " + Arrays.toString(imageData) + " ------------");
 
         // create picture object
@@ -492,12 +497,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
                 e.printStackTrace();
             }
 
-            if (response != null && response.getType() == ProtocolMessage.Type.SUCCESS)
-            {
-                return true;
-            }
-
-            return false;
+            return response != null && response.getType() == ProtocolMessage.Type.SUCCESS;
         }
 
     } // end inner class
