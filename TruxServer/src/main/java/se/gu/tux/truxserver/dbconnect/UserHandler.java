@@ -430,6 +430,8 @@ public class UserHandler {
                 f.setFirstname(rs.getString("firstname"));
                 f.setLastname(rs.getString("lastname"));
                 
+                f.setFriend(false);
+                
                 f.setProfilePicId(PictureHandler.gI().getProfilePictureID(f));
                 
                 users.add(f);
