@@ -28,7 +28,7 @@ import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 
 import se.gu.tux.truxserver.logger.Logger;
-import se.gu.tux.truxserver.services.EMailSender;
+import se.gu.tux.truxserver.mail.EMailSender;
 
 /**
  *
