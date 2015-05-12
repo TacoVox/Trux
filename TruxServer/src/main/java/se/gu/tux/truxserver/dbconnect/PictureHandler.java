@@ -138,7 +138,10 @@ public class PictureHandler {
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(selectStmnt);
             
-            pst.setLong(1, d.getUserId());
+            if(d instanceof User)
+                pst.setLong(1, d.getUserId());
+            else
+                pst.setLong(1, d.getFriendid());
             
             ResultSet rs = dbc.execSelect(d, pst);
             
