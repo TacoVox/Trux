@@ -15,6 +15,10 @@ public class ArrayResponse extends Data {
         return content;
     }
 
+    public Object[] getArray() {
+        return content;
+    }
+
     @Override
     public void setValue(Object value) {
         if (value instanceof Object[]) {

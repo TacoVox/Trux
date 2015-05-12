@@ -266,6 +266,14 @@ public class DataHandler
 
             // Move forward one day
             cal.add(Calendar.DATE, +1);
+
+            // Let this thread sleep for a slight while just to make other threads able to
+            // use the ServerConnector inbetween - since this is background prefetching
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         return perDay;

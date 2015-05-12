@@ -30,7 +30,6 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
-    private static final int MAP_VIEW = R.id.fragment_main_i_image_view;
     private static final int FRIENDS_BUTTON = R.id.friendButton;
     private static final int PROFILE_BUTTON = R.id.fragment_main_profile_button;
 
@@ -93,12 +92,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
      */
     public void onFragmentViewClick(int id)
     {
-        if (id == MAP_VIEW)
-        {
-            Intent intent = new Intent(this, Community_main.class);
-            startActivity(intent);
-        }
-        else if (id == FRIENDS_BUTTON)
+        if (id == FRIENDS_BUTTON)
         {
             Intent intent = new Intent(this, FriendsWindow.class);
             startActivity(intent);

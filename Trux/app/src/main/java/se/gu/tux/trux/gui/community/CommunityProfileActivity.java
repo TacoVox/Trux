@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
+import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
@@ -41,9 +42,8 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     private static final int SELECT_IMAGE = 1;
 
     // keeps track whether the user edited profile or not
+    private boolean isPicEdited;
     private boolean isEdited;
-    // image data
-    private byte[] imageData;
     // bitmap data
     private Bitmap bitmap;
 
@@ -85,6 +85,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
         // set edit
         isEdited = false;
+        isPicEdited = false;
 
         // get the components
         imageView = (ImageView) findViewById(R.id.profile_picture_container);
@@ -136,6 +137,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         eEmail.setEnabled(false);
         // set edit flag
         isEdited = false;
+        isPicEdited = false;
     }
 
 
@@ -148,12 +150,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         if (id == uploadPic.getId())
         {
             selectPicture(SELECT_IMAGE);
-        }
-        else if (id == editUsername.getId())
-        {
-            eUsername.setEnabled(true);
-            eUsername.requestFocus();
-            isEdited = true;
+            isPicEdited = true;
         }
         else if (id == editFirstName.getId())
         {
@@ -175,14 +172,20 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         }
         else if (id == saveChanges.getId())
         {
-            /*
-            if (isEdited)
+            if (isEdited || isPicEdited)
             {
-                if (checkValues())  { saveChanges(); }
-                else                { showToast("Please check values and try again");}
+                if (checkValues())
+                {
+                    saveChanges();
+                    cancel();
+                }
+                else { showToast("Please check values and try again");}
             }
-            else { showToast("No changes made"); }
-            */
+            else
+            {
+                showToast("No changes made. Returning to home screen.");
+                cancel();
+            }
         }
         else if (id == cancel.getId())
         {
@@ -211,8 +214,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 // set profile picture in profile page
                 imageView.setImageBitmap(bitmap);
-                // send picture to server
-                uploadPicture(bitmap);
             }
             catch (IOException e)
             {
@@ -253,16 +254,23 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
             e.printStackTrace();
         }
 
-        byte[] b = pic.getImg();
+        byte[] b = null;
+
+        if (pic != null) { b = pic.getImg(); }
 
         if (b != null)
         {
             System.out.println("--------- decoding byte array ------------");
-            Bitmap bm = BitmapFactory.decodeByteArray(pic.getImg(), 0, pic.getImg().length);
+            bitmap = BitmapFactory.decodeByteArray(pic.getImg(), 0, pic.getImg().length);
 
             System.out.println("--------- setting image ------------");
-            imageView.setImageBitmap(bm);
+            imageView.setImageBitmap(bitmap);
         }
+
+        eUsername.setText(DataHandler.getInstance().getUser().getUsername());
+        eFirstName.setText(DataHandler.getInstance().getUser().getFirstName());
+        eLastName.setText(DataHandler.getInstance().getUser().getLastName());
+        eEmail.setText(DataHandler.getInstance().getUser().getEmail());
 
     } // end setProfile()
 
@@ -276,16 +284,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     private boolean checkValues()
     {
         boolean isValid = true;
-
-        // check username
-        sUsername = eUsername.getText().toString();
-        if (sUsername.isEmpty() || sUsername.length() < 3)
-        {
-            showToast("Username must be at least 3 characters long.");
-            eUsername.setBackground(new ColorDrawable(Color.RED));
-            eUsername.requestFocus();
-            isValid = false;
-        }
 
         // check first name
         sFirstName = eFirstName.getText().toString();
@@ -330,7 +328,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     /**
      * Helper method. Saves the changes to the user profile.
      */
-/*    private void saveChanges()
+    private void saveChanges()
     {
         // user object to send to server
         User user = new User();
@@ -342,12 +340,45 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         user.setPasswordHash(DataHandler.getInstance().getUser().getPasswordHash());
 
         // set fields
-        user.setUsername(sUsername);
         user.setFirstName(sFirstName);
         user.setLastName(sLastName);
         user.setEmail(sEmail);
-    }
-*/
+        user.setRequestProfileChange(true);
+
+        // set the user back to DataHandler
+        DataHandler.getInstance().setUser(user);
+
+        if (isPicEdited)
+        {
+            boolean picIsUploaded = uploadPicture(bitmap);
+
+            if (picIsUploaded) { showToast("Picture uploaded"); }
+        }
+
+        if (isEdited)
+        {
+            boolean saveChanges = false;
+
+            AsyncTask<User, Void, Boolean> saveTask = new SaveChangesTask().execute(user);
+
+            try
+            {
+                saveChanges = saveTask.get();
+            }
+            catch (InterruptedException | ExecutionException e)
+            {
+                e.printStackTrace();
+            }
+
+            if (saveChanges)
+            {
+                DataHandler.getInstance().getUser().setRequestProfileChange(false);
+                showToast("Profile changes saved");
+            }
+        }
+
+    } // end saveChanges()
+
 
 
     /**
@@ -384,7 +415,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         // compress image
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
         // get image byte data
-        imageData = bos.toByteArray();
+        byte[] imageData = bos.toByteArray();
         System.out.println("--------- byte array image: " + Arrays.toString(imageData) + " ------------");
 
         // create picture object
@@ -455,7 +486,18 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         @Override
         protected Boolean doInBackground(User... users)
         {
-            return null;
+            ProtocolMessage response = null;
+
+            try
+            {
+                response = (ProtocolMessage) ServerConnector.getInstance().answerQuery(users[0]);
+            }
+            catch (NotLoggedInException e)
+            {
+                e.printStackTrace();
+            }
+
+            return response != null && response.getType() == ProtocolMessage.Type.SUCCESS;
         }
 
     } // end inner class
@@ -480,7 +522,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
             try
             {
-                image = (Picture) ServerConnector.getInstance().answerQuery(new Picture(0));
+                image = DataHandler.getInstance().getPicture(DataHandler.getInstance().getUser().getProfilePicId());
             }
             catch (NotLoggedInException e)
             {

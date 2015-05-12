@@ -97,9 +97,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     friends = DataHandler.getInstance().getFriends();
                     pictures = new Picture[friends.length];
                     for (int i = 0; i < pictures.length; i++) {
-                        System.out.println("Fetching image " + friends[i].getProfilePic() + " for friend " +
+                        System.out.println("Fetching image " + friends[i].getProfilePicId() + " for friend " +
                                 friends[i].getFirstname());
-                        pictures[i] = DataHandler.getInstance().getPicture(friends[i].getProfilePic());
+                        pictures[i] = DataHandler.getInstance().getPicture(friends[i].getProfilePicId());
                     }
                     System.out.println("Done.");
 
@@ -171,9 +171,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     //people =
                     pictures = new Picture[friends.length];
                     for (int i = 0; i < pictures.length; i++) {
-                        System.out.println("Fetching image " + friends[i].getProfilePic() + " for friend " +
+                        System.out.println("Fetching image " + friends[i].getProfilePicId() + " for friend " +
                                 friends[i].getFirstname());
-                        pictures[i] = DataHandler.getInstance().getPicture(friends[i].getProfilePic());
+                        pictures[i] = DataHandler.getInstance().getPicture(friends[i].getProfilePicId());
                     }
 
                     System.out.println("Done.");

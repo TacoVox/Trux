@@ -26,7 +26,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.imageio.ImageIO;
-import se.gu.tux.trux.datastructure.Data;
 
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
@@ -57,19 +56,34 @@ public class PictureIO {
     /**
      * Non-static part.
      */
-    private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+    private final DateFormat dateformat = new SimpleDateFormat("yyyy/MM/dd");
+    
     private PictureIO() {}
     
     public ProtocolMessage saveProfilePicture(Picture p) {
         BufferedImage img = decodePicture(p.getImg());
-        p.setPictureid(PictureHandler.gI().savePicturePath(p, storeOnFS(img)));
+        
+        String path = storeOnFS(img);
+        Logger.gI().addDebug("The new path :" + path);
+        
+        p.setPictureid(PictureHandler.gI().savePicturePath(p, path));
+        
+        Logger.gI().addDebug("Picture ID: " + p.getPictureid());
+        
         return PictureHandler.gI().setProfilePicture(p);
     }
     
     public Picture receiveProfilePicture(Picture p) {
-        BufferedImage img = getFromFS(PictureHandler.gI().getProfilePicturePath(p));
-        p.setImg(encodePicture(img));
+        String path = PictureHandler.gI().getProfilePicturePath(p);
         
+        if (path != null)
+        {
+            BufferedImage img = getFromFS(path);
+            
+            p.setImg(encodePicture(img));
+        }
+        p.setTimeStamp(System.currentTimeMillis());
+            
         return p;
     }
     
@@ -82,17 +96,13 @@ public class PictureIO {
         else
             imgHash = Integer.toString(img.hashCode());
         
-        String path = System.getProperty("user.dir") + "/files/pictures" +
-                dateFormat.format(date).toString();
         
-        File dir = new File(path);
-        
-        if(!dir.exists())
-            dir.mkdirs();
-        
-        path += "/" + imgHash + ".png";
+        String path = System.getProperty("user.dir") + "/files/pictures/" +
+                dateformat.format(date).toString() + "/" + Long.toString(System.currentTimeMillis()) + ".png";
         
         File pic = new File(path);
+        
+        pic.mkdirs();
         
         try {
             ImageIO.write(img, "png", pic);
@@ -105,6 +115,7 @@ public class PictureIO {
     
     private BufferedImage getFromFS(String path) {
         try {
+            Logger.gI().addDebug(path);
             return ImageIO.read(new File(path));
         } catch (IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());
@@ -140,4 +151,14 @@ public class PictureIO {
         
         return null;
     }	
+    
+    public static void main(String args[]) {
+        BufferedImage a = PictureIO.gI().getFromFS("C:\\Users\\Jonas\\Desktop\\Screen_shot_2010-01-30_at_2.17.06_AM.png");
+        
+        byte[] b = PictureIO.gI().encodePicture(a);
+        
+        BufferedImage c = PictureIO.gI().decodePicture(b);
+        
+        PictureIO.gI().storeOnFS(c);
+    }
 }

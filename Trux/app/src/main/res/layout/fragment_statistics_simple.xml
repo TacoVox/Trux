@@ -108,18 +108,4 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="2" />
-
-    <Button
-        android:layout_width="220dp"
-        android:layout_height="wrap_content"
-        android:text="Detailed statistics"
-        android:id="@+id/fm_i_statistics_detailed_button"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.36"
-        android:textSize="16sp" />
-
 </LinearLayout>

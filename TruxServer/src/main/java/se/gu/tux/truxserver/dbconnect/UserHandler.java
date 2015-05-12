@@ -188,20 +188,18 @@ public class UserHandler {
      * @return either a filled in user object on success or a ProtocolMessage indicating an ERROR
      */
     public Data getUser(User u)
-    {
-        String passwd = null;
-        
+    {   
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
 	{
-            String selectStmnt = "SELECT userid, password, firstname, lastname" +
-                    " FROM user WHERE username = ?";
+            String selectStmnt = "SELECT userid, firstname, lastname" +
+                    " FROM user WHERE userid = ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setString(1, u.getUsername());
+            pst.setLong(1, u.getUserId());
 	    
             ResultSet rs = dbc.execSelect(u, pst);
 	    
@@ -211,7 +209,6 @@ public class UserHandler {
 	    while (rs.next())
 	    {
                 u.setUserId(rs.getLong("userid"));
-                passwd = rs.getString("password");
                 u.setFirstName(rs.getString("firstname"));
                 u.setLastName(rs.getString("lastname"));
                 
@@ -235,19 +232,25 @@ public class UserHandler {
                 friends.add(rs.getLong("friendid"));
 	    }
             
-            u.setFriends((Long[])friends.toArray());
+            long[] ready = new long[friends.size()];
+            
+            for(int i = 0; i < friends.size(); i++)
+                ready[i] = (long)friends.get(i);
+            
+            u.setFriends(ready);
+            
+            u.setProfilePic(PictureHandler.gI().getProfilePictureID(u.getUserId()));
+            
+            return u;
 	}
 	catch (Exception e)
 	{
 	    Logger.gI().addError(e.getLocalizedMessage());
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
-        if(u.passwordMatch(passwd))
-            return u;
-        else
-            return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
     
     /**
@@ -289,6 +292,33 @@ public class UserHandler {
         }
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Username is already taken. Please select another one.");
     }
+        
+    public ProtocolMessage updateUser(User u) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "UPDATE user SET firstname = ?, lastname = ?, email = ? WHERE userid = ?");
+            
+            pst.setString(1, u.getFirstName());
+            pst.setString(2, u.getLastName());
+            pst.setString(3, u.getEmail());
+            pst.setLong(4, u.getUserId());
+	
+            dbc.execUpdate(u, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Update failed.");
+    }
     
     public Data getFriend(Friend f)
     {
@@ -323,6 +353,8 @@ public class UserHandler {
 		break;
 	    }
             
+            f.setProfilePic(PictureHandler.gI().getProfilePictureID(f.getUserid()));
+            
             return f;
 	}
 	catch (Exception e)
@@ -334,5 +366,94 @@ public class UserHandler {
         }
         
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Something went wrong while fetching information for your friend - plase contact Jerker");
+    }
+    
+    public void findUser(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        String name = "%" + pm.getMessage() + "%";
+        
+        try
+	{
+            String selectStmnt = "SELECT username, firstname, lastname" +
+                    " FROM user WHERE username LIKE ? OR "
+                    + "firstname LIKE ? OR lastname LIKE ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setString(1, name);
+            pst.setString(2, name);
+            pst.setString(3, name);
+	    
+            ResultSet rs = dbc.execSelect(pm, pst);
+            
+	    while (rs.next())
+	    {
+		break;
+	    }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
+    
+    public ProtocolMessage sendFriendRequest(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "INSERT INTO friendrequest (userid, friendid, timestamp) "
+                            + "VALUES(?, ?, ?)");
+            
+            pst.setLong(1, pm.getUserId());
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, System.currentTimeMillis());
+	
+            dbc.execInsert(pm, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
+    
+    public void unfriendUser(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String updateStmnt = "DELETE FROM isfriendwith " +
+                    "WHERE userid = ? AND friendid = ? OR userid = ? AND friendid = ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+	    
+            pst.setLong(1, pm.getUserId());
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, pm.getUserId());
+            pst.setLong(4, Long.parseLong(pm.getMessage()));
+	    
+            dbc.execDelete(pm, pst);
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
     }
 }
