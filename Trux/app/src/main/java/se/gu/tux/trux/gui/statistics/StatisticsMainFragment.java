@@ -33,6 +33,8 @@ public class StatisticsMainFragment extends Fragment
         // get the view
         View view = inflater.inflate(R.layout.fragment_statistics_main, container, false);
 
+        DataHandler.getInstance().cacheDetailedStats();
+
         // check if driving or not and add fragments
         if (isInDrivingMode())
         {
