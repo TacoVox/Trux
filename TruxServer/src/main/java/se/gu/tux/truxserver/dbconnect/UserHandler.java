@@ -404,18 +404,18 @@ public class UserHandler {
         
         try
 	{
-            String selectStmnt = "SELECT user.userid, username, firstname, lastname" +
-                    " FROM user, isfriendwith WHERE isfriendwith.userid = ? "
-                    + "AND isfriendwith.friendid != user.userid AND"
-                    + "username LIKE ? OR firstname LIKE ? OR lastname LIKE ? LIMIT 20";
+            String selectStmnt = "SELECT user.userid, username, firstname, lastname "
+                    + "FROM user, isfriendwith WHERE "
+                    + "(username LIKE ? OR firstname LIKE ? OR lastname LIKE ?) "
+                    + "AND isfriendwith.userid = ? AND isfriendwith.friendid != user.userid LIMIT 20";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, pm.getUserId());
+            pst.setString(1, name);
             pst.setString(2, name);
             pst.setString(3, name);
-            pst.setString(4, name);
+            pst.setLong(4, pm.getUserId());
 	    
             ResultSet rs = dbc.execSelect(pm, pst);
             
