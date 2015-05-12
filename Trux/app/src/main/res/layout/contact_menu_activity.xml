@@ -1,100 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:id="@+id/registerActivity"
-    tools:context="se.gu.tux.trux.gui.base.ContactMenuActivity"
+    tools:context="se.gu.tux.trux.gui.base.RegisterActivity"
     android:weightSum="8"
     android:padding="10dp"
     android:background="#E0E0E0">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:weightSum="3"
-        android:layout_weight="1">
-
-        <TextView
+        <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/contact_name"
-            android:textColor="#3D3D3D"
-            android:textStyle="bold"
-            android:id="@+id/contactName"
-            android:layout_weight="2"/>
+            android:orientation="vertical"
+            android:layout_height="fill_parent">
 
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/contactNameInput"
-            android:layout_weight="1"/>
-    </LinearLayout>
+            <TextView
+                android:id="@+id/TextViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contact_title"
+                android:textSize="10pt">
 
-  <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:weightSum="3"
-        android:layout_weight="1">
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/contact_email"
-            android:textColor="#3D3D3D"
-            android:textStyle="bold"
-            android:id="@+id/contactEmail"
-            android:layout_weight="2"/>
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/contacEmailInput"
-            android:layout_weight="1"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:weightSum="3"
-        android:layout_weight="1">
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/contact_subject"
-            android:textColor="#3D3D3D"
-            android:textStyle="bold"
-            android:id="@+id/contactSubject"
-            android:layout_weight="2"/>
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/contactSubjectInput"
-            android:layout_weight="1"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1">
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="@string/send_contact"
-            android:textColor="#E0E0E0"
-            android:background="@drawable/button_clickable_new"
-            android:id="@+id/sendContact"/>
-
-    </LinearLayout>
+                </TextView>
+            <EditText
+                android:id="@+id/EditTextName"
+                android:layout_height="wrap_content"
+                android:hint="@string/contact_name"
+                android:inputType="textPersonName"
+                android:layout_width="fill_parent">
+            </EditText>
+            <EditText
+                android:id="@+id/EditTextEmail"
+                android:layout_height="wrap_content"
+                android:hint="@string/contact_email"
+                android:inputType="textEmailAddress"
+                android:layout_width="fill_parent">
+            </EditText>
+        </LinearLayout>
+    </ScrollView>
 
 
-</LinearLayout>
+
