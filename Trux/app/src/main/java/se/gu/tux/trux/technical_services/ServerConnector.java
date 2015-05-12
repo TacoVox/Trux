@@ -6,10 +6,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Heartbeat;
+import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 
@@ -23,7 +28,8 @@ public class ServerConnector {
 
     private Thread transmitThread = null;
     private ConnectorRunnable connector = null;
-    private static LinkedBlockingDeque<Data> queue;
+    private LinkedBlockingDeque<Data> queue;
+    private ArrayList<Notification> notifications;
 
 
     /**
@@ -31,8 +37,8 @@ public class ServerConnector {
      */
     private static ServerConnector instance = null;
     private ServerConnector() { queue = new LinkedBlockingDeque<>(); }
-    public static ServerConnector getInstance()
-    {
+
+    public static ServerConnector getInstance() {
         if (instance == null) {
             synchronized (ServerConnector.class) {
                 // Yes, double check!
@@ -43,6 +49,7 @@ public class ServerConnector {
         }
         return instance;
     }
+
     public synchronized static ServerConnector gI()
     {
         return getInstance();
@@ -98,6 +105,15 @@ public class ServerConnector {
      * */
     public void removeFirst() { queue.removeFirst(); }
 
+    public void purgeHeartbeats() {
+        for (Iterator<Data> it = queue.iterator(); it.hasNext(); ) {
+            Data d = it.next();
+            if (d instanceof Heartbeat) {
+                it.remove();
+            }
+        }
+    }
+
 
     /**
      * Forwards a data query to the server and returns the reply.
@@ -123,6 +139,19 @@ public class ServerConnector {
 
     public Data answerTimestampedQuery(Data d) throws NotLoggedInException {
         return connector.sendQuery(d, -1);
+    }
+
+    public ArrayList<Notification> getNotifications() {
+        return notifications;
+    }
+
+    private void storeNotifications(Data d) {
+        if (d instanceof ArrayResponse && ((ArrayResponse)d).getArray() != null) {
+            Object[] newNfs = ((ArrayResponse)d).getArray();
+            for (int i = 0; i < newNfs.length; i++) {
+                notifications.add((Notification)newNfs[i]);
+            }
+        }
     }
 
     class ConnectorRunnable implements Runnable {
@@ -321,14 +350,12 @@ public class ServerConnector {
 
 
                     // Wait for queue to have objects
-                    System.out.println("Server connector: waiting  at queue... (" + sc.toString() + ")");
+                    //System.out.println("Server connector: waiting  at queue... (" + sc.toString() + ")");
                     d = queue.takeFirst();
 
-                    // Then STOP ANYTHING ELSE from using this object (most importantly
-                    // the in and out streams) while sending and receiving data
                     //System.out.println("Server connector: Found object in queue.");
                     if (d != null) {
-                        System.out.println("Server connector: Sending...");
+                        //System.out.println("Server connector: Sending...");
 
                         // Connect if not already connected.
                         // If we ever lose connection, try reconnecting at regular intervals
@@ -342,17 +369,20 @@ public class ServerConnector {
                             d.setSessionId(DataHandler.getInstance().getUser().getSessionId());
                             d.setUserId(DataHandler.getInstance().getUser().getUserId());
 
+                            // Then STOP ANYTHING ELSE from using this object (most importantly
+                            // the in and out streams) while sending and receiving data
                             // Send the data
+                            Data inD = null;
                             synchronized (this) {
                                 out.writeObject(d);
-                                Data inD = (Data) in.readObject();
+                                inD = (Data) in.readObject();
+                            }
 
-                                if (inD.getValue() == null) {
-                                    System.out.println("Server connector: Received data with null value");
-                                } else {
-                                    System.out.println("Server connector: Received data " + inD.getValue().toString());
-                                    System.out.println("returned values: " + inD.getSessionId() + " : " + inD.getUserId());
-                                }
+                            // If we sent a heartbeat object just now, put all the notifications
+                            // we get back into the notifications list
+                            if (d instanceof Heartbeat) {
+                                storeNotifications(inD);
+                                System.out.println("Heartbeat sent - response: " + d.getClass().getSimpleName());
                             }
 
                         } else {
