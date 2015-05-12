@@ -47,7 +47,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
     private Friend friend[];
     private Picture picture[];
     private double[] loc;
-    private LatLng latLng;
+    private LatLng[] latLng;
 
     private Timer t;
     private popFriends timer;
@@ -96,11 +96,14 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         Criteria criteria = new Criteria();
         String provider = locationManager.getBestProvider(criteria, true);
         Location mylocation = locationManager.getLastKnownLocation(provider);
-        double latitude = mylocation.getLatitude();
-        double longitude = mylocation.getLongitude();
-        LatLng latLng = new LatLng(latitude, longitude);
+        if(mylocation != null) {
+            double latitude = mylocation.getLatitude();
+            double longitude = mylocation.getLongitude();
+            LatLng latLng = new LatLng(latitude, longitude);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng (new LatLng(0, 0)));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -135,36 +138,37 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                                        catch(NotLoggedInException nLIE){
                                            System.out.println("NotLoggedInException: " + nLIE);
                                        }
-             //                          LatLng[] latLng =
-             //                          LatLng latLng = new LatLng(loc[0], loc[1]);
+                                       double[] loc = friend[j].getCurrentLoc().getLoc();
+                                       LatLng[] latLng = new LatLng[friend.length];
+                                       latLng[j] = new LatLng(loc[0], loc[1]);
                                    }
                                }
                            }
                            final Picture[] newPicture = picture;
                            final Friend[] newFriend = friend;
 
-                           final LatLng newLatLng = latLng;
+                           final LatLng[] newLatLng = latLng;
                            getActivity().runOnUiThread(new Runnable() {
                                @Override
                                public void run() {
                                    System.out.println("In the Run on UI Thread-----------");
                                    if(newPicture != null)
                                    for (int i = 0; i < newPicture.length; i++) {
-                                       final double[] newLoc = newFriend[i].getCurrentLoc().getLoc();
-                                    //   if(newLoc != null)
-                                       //newLatLng = LatLng(newLoc[0], newLoc[1]);
-                                       if (hasMarker) {
-                                           mMap.clear();
-                                           hasMarker = false;
-                                       } else if (newPicture != null && newPicture[i] != null) {
-                                           Bitmap bmp;
-                                           BitmapFactory.Options options = new BitmapFactory.Options();
-                                           bmp = BitmapFactory.decodeByteArray(newPicture[i].getImg(), 0,
-                                                   newPicture[i].getImg().length, options);
-                                           mMap.addMarker(new MarkerOptions().position(newLatLng).title(
-                                                   "Here is" + newFriend[i].getFirstname())
-                                                   .icon(BitmapDescriptorFactory.fromBitmap(bmp)));
-                                           hasMarker = true;
+                                       if(newLatLng != null) {
+                                           if (hasMarker) {
+                                               mMap.clear();
+                                               hasMarker = false;
+                                           } else if (newPicture != null && newPicture[i] != null) {
+                                               Bitmap bmp;
+                                               BitmapFactory.Options options = new BitmapFactory.Options();
+                                               bmp = BitmapFactory.decodeByteArray(newPicture[i].getImg(), 0,
+                                                       newPicture[i].getImg().length, options);
+                                               Bitmap reBmp = Bitmap.createScaledBitmap(bmp, 50, 50, false);
+                                               mMap.addMarker(new MarkerOptions().position(newLatLng[i]).title(
+                                                       "Here is" + newFriend[i].getFirstname())
+                                                       .icon(BitmapDescriptorFactory.fromBitmap(reBmp)));
+                                               hasMarker = true;
+                                           }
                                        }
                                    }
                                }
@@ -242,6 +246,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
     public void onStop(){
         super.onStop();
-        t.cancel();
+        if(t != null) {
+            t.cancel();
+        }
     }
 }
