@@ -194,7 +194,7 @@ public class UserHandler {
         
         try
 	{
-            String selectStmnt = "SELECT userid, firstname, lastname" +
+            String selectStmnt = "SELECT userid, firstname, lastname, email" +
                     " FROM user WHERE userid = ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
@@ -212,6 +212,7 @@ public class UserHandler {
                 u.setUserId(rs.getLong("userid"));
                 u.setFirstName(rs.getString("firstname"));
                 u.setLastName(rs.getString("lastname"));
+                u.setEmail(rs.getString("email"));
                 
 		break;
 	    }
@@ -380,7 +381,7 @@ public class UserHandler {
 	{
             String selectStmnt = "SELECT userid, username, firstname, lastname" +
                     " FROM user WHERE username LIKE ? OR "
-                    + "firstname LIKE ? OR lastname LIKE ?";
+                    + "firstname LIKE ? OR lastname LIKE ? LIMIT 20";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
@@ -397,6 +398,8 @@ public class UserHandler {
                 f.setUsername(rs.getString("username"));
                 f.setUsername(rs.getString("firstname"));
                 f.setUsername(rs.getString("lastname"));
+                
+                f.setProfilePicId(PictureHandler.gI().getProfilePictureID(f));
                 
                 users.add(f);
 	    }
