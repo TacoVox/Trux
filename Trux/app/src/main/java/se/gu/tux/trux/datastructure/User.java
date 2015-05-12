@@ -19,8 +19,7 @@ public class User extends Data
     private String email;
     private boolean stayLoggedIn;
     private long[] friends;
-    private long profilePic;
-
+    private long profilePicId;
 
 	public boolean passwordMatch(String hash) {
 		return hash.equals(passwordHash);
@@ -98,11 +97,11 @@ public class User extends Data
         this.friends = friends;
     }
 
-    public long getProfilePic() {
-        return profilePic;
+    public long getProfilePicId() {
+        return profilePicId;
     }
 
-    public void setProfilePic(long profilePic) {
-        this.profilePic = profilePic;
+    public void setProfilePicId(long profilePic) {
+        this.profilePicId = profilePic;
     }
 }

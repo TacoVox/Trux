@@ -1,6 +1,7 @@
 package se.gu.tux.trux.technical_services;
 
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Heartbeat;
 
 /**
  * Created by jerker on 2015-04-01.
@@ -70,6 +71,8 @@ public class DataPoller {
             RealTimeDataHandler rtdh = new RealTimeDataHandler();
 
             while (isRunning) {
+                // Main loop - every POLL_INTERVAL seconds, pull data from AGA and also provide a
+                // heartbeat to the server
                 try {
                     // Make sure the queue doesn't grow to big by removing some things
                     // if it's really big
@@ -78,40 +81,22 @@ public class DataPoller {
                     // Get the current metric data from RTDH.
                     Data[] metrics = rtdh.getCurrentMetrics();
 
-                    if (hasValues(metrics)) {
-
-                        // Compare with latest received metrics - yes, we compare the whole array
-                        // (We only transmit if some value has changed, otherwise there may be a
-                        // problem with aga connection + the information is just redundant)
-                        boolean send = false;
-                        if (lastMetrics == null) {
-                            // Nothing previously known
-                            send = true;
-                        } else {
-                            // Loop through and see if there is a difference
-                            for (int i = 0; i < metrics.length; i++) {
-                                // Compare with last sent
-
-                                if (metrics[i] != null && metrics[i].getValue() != null &&
-                                        !metrics[i].equals(lastMetrics[i])) {
-                                    // Difference detected
-                                    send = true;
-                                }
-                            }
-                        }
+                    if (hasValues(metrics) && metricsChanged(metrics)) {
 
                         // Send and update the lastMetrics array
-                        if (send) {
-                            for (Data thisMetric : metrics) {
-                                // Adding another null check just if some value happens to be missing
-                                // from AGA input
-                                if (thisMetric.getValue() != null) {
-                                    ServerConnector.gI().send(thisMetric);
-                                }
+                        for (Data thisMetric : metrics) {
+                            // Adding another null check just if some value happens to be missing
+                            // from AGA input
+                            if (thisMetric.getValue() != null) {
+                                ServerConnector.gI().send(thisMetric);
                             }
-                            lastMetrics = metrics;
                         }
+                        lastMetrics = metrics;
                     }
+
+                    // Also provide a heartbeat object - this keeps connection alive regardless
+                    // of connection to AGA and makes sure server can send back notifications
+                    ServerConnector.gI().send(new Heartbeat());
 
                     // Wait POLL_INTERVAL seconds before continuing.
                     Thread.sleep(1000 * POLL_INTERVAL);
@@ -125,6 +110,29 @@ public class DataPoller {
     }
 
 
+    private boolean metricsChanged(Data[] metrics) {
+        // Compare with latest received metrics - yes, we compare the whole array
+        // (We only transmit if some value has changed, otherwise there may be a
+        // problem with aga connection + the information is just redundant)
+        boolean send = false;
+        if (lastMetrics == null) {
+            // Nothing previously known
+            send = true;
+        } else {
+            // Loop through and see if there is a difference
+            for (int i = 0; i < metrics.length; i++) {
+                // Compare with last sent
+
+                if (metrics[i] != null && metrics[i].getValue() != null &&
+                        !metrics[i].equals(lastMetrics[i])) {
+                    // Difference detected
+                    send = true;
+                }
+            }
+        }
+        return send;
+    }
+
     /**
      * If we loose connection to the server but still get values continously, the queue may grow
      * unreasonably big. Here we make sure to thin out the data in that case.
@@ -136,5 +144,10 @@ public class DataPoller {
                 ServerConnector.gI().removeFirst();
             }
         }
+
+        // ALSO, if there are any unsent heartbeat messages, remove them since only the latest
+        // heartbeat object needs to be sent - and that one will be appended to the queue after
+        // running this cleaning method
+        ServerConnector.gI().purgeHeartbeats();
     }
 }
