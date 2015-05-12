@@ -17,6 +17,8 @@ package se.gu.tux.truxserver;
 
 import se.gu.tux.trux.datastructure.Heartbeat;
 import se.gu.tux.trux.datastructure.Notification;
+import se.gu.tux.truxserver.dbconnect.FriendshipHandler;
+import se.gu.tux.truxserver.dbconnect.MessageHandler;
 import se.gu.tux.truxserver.dbconnect.SessionHandler;
 
 /**
@@ -48,7 +50,11 @@ public class HeartbeatHandler {
     public Notification handleHB(Heartbeat hb) {
         SessionHandler.gI().updateActive(hb);
         
+        Notification n = new Notification();
         
-        return null;
+        n.setNewFriends(FriendshipHandler.gI().hasNewRequests(hb));
+        n.setNewMessages(MessageHandler.gI().hasNewMessage(hb));
+        
+        return n;
     }
 }
