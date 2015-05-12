@@ -80,13 +80,14 @@ public class SessionHandler {
         try
 	{
             String updateStmnt = "UPDATE session SET lastactive = ? " +
-                    "WHERE userid = ? AND ISNULL(endtime)";
+                    "WHERE userid = ? AND sessionid = ? AND ISNULL(endtime)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
 	    
             pst.setLong(1, System.currentTimeMillis());
             pst.setLong(2, d.getUserId());
+            pst.setLong(3, d.getSessionId());
             
             dbc.execUpdate(d, pst);
 	}
