@@ -15,8 +15,8 @@
  */
 package se.gu.tux.truxserver;
 
-import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Heartbeat;
+import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.truxserver.dbconnect.SessionHandler;
 
 /**
@@ -45,10 +45,10 @@ public class HeartbeatHandler {
      */
     private HeartbeatHandler() {}
     
-    public ArrayResponse handleHB(Heartbeat hb) {
+    public Notification handleHB(Heartbeat hb) {
         SessionHandler.gI().updateActive(hb);
         
         
-        return new ArrayResponse(null);
+        return null;
     }
 }
