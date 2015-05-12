@@ -18,6 +18,7 @@ package se.gu.tux.truxserver.dbconnect;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import se.gu.tux.trux.datastructure.Data;
 
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
@@ -72,7 +73,7 @@ public class SessionHandler {
      * 
      * @param u the user which session shall be updated
      */
-    public void updateActive(User u)
+    public void updateActive(Data d)
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
@@ -85,9 +86,9 @@ public class SessionHandler {
                     updateStmnt);
 	    
             pst.setLong(1, System.currentTimeMillis());
-            pst.setLong(2, u.getUserId());
+            pst.setLong(2, d.getUserId());
             
-            dbc.execUpdate(u, pst);
+            dbc.execUpdate(d, pst);
 	}
 	catch (Exception e)
 	{
