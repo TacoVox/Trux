@@ -21,6 +21,7 @@ package se.gu.tux.trux.datastructure;
  */
 public class Friend extends Data {
     private long userid;
+    private long friendid;
     private long profilePic;
     
     private String username;
@@ -89,6 +90,15 @@ public class Friend extends Data {
 
     public void setCurrentLoc(Location currentLoc) {
         this.currentLoc = currentLoc;
+    }
+
+
+    public long getFriendid() {
+        return friendid;
+    }
+
+    public void setFriendid(long friendid) {
+        this.friendid = friendid;
     }
 
     @Override
