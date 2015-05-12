@@ -16,7 +16,10 @@
 package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.truxserver.config.Config;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -98,6 +101,37 @@ public class FriendshipHandler {
 	    Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
+    
+    public boolean hasNewRequests(Data d) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String updateStmnt = "SELECT * FROM friendrequest WHERE friendid = ? AND seen = FALSE";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+	    
+            pst.setLong(1, d.getUserId());
+	    
+	    ResultSet rs = dbc.execSelect(d, pst);
+            
+            while(rs.next()) {
+                return true;
+            }
+            
+            return false;
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+            
+            return false;
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
