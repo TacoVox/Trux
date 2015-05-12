@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
+import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
@@ -480,7 +481,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
             try
             {
-                image = (Picture) ServerConnector.getInstance().answerQuery(new Picture(0));
+                image = DataHandler.getInstance().getPicture(DataHandler.getInstance().getUser().getProfilePicId());
             }
             catch (NotLoggedInException e)
             {
