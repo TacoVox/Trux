@@ -46,16 +46,15 @@ public class UserSwitcher {
     private UserSwitcher() {}
     
     protected Data handleUser(Data ud) {
-        if(ud instanceof User) {
-            if(ud.getSessionId() == User.LOGIN_REQUEST)
-                return UserHandler.gI().login((User)ud);
-            else if(ud.getSessionId() == User.REGISTER_REQUEST)
-                return UserHandler.gI().register((User)ud);
-            else
-                return UserHandler.gI().getUser((User)ud);
-        } else if (ud instanceof Friend) {
+        if(ud instanceof User && ud.getSessionId() == User.LOGIN_REQUEST)
+            return UserHandler.gI().login((User)ud);
+        else if(ud instanceof User && ud.getSessionId() == User.REGISTER_REQUEST)
+            return UserHandler.gI().register((User)ud);
+        else if(ud instanceof User)
+            return UserHandler.gI().getUser((User)ud);
+        else if (ud instanceof Friend)
             return UserHandler.gI().getFriend((Friend)ud);
-        } else
+        else
             return null;
     }
 }
