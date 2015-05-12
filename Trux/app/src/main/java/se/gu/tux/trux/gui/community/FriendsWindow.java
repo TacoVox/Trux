@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Picture;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
@@ -95,12 +97,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 try {
                     System.out.println("Fetching friends...");
                     friends = DataHandler.getInstance().getFriends();
-                    pictures = new Picture[friends.length];
-                    for (int i = 0; i < pictures.length; i++) {
-                        System.out.println("Fetching image " + friends[i].getProfilePicId() + " for friend " +
-                                friends[i].getFirstname());
-                        pictures[i] = DataHandler.getInstance().getPicture(friends[i].getProfilePicId());
-                    }
+                    pictures = getPicturesFor(friends);
                     System.out.println("Done.");
 
                 } catch (NotLoggedInException e) {
@@ -163,18 +160,25 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             protected Object doInBackground(Object[] objects) {
                 // Load friend list
                 Friend[] friends = null;
-                Friend[] people = null;
+                Object[] people = null;
+
                 Picture[] pictures = null;
                 try {
-                    System.out.println("Fetching friends...");
+                    System.out.println("Fetching friends and people from search...");
+
+                    // Fetch friends and see which are matching
                     friends = matchFriendSearch(DataHandler.getInstance().getFriends(), needle);
-                    //people =
-                    pictures = new Picture[friends.length];
-                    for (int i = 0; i < pictures.length; i++) {
-                        System.out.println("Fetching image " + friends[i].getProfilePicId() + " for friend " +
-                                friends[i].getFirstname());
-                        pictures[i] = DataHandler.getInstance().getPicture(friends[i].getProfilePicId());
+
+                    // Fetch other people
+                    ArrayResponse ar = (ArrayResponse)DataHandler.getInstance().getData(
+                            new ProtocolMessage(ProtocolMessage.Type.PEOPLE_SEARCH, needle));
+                    if (ar.getArray() != null) {
+                        people = ar.getArray();
                     }
+
+                    // Join friends and people
+                    friends = appendFriendObjects(friends, people);
+                    pictures = getPicturesFor(friends);
 
                     System.out.println("Done.");
 
@@ -199,7 +203,40 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         }.execute();
     }
 
+    /**
+     * Appends the second array to the first - also does casting simultaneously
+     * @param firstArray
+     * @param secondArray
+     * @return
+     */
+    private Friend[] appendFriendObjects(Friend[] firstArray, Object[] secondArray) {
+        Friend[] sumArray = null;
+        if (secondArray == null) {
+            return firstArray;
+        } else {
+            sumArray = new Friend[firstArray.length + secondArray.length];
+            int i = 0;
+            for (i = 0; i < firstArray.length; i++) {
+                sumArray[i] = firstArray[i];
+            } // Note i is reused
+            for (; i < firstArray.length + secondArray.length; i++) {
+                sumArray[i] = (Friend)secondArray[i - firstArray.length];
+            }
+        }
+        return sumArray;
+    }
 
+    private Picture[] getPicturesFor(Friend[] friends) throws NotLoggedInException {
+        Picture[] pictures = new Picture[friends.length];
+        for (int i = 0; i < pictures.length; i++) {
+            System.out.println("Fetching image " + friends[i].getProfilePicId() + " for friend " +
+                    friends[i].getFirstname());
+            if (friends[i].getProfilePicId() != -1) {
+                pictures[i] = DataHandler.getInstance().getPicture(friends[i].getProfilePicId());
+            }
+        }
+        return pictures;
+    }
 
     class FriendAdapter extends BaseAdapter {
 
@@ -263,13 +300,17 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
 
             text.setText(friends[position].getFirstname() + " " + friends[position].getLastname());
-            if (pictures != null && pictures[position] != null) {
+            if (pictures != null && pictures[position] != null &&
+                    pictures[position].getImg() != null) {
                 Bitmap bmp;
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inMutable = true;
                 bmp = BitmapFactory.decodeByteArray(pictures[position].getImg(), 0,
                         pictures[position].getImg().length, options);
                 image.setImageBitmap(bmp);
+            } else {
+                // Reset the image - note here we should use a default picture probably
+                image.setImageBitmap(null);
             }
             return view;
         }

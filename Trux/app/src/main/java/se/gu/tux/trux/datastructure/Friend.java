@@ -23,7 +23,8 @@ public class Friend extends Data {
 
     private long friendId;
     private long profilePicId;
-    
+    private boolean isFriend;
+
     private String username;
     private String firstname;
     private String lastname;
@@ -105,5 +106,13 @@ public class Friend extends Data {
 
     public void setProfilePicId(long profilePic) {
         this.profilePicId = profilePic;
+    }
+
+    public boolean isFriend() {
+        return isFriend;
+    }
+
+    public void setFriend(boolean isFriend) {
+        this.isFriend = isFriend;
     }
 }

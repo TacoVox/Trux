@@ -21,13 +21,20 @@ public class DataPoller {
 
     private DataPoller() {}
 
-    public synchronized static DataPoller getInstance()
+    public static DataPoller getInstance()
     {
-        if (instance == null) {
-            instance = new DataPoller();
+        // Double checked locking
+        if (instance == null)
+        {
+            synchronized (DataPoller.class) {
+                if (instance == null) {
+                    instance = new DataPoller();
+                }
+            }
+
         }
         return instance;
-    }
+    } // end getInstance()
 
     public synchronized static DataPoller gI()
     {
@@ -35,10 +42,11 @@ public class DataPoller {
     }
 
     public void start() {
-        pr = new PollRunnable();
-        t = new Thread(pr);
-        t.start();
-
+        if (pr == null) {
+            pr = new PollRunnable();
+            t = new Thread(pr);
+            t.start();
+        }
     }
 
     public void stop() {
@@ -100,6 +108,7 @@ public class DataPoller {
 
                     // Wait POLL_INTERVAL seconds before continuing.
                     Thread.sleep(1000 * POLL_INTERVAL);
+                    System.out.println("DataPoller: " + this.toString());
 
                 } catch (InterruptedException e) {
                     // Interrupted - exit thread
