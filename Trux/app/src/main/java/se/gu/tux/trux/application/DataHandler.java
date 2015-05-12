@@ -270,7 +270,7 @@ public class DataHandler
             // Let this thread sleep for a slight while just to make other threads able to
             // use the ServerConnector inbetween - since this is background prefetching
             try {
-                Thread.sleep(200);
+                Thread.sleep(20);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

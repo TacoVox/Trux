@@ -22,15 +22,47 @@ import tux.gu.se.trux.R;
 /**
  * Created by ivryashkov on 2015-05-05.
  */
-public class StatisticsSimpleFragment extends Fragment implements View.OnClickListener
+public class StatisticsSimpleFragment extends Fragment
 {
     private TextView currentSpeed;
     private TextView currentFuel;
     private TextView currentDistance;
     private Timer t;
 
-    TimerTask timer;
+    private TimerTask timer;
 
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState)
+    {
+        View view = inflater.inflate(R.layout.fragment_statistics_simple, container, false);
+
+        currentSpeed = (TextView) view.findViewById(R.id.currentSpeed);
+        currentFuel = (TextView) view.findViewById(R.id.currentFuel);
+        currentDistance = (TextView) view.findViewById(R.id.currentDistance);
+
+        t = new Timer();
+        timer = new myTask();
+        t.schedule(timer, 0, 1000);
+
+        return view;
+    }
+
+
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        t.cancel();
+    }
+
+
+    /**
+     * Private class to post current collectable data to screen.
+     */
     class myTask extends TimerTask {
         public void run() {
             try {
@@ -67,41 +99,5 @@ public class StatisticsSimpleFragment extends Fragment implements View.OnClickLi
             }
         }
     }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
-    {
-        View view = inflater.inflate(R.layout.fragment_statistics_simple, container, false);
-
-        // get the components
-        Button statsButton = (Button) view.findViewById(R.id.fm_i_statistics_detailed_button);
-
-        statsButton.setOnClickListener(this);
-
-        currentSpeed = (TextView) view.findViewById(R.id.currentSpeed);
-        currentFuel = (TextView) view.findViewById(R.id.currentFuel);
-        currentDistance = (TextView) view.findViewById(R.id.currentDistance);
-
-        t = new Timer();
-        timer = new myTask();
-        t.schedule(timer , 0 , 1000);
-
-        return view;
-    }
-
-
-    @Override
-    public void onClick(View view)
-    {
-        ( (HomeActivity) getActivity() ).onFragmentViewClick(view.getId());
-    }
-
-
-    public void onStop(){
-        super.onStop();
-        t.cancel();
-    }
-
 
 } // end class
