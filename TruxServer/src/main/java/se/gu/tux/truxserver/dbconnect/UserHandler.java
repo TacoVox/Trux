@@ -239,7 +239,7 @@ public class UserHandler {
             
             u.setFriends(ready);
             
-            u.setProfilePic(PictureHandler.gI().getProfilePictureID(u.getUserId()));
+            u.setProfilePicId(PictureHandler.gI().getProfilePictureID(u));
             
             return u;
 	}
@@ -323,7 +323,7 @@ public class UserHandler {
     public Data getFriend(Friend f)
     {
         Location loc = new Location();
-        loc.setUserId(f.getUserid());
+        loc.setUserId(f.getFriendId());
         
         f.setCurrentLoc((Location)MetricReceiver.gI().getMetric(loc));
         
@@ -337,7 +337,7 @@ public class UserHandler {
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, f.getUserid());
+            pst.setLong(1, f.getFriendId());
 	    
             ResultSet rs = pst.executeQuery();
 	    
@@ -353,7 +353,7 @@ public class UserHandler {
 		break;
 	    }
             
-            f.setProfilePic(PictureHandler.gI().getProfilePictureID(f.getUserid()));
+            f.setProfilePicId(PictureHandler.gI().getProfilePictureID(f));
             
             return f;
 	}
