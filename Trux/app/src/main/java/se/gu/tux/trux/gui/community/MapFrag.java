@@ -135,6 +135,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                                        catch(NotLoggedInException nLIE){
                                            System.out.println("NotLoggedInException: " + nLIE);
                                        }
+             //                          LatLng[] latLng =
+             //                          LatLng latLng = new LatLng(loc[0], loc[1]);
                                    }
                                }
                            }
@@ -149,7 +151,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                                    if(newPicture != null)
                                    for (int i = 0; i < newPicture.length; i++) {
                                        final double[] newLoc = newFriend[i].getCurrentLoc().getLoc();
-                                       latLng = new LatLng(newLoc[0], newLoc[1]);
+                                    //   if(newLoc != null)
+                                       //newLatLng = LatLng(newLoc[0], newLoc[1]);
                                        if (hasMarker) {
                                            mMap.clear();
                                            hasMarker = false;
