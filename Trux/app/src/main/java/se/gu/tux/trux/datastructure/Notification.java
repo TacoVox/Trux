@@ -3,16 +3,38 @@ package se.gu.tux.trux.datastructure;
 /**
  * Created by jerker on 2015-05-11.
  */
-public class Notification {
+public class Notification extends Data {
+    private boolean newMessages;
+    private boolean newFriends;
 
-    public enum Type {NEW_MESSAGE, FRIEND_REQUEST};
-    private Type type;
-    private String message;
-
-
-    public Notification(String message, Type type) {
-        this.message = message;
-        this.type = type;
+    @Override
+    public Object getValue() {
+        return null;
     }
 
+    @Override
+    public void setValue(Object value) {
+
+    }
+
+    @Override
+    public boolean isOnServerSide() {
+        return true;
+    }
+
+    public boolean isNewMessages() {
+        return newMessages;
+    }
+
+    public void setNewMessages(boolean newMessages) {
+        this.newMessages = newMessages;
+    }
+
+    public boolean isNewFriends() {
+        return newFriends;
+    }
+
+    public void setNewFriends(boolean newFriends) {
+        this.newFriends = newFriends;
+    }
 }
