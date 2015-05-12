@@ -159,7 +159,7 @@ public class DBConnector
         finalpst.setLong(1, d.getSessionId());
         finalpst.setLong(2, d.getUserId());
         
-        Logger.gI().addDebug(finalpst.toString());
+        //Logger.gI().addDebug(finalpst.toString());
 
         return pst.executeQuery();
     }
@@ -204,6 +204,36 @@ public class DBConnector
     protected void execUpdate(Data d, PreparedStatement pst) throws SQLException
     {
         String pststring = pst.toString().substring(pst.toString().indexOf("UPDATE"), pst.toString().length());
+        
+        PreparedStatement finalpst = this.connection.prepareStatement(
+            getAdvSessionCheck(pststring));
+        
+        finalpst.setLong(1, d.getSessionId());
+        finalpst.setLong(2, d.getUserId());
+        
+        //Logger.gI().addDebug(finalpst.toString());
+        
+        pst.executeUpdate();
+    }
+    
+    protected void execReplace(Data d, PreparedStatement pst) throws SQLException
+    {
+        String pststring = pst.toString().substring(pst.toString().indexOf("REPLACE"), pst.toString().length());
+        
+        PreparedStatement finalpst = this.connection.prepareStatement(
+            getAdvSessionCheck(pststring));
+        
+        finalpst.setLong(1, d.getSessionId());
+        finalpst.setLong(2, d.getUserId());
+        
+        //Logger.gI().addDebug(finalpst.toString());
+        
+        pst.executeUpdate();
+    }
+    
+    protected void execDelete(Data d, PreparedStatement pst) throws SQLException
+    {
+        String pststring = pst.toString().substring(pst.toString().indexOf("DELETE"), pst.toString().length());
         
         PreparedStatement finalpst = this.connection.prepareStatement(
             getAdvSessionCheck(pststring));

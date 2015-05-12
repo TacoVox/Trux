@@ -20,9 +20,11 @@ package se.gu.tux.truxserver.dbconnect;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import se.gu.tux.trux.datastructure.Data;
 
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.truxserver.logger.Logger;
 /**
  *
@@ -87,7 +89,7 @@ public class PictureHandler {
             pst.setLong(1, pic.getUserId());
             pst.setLong(2, pic.getPictureid());
             
-            ResultSet keys = dbc.execInsert(pic, pst);
+            dbc.execReplace(pic, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         } catch (Exception e) {
@@ -105,13 +107,12 @@ public class PictureHandler {
         
         try
 	{
-            String selectStmnt = "SELECT path FROM picture, profilepicture" +
-                    " WHERE picture.pictureid = profilepicture.pictureid "
-                    + "AND profilepicture.userid = ?";
+            String selectStmnt = "SELECT path FROM picture" +
+                    " WHERE pictureid = ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(selectStmnt);
             
-            pst.setLong(1, p.getUserId());
+            pst.setLong(1, p.getPictureid());
             
             ResultSet rs = dbc.execSelect(p, pst);
             
@@ -119,8 +120,37 @@ public class PictureHandler {
 		return rs.getString("path");
         } catch (SQLException e) {
             Logger.gI().addError(e.getLocalizedMessage());
+        } 
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
         }
         
         return null;
+    }
+    
+    public long getProfilePictureID(long userid) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "SELECT pictureid FROM profilepicture" +
+                    " WHERE userid = ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(selectStmnt);
+            
+            pst.setLong(1, userid);
+            
+            ResultSet rs = pst.executeQuery();
+            
+	    while (rs.next())
+		return rs.getLong("pictureid");
+        } catch (SQLException e) {
+            Logger.gI().addError(e.getLocalizedMessage());
+        } 
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+        return -1;
     }
 }

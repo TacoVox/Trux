@@ -88,15 +88,15 @@ public class ServerRunnable implements Runnable {
                     return;
                 }
 
-                // Debugging output
-                if (d.getValue() != null) {
-                    Logger.gI().addDebug(d.getValue().toString());
-                    if (d instanceof MetricData) {
-                        Logger.gI().addDebug("TS: " + Long.toString(d.getTimeStamp()));
-                    }
-                } else {
-                    Logger.gI().addDebug(connectionId + ": Received object with null value from " + cs.getInetAddress());
-                }
+//                // Debugging output
+//                if (d.getValue() != null) {
+//                    Logger.gI().addDebug(d.getValue().toString());
+//                    if (d instanceof MetricData) {
+//                        Logger.gI().addDebug("TS: " + Long.toString(d.getTimeStamp()));
+//                    }
+//                } else {
+//                    Logger.gI().addDebug(connectionId + ": Received object with null value from " + cs.getInetAddress());
+//                }
 
                 // Send data to DataSwitcher
                 d = DataSwitcher.gI().handleData(d);
