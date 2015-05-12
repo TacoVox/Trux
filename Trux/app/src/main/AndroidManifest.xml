@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -30,7 +31,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBv3nH-BWgACV12HegQ_SIC41Bjppiyykc" />
+            android:value="AIzaSyDwpW3xvLq2xKwTjM_a8OtZWf1DYOpM-VU" />
 
 
         <!-- ACTIVITIES -->
@@ -105,11 +106,6 @@
             android:label="@string/title_activity_overall_stats">
         </activity>
 
-        <activity
-            android:name="se.gu.tux.trux.gui.community.FragmentPageAdapterCommunity"
-            android:label="@string/title_activity_fragment_page_adapter_community" >
-        </activity>
-        <!---->
 
         <activity
             android:name="se.gu.tux.trux.gui.community.Community_main"
