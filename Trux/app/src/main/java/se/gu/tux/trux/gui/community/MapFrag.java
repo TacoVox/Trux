@@ -138,9 +138,11 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                                        catch(NotLoggedInException nLIE){
                                            System.out.println("NotLoggedInException: " + nLIE);
                                        }
-                                       double[] loc = friend[j].getCurrentLoc().getLoc();
-                                       LatLng[] latLng = new LatLng[friend.length];
-                                       latLng[j] = new LatLng(loc[0], loc[1]);
+                                       if(friend[j].getCurrentLoc().getLoc() != null) {
+                                           double[] loc = friend[j].getCurrentLoc().getLoc();
+                                           LatLng[] latLng = new LatLng[friend.length];
+                                           latLng[j] = new LatLng(loc[0], loc[1]);
+                                       }
                                    }
                                }
                            }
@@ -164,7 +166,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                                                bmp = BitmapFactory.decodeByteArray(newPicture[i].getImg(), 0,
                                                        newPicture[i].getImg().length, options);
                                                Bitmap reBmp = Bitmap.createScaledBitmap(bmp, 50, 50, false);
-                                               mMap.addMarker(new MarkerOptions().position(newLatLng[i]).title(
+                                               mMap.addMarker(new MarkerOptions().position(new LatLng(46.6872, 11.7564)).title(
                                                        "Here is" + newFriend[i].getFirstname())
                                                        .icon(BitmapDescriptorFactory.fromBitmap(reBmp)));
                                                hasMarker = true;
