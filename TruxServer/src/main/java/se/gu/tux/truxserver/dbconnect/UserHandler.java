@@ -120,8 +120,10 @@ public class UserHandler {
             
             return pm;
         }
-        else
+        else {
+            failedLogin(u.getUserId());
             return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
+        }
     }
     
     /**
@@ -177,8 +179,31 @@ public class UserHandler {
             
             return m;
         }
-        else
+        else {
+            failedLogin(userid);
             return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
+        }
+    }
+    
+    private void failedLogin(long userid) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "INSERT INTO loginattempts (userid, timestamp) VALUES(?, ?)");
+            
+            pst.setLong(1, userid);
+	
+            pst.executeUpdate();
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
     }
     
     /**
