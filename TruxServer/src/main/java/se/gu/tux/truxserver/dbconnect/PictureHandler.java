@@ -146,7 +146,7 @@ public class PictureHandler {
                 pst.setLong(1, f.getFriendId());
             }
             
-            ResultSet rs = pst.executeQuery();
+            ResultSet rs = dbc.execSelect(d, pst);
             
 	    while (rs.next())
 		return rs.getLong("pictureid");
