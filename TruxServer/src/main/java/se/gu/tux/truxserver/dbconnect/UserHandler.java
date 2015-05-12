@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import se.gu.tux.trux.datastructure.ArrayResponse;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
@@ -368,14 +369,16 @@ public class UserHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Something went wrong while fetching information for your friend - plase contact Jerker");
     }
     
-    public void findUser(ProtocolMessage pm) {
+    public Data findUsers(ProtocolMessage pm) {
         DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        List users = new ArrayList<Friend>();
         
         String name = "%" + pm.getMessage() + "%";
         
         try
 	{
-            String selectStmnt = "SELECT username, firstname, lastname" +
+            String selectStmnt = "SELECT userid, username, firstname, lastname" +
                     " FROM user WHERE username LIKE ? OR "
                     + "firstname LIKE ? OR lastname LIKE ?";
             
@@ -390,12 +393,21 @@ public class UserHandler {
             
 	    while (rs.next())
 	    {
-		break;
+                Friend f = new Friend(rs.getLong("userid"));
+                f.setUsername(rs.getString("username"));
+                f.setUsername(rs.getString("firstname"));
+                f.setUsername(rs.getString("lastname"));
+                
+                users.add(f);
 	    }
+            
+            return new ArrayResponse(users.toArray());
 	}
 	catch (Exception e)
 	{
 	    Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
