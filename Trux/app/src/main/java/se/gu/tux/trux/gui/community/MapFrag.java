@@ -126,11 +126,11 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                                 @Override
                                 public void run() {
                                     for(int i = 0; i < friend.length; i++){
-                                        double temp = friend[i].getUserid();
+                                        double temp = friend[i].getFriendId();
                                         for(int j = 0; j < friend.length; j++){
-                                            if(temp == friend[j].getUserid()){
+                                            if(temp == friend[j].getFriendId()){
                                                 try{
-                                                    picture[j] = DataHandler.getInstance().getPicture(friend[j].getProfilePic());
+                                                    picture[j] = DataHandler.getInstance().getPicture(friend[j].getProfilePicId());
                                                 }
                                                 catch (NotLoggedInException nLIE){
                                                     System.out.println("NotLoggedInException: " + nLIE.getMessage());

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
+import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
@@ -103,7 +104,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         eEmail = (EditText) findViewById(R.id.profile_email);
 
         // set enabled option to edit texts
-        eUsername.setEnabled(false);
         eFirstName.setEnabled(false);
         eLastName.setEnabled(false);
         eEmail.setEnabled(false);
@@ -130,7 +130,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         // call super
         super.onStop();
         // disable edit texts
-        eUsername.setEnabled(false);
         eFirstName.setEnabled(false);
         eLastName.setEnabled(false);
         eEmail.setEnabled(false);
@@ -148,11 +147,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         if (id == uploadPic.getId())
         {
             selectPicture(SELECT_IMAGE);
-        }
-        else if (id == editUsername.getId())
-        {
-            eUsername.setEnabled(true);
-            eUsername.requestFocus();
             isEdited = true;
         }
         else if (id == editFirstName.getId())
@@ -175,14 +169,13 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         }
         else if (id == saveChanges.getId())
         {
-            /*
+
             if (isEdited)
             {
                 if (checkValues())  { saveChanges(); }
                 else                { showToast("Please check values and try again");}
             }
             else { showToast("No changes made"); }
-            */
         }
         else if (id == cancel.getId())
         {
@@ -211,8 +204,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 // set profile picture in profile page
                 imageView.setImageBitmap(bitmap);
-                // send picture to server
-                uploadPicture(bitmap);
             }
             catch (IOException e)
             {
@@ -277,16 +268,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     {
         boolean isValid = true;
 
-        // check username
-        sUsername = eUsername.getText().toString();
-        if (sUsername.isEmpty() || sUsername.length() < 3)
-        {
-            showToast("Username must be at least 3 characters long.");
-            eUsername.setBackground(new ColorDrawable(Color.RED));
-            eUsername.requestFocus();
-            isValid = false;
-        }
-
         // check first name
         sFirstName = eFirstName.getText().toString();
         if (sFirstName.isEmpty())
@@ -330,7 +311,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     /**
      * Helper method. Saves the changes to the user profile.
      */
-/*    private void saveChanges()
+    private void saveChanges()
     {
         // user object to send to server
         User user = new User();
@@ -342,12 +323,38 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         user.setPasswordHash(DataHandler.getInstance().getUser().getPasswordHash());
 
         // set fields
-        user.setUsername(sUsername);
         user.setFirstName(sFirstName);
         user.setLastName(sLastName);
         user.setEmail(sEmail);
-    }
-*/
+        user.setRequestProfileChange(true);
+
+        // set the user back to DataHandler
+        DataHandler.getInstance().setUser(user);
+
+        boolean picIsUploaded = uploadPicture(bitmap);
+
+        if (picIsUploaded)
+        {
+            showToast("Picture uploaded");
+
+            boolean saveChanges = false;
+
+            AsyncTask<User, Void, Boolean> saveTask = new SaveChangesTask().execute(user);
+
+            try
+            {
+                saveChanges = saveTask.get();
+            }
+            catch (InterruptedException | ExecutionException e)
+            {
+                e.printStackTrace();
+            }
+
+            if (saveChanges) { showToast("Profile changes saved"); }
+        }
+
+    } // end saveChanges()
+
 
 
     /**
@@ -455,7 +462,23 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         @Override
         protected Boolean doInBackground(User... users)
         {
-            return null;
+            ProtocolMessage response = null;
+
+            try
+            {
+                response = (ProtocolMessage) ServerConnector.getInstance().answerQuery(users[0]);
+            }
+            catch (NotLoggedInException e)
+            {
+                e.printStackTrace();
+            }
+
+            if (response != null && response.getType() == ProtocolMessage.Type.SUCCESS)
+            {
+                return true;
+            }
+
+            return false;
         }
 
     } // end inner class
@@ -480,7 +503,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
             try
             {
-                image = (Picture) ServerConnector.getInstance().answerQuery(new Picture(0));
+                image = DataHandler.getInstance().getPicture(DataHandler.getInstance().getUser().getProfilePicId());
             }
             catch (NotLoggedInException e)
             {
