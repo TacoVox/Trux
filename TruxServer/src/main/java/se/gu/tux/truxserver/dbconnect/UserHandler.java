@@ -239,7 +239,7 @@ public class UserHandler {
             
             u.setFriends(ready);
             
-            u.setProfilePic(PictureHandler.gI().getProfilePictureID(u));
+            u.setProfilePic(PictureHandler.gI().getProfilePictureID(u.getUserId()));
             
             return u;
 	}
@@ -353,7 +353,7 @@ public class UserHandler {
 		break;
 	    }
             
-            f.setProfilePic(PictureHandler.gI().getProfilePictureID(f));
+            f.setProfilePic(PictureHandler.gI().getProfilePictureID(f.getUserid()));
             
             return f;
 	}

@@ -128,7 +128,7 @@ public class PictureHandler {
         return null;
     }
     
-    public long getProfilePictureID(Data d) {
+    public long getProfilePictureID(long userid) {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
@@ -138,12 +138,9 @@ public class PictureHandler {
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(selectStmnt);
             
-            if(d instanceof User)
-                pst.setLong(1, d.getUserId());
-            else
-                pst.setLong(1, d.getFriendid());
+            pst.setLong(1, userid);
             
-            ResultSet rs = dbc.execSelect(d, pst);
+            ResultSet rs = pst.executeQuery();
             
 	    while (rs.next())
 		return rs.getLong("pictureid");
