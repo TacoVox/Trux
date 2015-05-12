@@ -421,8 +421,8 @@ public class UserHandler {
 	    {
                 Friend f = new Friend(rs.getLong("userid"));
                 f.setUsername(rs.getString("username"));
-                f.setUsername(rs.getString("firstname"));
-                f.setUsername(rs.getString("lastname"));
+                f.setFirstname(rs.getString("firstname"));
+                f.setLastname(rs.getString("lastname"));
                 
                 f.setProfilePicId(PictureHandler.gI().getProfilePictureID(f));
                 
