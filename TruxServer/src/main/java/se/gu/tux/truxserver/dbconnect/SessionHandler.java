@@ -79,7 +79,7 @@ public class SessionHandler {
         
         try
 	{
-            String updateStmnt = "UPDATE session SET lastactive = ?" +
+            String updateStmnt = "UPDATE session SET lastactive = ? " +
                     "WHERE userid = ? AND ISNULL(endtime)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
