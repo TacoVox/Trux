@@ -52,7 +52,7 @@ public class MessageHandler {
         
         try
 	{
-            String updateStmnt = "SELECT * FROM message WHERE receiverid = ?";
+            String updateStmnt = "SELECT * FROM message WHERE receiverid = ? AND seen = FALSE";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
