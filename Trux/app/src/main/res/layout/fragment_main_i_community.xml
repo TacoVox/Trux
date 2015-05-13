@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bottom_button"
-        android:text="TODO"
+        android:text="Profile"
         android:textColor="#E0E0E0"
         android:layout_weight="1"/>
 
