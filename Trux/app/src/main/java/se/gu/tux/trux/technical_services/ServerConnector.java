@@ -29,8 +29,6 @@ public class ServerConnector {
     private Thread transmitThread = null;
     private ConnectorRunnable connector = null;
     private LinkedBlockingDeque<Data> queue;
-    private ArrayList<Notification> notifications;
-
 
     /**
      * Some more singleton....!
@@ -141,19 +139,6 @@ public class ServerConnector {
         return connector.sendQuery(d, -1);
     }
 
-    public ArrayList<Notification> getNotifications() {
-        return notifications;
-    }
-
-    private void storeNotifications(Data d) {
-        if (d instanceof ArrayResponse && ((ArrayResponse)d).getArray() != null) {
-            Object[] newNfs = ((ArrayResponse)d).getArray();
-            for (int i = 0; i < newNfs.length; i++) {
-                notifications.add((Notification)newNfs[i]);
-            }
-        }
-    }
-
     class ConnectorRunnable implements Runnable {
         private Socket cs;
         private String serverAddress;
@@ -249,12 +234,11 @@ public class ServerConnector {
                     try {
 
                         // Send and receive
-                        //System.out.println("Sending query...: " + query.getClass().getSimpleName());
+                        System.out.println("Sending query...: " + query.getClass().getSimpleName());
 
                         // Set user id and session id if it's not a goodbye message
                         if (!(query instanceof ProtocolMessage &&
                                 ((ProtocolMessage) query).getType() == ProtocolMessage.Type.GOODBYE)) {
-                            //System.out.println("Setting user and session id...");
                             query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
                             query.setUserId(DataHandler.getInstance().getUser().getUserId());
                         }
@@ -307,14 +291,17 @@ public class ServerConnector {
                 try {
                     // Make sure no other thread uses the stream resources here
                     synchronized(this) {
-                        System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
-                        cs = new Socket(serverAddress, 12000);
-                        System.out.println("Connecting output stream...");
-                        out = new ObjectOutputStream(cs.getOutputStream());
-                        out.flush();
-                        System.out.println("Connecting input stream...");
-                        in = new ObjectInputStream(cs.getInputStream());
-                        System.out.println("Connected.");
+                        // Double checked locking
+                        if (cs == null || cs.isClosed()) {
+                            System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
+                            cs = new Socket(serverAddress, 12000);
+                            System.out.println("Connecting output stream...");
+                            out = new ObjectOutputStream(cs.getOutputStream());
+                            out.flush();
+                            System.out.println("Connecting input stream...");
+                            in = new ObjectInputStream(cs.getInputStream());
+                            System.out.println("Connected.");
+                        }
                     }
                 } catch (IOException e) {
                     // Problem connecting.
@@ -355,7 +342,7 @@ public class ServerConnector {
 
                     //System.out.println("Server connector: Found object in queue.");
                     if (d != null) {
-                        //System.out.println("Server connector: Sending...");
+                        System.out.println("Server connector: next up is " + d.getClass().getSimpleName());
 
                         // Connect if not already connected.
                         // If we ever lose connection, try reconnecting at regular intervals
@@ -372,17 +359,18 @@ public class ServerConnector {
                             // Then STOP ANYTHING ELSE from using this object (most importantly
                             // the in and out streams) while sending and receiving data
                             // Send the data
+                            System.out.println("Server connector: sending " + d.getClass().getSimpleName());
                             Data inD = null;
                             synchronized (this) {
                                 out.writeObject(d);
                                 inD = (Data) in.readObject();
                             }
+                            System.out.println("Server connector: received " + inD.getClass().getSimpleName());
 
                             // If we sent a heartbeat object just now, put all the notifications
                             // we get back into the notifications list
-                            if (d instanceof Heartbeat) {
-                                storeNotifications(inD);
-                                System.out.println("Heartbeat sent - response: " + d.getClass().getSimpleName());
+                            if (d instanceof Heartbeat && inD instanceof Notification) {
+                                DataHandler.getInstance().setNotificationStatus((Notification)inD);
                             }
 
                         } else {

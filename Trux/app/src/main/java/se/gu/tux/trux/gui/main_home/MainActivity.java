@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.main_home;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -23,6 +24,7 @@ import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.base.RegisterActivity;
 import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
+import se.gu.tux.trux.technical_services.LocationService;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
@@ -63,13 +65,15 @@ public class MainActivity extends BaseAppActivity
 
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
-        ServerConnector.gI().connect("www.derkahler.de");
+        ServerConnector.gI().connect("trux.derkahler.de");
 
         // Create login service
         LoginService.createInstance(this.getBaseContext(), FILE_NAME);
 
         // Just make sure a AGA data parser is created
         AGADataParser.getInstance();
+
+        LocationService ls = new LocationService(this);
 
         // Start the DataPoller that will send AGA metrics to the server with regular interavals
         DataPoller.gI().start();
@@ -251,6 +255,7 @@ public class MainActivity extends BaseAppActivity
         else
         {
             showToast("Problem logging in.\nMessage: " + msg.getMessage() + ".\nPlease try again.");
+            DataHandler.getInstance().setUser(null);
         }
 
     } // end autoLogin()

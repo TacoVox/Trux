@@ -7,19 +7,8 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="About Go Here"
-        android:textSize="40sp"/>
+        android:text="Trux ™ is an application developed by a group of software engineering and managements students, as a group project at the University of  Gothenburg, Sweden."
+        android:textSize="35sp"/>
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="More About Here"
-        android:textSize="40sp"/>
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="And So On"
-        android:textSize="40sp"/>
 
 </LinearLayout>
