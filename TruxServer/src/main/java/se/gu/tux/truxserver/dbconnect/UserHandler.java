@@ -147,9 +147,6 @@ public class UserHandler {
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
-            
-            Logger.gI().addDebug(Long.toString(pm.getUserId()));
-            Logger.gI().addDebug(Long.toString(pm.getSessionId()));
 	    
             pst.setLong(1, pm.getUserId()); 
             pst.setLong(2, pm.getSessionId());
