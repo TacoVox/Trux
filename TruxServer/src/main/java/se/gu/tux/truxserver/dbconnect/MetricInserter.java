@@ -126,13 +126,13 @@ public class MetricInserter implements Runnable {
             
             if(md instanceof Location) {
                 pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO location (latitude, logitude, timestamp, userid, sessionid) "
+                    "INSERT INTO location (latitude, longitude, timestamp, userid, sessionid) "
                             + "SELECT * FROM (SELECT ?, ?, ?, ?, ?) AS tmp");
                 pst.setDouble(1, ((double[])md.getValue())[0]);
                 pst.setObject(2, ((double[])md.getValue())[1]);
                 pst.setLong(3, md.getTimeStamp());
                 pst.setLong(4, md.getUserId());
-                pst.setLong(5, md.getSignalId());
+                pst.setLong(5, md.getSessionId());
             } else {
                 pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO " + type + "(value, timestamp, userid) "
