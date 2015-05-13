@@ -16,7 +16,6 @@ import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.application.DataHandler;
@@ -48,7 +47,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     private Bitmap bitmap;
 
     // user info
-    private String sUsername;
     private String sFirstName;
     private String sLastName;
     private String sEmail;
@@ -82,10 +80,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
         // set current view showing
         setCurrentViewId(R.layout.activity_community_profile);
-
-        // set edit
-        isEdited = false;
-        isPicEdited = false;
 
         // get the components
         imageView = (ImageView) findViewById(R.id.profile_picture_container);
@@ -135,9 +129,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         eFirstName.setEnabled(false);
         eLastName.setEnabled(false);
         eEmail.setEnabled(false);
-        // set edit flag
-        isEdited = false;
-        isPicEdited = false;
     }
 
 
@@ -149,8 +140,13 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
         if (id == uploadPic.getId())
         {
-            selectPicture(SELECT_IMAGE);
             isPicEdited = true;
+            selectPicture(SELECT_IMAGE);
+        }
+        else if (id == editUsername.getId())
+        {
+            showDialogBox("Change username",
+                    "To change your username, please contact the system administrators.\nHave a nice day!");
         }
         else if (id == editFirstName.getId())
         {
@@ -330,24 +326,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
      */
     private void saveChanges()
     {
-        // user object to send to server
-        User user = new User();
-
-        // get and set the unchanged values like sessionID and userID
-        // maybe that's how we will change values ?
-        user.setUserId(DataHandler.getInstance().getUser().getUserId());
-        user.setSessionId(DataHandler.getInstance().getUser().getSessionId());
-        user.setPasswordHash(DataHandler.getInstance().getUser().getPasswordHash());
-
-        // set fields
-        user.setFirstName(sFirstName);
-        user.setLastName(sLastName);
-        user.setEmail(sEmail);
-        user.setRequestProfileChange(true);
-
-        // set the user back to DataHandler
-        DataHandler.getInstance().setUser(user);
-
         if (isPicEdited)
         {
             boolean picIsUploaded = uploadPicture(bitmap);
@@ -357,6 +335,23 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
         if (isEdited)
         {
+            // user object to send to server
+            User user = new User();
+
+            // get and set the unchanged values like sessionID and userID
+            user.setUserId(DataHandler.getInstance().getUser().getUserId());
+            user.setSessionId(DataHandler.getInstance().getUser().getSessionId());
+            user.setPasswordHash(DataHandler.getInstance().getUser().getPasswordHash());
+
+            // set fields
+            user.setFirstName(sFirstName);
+            user.setLastName(sLastName);
+            user.setEmail(sEmail);
+            user.setRequestProfileChange(true);
+
+            // set the user back to DataHandler
+            DataHandler.getInstance().setUser(user);
+
             boolean saveChanges = false;
 
             AsyncTask<User, Void, Boolean> saveTask = new SaveChangesTask().execute(user);
@@ -414,9 +409,10 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         // compress image
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+
+        System.out.println("--------- decoding byte array ------------");
         // get image byte data
         byte[] imageData = bos.toByteArray();
-        System.out.println("--------- byte array image: " + Arrays.toString(imageData) + " ------------");
 
         // create picture object
         Picture uploadPicture = new Picture(0);
@@ -482,6 +478,11 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
      */
     private class SaveChangesTask extends AsyncTask<User, Void, Boolean>
     {
+        @Override
+        protected void onPreExecute()
+        {
+            showToast("Saving changes to profile...");
+        }
 
         @Override
         protected Boolean doInBackground(User... users)
