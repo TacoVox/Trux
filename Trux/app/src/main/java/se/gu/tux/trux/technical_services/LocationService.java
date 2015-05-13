@@ -23,7 +23,7 @@ public abstract class LocationService implements LocationListener, ConnectionCal
     private Long locationTimeStamp;
     private double latitude;
     private double longitude;
-    private double latLng[];
+    private double[] latLng = new double[2];
 
     private GoogleApiClient googleApiClient;
 
