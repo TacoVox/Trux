@@ -376,6 +376,7 @@ public class UserHandler {
                 f.setUsername(rs.getString("username"));
                 f.setFirstname(rs.getString("firstname"));
                 f.setLastname(rs.getString("lastname"));
+                f.setFriend(true);
                 
 		break;
 	    }
