@@ -5,6 +5,7 @@ import android.location.Location;
 import android.os.Bundle;
 
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -16,9 +17,8 @@ import com.google.android.gms.location.LocationServices;
 /**
  * Created by Niklas on 07/05/15.
  */
-public abstract class LocationService implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener {
+public class LocationService implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener {
 
-    private Location lastKnownLocation;
     private Location currentLocation;
     private Long locationTimeStamp;
     private double latitude;
@@ -29,10 +29,10 @@ public abstract class LocationService implements LocationListener, ConnectionCal
 
     private Activity activity;
 
-    public LocationService(Activity activity){
+    public LocationService(Activity activity) {
+        System.out.println("LocationService created.");
         this.activity = activity;
         buildGoogleApiClient();
-
     }
 
 
@@ -47,13 +47,18 @@ public abstract class LocationService implements LocationListener, ConnectionCal
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(
+        System.out.println("LocationService connected.");
+        Location lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(
                 googleApiClient);
         if (lastKnownLocation != null) {
-            latitude = (double) lastKnownLocation.getLatitude();
-            longitude = (double) lastKnownLocation.getLongitude();
+            currentLocation = lastKnownLocation;
         }
         startLocationUpdates();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 
     protected void startLocationUpdates() {
@@ -69,12 +74,7 @@ public abstract class LocationService implements LocationListener, ConnectionCal
     public void onLocationChanged(Location location) {
         currentLocation = location;
         locationTimeStamp = System.currentTimeMillis();
-    }
-
-    private void updateLocation() {
-        latitude = (double) currentLocation.getLatitude();
-        longitude = (double) currentLocation.getLongitude();
-
+        System.out.println("New location: " + location.getLongitude());
     }
 
     public void setLatitude(double latitude){
@@ -99,8 +99,12 @@ public abstract class LocationService implements LocationListener, ConnectionCal
         return latLng;
     }
 
-    public Location sendLocation(Location currentLocation){
-        this.currentLocation = currentLocation;
+    public Location getLocation(){
         return currentLocation;
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

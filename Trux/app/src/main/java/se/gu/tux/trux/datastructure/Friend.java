@@ -24,6 +24,7 @@ public class Friend extends Data {
     private long friendId;
     private long profilePicId;
     private boolean isFriend;
+    private boolean isOnline;
 
     private String username;
     private String firstname;
@@ -114,5 +115,13 @@ public class Friend extends Data {
 
     public void setFriend(boolean isFriend) {
         this.isFriend = isFriend;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean isOnline) {
+        this.isOnline = isOnline;
     }
 }
