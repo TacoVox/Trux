@@ -112,8 +112,8 @@ public class MetricReceiver {
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 
-            Logger.gI().addDebug("Timestamp: " + Long.toString(md.getTimeStamp()));
-            Logger.gI().addDebug("Timeframe: " + Long.toString(md.getTimeFrame()));
+            //Logger.gI().addDebug("Timestamp: " + Long.toString(md.getTimeStamp()));
+            //Logger.gI().addDebug("Timeframe: " + Long.toString(md.getTimeFrame()));
             
             pst.setLong(1, md.getUserId());
             
@@ -132,7 +132,7 @@ public class MetricReceiver {
 		break;
 	    }
             
-            Logger.gI().addDebug("After query: " + Double.toString((Double)md.getValue()));
+            //Logger.gI().addDebug("After query: " + Double.toString((Double)md.getValue()));
 	}
 	catch (Exception e)
 	{
