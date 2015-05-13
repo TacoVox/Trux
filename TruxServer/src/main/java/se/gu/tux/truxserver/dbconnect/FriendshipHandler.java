@@ -137,8 +137,30 @@ public class FriendshipHandler {
         }
     }
     
-    public void sawRequest(Data d) {
+    public ProtocolMessage sawRequest(Data d) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
         
+        Long ts = System.currentTimeMillis();
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "UPDATE friendrequest SET seen = ? WHERE ");
+            
+            pst.setBoolean(1, true);
+	
+            dbc.execUpdate(d, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
     }
     
     public ProtocolMessage acceptFriend(ProtocolMessage pm) {
