@@ -1,5 +1,6 @@
 package se.gu.tux.trux.application;
 
+import com.google.android.gms.games.internal.api.NotificationsImpl;
 import com.jjoe64.graphview.series.DataPoint;
 
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.datastructure.User;
@@ -32,6 +34,7 @@ public class DataHandler
     private RealTimeDataHandler realTimeDataHandler;
 
     private volatile User user;
+    private volatile Notification notificationStatus;
 
     // Stores detailed stats with signal id as key
     private volatile HashMap<Integer, DetailedStatsBundle> detailedStats;
@@ -372,4 +375,11 @@ public class DataHandler
         return imageCache.get(pictureId);
     }
 
+    public Notification getNotificationStatus() {
+        return notificationStatus;
+    }
+
+    public void setNotificationStatus(Notification notificationStatus) {
+        this.notificationStatus = notificationStatus;
+    }
 } // end class DataHandler

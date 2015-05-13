@@ -29,8 +29,6 @@ public class ServerConnector {
     private Thread transmitThread = null;
     private ConnectorRunnable connector = null;
     private LinkedBlockingDeque<Data> queue;
-    private ArrayList<Notification> notifications;
-
 
     /**
      * Some more singleton....!
@@ -139,19 +137,6 @@ public class ServerConnector {
 
     public Data answerTimestampedQuery(Data d) throws NotLoggedInException {
         return connector.sendQuery(d, -1);
-    }
-
-    public ArrayList<Notification> getNotifications() {
-        return notifications;
-    }
-
-    private void storeNotifications(Data d) {
-        if (d instanceof ArrayResponse && ((ArrayResponse)d).getArray() != null) {
-            Object[] newNfs = ((ArrayResponse)d).getArray();
-            for (int i = 0; i < newNfs.length; i++) {
-                notifications.add((Notification)newNfs[i]);
-            }
-        }
     }
 
     class ConnectorRunnable implements Runnable {
@@ -355,7 +340,7 @@ public class ServerConnector {
 
                     //System.out.println("Server connector: Found object in queue.");
                     if (d != null) {
-                        //System.out.println("Server connector: Sending...");
+                        System.out.println("Server connector: next up is " + d.getClass().getSimpleName());
 
                         // Connect if not already connected.
                         // If we ever lose connection, try reconnecting at regular intervals
@@ -372,17 +357,18 @@ public class ServerConnector {
                             // Then STOP ANYTHING ELSE from using this object (most importantly
                             // the in and out streams) while sending and receiving data
                             // Send the data
+                            System.out.println("Server connector: sending " + d.getClass().getSimpleName());
                             Data inD = null;
                             synchronized (this) {
                                 out.writeObject(d);
                                 inD = (Data) in.readObject();
                             }
+                            System.out.println("Server connector: received " + inD.getClass().getSimpleName());
 
                             // If we sent a heartbeat object just now, put all the notifications
                             // we get back into the notifications list
-                            if (d instanceof Heartbeat) {
-                                storeNotifications(inD);
-                                System.out.println("Heartbeat sent - response: " + d.getClass().getSimpleName());
+                            if (d instanceof Heartbeat && inD instanceof Notification) {
+                                DataHandler.getInstance().setNotificationStatus((Notification)inD);
                             }
 
                         } else {
