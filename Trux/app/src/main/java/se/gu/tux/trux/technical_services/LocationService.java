@@ -98,4 +98,9 @@ public abstract class LocationService implements LocationListener, ConnectionCal
         latLng[1] = longitude;
         return latLng;
     }
+
+    public Location sendLocation(Location currentLocation){
+        this.currentLocation = currentLocation;
+        return currentLocation;
+    }
 }

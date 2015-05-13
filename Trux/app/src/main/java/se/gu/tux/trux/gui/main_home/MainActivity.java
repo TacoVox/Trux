@@ -63,7 +63,7 @@ public class MainActivity extends BaseAppActivity
 
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
-        ServerConnector.gI().connect("83.248.219.57");
+        ServerConnector.gI().connect("trux.kahler.de");
 
         // Create login service
         LoginService.createInstance(this.getBaseContext(), FILE_NAME);

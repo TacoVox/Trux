@@ -41,6 +41,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private LatLng[] latLng;
+    private LatLng loc;
 
     private Timer t;
     private popFriends timer;
@@ -63,13 +64,23 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
     }
 
+    private GoogleMap.OnMyLocationButtonClickListener onMyLocationButtonClickListener =
+            new GoogleMap.OnMyLocationButtonClickListener() {
+
+        @Override
+        public boolean onMyLocationButtonClick(){
+            if(onMyLocationButtonClick()){
+                mMap.setOnMyLocationChangeListener(myLocationChangeListener);
+            }
+            return false;
+        }
+    };
     //A listner which listen to the location of the user
     private GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
         @Override
         public void onMyLocationChange(Location location) {
-            LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+            loc = new LatLng(location.getLatitude(), location.getLongitude());
             if(mMap != null){
-
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(loc));
 
             }
@@ -104,7 +115,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
-        mMap.setOnMyLocationChangeListener(myLocationChangeListener);
+        mMap.setOnMyLocationButtonClickListener(onMyLocationButtonClickListener);
+
 
         //Creats a timeTask which will uppdate the posion of the friendUsers
         t = new Timer();
@@ -113,12 +125,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
     }
 
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            
-        }
-    };
     /*
      * This method will populate the map with the friend pictures and put
      * them on the currect position.
