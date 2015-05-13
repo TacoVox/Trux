@@ -46,7 +46,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
     private LatLng[] latLng;
     private LatLng loc;
     private MapFragment f;
-    private Friend[] friend;
 
     private Timer t;
     private popFriends timer;
@@ -168,57 +167,50 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                @Override
                 protected Object doInBackground(Object[] objects){
                    try{
-                       friend = DataHandler.getInstance().getFriends();
-                       Picture[] picture = new Picture[friend.length];
+                       Friend[] friend = DataHandler.getInstance().getFriends();
+                       final Bitmap[] picture = new Bitmap[friend.length];
                        if(friend.length > 0){
                            for(int i = 0; i < friend.length; i++){
-                               double temp = friend[i].getFriendId();
-                               for(int j = 0; j < friend.length; j++){
-                                   if(temp == friend[j].getFriendId()){
-                                       try{
-                                           picture[j] = DataHandler.getInstance().getPicture(friend[j].getProfilePicId());
-                                       }
-                                       catch(NotLoggedInException nLIE){
-                                           System.out.println("NotLoggedInException: " + nLIE);
-                                       }
-                                       if(friend[j].getCurrentLoc().getLoc() != null) {
-                                           double[] loc = friend[j].getCurrentLoc().getLoc();
-                                           latLng = new LatLng[friend.length];
-                                           latLng[j] = new LatLng(loc[0], loc[1]);
-                                       }
-                                   }
+                               try{
+                                   picture[i] = DataHandler.getInstance().getPicture(friend[i].getProfilePicId());
+                               }
+                               catch(NotLoggedInException nLIE){
+                                   System.out.println("NotLoggedInException: " + nLIE);
                                }
                            }
-                           final Picture[] newPicture = picture;
+                           final Bitmap[] newPicture = picture;
                            final Friend[] newFriend = friend;
 
-                           final LatLng[] newLatLng = latLng;
                            getActivity().runOnUiThread(new Runnable() {
                                @Override
                                public void run() {
-                                   if(newPicture != null)
-                                   for (int i = 0; i < newPicture.length; i++) {
-                                     //  if(newLatLng != null) {
-                                           if (hasMarker) {
-                                               mMap.clear();
-                                               hasMarker = false;
-                                           } else if (newPicture != null && newPicture[i] != null) {
-                                               Bitmap bmp;
-                                               BitmapFactory.Options options = new BitmapFactory.Options();
-                                               bmp = BitmapFactory.decodeByteArray(newPicture[i].getImg(), 0,
-                                                       newPicture[i].getImg().length, options);
-                                               Bitmap reBmp = Bitmap.createScaledBitmap(bmp, 50, 50, false);
-                                               mMap.addMarker(new MarkerOptions()
-                                                       .position(new LatLng(57.708870 + i, 11.974560))
-                                                       .title(newFriend[i].getFirstname())
-                                                       .snippet("DRIVING")
-                                                       .icon(BitmapDescriptorFactory.fromBitmap(reBmp)));
-                                               System.out.println("---Picture is now a marker---");
-                                               hasMarker = true;
-                                           }
+                                   if(newFriend != null)
+                                   for (int i = 0; i < newFriend.length; i++) {
+                                       System.out.println("FRIEND: " + i + " picture: " +
+                                            newPicture[i] + " pictureid: " + newFriend[i].getProfilePicId()
+                                            + " loc: " + newFriend[i].getCurrentLoc().getLoc());
+
+                                       if (hasMarker) {
+                                           mMap.clear();
+                                           hasMarker = false;
+                                       } else if (newPicture[i] != null && newFriend[i] != null /*&&
+                                               newFriend[i].getCurrentLoc() != null &&
+                                               newFriend[i].getCurrentLoc().getLoc() != null*/) {
+
+                                           //double[] loc = newFriend[i].getCurrentLoc().getLoc();
+                                           double[] loc = {46, 11};
+                                           mMap.addMarker(new MarkerOptions()
+                                                   .position(new LatLng(loc[0], loc[1]))
+                                                   .title(newFriend[i].getFirstname())
+                                                   .snippet("DRIVING")
+                                                   .icon(BitmapDescriptorFactory.fromBitmap(newPicture[i])));
+                                           System.out.println("---Picture is now a marker---");
+                                           hasMarker = true;
+
                                        }
                                    }
-                               //}
+
+                               }
                            });
                        }
                    }
