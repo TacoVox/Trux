@@ -26,6 +26,7 @@ import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
 import se.gu.tux.trux.technical_services.LocationService;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
+import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
@@ -75,8 +76,11 @@ public class MainActivity extends BaseAppActivity
 
         LocationService ls = new LocationService(this);
 
-        // Start the DataPoller that will send AGA metrics to the server with regular interavals
-        DataPoller.gI().start();
+        // Start the DataPoller that will send AGA metrics and location data
+        // to the server with regular interavals
+        RealTimeDataHandler rtdh = new RealTimeDataHandler(ls);
+        DataHandler.getInstance().setRealTimeDataHandler(rtdh);
+        DataPoller.gI().start(rtdh);
 
         file = new File(getFilesDir(), FILE_NAME);
 
