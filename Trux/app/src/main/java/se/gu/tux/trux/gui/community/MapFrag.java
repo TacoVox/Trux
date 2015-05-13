@@ -24,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -69,7 +70,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
         @Override
         public boolean onMyLocationButtonClick(){
-            if(onMyLocationButtonClick()){
+            {
                 mMap.setOnMyLocationChangeListener(myLocationChangeListener);
             }
             return false;
@@ -84,6 +85,12 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(loc));
 
             }
+        }
+    };
+
+    private GoogleMap.OnCameraChangeListener stopFollowing = new GoogleMap.OnCameraChangeListener() {
+        public void onCameraChange(CameraPosition position) {
+            mMap.stopAnimation();
         }
     };
 
@@ -116,6 +123,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
         mMap.setOnMyLocationButtonClickListener(onMyLocationButtonClickListener);
+        mMap.setOnCameraChangeListener(stopFollowing);
 
 
         //Creats a timeTask which will uppdate the posion of the friendUsers
