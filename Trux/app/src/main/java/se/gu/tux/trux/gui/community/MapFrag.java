@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
@@ -43,6 +45,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private LatLng[] latLng;
     private LatLng loc;
+    private MapFragment f;
+    private Friend[] friend;
 
     private Timer t;
     private popFriends timer;
@@ -59,7 +63,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
         //Setting a Mapfragment so that it calls to the getMapAsync which is connected to onMapReady
-        MapFragment f = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map);
+        f = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map);
         f.getMapAsync(this);
         return view;
 
@@ -71,13 +75,13 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         @Override
         public boolean onMyLocationButtonClick(){
             {
-                mMap.setOnMyLocationChangeListener(myLocationChangeListener);
+                mMap.setOnMyLocationChangeListener(startFollowing);
             }
             return false;
         }
     };
     //A listner which listen to the location of the user
-    private GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
+    private GoogleMap.OnMyLocationChangeListener startFollowing = new GoogleMap.OnMyLocationChangeListener() {
         @Override
         public void onMyLocationChange(Location location) {
             loc = new LatLng(location.getLatitude(), location.getLongitude());
@@ -90,7 +94,24 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap.OnCameraChangeListener stopFollowing = new GoogleMap.OnCameraChangeListener() {
         public void onCameraChange(CameraPosition position) {
-            mMap.stopAnimation();
+            startFollowing = null;
+        }
+    };
+
+    private GoogleMap.OnMarkerClickListener markerClickListener = new GoogleMap.OnMarkerClickListener() {
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+
+       return false;
+        }
+    };
+
+    private GoogleMap.OnInfoWindowClickListener markerMenu = new GoogleMap.OnInfoWindowClickListener() {
+        @Override
+        public void onInfoWindowClick(Marker marker) {
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.menuContainer, new MapCommunityWindow());
+            fragmentTransaction.commit();
         }
     };
 
@@ -101,6 +122,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         mMap.setMyLocationEnabled(true);
         //Gets the satelite pictures as a map
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+        System.out.println("------MAP READY-----");
 
 
 
@@ -124,6 +147,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
         mMap.setOnMyLocationButtonClickListener(onMyLocationButtonClickListener);
         mMap.setOnCameraChangeListener(stopFollowing);
+        mMap.setOnMarkerClickListener(markerClickListener);
+        mMap.setOnInfoWindowClickListener(markerMenu);
 
 
         //Creats a timeTask which will uppdate the posion of the friendUsers
@@ -143,7 +168,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                @Override
                 protected Object doInBackground(Object[] objects){
                    try{
-                       Friend[] friend = DataHandler.getInstance().getFriends();
+                       friend = DataHandler.getInstance().getFriends();
                        Picture[] picture = new Picture[friend.length];
                        if(friend.length > 0){
                            for(int i = 0; i < friend.length; i++){
@@ -183,8 +208,10 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                                                bmp = BitmapFactory.decodeByteArray(newPicture[i].getImg(), 0,
                                                        newPicture[i].getImg().length, options);
                                                Bitmap reBmp = Bitmap.createScaledBitmap(bmp, 50, 50, false);
-                                               mMap.addMarker(new MarkerOptions().position(new LatLng(57.708870 + i, 11.974560)).title(
-                                                       newFriend[i].getFirstname())
+                                               mMap.addMarker(new MarkerOptions()
+                                                       .position(new LatLng(57.708870 + i, 11.974560))
+                                                       .title(newFriend[i].getFirstname())
+                                                       .snippet("DRIVING")
                                                        .icon(BitmapDescriptorFactory.fromBitmap(reBmp)));
                                                System.out.println("---Picture is now a marker---");
                                                hasMarker = true;

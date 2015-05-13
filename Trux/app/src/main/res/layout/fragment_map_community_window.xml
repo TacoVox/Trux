@@ -2,15 +2,18 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context="se.gu.tux.trux.gui.community.mapCommunityWindow">
-
+    tools:context="se.gu.tux.trux.gui.community.MapCommunityWindow"
+    android:id="@+id/menuLayout">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        >
+        android:clickable="true"
+        android:onClick=""
+        android:id="@+id/emptyLayout">
+
     </LinearLayout>
 
     <LinearLayout
@@ -18,9 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:background="#61728d"
+        android:background="#61728d">
 
-        >
         <Space
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -42,8 +44,7 @@
         <Space
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:id="@+id/" />
+            android:layout_weight="1"/>
 
 
     </LinearLayout>
