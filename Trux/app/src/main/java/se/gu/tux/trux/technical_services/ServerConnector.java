@@ -234,12 +234,11 @@ public class ServerConnector {
                     try {
 
                         // Send and receive
-                        //System.out.println("Sending query...: " + query.getClass().getSimpleName());
+                        System.out.println("Sending query...: " + query.getClass().getSimpleName());
 
                         // Set user id and session id if it's not a goodbye message
                         if (!(query instanceof ProtocolMessage &&
                                 ((ProtocolMessage) query).getType() == ProtocolMessage.Type.GOODBYE)) {
-                            //System.out.println("Setting user and session id...");
                             query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
                             query.setUserId(DataHandler.getInstance().getUser().getUserId());
                         }
@@ -292,14 +291,17 @@ public class ServerConnector {
                 try {
                     // Make sure no other thread uses the stream resources here
                     synchronized(this) {
-                        System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
-                        cs = new Socket(serverAddress, 12000);
-                        System.out.println("Connecting output stream...");
-                        out = new ObjectOutputStream(cs.getOutputStream());
-                        out.flush();
-                        System.out.println("Connecting input stream...");
-                        in = new ObjectInputStream(cs.getInputStream());
-                        System.out.println("Connected.");
+                        // Double checked locking
+                        if (cs == null || cs.isClosed()) {
+                            System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
+                            cs = new Socket(serverAddress, 12000);
+                            System.out.println("Connecting output stream...");
+                            out = new ObjectOutputStream(cs.getOutputStream());
+                            out.flush();
+                            System.out.println("Connecting input stream...");
+                            in = new ObjectInputStream(cs.getInputStream());
+                            System.out.println("Connected.");
+                        }
                     }
                 } catch (IOException e) {
                     // Problem connecting.
