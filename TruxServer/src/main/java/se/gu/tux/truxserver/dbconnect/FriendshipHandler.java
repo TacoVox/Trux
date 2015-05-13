@@ -138,7 +138,48 @@ public class FriendshipHandler {
         }
     }
     
-    public ProtocolMessage addFriend() {
-        return null;
+    public void sawRequest(Data d) {
+        
+    }
+    
+    public ProtocolMessage acceptFriend(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        Long ts = System.currentTimeMillis();
+        try
+        {   
+            //Way one
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "INSERT INTO friendrequest (userid, friendid, timestamp) "
+                            + "VALUES(?, ?, ?)");
+            
+            pst.setLong(1, pm.getUserId());
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, ts);
+	
+            dbc.execInsert(pm, pst);
+            
+            //Way two
+            pst = dbc.getConnection().prepareStatement(
+                    "INSERT INTO friendrequest (userid, friendid, timestamp) "
+                            + "VALUES(?, ?, ?)");
+            
+            pst.setLong(1, Long.parseLong(pm.getMessage()));
+            pst.setLong(2, pm.getUserId());
+            pst.setLong(3, ts);
+	
+            dbc.execInsert(pm, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
     }
 }
