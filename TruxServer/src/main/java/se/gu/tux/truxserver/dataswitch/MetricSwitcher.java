@@ -55,10 +55,7 @@ public class MetricSwitcher {
             return new ProtocolMessage(ProtocolMessage.Type.DATA_RECEIVED);
         }
         else {
-            if(md instanceof Location)
-                return LocationReceiver.gI().getLocation();
-            else
-                return MetricReceiver.gI().getMetric(md);
+            return MetricReceiver.gI().getMetric(md);
         }
     }
 }
