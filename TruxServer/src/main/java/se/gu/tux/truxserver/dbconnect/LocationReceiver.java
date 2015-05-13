@@ -15,6 +15,13 @@
  */
 package se.gu.tux.truxserver.dbconnect;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Location;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.truxserver.logger.Logger;
+
 /**
  *
  * @author jonas
@@ -40,4 +47,44 @@ public class LocationReceiver {
     * Non-static part.
     */
     private LocationReceiver() {}
+    
+    public Location getLocation() {
+        return null;
+    }
+    
+    private Data getCurrent(Location l) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String selectStmnt = "SELECT latitude, longitude " +
+                    "FROM location WHERE userid = ? ORDER BY timestamp DESC LIMIT 1";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setLong(1, l.getUserId());
+            
+	    ResultSet rs = pst.executeQuery();
+	    
+	    while (rs.next())
+	    {
+                l.setLatitude(rs.getDouble("latitude"));
+                l.setLongitude(rs.getDouble("longitude"));
+                
+		break;
+	    }
+            
+            return l;
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
 }
