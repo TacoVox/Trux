@@ -46,7 +46,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         friendsList = (ListView) findViewById(R.id.friendsList);
 
-        friendAdapter = new FriendAdapter(this, new Friend[0], new Picture[0]);
+        friendAdapter = new FriendAdapter(this, new Friend[0], new Bitmap[0]);
         friendsList.setAdapter(friendAdapter);
         friendsList.setEmptyView(findViewById(R.id.noFriends));
         searchField = (EditText) findViewById(R.id.searchField);
@@ -94,7 +94,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             protected Object doInBackground(Object[] objects) {
                 // Load friend list
                 Friend[] friends = null;
-                Picture[] pictures = null;
+                Bitmap[] pictures = null;
                 try {
                     System.out.println("Fetching friends...");
                     friends = DataHandler.getInstance().getFriends();
@@ -107,7 +107,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 }
 
                 final Friend[] finalFriends = friends;
-                final Picture[] finalPictures = pictures;
+                final Bitmap[] finalPictures = pictures;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -162,8 +162,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 // Load friend list
                 Friend[] friends = null;
                 Object[] people = null;
+                Bitmap[] pictures = null;
 
-                Picture[] pictures = null;
                 try {
                     System.out.println("Fetching friends and people from search...");
 
@@ -189,7 +189,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 }
 
                 final Friend[] finalFriends = friends;
-                final Picture[] finalPictures = pictures;
+                final Bitmap[] finalPictures = pictures;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -227,8 +227,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         return sumArray;
     }
 
-    private Picture[] getPicturesFor(Friend[] friends) throws NotLoggedInException {
-        Picture[] pictures = new Picture[friends.length];
+    private Bitmap[] getPicturesFor(Friend[] friends) throws NotLoggedInException {
+        Bitmap[] pictures = new Bitmap[friends.length];
         for (int i = 0; i < pictures.length; i++) {
             System.out.println("Fetching image " + friends[i].getProfilePicId() + " for friend " +
                     friends[i].getFirstname());
@@ -247,11 +247,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         // send just friend info without the overhead of sending the picture. Could be handled
         // differentlyt though for example with a request boolean.
         Friend[] friends;
-        Picture[] pictures;
+        Bitmap[] pictures;
 
         private LayoutInflater inflater = null;
 
-        public FriendAdapter(Context context, Friend[] friends, Picture[] pictures) {
+        public FriendAdapter(Context context, Friend[] friends, Bitmap[] pictures) {
             this.context = context;
             this.friends = friends;
             this.pictures = pictures;
@@ -277,20 +277,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             return position;
         }
 
-        public void setFriends(Friend[] friends, Picture[] pictures) {
+        public void setFriends(Friend[] friends, Bitmap[] pictures) {
             this.friends = friends;
             this.pictures = pictures;
             notifyDataSetChanged();
         }
 
-        public void setPictureFor(int position, Picture pic) {
-            if (pictures == null) {
-                pictures = new Picture[friends.length];
-            }
-            if (position >= 0 && position < pictures.length) {
-                pictures[position] = pic;
-            }
-        }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -314,19 +306,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 sendMessageButton.setVisibility(View.GONE);
             }
 
-            // Set the picture if it is set
-            if (pictures != null && pictures[position] != null &&
-                    pictures[position].getImg() != null) {
-                Bitmap bmp;
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inMutable = true;
-                bmp = BitmapFactory.decodeByteArray(pictures[position].getImg(), 0,
-                        pictures[position].getImg().length, options);
-                image.setImageBitmap(bmp);
-            } else {
-                // Reset the image - note here we should use a default picture probably
-                image.setImageBitmap(null);
-            }
+            // Set the picture
+            image.setImageBitmap(pictures[position]);
+
             return view;
         }
 
