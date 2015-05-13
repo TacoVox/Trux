@@ -98,6 +98,12 @@
             android:label="@string/title_activity_community_main" >
         </activity>
 
+        <!-- Message Activity -->
+        <activity
+            android:name="se.gu.tux.trux.gui.messaging.MessageActivity"
+            android:label="Friends">
+        </activity>
+
 
     </application>
 
