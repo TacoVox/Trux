@@ -15,6 +15,7 @@
  */
 package se.gu.tux.truxserver.dataswitch;
 
+import se.gu.tux.trux.datastructure.Message;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.dbconnect.FriendshipHandler;
@@ -48,19 +49,24 @@ public class MessageSwitcher {
      */
     private MessageSwitcher() {}
     
-    public Data handleMessage(ProtocolMessage pm)
+    public Data handleMessage(Data m)
     {
-        if(pm.getType() == ProtocolMessage.Type.AUTO_LOGIN_REQUEST)
-            return UserHandler.gI().autoLogin(pm);
-        else if(pm.getType() == ProtocolMessage.Type.LOGOUT_REQUEST)
-            return SessionHandler.gI().endSession(pm);
-        else if(pm.getType() == ProtocolMessage.Type.PEOPLE_SEARCH)
-            return UserHandler.gI().findUsers(pm);
-        else if(pm.getType() == ProtocolMessage.Type.FRIEND_REQUEST)
-            return FriendshipHandler.gI().sendFriendRequest(pm);
-        else if(pm.getType() == ProtocolMessage.Type.FRIEND_REMOVE)
-            return FriendshipHandler.gI().unfriendUser(pm);
+        if(m instanceof ProtocolMessage) {
+            ProtocolMessage pm = (ProtocolMessage) m;
+            if(pm.getType() == ProtocolMessage.Type.AUTO_LOGIN_REQUEST)
+                return UserHandler.gI().autoLogin(pm);
+            else if(pm.getType() == ProtocolMessage.Type.LOGOUT_REQUEST)
+                return SessionHandler.gI().endSession(pm);
+            else if(pm.getType() == ProtocolMessage.Type.PEOPLE_SEARCH)
+                return UserHandler.gI().findUsers(pm);
+            else if(pm.getType() == ProtocolMessage.Type.FRIEND_REQUEST)
+                return FriendshipHandler.gI().sendFriendRequest(pm);
+            else if(pm.getType() == ProtocolMessage.Type.FRIEND_REMOVE)
+                return FriendshipHandler.gI().unfriendUser(pm);
+        } else if (m instanceof Message){
+            return m;
+        }
         
-        return pm;
+        return m;
     }
 }
