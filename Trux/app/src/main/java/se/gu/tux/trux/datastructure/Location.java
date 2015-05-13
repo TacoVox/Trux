@@ -57,4 +57,12 @@ public class Location extends MetricData {
         if(loc instanceof double[])
             this.loc = (double[]) loc;
     }
+
+    public boolean equals(Object o) {
+        if (o instanceof Location && ((Location) o).getLoc() != null) {
+            return (((Location)o).getLoc()[0] == loc[0] && ((Location)o).getLoc()[1] == loc[1]);
+        } else {
+            return false;
+        }
+    }
 }

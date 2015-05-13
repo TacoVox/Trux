@@ -48,9 +48,7 @@ public class DataHandler
      * Constructor. Declared private and not instantiated. We keep an
      * instance of DataHandler instead.
      */
-    private DataHandler()    {
-        realTimeDataHandler = new RealTimeDataHandler();
-    }
+    private DataHandler()    {}
 
 
     /**
@@ -74,6 +72,12 @@ public class DataHandler
         }
         return dataHandler;
     } // end getInstance()
+
+
+    public void setRealTimeDataHandler(RealTimeDataHandler rtdh) {
+        realTimeDataHandler = rtdh;
+    }
+
 
     /**
      * Returns true if the user is logged in.

@@ -8,7 +8,9 @@ public class Message extends Data
     private long receiverId;
     private boolean isSeen;
     private String value;
+    private long conversationId;
 
+    
 
     @Override
     public Object getValue() {
@@ -47,6 +49,14 @@ public class Message extends Data
 
     public void setIsSeen(boolean isSeen) {
         this.isSeen = isSeen;
+    }
+
+    public long getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(long conversationId) {
+        this.conversationId = conversationId;
     }
 
 } // end class

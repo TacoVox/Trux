@@ -14,6 +14,7 @@ import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.Community_main;
 import se.gu.tux.trux.gui.community.FriendsWindow;
+import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
 import se.gu.tux.trux.gui.welcome.WelcomeMainFragment;
 import tux.gu.se.trux.R;
@@ -32,6 +33,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
     private static final int FRIENDS_BUTTON = R.id.friendButton;
     private static final int PROFILE_BUTTON = R.id.fragment_main_profile_button;
+    private static final int MESSAGE_BUTTON = R.id.fragment_welcome_message_button;
 
 
     private ViewPager viewPager;
@@ -100,6 +102,11 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         else if (id == PROFILE_BUTTON)
         {
             Intent intent = new Intent(this, CommunityProfileActivity.class);
+            startActivity(intent);
+        }
+        else if (id == MESSAGE_BUTTON)
+        {
+            Intent intent = new Intent(this, MessageActivity.class);
             startActivity(intent);
         }
         else
