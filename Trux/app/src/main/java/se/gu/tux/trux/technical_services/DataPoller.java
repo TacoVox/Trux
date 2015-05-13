@@ -2,6 +2,7 @@ package se.gu.tux.trux.technical_services;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Heartbeat;
+import se.gu.tux.trux.datastructure.Location;
 
 /**
  * Created by jerker on 2015-04-01.
@@ -41,9 +42,9 @@ public class DataPoller {
        return getInstance();
     }
 
-    public void start() {
+    public void start(RealTimeDataHandler rtdh) {
         if (pr == null) {
-            pr = new PollRunnable();
+            pr = new PollRunnable(rtdh);
             t = new Thread(pr);
             t.start();
         }
@@ -56,7 +57,11 @@ public class DataPoller {
 
     class PollRunnable implements Runnable {
         private boolean isRunning = true;
+        private RealTimeDataHandler rtdh;
 
+        public PollRunnable(RealTimeDataHandler rtdh) {
+            this.rtdh = rtdh;
+        }
 
         /**
          * Returns true if the array has any value that is not null.
@@ -76,8 +81,6 @@ public class DataPoller {
 
         @Override
         public void run() {
-            RealTimeDataHandler rtdh = new RealTimeDataHandler();
-
             while (isRunning) {
                 // Main loop - every POLL_INTERVAL seconds, pull data from AGA and also provide a
                 // heartbeat to the server

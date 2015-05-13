@@ -23,15 +23,15 @@ public class RealTimeDataHandler
     //RealTimeDataParser rtdp;
 
     AGADataParser rtdp;
-
+    LocationService locationService;
 
     /**
      * Constructor.
      */
-    public RealTimeDataHandler()
+    public RealTimeDataHandler(LocationService locationService)
     {
         //rtdp = RealTimeDataParser.getInstance();
-
+        this.locationService = locationService;
         rtdp = AGADataParser.getInstance();
 
     }
@@ -43,10 +43,11 @@ public class RealTimeDataHandler
      * @return
      */
     public Data[] getCurrentMetrics() {
-        Data metricArray[] = new Data[3];
+        Data metricArray[] = new Data[4];
         metricArray[0] = getSignalData(new Fuel(0));
         metricArray[1] = getSignalData(new Speed(0));
         metricArray[2] = getSignalData(new Distance(0));
+        metricArray[3] = locationService.getLocation();
 
         // Set timestamp for all data
         for (Data d : metricArray) {

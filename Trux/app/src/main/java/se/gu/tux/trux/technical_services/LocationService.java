@@ -33,6 +33,7 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
         System.out.println("LocationService created.");
         this.activity = activity;
         buildGoogleApiClient();
+        googleApiClient.connect();
     }
 
 
@@ -99,12 +100,23 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
         return latLng;
     }
 
-    public Location getLocation(){
-        return currentLocation;
+    /**
+     * Returns a Trux Location object.
+     * @return
+     */
+    public se.gu.tux.trux.datastructure.Location getLocation(){
+        se.gu.tux.trux.datastructure.Location truxLocation = null;
+        if (currentLocation != null) {
+            truxLocation = new se.gu.tux.trux.datastructure.Location(currentLocation.getLatitude(),
+                    currentLocation.getLongitude());
+        } else {
+            truxLocation = new se.gu.tux.trux.datastructure.Location();
+        }
+        return truxLocation;
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        System.out.println("Connecting LocationService failed.");
     }
 }
