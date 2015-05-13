@@ -2,7 +2,12 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Message;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.logger.Logger;
 
 /*
@@ -72,6 +77,91 @@ public class MessageHandler {
 	    Logger.gI().addError(e.getLocalizedMessage());
             
             return false;
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
+    
+    public Data getLatestConv(ProtocolMessage pm) {
+        List conversations = new ArrayList<Message>();
+        
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String updateStmnt = "SELECT DISTINCT conversationid, senderid, receiverid, message, timestamp "
+                    + "FROM message WHERE conversationid = "
+                    + "(SELECT conversationid FROM conversation WHERE persone = 1 OR perstwo = 1 "
+                    + "ORDER BY timestamp DESC LIMIT 20) ORDER BY timestamp DESC";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+	    
+            pst.setLong(1, pm.getUserId());
+            pst.setLong(2, pm.getUserId());
+	    
+	    ResultSet rs = dbc.execSelect(pm, pst);
+            
+            while(rs.next()) {
+                Message m = new Message();
+                m.setConversationId(rs.getLong("converstaionid"));
+                m.setSenderId(rs.getLong("senderid"));
+                m.setReceiverId(rs.getLong("receiverid"));
+                m.setValue(rs.getString("message"));
+                m.setTimeStamp(rs.getLong("timestamp"));
+                
+                conversations.add(m);
+            }
+            
+            return new ArrayResponse(conversations.toArray());
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
+    
+    public Data getMessages(ProtocolMessage pm) {
+        List messages = new ArrayList<Message>();
+        
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String updateStmnt = "SELECT conversationid, senderid, receiverid, message, timestamp "
+                    + "FROM message WHERE conversationid = ? ORDER BY timestamp DESC LIMIT 20";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+	    
+            pst.setLong(1, Long.parseLong(pm.getMessage()));
+	    
+	    ResultSet rs = dbc.execSelect(pm, pst);
+            
+            while(rs.next()) {
+                Message m = new Message();
+                m.setConversationId(rs.getLong("converstaionid"));
+                m.setSenderId(rs.getLong("senderid"));
+                m.setReceiverId(rs.getLong("receiverid"));
+                m.setValue(rs.getString("message"));
+                m.setTimeStamp(rs.getLong("timestamp"));
+                
+                messages.add(m);
+            }
+            
+            return new ArrayResponse(messages.toArray());
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR);
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
