@@ -126,7 +126,7 @@ public class SessionHandler {
             pst.setLong(3, System.currentTimeMillis());
             pst.setBoolean(4, u.getStayLoggedIn());
             
-            Logger.gI().addDebug(Boolean.toString(u.getStayLoggedIn()));
+            //Logger.gI().addDebug(Boolean.toString(u.getStayLoggedIn()));
             
             //No check for active session here!
             pst.executeUpdate();
