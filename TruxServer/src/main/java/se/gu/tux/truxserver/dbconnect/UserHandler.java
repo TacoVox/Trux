@@ -147,6 +147,9 @@ public class UserHandler {
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
+            
+            Logger.gI().addDebug(Long.toString(pm.getUserId()));
+            Logger.gI().addDebug(Long.toString(pm.getSessionId()));
 	    
             pst.setLong(1, pm.getUserId()); 
             pst.setLong(2, pm.getSessionId());
@@ -155,9 +158,9 @@ public class UserHandler {
 	    
 	    while (rs.next())
 	    {
-                userid = rs.getLong("user.userid");
-                passwd = rs.getString("user.password");
-                sessionid = rs.getLong("session.sessionid");
+                userid = rs.getLong("userid");
+                passwd = rs.getString("password");
+                sessionid = rs.getLong("sessionid");
                 
 		break;
 	    }
@@ -180,8 +183,8 @@ public class UserHandler {
             return m;
         }
         else {
-            failedLogin(userid);
-            return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED);
+            failedLogin(pm.getUserId());
+            return new ProtocolMessage(ProtocolMessage.Type.LOGIN_FAILED, "Session is not valid anymore.");
         }
     }
     
@@ -194,6 +197,7 @@ public class UserHandler {
                     "INSERT INTO loginattempts (userid, timestamp) VALUES(?, ?)");
             
             pst.setLong(1, userid);
+            pst.setLong(2, System.currentTimeMillis());
 	
             pst.executeUpdate();
         }
