@@ -108,7 +108,7 @@ public class DataPoller {
 
                     // Wait POLL_INTERVAL seconds before continuing.
                     Thread.sleep(1000 * POLL_INTERVAL);
-                    System.out.println("DataPoller: " + this.toString());
+                    //System.out.println("DataPoller: " + this.toString());
 
                 } catch (InterruptedException e) {
                     // Interrupted - exit thread

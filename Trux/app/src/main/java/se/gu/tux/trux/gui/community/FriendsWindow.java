@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.transition.Visibility;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -298,8 +299,22 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 view = inflater.inflate(R.layout.friend_row, null);
             TextView text = (TextView) view.findViewById(R.id.friendName);
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
+            Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
+            Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
 
+            // Set the name
             text.setText(friends[position].getFirstname() + " " + friends[position].getLastname());
+
+            // Set the proper button visibility
+            if (friends[position].isFriend()) {
+                friendRequestButton.setVisibility(View.GONE);
+                sendMessageButton.setVisibility(View.VISIBLE);
+            } else {
+                friendRequestButton.setVisibility(View.VISIBLE);
+                sendMessageButton.setVisibility(View.GONE);
+            }
+
+            // Set the picture if it is set
             if (pictures != null && pictures[position] != null &&
                     pictures[position].getImg() != null) {
                 Bitmap bmp;
