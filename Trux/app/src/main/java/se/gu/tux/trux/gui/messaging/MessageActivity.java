@@ -1,11 +1,12 @@
 package se.gu.tux.trux.gui.messaging;
 
+import android.support.v4.app.FragmentTransaction;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.application.DataHandler;
@@ -25,6 +26,10 @@ public class MessageActivity extends BaseAppActivity
     private static final int LAYOUT_ID = R.layout.activity_message;
 
     private Friend[] friends;
+
+    private Friend listFriend;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,7 +54,19 @@ public class MessageActivity extends BaseAppActivity
         }
 
         // get the list view
-        ListView listView = (ListView) findViewById(R.id.messages_list_view);
+        final ListView listView = (ListView) findViewById(R.id.messages_list_view);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                showToast("Click detected");
+                listFriend = (Friend) adapterView.getAdapter().getItem(i);
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.message_frame_container, new ChatFragment());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
         // get the adapter
         MessageListAdapter messageListAdapter = new MessageListAdapter(this, friends);
         // set adapter
@@ -65,6 +82,11 @@ public class MessageActivity extends BaseAppActivity
         setCurrentViewId(LAYOUT_ID);
     }
 
+
+    public Friend getListFriend()
+    {
+        return listFriend;
+    }
 
 
     private class FetchFriendsTask extends AsyncTask<Void, Void, Friend[]>
