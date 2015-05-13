@@ -350,11 +350,6 @@ public class UserHandler {
     
     public Data getFriend(Friend f)
     {
-        Location loc = new Location();
-        loc.setUserId(f.getFriendId());
-        
-        f.setCurrentLoc((Location)MetricReceiver.gI().getMetric(loc));
-        
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
@@ -382,6 +377,7 @@ public class UserHandler {
 		break;
 	    }
             
+            f.setCurrentLoc(LocationReceiver.gI().getCurrent(f.getFriendId()));
             f.setProfilePicId(PictureHandler.gI().getProfilePictureID(f));
             
             return f;

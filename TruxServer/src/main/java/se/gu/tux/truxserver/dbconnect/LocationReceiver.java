@@ -52,7 +52,9 @@ public class LocationReceiver {
         return null;
     }
     
-    private Data getCurrent(Location l) {
+    public Location getCurrent(long userid) {
+        Location l = new Location();
+        
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
@@ -73,18 +75,16 @@ public class LocationReceiver {
                 l.setLongitude(rs.getDouble("longitude"));
                 
 		break;
-	    }
-            
-            return l;
+	    }           
 	}
 	catch (Exception e)
 	{
 	    Logger.gI().addError(e.getLocalizedMessage());
-            
-            return new ProtocolMessage(ProtocolMessage.Type.ERROR);
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
+        
+        return l;
     }
 }
