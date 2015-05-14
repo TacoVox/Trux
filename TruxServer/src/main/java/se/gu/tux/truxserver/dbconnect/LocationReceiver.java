@@ -17,9 +17,8 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import se.gu.tux.trux.datastructure.Data;
+
 import se.gu.tux.trux.datastructure.Location;
-import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -53,7 +52,7 @@ public class LocationReceiver {
     }
     
     public Location getCurrent(long userid) {
-        Location l = new Location();
+        Location l = null;
         
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
@@ -73,8 +72,7 @@ public class LocationReceiver {
 	    
 	    while (rs.next())
 	    {
-                l.setLatitude(rs.getDouble("latitude"));
-                l.setLongitude(rs.getDouble("longitude"));
+                l = new Location(rs.getDouble("latitude"), rs.getDouble("longitude"));
                 
 		break;
 	    }           
