@@ -109,6 +109,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         @Override
         public void onInfoWindowClick(Marker marker) {
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragmentTransaction.replace(R.id.menuContainer, new MapCommunityWindow());
             fragmentTransaction.commit();
         }
@@ -184,33 +186,36 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                            getActivity().runOnUiThread(new Runnable() {
                                @Override
                                public void run() {
-                                   if(newFriend != null)
-                                   for (int i = 0; i < newFriend.length; i++) {
-                                       System.out.println("FRIEND: " + i + " picture: " +
-                                            newPicture[i] + " pictureid: " + newFriend[i].getProfilePicId()
-                                            + " loc: " + newFriend[i].getCurrentLoc().getLoc());
+                                   if(newFriend != null) {
 
                                        if (hasMarker) {
                                            mMap.clear();
                                            hasMarker = false;
-                                       } else if (newPicture[i] != null && newFriend[i] != null &&
-                                               newFriend[i].getCurrentLoc() != null &&
-                                               newFriend[i].getCurrentLoc().getLoc() != null) {
+                                       }
 
-                                           double[] loc = newFriend[i].getCurrentLoc().getLoc();
-                                           //double[] loc = {46, 11};
-                                           mMap.addMarker(new MarkerOptions()
-                                                   .position(new LatLng(loc[0], loc[1]))
-                                                   .title(newFriend[i].getFirstname())
-                                                   .snippet("DRIVING")
-                                                   .icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(
-                                                           newPicture[i], 40, 40,false))));
-                                           System.out.println("---Picture is now a marker---");
-                                           hasMarker = true;
+                                       for (int i = 0; i < newFriend.length; i++) {
+                                           System.out.println("FRIEND: " + i + " picture: " +
+                                                   newPicture[i] + " pictureid: " + newFriend[i].getProfilePicId()
+                                                   + " loc: " + newFriend[i].getCurrentLoc().getLoc());
 
+                                           if (newPicture[i] != null && newFriend[i] != null &&
+                                                   newFriend[i].getCurrentLoc() != null &&
+                                                   newFriend[i].getCurrentLoc().getLoc() != null) {
+
+                                               double[] loc = newFriend[i].getCurrentLoc().getLoc();
+                                               //double[] loc = {46, 11};
+                                               mMap.addMarker(new MarkerOptions()
+                                                       .position(new LatLng(loc[0], loc[1]))
+                                                       .title(newFriend[i].getFirstname())
+                                                       .snippet("DRIVING")
+                                                       .icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(
+                                                               newPicture[i], 40, 40, false))));
+                                               System.out.println("---Picture is now a marker---");
+                                               hasMarker = true;
+
+                                           }
                                        }
                                    }
-
                                }
                            });
                        }

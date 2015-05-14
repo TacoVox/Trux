@@ -11,8 +11,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:clickable="true"
-        android:onClick=""
-        android:id="@+id/emptyLayout">
+        android:id="@+id/backLayout">
 
     </LinearLayout>
 
@@ -31,15 +30,18 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Messages"/>
+            android:text="Messages"
+            android:id="@+id/messageButton"/>
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Info"/>
+            android:text="Info"
+            android:id="@+id/infoButton"/>
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Remove Friend"/>
+            android:text="Remove Friend"
+            android:id="@+id/removeFriend"/>
 
         <Space
             android:layout_width="fill_parent"
