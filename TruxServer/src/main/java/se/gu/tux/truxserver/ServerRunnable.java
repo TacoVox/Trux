@@ -74,8 +74,7 @@ public class ServerRunnable implements Runnable {
                             Logger.gI().addError(d.getClass().getSimpleName());
                         }
                     } catch (ClassCastException e) {
-                        Logger.gI().addError(connectionId + ": Classcast: "
-                                + d.getClass().getSimpleName());
+                        Logger.gI().addError(connectionId + ": Classcast:" + e.getLocalizedMessage());
                     } catch (SocketTimeoutException e) {
                     	idleTime++;
                     	if (idleTime > maxIdleTime) {
