@@ -131,7 +131,7 @@ public class SessionHandler {
             //No check for active session here!
             pst.executeUpdate();
             
-            Logger.gI().addDebug(pst.toString());
+            //Logger.gI().addDebug(pst.toString());
             
             ResultSet keys = pst.getGeneratedKeys();
             
