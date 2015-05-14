@@ -52,6 +52,47 @@ public class MessageHandler {
     */
     private MessageHandler() {}
     
+    public ProtocolMessage newMessage(Message m) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                "REPLACE INTO conversation (personone, persontwo, timestamp) "
+                    + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
+                
+            pst.setLong(1, m.getSenderId());
+            pst.setLong(2, m.getReceiverId());
+            pst.setLong(3, System.currentTimeMillis());
+            
+            ResultSet keys = dbc.execReplace(m, pst);
+            
+            long conversationid = keys.getLong(1);
+            
+            pst = dbc.getConnection().prepareStatement(
+                "INSERT INTO message (conversationid, senderid, receiverid, message, timestamp, seen) "
+                        + "VALUES(?, ?, ?, ?, ?, ?)");
+              
+            pst.setLong(1, conversationid);
+            pst.setLong(2, m.getSenderId());
+            pst.setLong(3, m.getReceiverId());
+            pst.setString(4, (String)m.getValue());
+            pst.setLong(5, System.currentTimeMillis());
+            pst.setBoolean(6, false);
+            
+            dbc.execInsert(m, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        } catch (Exception e) {
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        
+	return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+    }
+    
     public boolean hasNewMessage(Data d) {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
