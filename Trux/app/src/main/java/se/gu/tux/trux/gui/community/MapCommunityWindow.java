@@ -4,17 +4,17 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import tux.gu.se.trux.R;
 
 
 public class MapCommunityWindow extends Fragment {
-
-    private static final int LAYOUT = R.id.emptyLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,18 +24,54 @@ public class MapCommunityWindow extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_map_community_window, container, false);
 
-        LinearLayout layout = (LinearLayout) view.findViewById(R.id.menuLayout);
+        final View view = inflater.inflate(R.layout.fragment_map_community_window, container, false);
+
+        LinearLayout layout = (LinearLayout) view.findViewById(R.id.backLayout);
+        Button messageButton = (Button) view.findViewById(R.id.messageButton);
+        Button infoButton = (Button) view.findViewById(R.id.infoButton);
+        Button removeFriendButton = (Button) view.findViewById(R.id.removeFriend);
+
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeMenu();
+            }
+        });
+
+        messageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeMenu();
+            }
+        });
+
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeMenu();
+            }
+        });
+
+        removeFriendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeMenu();
+            }
+        });
 
         return view;
     }
 
-    public void onFragmentViewClick(int id) {
-        if(id == LAYOUT){
-        }
-    }
+    public void removeMenu() {
 
+        Fragment mcw = this;
+
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        fragmentTransaction.remove(mcw);
+        fragmentTransaction.commit();
+    }
 
 }

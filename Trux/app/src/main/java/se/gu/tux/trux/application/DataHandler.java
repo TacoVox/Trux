@@ -18,6 +18,7 @@ import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.datastructure.Picture;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
@@ -353,9 +354,14 @@ public class DataHandler
         if (friendIds != null) {
             friends =  new Friend[friendIds.length];
             for (int i = 0; i < friendIds.length; i++) {
-                friends[i] = (Friend)getData(new Friend(friendIds[i]));
-            }
-        }
+                Data d = getData(new Friend(friendIds[i]));
+				if (d instanceof Friend) {
+					friends[i] = (Friend)d;
+				} else if (d instanceof ProtocolMessage) {
+					System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
+				}
+			}
+   	     }
 
         return friends;
     }

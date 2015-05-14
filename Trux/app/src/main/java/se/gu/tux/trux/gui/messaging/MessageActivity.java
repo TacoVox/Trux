@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.messaging;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,10 +26,11 @@ public class MessageActivity extends BaseAppActivity
 
     private static final int LAYOUT_ID = R.layout.activity_message;
 
-    private Friend[] friends;
+    private Friend friend;
 
-    private Friend listFriend;
+    private int homeFragment = R.layout.fragment_message_list_holder;
 
+    private int currentFragmentId;
 
 
     @Override
@@ -41,38 +43,13 @@ public class MessageActivity extends BaseAppActivity
         // set current view showing
         setCurrentViewId(LAYOUT_ID);
 
-        // get the friend list
-        AsyncTask<Void, Void, Friend[]> friendTask = new FetchFriendsTask().execute();
-
-        try
-        {
-            friends = friendTask.get();
-        }
-        catch (InterruptedException | ExecutionException e)
-        {
-            e.printStackTrace();
-        }
-
-        // get the list view
-        final ListView listView = (ListView) findViewById(R.id.messages_list_view);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showToast("Click detected");
-                listFriend = (Friend) adapterView.getAdapter().getItem(i);
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.message_frame_container, new ChatFragment());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-        });
-        // get the adapter
-        MessageListAdapter messageListAdapter = new MessageListAdapter(this, friends);
-        // set adapter
-        listView.setAdapter(messageListAdapter);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.message_frame_container, new FriendListFragment());
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
 
     }
+
 
 
     @Override
@@ -83,32 +60,43 @@ public class MessageActivity extends BaseAppActivity
     }
 
 
-    public Friend getListFriend()
+
+    public Friend getFriend()
     {
-        return listFriend;
+        return friend;
     }
 
 
-    private class FetchFriendsTask extends AsyncTask<Void, Void, Friend[]>
+
+    public void onItemClick(Friend friend, int id)
     {
+        this.friend = friend;
+        currentFragmentId = id;
 
-        @Override
-        protected Friend[] doInBackground(Void... voids)
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.message_frame_container, new ChatFragment());
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+
+
+    @Override
+    public void onBackPressed()
+    {
+        if (currentFragmentId == homeFragment)
         {
-            Friend[] array = null;
-            try
-            {
-                array = DataHandler.getInstance().getFriends();
-            }
-            catch (NotLoggedInException e)
-            {
-                e.printStackTrace();
-            }
-
-            return array;
+            this.finish();
         }
-
-    } // end inner class
+        else
+        {
+            currentFragmentId = homeFragment;
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.message_frame_container, new FriendListFragment());
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+    }
 
 
 } // end class
