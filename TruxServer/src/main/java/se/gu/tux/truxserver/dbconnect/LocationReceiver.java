@@ -57,6 +57,8 @@ public class LocationReceiver {
         
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
+        Logger.gI().addDebug(Long.toString(userid));
+        
         try
 	{
             String selectStmnt = "SELECT latitude, longitude " +
@@ -65,7 +67,7 @@ public class LocationReceiver {
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, l.getUserId());
+            pst.setLong(1, userid);
             
 	    ResultSet rs = pst.executeQuery();
 	    
@@ -84,7 +86,7 @@ public class LocationReceiver {
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
-        
+
         return l;
     }
 }
