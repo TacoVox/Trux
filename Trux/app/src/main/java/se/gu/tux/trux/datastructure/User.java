@@ -23,7 +23,10 @@ public class User extends Data
     private long profilePicId;
 
 	public boolean passwordMatch(String hash) {
-		return hash.equals(passwordHash);
+        if (hash != null) {
+            return hash.equals(passwordHash);
+        }
+        return false;
 	}
 
 	@Override
