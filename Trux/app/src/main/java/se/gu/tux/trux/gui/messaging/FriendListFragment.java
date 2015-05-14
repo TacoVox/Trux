@@ -3,8 +3,6 @@ package se.gu.tux.trux.gui.messaging;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +12,12 @@ import android.widget.ListView;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.datastructure.Message;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
+import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 /**
@@ -28,7 +30,7 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
     private Friend friend;
 
-    private Friend[] friends;
+    private Friend[] friendsArray;
 
 
 
@@ -43,7 +45,7 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
         try
         {
-            friends = friendTask.get();
+            friendsArray = friendTask.get();
         }
         catch (InterruptedException | ExecutionException e)
         {
@@ -52,10 +54,10 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
         // get the list view
         listView = (ListView) view.findViewById(R.id.list);
-
+        // set listener
         listView.setOnItemClickListener(this);
         // get the adapter
-        MessageListAdapter messageListAdapter = new MessageListAdapter(inflater, friends);
+        MessageListAdapter messageListAdapter = new MessageListAdapter(inflater, friendsArray);
         // set adapter
         listView.setAdapter(messageListAdapter);
 
@@ -74,6 +76,36 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
 
 
+    private void initMessageService()
+    {
+        ProtocolMessage message = new ProtocolMessage(ProtocolMessage.Type.GET_LATEST_CONVERSATIONS);
+
+        AsyncTask<ProtocolMessage, Void, ArrayResponse> conv = new FetchConversationTask().execute(message);
+
+        ArrayResponse response = null;
+
+        try
+        {
+            response = conv.get();
+        }
+        catch (InterruptedException | ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+
+        Message[] messages = null;
+
+        if (response != null)
+        {
+            messages = (Message[]) response.getArray();
+        }
+
+
+
+    }
+
+
+
     /**
      * Private class to fetch the friend list.
      */
@@ -88,6 +120,30 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
             try
             {
                 array = DataHandler.getInstance().getFriends();
+            }
+            catch (NotLoggedInException e)
+            {
+                e.printStackTrace();
+            }
+
+            return array;
+        }
+
+    } // end inner class
+
+
+
+    private class FetchConversationTask extends AsyncTask<ProtocolMessage, Void, ArrayResponse>
+    {
+
+        @Override
+        protected ArrayResponse doInBackground(ProtocolMessage... protocolMessages)
+        {
+            ArrayResponse array = null;
+
+            try
+            {
+                array = (ArrayResponse) ServerConnector.getInstance().answerQuery(protocolMessages[0]);
             }
             catch (NotLoggedInException e)
             {
