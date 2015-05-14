@@ -53,7 +53,7 @@ public class ContactMenuActivity extends BaseAppActivity {
     }
 
 
-
+//TODO: checkCredentialvalues not working accordingly !
 
     private boolean checkCredentialvalues() {
         boolean isCorrect = true;
