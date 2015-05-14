@@ -143,7 +143,7 @@ public class UserHandler {
 	{
             String selectStmnt = "SELECT user.userid, user.password, session.sessionid" +
                     " FROM user, session WHERE user.userid = session.userid AND"
-                    + " user.userid = ? AND session.sessionid = ? AND session.endtime IS NULL;";
+                    + " user.userid = ? AND session.sessionid = ? AND session.endtime IS NULL";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
