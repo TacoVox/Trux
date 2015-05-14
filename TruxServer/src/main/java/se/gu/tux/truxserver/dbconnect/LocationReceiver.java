@@ -57,7 +57,7 @@ public class LocationReceiver {
         
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
-        Logger.gI().addDebug(Long.toString(userid));
+        //Logger.gI().addDebug(Long.toString(userid));
         
         try
 	{
