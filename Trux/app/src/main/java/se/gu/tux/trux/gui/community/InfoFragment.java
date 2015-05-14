@@ -33,17 +33,20 @@ public class InfoFragment extends MapFrag {
         nameText = (TextView) view.findViewById(R.id.nameTextView);
         infoText = (TextView) view.findViewById(R.id.infoTextView);
         profilePic = (ImageView) view.findViewById(R.id.infoPicture);
+
+        viewFriendInfo();
+
         return view;
     }
 
     private void viewFriendInfo() {
-        final Friend[] newFriend = friend;
-        final Bitmap[] newPicture = picture;
+        final Friend[] newFriend = getFriends();
+        final Bitmap[] newPicture = getPictures();
         for(int i = 0; i < newFriend.length; i++){
             if(friendMarker.containsKey(markerID)){
                 nameText.setText(newFriend[i].getFirstname() + " " + newFriend[i].getLastname());
                 profilePic.setImageBitmap(Bitmap.createScaledBitmap(newPicture[i], 50,50, false));
-               // infoText.setText();
+                infoText.setText("");
             }
         }
     }

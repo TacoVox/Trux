@@ -49,7 +49,7 @@ public class MapCommunityWindow extends Fragment {
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeMenu();
+                showInfoWindow();
             }
         });
 
@@ -71,6 +71,14 @@ public class MapCommunityWindow extends Fragment {
         fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
         fragmentTransaction.remove(mcw);
+        fragmentTransaction.commit();
+    }
+
+    public void showInfoWindow() {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        fragmentTransaction.replace(R.id.contentContainer, new InfoFragment());
         fragmentTransaction.commit();
     }
 
