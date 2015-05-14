@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/contact_title"
-                android:textSize="10pt">
+                android:textSize="20pt">
 
                 </TextView>
             <EditText
@@ -30,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/contact_name"
                 android:inputType="textPersonName"
+                android:textSize="12pt"
                 android:layout_width="fill_parent">
             </EditText>
             <EditText
@@ -37,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/contact_email"
                 android:inputType="textEmailAddress"
+                android:textSize="12pt"
                 android:layout_width="fill_parent">
             </EditText>
 
@@ -46,9 +48,11 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/feedback_body"
                 android:inputType="textMultiLine"
+                android:textSize="12pt"
                 android:lines="5"
                 android:layout_width="fill_parent">
             </EditText>
+            
         </LinearLayout>
     </ScrollView>
 
