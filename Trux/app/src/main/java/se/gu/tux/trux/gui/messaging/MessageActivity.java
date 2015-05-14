@@ -1,20 +1,12 @@
 package se.gu.tux.trux.gui.messaging;
 
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
-import java.util.concurrent.ExecutionException;
-
-import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
-import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
+
 
 /**
  * Created by ivryashkov on 2015-05-13.

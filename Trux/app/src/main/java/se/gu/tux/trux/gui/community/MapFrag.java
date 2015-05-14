@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -46,6 +47,10 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
     private LatLng[] latLng;
     private LatLng loc;
     private MapFragment f;
+    String markerID;
+    Friend[] friend;
+    HashMap friendMarker;
+    Bitmap[] picture;
 
     private Timer t;
     private popFriends timer;
@@ -108,6 +113,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
     private GoogleMap.OnInfoWindowClickListener markerMenu = new GoogleMap.OnInfoWindowClickListener() {
         @Override
         public void onInfoWindowClick(Marker marker) {
+            markerID = marker.getId();
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -169,8 +175,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                @Override
                 protected Object doInBackground(Object[] objects){
                    try{
-                       Friend[] friend = DataHandler.getInstance().getFriends();
-                       final Bitmap[] picture = new Bitmap[friend.length];
+                       friend = DataHandler.getInstance().getFriends();
+                       picture = new Bitmap[friend.length];
                        if(friend.length > 0){
                            for(int i = 0; i < friend.length; i++){
                                try{
@@ -204,12 +210,14 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
                                                double[] loc = newFriend[i].getCurrentLoc().getLoc();
                                                //double[] loc = {46, 11};
-                                               mMap.addMarker(new MarkerOptions()
+                                               Marker m = mMap.addMarker(new MarkerOptions()
                                                        .position(new LatLng(loc[0], loc[1]))
                                                        .title(newFriend[i].getFirstname())
                                                        .snippet("DRIVING")
                                                        .icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(
                                                                newPicture[i], 40, 40, false))));
+                                               String mID = m.getId();
+                                               friendMarker.put(mID, newFriend[i]);
                                                System.out.println("---Picture is now a marker---");
                                                hasMarker = true;
 
