@@ -124,4 +124,12 @@ public class Friend extends Data {
     public void setOnline(boolean isOnline) {
         this.isOnline = isOnline;
     }
+
+    public int hashCode() {
+        if (friendId != 0) {
+            return (int)(friendId);
+        } else {
+            return 0;
+        }
+    }
 }

@@ -354,7 +354,8 @@ public class DataHandler
         if (friendIds != null) {
             friends =  new Friend[friendIds.length];
             for (int i = 0; i < friendIds.length; i++) {
-                Data d = getData(new Friend(friendIds[i]));
+                Friend queryFriend = new Friend(friendIds[i]);
+                Data d = getData(queryFriend);
 				if (d instanceof Friend) {
 					friends[i] = (Friend)d;
 				} else if (d instanceof ProtocolMessage) {

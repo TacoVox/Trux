@@ -248,7 +248,7 @@ public class ServerConnector {
                         out.writeObject(query);
                         answer = (Data)in.readObject();
 
-                        //System.out.println("Returned type: " + answer.getClass().getSimpleName());
+                        System.out.println("Returned type: " + answer.getClass().getSimpleName());
 
                         dataSent = true;
 

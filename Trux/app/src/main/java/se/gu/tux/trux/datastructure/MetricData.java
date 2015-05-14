@@ -69,6 +69,10 @@ public class MetricData extends Data
     }
 
     public int hashCode() {
-        return (int)(tf + Math.round((Double)getValue() * 1000));
+        if (getValue() != null) {
+            return (int)(tf + Math.round((Double)getValue() * 1000));
+        } else {
+            return 0;
+        }
     }
 }
