@@ -79,8 +79,8 @@
     <string name="contact_email">Email</string>
     <string name="feedback_body">Your feedback</string>
     <string name="feedbacktype">Enter your feedback type</string>
-    <string name="feedbacktype1">Password reset</string>
-    <string name="feedbacktype2">Suggestion</string>
+    <string name="feedbacktype1">Reset Password</string>
+    <string name="feedbacktype2">Constructive suggestion</string>
     <string name="feedbacktype3">Service issues</string>
     <string name="feedbackbutton">Send Feedback</string>
 
