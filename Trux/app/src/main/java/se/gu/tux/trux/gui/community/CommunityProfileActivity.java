@@ -237,9 +237,9 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     private void setProfile()
     {
         // get the profile picture
-        Picture pic = null;
+        Bitmap pic = null;
 
-        AsyncTask<Void, Void, Picture> fetchImageTask = new FetchImageTask().execute();
+        AsyncTask<Void, Void, Bitmap> fetchImageTask = new FetchImageTask().execute();
 
         try
         {
@@ -250,17 +250,9 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
             e.printStackTrace();
         }
 
-        byte[] b = null;
 
-        if (pic != null) { b = pic.getImg(); }
-
-        if (b != null)
-        {
-            System.out.println("--------- decoding byte array ------------");
-            bitmap = BitmapFactory.decodeByteArray(pic.getImg(), 0, pic.getImg().length);
-
-            System.out.println("--------- setting image ------------");
-            imageView.setImageBitmap(bitmap);
+        if (pic != null) {
+            imageView.setImageBitmap(pic);
         }
 
         eUsername.setText(DataHandler.getInstance().getUser().getUsername());
@@ -508,7 +500,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     /**
      * Private class to fetch the profile picture.
      */
-    private class FetchImageTask extends AsyncTask<Void, Void, Picture>
+    private class FetchImageTask extends AsyncTask<Void, Void, Bitmap>
     {
         @Override
         protected void onPreExecute()
@@ -517,9 +509,9 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         }
 
         @Override
-        protected Picture doInBackground(Void... voids)
+        protected Bitmap doInBackground(Void... voids)
         {
-            Picture image = null;
+            Bitmap image = null;
 
             try
             {

@@ -10,7 +10,7 @@ public class Message extends Data
     private String value;
     private long conversationId;
 
-    
+
 
     @Override
     public Object getValue() {

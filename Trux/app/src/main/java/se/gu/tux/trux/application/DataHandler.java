@@ -1,5 +1,8 @@
 package se.gu.tux.trux.application;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import com.google.android.gms.games.internal.api.NotificationsImpl;
 import com.jjoe64.graphview.series.DataPoint;
 
@@ -358,13 +361,19 @@ public class DataHandler
     }
 
 
-    public Picture getPicture(Long pictureId) throws NotLoggedInException {
+    /**
+     * Get the requested picture as a Bitmap object.
+     * @param pictureId
+     * @return
+     * @throws NotLoggedInException
+     */
+    public Bitmap getPicture(Long pictureId) throws NotLoggedInException {
         if (imageCache == null) {
             imageCache = new HashMap<Long, Picture>();
         }
-        /*if (pictureId == 0) {
+        if (pictureId == -1) {
             return null;
-        }*/
+        }
 
         // Empty cache if it is really big
         if (imageCache.size() > 500) {
@@ -376,7 +385,19 @@ public class DataHandler
             // Try to fecth it
             imageCache.put(pictureId, (Picture)getData(new Picture(pictureId)));
         }
-        return imageCache.get(pictureId);
+
+        Picture p = imageCache.get(pictureId);
+
+        // Now we have the picture - convert it to a bitmap so it can be used in the app
+        Bitmap bmp = null;
+        if (p != null && p.getImg() != null) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inMutable = true;
+            bmp = BitmapFactory.decodeByteArray(p.getImg(), 0,
+                    p.getImg().length, options);
+        }
+
+        return bmp;
     }
 
     public Notification getNotificationStatus() {
