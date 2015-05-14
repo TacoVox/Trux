@@ -13,6 +13,11 @@
         android:clickable="true"
         android:id="@+id/backLayout">
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/contentContainer"/>
+
     </LinearLayout>
 
     <LinearLayout

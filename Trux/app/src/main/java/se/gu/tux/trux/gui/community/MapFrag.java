@@ -200,13 +200,14 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                                        }
 
                                        for (int i = 0; i < newFriend.length; i++) {
-                                           System.out.println("FRIEND: " + i + " picture: " +
-                                                   newPicture[i] + " pictureid: " + newFriend[i].getProfilePicId()
-                                                   + " loc: " + newFriend[i].getCurrentLoc().getLoc());
 
                                            if (newPicture[i] != null && newFriend[i] != null &&
                                                    newFriend[i].getCurrentLoc() != null &&
                                                    newFriend[i].getCurrentLoc().getLoc() != null) {
+
+                                               System.out.println("FRIEND: " + i + " picture: " +
+                                                       newPicture[i] + " pictureid: " + newFriend[i].getProfilePicId()
+                                                       + " loc: " + newFriend[i].getCurrentLoc().getLoc());
 
                                                double[] loc = newFriend[i].getCurrentLoc().getLoc();
                                                //double[] loc = {46, 11};
@@ -234,6 +235,15 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
               return null; }
            }.execute();
         }
+    }
+
+    public Friend[] getFriends() {
+        System.out.println("----------------------------------------" + friend.length);
+        return friend;
+    }
+
+    public Bitmap[] getPictures() {
+        return picture;
     }
 
     public void onStop(){
