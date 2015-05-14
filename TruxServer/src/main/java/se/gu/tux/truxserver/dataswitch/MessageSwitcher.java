@@ -19,6 +19,7 @@ import se.gu.tux.trux.datastructure.Message;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.dbconnect.FriendshipHandler;
+import se.gu.tux.truxserver.dbconnect.MessageHandler;
 import se.gu.tux.truxserver.dbconnect.SessionHandler;
 import se.gu.tux.truxserver.dbconnect.UserHandler;
 
@@ -64,7 +65,7 @@ public class MessageSwitcher {
             else if(pm.getType() == ProtocolMessage.Type.FRIEND_REMOVE)
                 return FriendshipHandler.gI().unfriendUser(pm);
         } else if (m instanceof Message){
-            return m;
+            return MessageHandler.gI().newMessage((Message)m);
         }
         
         return m;
