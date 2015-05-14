@@ -34,13 +34,13 @@ public class MessageListAdapter extends BaseAdapter
      * Constructor. Takes the activity where to display items and
      * the data to display on those items.
      *
-     * @param activity          The activity.
+     * @param inflater          The inflater.
      * @param friends           The data to display.
      */
-    public MessageListAdapter(Activity activity, Friend[] friends)
+    public MessageListAdapter(LayoutInflater inflater, Friend[] friends)
     {
         this.friends = friends;
-        layoutInflater = (LayoutInflater) activity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater = inflater;
     }
 
 

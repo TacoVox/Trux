@@ -29,7 +29,7 @@ public class ChatFragment extends Fragment
 
         MessageActivity act = (MessageActivity) getActivity();
 
-        Friend friend = act.getListFriend();
+        Friend friend = act.getFriend();
 
         tv.setText(friend.getUsername());
 
