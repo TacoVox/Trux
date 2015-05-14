@@ -75,7 +75,7 @@
             \nBased on litres/h.
     </string>
     <string name="contact_name">Name</string>
-    <string name="contact_title">Conact us</string>
+    <string name="contact_title">Contact us</string>
     <string name="contact_email">Email</string>
     <string name="feedback_body">Your feedback</string>
     <string name="feedbacktype">Enter your feedback type</string>

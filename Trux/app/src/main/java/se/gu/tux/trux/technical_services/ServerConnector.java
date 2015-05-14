@@ -160,9 +160,11 @@ public class ServerConnector {
 
         public void shutDown() {
             if (cs != null) try {
-                cs.close();
-                in.close();
-                out.close();
+                synchronized (this) {
+                    cs.close();
+                    in.close();
+                    out.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -335,7 +337,6 @@ public class ServerConnector {
                 // Connected. Send anything in the queue.
                 try {
 
-
                     // Wait for queue to have objects
                     //System.out.println("Server connector: waiting  at queue... (" + sc.toString() + ")");
                     d = queue.takeFirst();
@@ -344,8 +345,7 @@ public class ServerConnector {
                     if (d != null) {
                         System.out.println("Server connector: next up is " + d.getClass().getSimpleName());
 
-                        // Connect if not already connected.
-                        // If we ever lose connection, try reconnecting at regular intervals
+                        // Connect if not connected at this point.
                         if (cs == null || cs.isClosed() || out == null || in == null) {
                             connect();
                         }
@@ -356,7 +356,7 @@ public class ServerConnector {
                             d.setSessionId(DataHandler.getInstance().getUser().getSessionId());
                             d.setUserId(DataHandler.getInstance().getUser().getUserId());
 
-                            // Then STOP ANYTHING ELSE from using this object (most importantly
+                            // Then stop other threads from using this object (most importantly
                             // the in and out streams) while sending and receiving data
                             // Send the data
                             System.out.println("Server connector: sending " + d.getClass().getSimpleName());
@@ -367,8 +367,8 @@ public class ServerConnector {
                             }
                             System.out.println("Server connector: received " + inD.getClass().getSimpleName());
 
-                            // If we sent a heartbeat object just now, put all the notifications
-                            // we get back into the notifications list
+                            // If we sent a heartbeat object just now, update the notification object
+                            // in DataHandler
                             if (d instanceof Heartbeat && inD instanceof Notification) {
                                 DataHandler.getInstance().setNotificationStatus((Notification)inD);
                             }
@@ -398,10 +398,11 @@ public class ServerConnector {
 
                     if (cs != null) {
                         try {
-                            cs.close();
-                            in.close();
-                            out.close();
-
+                            synchronized (this) {
+                                cs.close();
+                                in.close();
+                                out.close();
+                            }
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
