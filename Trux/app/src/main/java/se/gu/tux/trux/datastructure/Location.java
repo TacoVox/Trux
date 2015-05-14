@@ -27,12 +27,11 @@ public class Location extends MetricData {
     }
     
     public Location() {
-		loc = new double[2];
+		// Leave location as null
 	}
     
     public Location(double lat, double lng) {
         loc = new double[2];
-        
         setLoc(lat, lng);
    }
 
