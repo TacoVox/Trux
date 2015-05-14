@@ -358,7 +358,7 @@ public class DataHandler
 				if (d instanceof Friend) {
 					friends[i] = (Friend)d;
 				} else if (d instanceof ProtocolMessage) {
-					System.out.println("Friend fetch: " + d.getMessage());
+					System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
 				}
 			}
    	     }
