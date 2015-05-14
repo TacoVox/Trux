@@ -353,9 +353,14 @@ public class DataHandler
         if (friendIds != null) {
             friends =  new Friend[friendIds.length];
             for (int i = 0; i < friendIds.length; i++) {
-                friends[i] = (Friend)getData(new Friend(friendIds[i]));
-            }
-        }
+                Data d = getData(new Friend(friendIds[i]));
+				if (d instanceof Friend) {
+					friends[i] = (Friend)d;
+				} else if (d instanceof ProtocolMessage) {
+					System.out.println("Friend fetch: " + d.getMessage());
+				}
+			}
+   	     }
 
         return friends;
     }
