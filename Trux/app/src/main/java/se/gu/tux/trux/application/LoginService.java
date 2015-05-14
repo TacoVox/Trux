@@ -219,6 +219,7 @@ public class LoginService
             // Clear the user details file
             writeToFile("LOGGED_OUT");
 
+
             DataHandler.getInstance().setUser(null);
             isLoggedOut = true;
         } else {
