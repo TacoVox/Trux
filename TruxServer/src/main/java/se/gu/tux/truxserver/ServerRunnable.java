@@ -106,8 +106,9 @@ public class ServerRunnable implements Runnable {
                 // Send data to DataSwitcher
                 d = DataSwitcher.gI().handleData(d);
 
-                // Send data back to acknowledge.
+                // Send data back to respond to the request or acknowledge.
                 out.writeObject(d);
+		out.flush();		
 
             } catch (ClassNotFoundException e) {
 

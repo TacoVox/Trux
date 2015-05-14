@@ -27,8 +27,8 @@ import se.gu.tux.trux.datastructure.User;
 public class ServerConnector {
 
     private Thread transmitThread = null;
-    private ConnectorRunnable connector = null;
-    private LinkedBlockingDeque<Data> queue;
+    private volatile ConnectorRunnable connector = null;
+    private volatile LinkedBlockingDeque<Data> queue;
 
     /**
      * Some more singleton....!
@@ -62,7 +62,7 @@ public class ServerConnector {
     public void connect(String address) {
         connector = new ConnectorRunnable(address, this);
         transmitThread = new Thread(connector);
-        transmitThread.start();
+        //transmitThread.start();
     }
 
 
@@ -140,10 +140,11 @@ public class ServerConnector {
     }
 
     class ConnectorRunnable implements Runnable {
-        private Socket cs;
+        private volatile Socket cs;
+        private volatile ObjectInputStream in = null;
+        private volatile ObjectOutputStream out = null;
         private String serverAddress;
-        private ObjectInputStream in = null;
-        private ObjectOutputStream out = null;
+
         private boolean isRunning = true;
         // For debugging, checking the instance
         private ServerConnector sc = null;
@@ -246,6 +247,7 @@ public class ServerConnector {
                         }
 
                         out.writeObject(query);
+                        out.flush();
                         answer = (Data)in.readObject();
 
                         System.out.println("Returned type: " + answer.getClass().getSimpleName());
@@ -363,6 +365,7 @@ public class ServerConnector {
                             Data inD = null;
                             synchronized (this) {
                                 out.writeObject(d);
+                                out.flush();
                                 inD = (Data) in.readObject();
                             }
                             System.out.println("Server connector: received " + inD.getClass().getSimpleName());

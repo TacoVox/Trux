@@ -157,12 +157,12 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         mMap.setOnMarkerClickListener(markerClickListener);
         mMap.setOnInfoWindowClickListener(markerMenu);
 
+        friendMarker = new HashMap<String, Friend>();
 
         //Creats a timeTask which will uppdate the posion of the friendUsers
         t = new Timer();
         timer = new popFriends();
         t.schedule(timer, 0, 10000);
-        friendMarker = new HashMap<String, Friend>();
     }
 
     /*
