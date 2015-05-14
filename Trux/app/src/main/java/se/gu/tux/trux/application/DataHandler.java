@@ -18,6 +18,7 @@ import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.datastructure.Picture;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
