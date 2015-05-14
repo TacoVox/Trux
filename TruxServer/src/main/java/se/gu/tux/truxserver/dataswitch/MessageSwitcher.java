@@ -64,6 +64,10 @@ public class MessageSwitcher {
                 return FriendshipHandler.gI().sendFriendRequest(pm);
             else if(pm.getType() == ProtocolMessage.Type.FRIEND_REMOVE)
                 return FriendshipHandler.gI().unfriendUser(pm);
+            else if(pm.getType() == ProtocolMessage.Type.GET_LATEST_CONVERSATIONS)
+                return MessageHandler.gI().getLatestConv(pm);
+            else if(pm.getType() == ProtocolMessage.Type.GET_LATEST_MESSAGES)
+                return MessageHandler.gI().getMessages(pm);
         } else if (m instanceof Message){
             return MessageHandler.gI().newMessage((Message)m);
         }
