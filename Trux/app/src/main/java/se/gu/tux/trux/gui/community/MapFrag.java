@@ -193,17 +193,18 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                                        if (hasMarker) {
                                            mMap.clear();
                                            hasMarker = false;
-                                       } else if (newPicture[i] != null && newFriend[i] != null /*&&
+                                       } else if (newPicture[i] != null && newFriend[i] != null &&
                                                newFriend[i].getCurrentLoc() != null &&
-                                               newFriend[i].getCurrentLoc().getLoc() != null*/) {
+                                               newFriend[i].getCurrentLoc().getLoc() != null) {
 
-                                           //double[] loc = newFriend[i].getCurrentLoc().getLoc();
-                                           double[] loc = {46, 11};
+                                           double[] loc = newFriend[i].getCurrentLoc().getLoc();
+                                           //double[] loc = {46, 11};
                                            mMap.addMarker(new MarkerOptions()
                                                    .position(new LatLng(loc[0], loc[1]))
                                                    .title(newFriend[i].getFirstname())
                                                    .snippet("DRIVING")
-                                                   .icon(BitmapDescriptorFactory.fromBitmap(newPicture[i])));
+                                                   .icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(
+                                                           newPicture[i], 40, 40,false))));
                                            System.out.println("---Picture is now a marker---");
                                            hasMarker = true;
 
