@@ -121,7 +121,7 @@ public class ServerRunnable implements Runnable {
             } catch (IOException e) {
 
                 if (e instanceof SocketException) {
-                    Logger.gI().addDebug(connectionId + ": Socket exception - assuming server is shutting down.");
+                    Logger.gI().addDebug(connectionId + ": Socket exception - assuming server is shutting down or client disconnected.");
                 } else {
                     Logger.gI().addMsg(connectionId + ": Closing ServerRunnable socket... (" + e.getClass() + ")");
                 }
