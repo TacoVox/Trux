@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Friend;
 
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
@@ -128,7 +129,7 @@ public class PictureHandler {
         return null;
     }
     
-    public long getProfilePictureID(long userid) {
+    public long getProfilePictureID(Data d) {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         try
@@ -138,9 +139,14 @@ public class PictureHandler {
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(selectStmnt);
             
-            pst.setLong(1, userid);
+            if(d instanceof User)
+                pst.setLong(1, d.getUserId());
+            else {
+                Friend f = (Friend)d;
+                pst.setLong(1, f.getFriendId());
+            }
             
-            ResultSet rs = pst.executeQuery();
+            ResultSet rs = dbc.execSelect(d, pst);
             
 	    while (rs.next())
 		return rs.getLong("pictureid");

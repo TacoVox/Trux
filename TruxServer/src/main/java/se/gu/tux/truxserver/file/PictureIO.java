@@ -64,11 +64,11 @@ public class PictureIO {
         BufferedImage img = decodePicture(p.getImg());
         
         String path = storeOnFS(img);
-        Logger.gI().addDebug("The new path :" + path);
+        //Logger.gI().addDebug("The new path :" + path);
         
         p.setPictureid(PictureHandler.gI().savePicturePath(p, path));
         
-        Logger.gI().addDebug("Picture ID: " + p.getPictureid());
+        //Logger.gI().addDebug("Picture ID: " + p.getPictureid());
         
         return PictureHandler.gI().setProfilePicture(p);
     }
@@ -115,7 +115,7 @@ public class PictureIO {
     
     private BufferedImage getFromFS(String path) {
         try {
-            Logger.gI().addDebug(path);
+            //Logger.gI().addDebug(path);
             return ImageIO.read(new File(path));
         } catch (IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());
