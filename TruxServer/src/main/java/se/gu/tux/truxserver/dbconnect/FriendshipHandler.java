@@ -66,6 +66,8 @@ public class FriendshipHandler {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
+            
             Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
@@ -97,6 +99,8 @@ public class FriendshipHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
+            
 	    Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
@@ -128,6 +132,8 @@ public class FriendshipHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
+            
 	    Logger.gI().addError(e.getLocalizedMessage());
             
             return false;
@@ -154,6 +160,8 @@ public class FriendshipHandler {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
+            
             Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
@@ -195,6 +203,8 @@ public class FriendshipHandler {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
+            
             Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());

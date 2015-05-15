@@ -136,6 +136,7 @@ public class MetricReceiver {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getMessage());
 	}
         finally {
@@ -176,6 +177,7 @@ public class MetricReceiver {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -238,6 +240,7 @@ public class MetricReceiver {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -284,6 +287,7 @@ public class MetricReceiver {
             
         } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {

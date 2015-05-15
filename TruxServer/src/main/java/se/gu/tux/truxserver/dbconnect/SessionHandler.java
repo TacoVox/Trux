@@ -93,6 +93,7 @@ public class SessionHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -143,6 +144,7 @@ public class SessionHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -181,6 +183,7 @@ public class SessionHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -214,6 +217,7 @@ public class SessionHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -255,6 +259,7 @@ public class SessionHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {

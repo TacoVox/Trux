@@ -82,6 +82,7 @@ public class MetricInserter implements Runnable {
                 insertMetric((MetricData)queue.take());
             }
             catch (InterruptedException e) {
+                e.printStackTrace();
             	// Received interrupt() call from managing thread
             	running = false;
             }
@@ -152,6 +153,7 @@ public class MetricInserter implements Runnable {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {

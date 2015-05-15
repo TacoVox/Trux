@@ -79,6 +79,8 @@ public class LocationReceiver {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
+            
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {

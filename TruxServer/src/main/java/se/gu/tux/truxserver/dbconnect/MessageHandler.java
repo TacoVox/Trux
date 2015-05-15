@@ -83,6 +83,7 @@ public class MessageHandler {
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         } catch (Exception e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
@@ -114,6 +115,8 @@ public class MessageHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
+            
 	    Logger.gI().addError(e.getLocalizedMessage());
             
             return false;
@@ -160,6 +163,8 @@ public class MessageHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
+            
 	    Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR);
@@ -207,6 +212,8 @@ public class MessageHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
+            
 	    Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR);
