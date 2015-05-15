@@ -23,7 +23,6 @@ import se.gu.tux.trux.datastructure.ArrayResponse;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
-import se.gu.tux.trux.datastructure.Location;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 
@@ -106,6 +105,7 @@ public class UserHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -164,6 +164,7 @@ public class UserHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -200,6 +201,7 @@ public class UserHandler {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
@@ -273,6 +275,7 @@ public class UserHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
 	}
@@ -313,6 +316,7 @@ public class UserHandler {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
@@ -340,6 +344,7 @@ public class UserHandler {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
@@ -384,6 +389,7 @@ public class UserHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -439,6 +445,8 @@ public class UserHandler {
 	}
 	catch (Exception e)
 	{
+            e.printStackTrace();
+            
 	    Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
