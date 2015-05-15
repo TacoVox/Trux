@@ -4,8 +4,11 @@ package se.gu.tux.trux.gui.community;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 
@@ -13,6 +16,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -31,6 +35,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -52,8 +57,12 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
     HashMap<String, Friend> friendMarker;
     Bitmap[] picture;
 
+
+
+
+
     private Timer t;
-    private popFriends timer;
+    private PopFriends timer;
     private boolean hasMarker = false;
 
 
@@ -114,6 +123,13 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         @Override
         public void onInfoWindowClick(Marker marker) {
             markerID = marker.getId();
+            InfoFragment fragment = new InfoFragment();
+            Bundle sendToInfoFragment = new Bundle();
+            sendToInfoFragment.putSerializable("friendArray", friend);
+            sendToInfoFragment.putSerializable("pictureArray", picture);
+            sendToInfoFragment.putSerializable("hashmap", friendMarker);
+            sendToInfoFragment.putString("markerID", markerID);
+            fragment.setArguments(sendToInfoFragment);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -161,7 +177,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
         //Creats a timeTask which will uppdate the posion of the friendUsers
         t = new Timer();
-        timer = new popFriends();
+        timer = new PopFriends();
         t.schedule(timer, 0, 10000);
     }
 
@@ -169,7 +185,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
      * This method will populate the map with the friend pictures and put
      * them on the currect position.
      */
-    class popFriends extends TimerTask{
+    class PopFriends extends TimerTask{
         public  void run(){
            new AsyncTask(){
                @Override
@@ -211,12 +227,19 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
                                                double[] loc = newFriend[i].getCurrentLoc().getLoc();
                                                //double[] loc = {46, 11};
+
+                                               newPicture[i] = Bitmap.createScaledBitmap(newPicture[i],40,40,false);
+/*                                               Canvas canvas = new Canvas(newPicture[i]);
+                                               Drawable shape = getResources().getDrawable(R.drawable.marker_layout);
+                                               shape.setBounds(0, 0, newPicture[i].getWidth(), newPicture[i].getHeight());
+                                               shape.draw(canvas);
+*/
+
                                                Marker m = mMap.addMarker(new MarkerOptions()
                                                        .position(new LatLng(loc[0], loc[1]))
                                                        .title(newFriend[i].getFirstname())
                                                        .snippet("DRIVING")
-                                                       .icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(
-                                                               newPicture[i], 40, 40, false))));
+                                                       .icon(BitmapDescriptorFactory.fromBitmap(newPicture[i])));
                                                String mID = m.getId();
                                                friendMarker.put(mID, newFriend[i]);
                                                System.out.println("---Picture is now a marker---");

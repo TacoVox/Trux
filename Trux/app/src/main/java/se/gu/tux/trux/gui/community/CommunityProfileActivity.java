@@ -384,13 +384,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
 
-        intent.putExtra("crop", "true");
-        intent.putExtra("outputX", 512);
-        intent.putExtra("outputY", 512);
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("scale", true);
-
         // start an activity for result, we want some data returned
         // in this case it will be the picture data
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), code);
