@@ -26,6 +26,7 @@ public class Friend extends Data {
 
     private long friendId;
     private long profilePicId;
+    private transient Picture profilePic;
     private boolean isFriend;
     private boolean isOnline;
 
@@ -134,6 +135,14 @@ public class Friend extends Data {
 
     public void setOnline(boolean isOnline) {
         this.isOnline = isOnline;
+    }
+
+    public Picture getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(Picture profilePic) {
+        this.profilePic = profilePic;
     }
 
     public int hashCode() {
