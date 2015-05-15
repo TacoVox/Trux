@@ -121,6 +121,7 @@ public class ServerRunnable implements Runnable {
                 shutDown();
             } catch (StreamCorruptedException e) {    
             	Logger.gI().addError(connectionId + " Stream corrupted: " + e.getLocalizedMessage());
+            	shutDown();
             } catch (SocketException e) {
             	Logger.gI().addDebug(connectionId + ": Socket exception - assuming server is shutting down or client disconnected.");
             	shutDown();
