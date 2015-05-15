@@ -185,10 +185,10 @@ public class MessageHandler {
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
 	    
-            pst.setLong(1, Long.parseLong(pm.getMessage()));
+            pst.setLong(1, pm.getUserId());
             pst.setLong(2, Long.parseLong(pm.getMessage()));
             pst.setLong(3, Long.parseLong(pm.getMessage()));
-            pst.setLong(4, Long.parseLong(pm.getMessage()));
+            pst.setLong(4, pm.getUserId());
 	    
 	    ResultSet rs = dbc.execSelect(pm, pst);
             
