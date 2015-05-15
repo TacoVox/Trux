@@ -207,6 +207,41 @@ public class MessageHandler {
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
+        }        
+    }
+    
+    public Data getConId(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String updateStmnt = "SELECT conversationid FROM conversation "
+                    + "WHERE (persone = ? AND perstwo = ?) OR (persone = ? AND perstwo = ?)";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+	    
+            pst.setLong(1, Long.parseLong(pm.getMessage()));
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, Long.parseLong(pm.getMessage()));
+            pst.setLong(4, Long.parseLong(pm.getMessage()));
+	    
+	    ResultSet rs = dbc.execSelect(pm, pst);
+            
+            while(rs.next()) {
+                
+            }
+	}
+	catch (Exception e)
+	{
+	    Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
         }
+        
+        return null;
     }
 }
