@@ -24,7 +24,7 @@ public class MessageListAdapter extends BaseAdapter
 {
 
     // the data to display
-    private Friend[] friends;
+    private ArrayList<Friend> friends;
     // to inflate each layout
     private static LayoutInflater layoutInflater;
 
@@ -37,7 +37,7 @@ public class MessageListAdapter extends BaseAdapter
      * @param inflater          The inflater.
      * @param friends           The data to display.
      */
-    public MessageListAdapter(LayoutInflater inflater, Friend[] friends)
+    public MessageListAdapter(LayoutInflater inflater, ArrayList<Friend> friends)
     {
         this.friends = friends;
         layoutInflater = inflater;
@@ -47,14 +47,14 @@ public class MessageListAdapter extends BaseAdapter
     @Override
     public int getCount()
     {
-        return friends.length;
+        return friends.size();
     }
 
 
     @Override
     public Object getItem(int i)
     {
-        return friends[i];
+        return friends.get(i);
     }
 
 
@@ -92,7 +92,7 @@ public class MessageListAdapter extends BaseAdapter
             viewHolder = (ViewHolder) newView.getTag();
         }
 
-        if (friends.length <= 0)
+        if (friends.size() <= 0)
         {
             // set no data
             viewHolder.username.setText("No Data");
@@ -101,7 +101,7 @@ public class MessageListAdapter extends BaseAdapter
         else
         {
             // set the data to show
-            viewHolder.username.setText(friends[i].getUsername());
+            viewHolder.username.setText(friends.get(i).getUsername());
         }
 
         // return the view
