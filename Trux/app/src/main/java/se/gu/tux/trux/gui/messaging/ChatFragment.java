@@ -25,7 +25,7 @@ public class ChatFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_chat_head, container, false);
 
-        TextView tv = (TextView) view.findViewById(R.id.chat_head_text_view);
+        TextView tv = (TextView) view.findViewById(R.id.chat_head_username_text_view);
 
         MessageActivity act = (MessageActivity) getActivity();
 
@@ -37,4 +37,4 @@ public class ChatFragment extends Fragment
     }
 
 
-} // en class
+} // end class
