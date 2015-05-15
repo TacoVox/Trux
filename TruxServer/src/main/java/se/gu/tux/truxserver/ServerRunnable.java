@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -108,29 +109,23 @@ public class ServerRunnable implements Runnable {
 
                 // Send data back to respond to the request or acknowledge.
                 out.writeObject(d);
-		out.flush();		
+                out.flush();		
 
             } catch (ClassNotFoundException e) {
-
                 Logger.gI().addError(connectionId + ": Class not found! Exiting.");
                 isRunning = false;
-
             } catch (InvalidClassException e) {
-
                 Logger.gI().addError(connectionId + ": Client sent invalid class: " + e.getMessage());
-
             } catch (EOFException e) {
-
                 Logger.gI().addDebug(connectionId + ": Client disconnected.");
                 shutDown();
-
+            } catch (StreamCorruptedException e) {    
+            	Logger.gI().addError(connectionId + " Stream corrupted: " + e.getLocalizedMessage());
+            } catch (SocketException e) {
+            	Logger.gI().addDebug(connectionId + ": Socket exception - assuming server is shutting down or client disconnected.");
+            	shutDown();
             } catch (IOException e) {
-
-                if (e instanceof SocketException) {
-                    Logger.gI().addDebug(connectionId + ": Socket exception - assuming server is shutting down or client disconnected.");
-                } else {
-                    Logger.gI().addMsg(connectionId + ": Closing ServerRunnable socket... (" + e.getClass() + ")");
-                }
+                Logger.gI().addMsg(connectionId + ": Closing ServerRunnable socket... (" + e.getClass() + ")");   
                 shutDown();
             }
         }

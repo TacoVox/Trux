@@ -62,7 +62,7 @@ public class ServerConnector {
     public void connect(String address) {
         connector = new ConnectorRunnable(address, this);
         transmitThread = new Thread(connector);
-        //transmitThread.start();
+        transmitThread.start();
     }
 
 

@@ -81,7 +81,7 @@
     <string name="feedbacktype">Enter your feedback type</string>
     <string name="feedbacktype1">Reset Password</string>
     <string name="feedbacktype2">Constructive suggestion</string>
-    <string name="feedbacktype3">Service issues</string>
+    <string name="feedbacktype3">Report service issues</string>
     <string name="feedbackbutton">Send Feedback</string>
 
 <!-- TODO: Remove or change this placeholder text -->
