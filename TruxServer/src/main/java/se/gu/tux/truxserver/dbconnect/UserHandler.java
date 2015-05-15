@@ -357,6 +357,8 @@ public class UserHandler {
     {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
+        long lastActive = Long.MAX_VALUE;
+        
         try
 	{
             String selectStmnt = "SELECT username, firstname, lastname" +
@@ -381,6 +383,29 @@ public class UserHandler {
                 
 		break;
 	    }
+            
+            selectStmnt = "SELECT MAX(timestamp) AS ts FROM session WHERE userid = ? "
+                    + "AND endtime NOT NULL";
+            
+            pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setLong(1, f.getFriendId());
+	    
+            rs = pst.executeQuery();
+	    
+            
+            f.setStatus(Friend.Status.OFFLINE);
+            
+	    while (rs.next())
+	    {
+                lastActive = System.currentTimeMillis() - rs.getLong("ts");
+                
+		break;
+	    }
+            
+            if(lastActive <= 300000)
+                f.setStatus(Friend.Status.ONLINE);
             
             f.setCurrentLoc(LocationReceiver.gI().getCurrent(f.getFriendId()));
             f.setProfilePicId(PictureHandler.gI().getProfilePictureID(f));
