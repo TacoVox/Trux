@@ -27,10 +27,11 @@ public class SocialHandler {
     private HashMap<Long, Picture> pictureCache;
     public enum FriendsUpdateMode {NONE, ALL, ONLINE};
 
-    interface FriendFetchListener {
-        public void FriendsFetched(List<Friend> friends);
-    }
 
+    public SocialHandler() {
+        friendCache = new HashMap<Long, Friend>();
+        pictureCache = new HashMap<Long, Picture>();
+    }
 
     /**
      * Fetches in its own background thread, then calls back to the FetchFriendListener object.
@@ -50,6 +51,7 @@ public class SocialHandler {
         if (reqUpdateMode == FriendsUpdateMode.NONE) {
             // If no forced update, still update ALL if the list doesn't have the correct objects
             if (!allFriendsInCache()) {
+                System.out.println("Forcing update of all friends.");
                 reqUpdateMode = FriendsUpdateMode.ALL;
             }
         }
@@ -63,6 +65,7 @@ public class SocialHandler {
             public void run() {
                 // If forced update ALL, fetch all friend objects
                 if (updateMode == FriendsUpdateMode.ALL) {
+                    System.out.println("Updating all friends.");
                     friendCache.clear();
                     for (int i = 0; i < friendIds.length; i++) {
                         Data d = null;
@@ -83,6 +86,7 @@ public class SocialHandler {
                     }
                 } else if (updateMode == FriendsUpdateMode.ONLINE) {
                     // If forced update ONLINE fetch online friends and merge with cache
+                    System.out.println("Updating online friends.");
                     Data d = null;
                     try {
                         d = DataHandler.gI().getData(
@@ -101,19 +105,16 @@ public class SocialHandler {
 
                         }
                     }
-                    listener.FriendsFetched(friends);
 
                 } else {
+                    System.out.println("Returning cached friends.");
                     // The caceh was not updated, just return the previously cached friends
                     friends = new ArrayList<Friend>(friendCache.values());
                 }
+                System.out.println("Returning fetched friends.");
                 listener.FriendsFetched(friends);
             }
         }).start();
-
-
-
-
     }
 
 

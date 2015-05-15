@@ -421,7 +421,7 @@ public class DataHandler
         this.notificationStatus = notificationStatus;
     }
 
-    public SocialHandler getSocialCacher() {
+    public SocialHandler getSocialHandler() {
         return sc;
     }
 } // end class DataHandler
