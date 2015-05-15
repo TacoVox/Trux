@@ -384,8 +384,8 @@ public class UserHandler {
 		break;
 	    }
             
-            selectStmnt = "SELECT MAX(timestamp) AS ts FROM session WHERE userid = ? "
-                    + "AND endtime NOT NULL";
+            selectStmnt = "SELECT MAX(lastactive) AS ts FROM session WHERE userid = ? "
+                    + "AND endtime IS NULL";
             
             pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
