@@ -3,7 +3,6 @@ package se.gu.tux.trux.application;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.google.android.gms.games.internal.api.NotificationsImpl;
 import com.jjoe64.graphview.series.DataPoint;
 
 import java.util.Arrays;
@@ -36,6 +35,7 @@ public class DataHandler
     private static DataHandler dataHandler;
 
     private RealTimeDataHandler realTimeDataHandler;
+    private SocialHandler sc;
 
     private volatile User user;
     private volatile Notification notificationStatus;
@@ -52,7 +52,9 @@ public class DataHandler
      * Constructor. Declared private and not instantiated. We keep an
      * instance of DataHandler instead.
      */
-    private DataHandler()    {}
+    private DataHandler()    {
+        sc = new SocialHandler();
+    }
 
 
     /**
@@ -76,6 +78,10 @@ public class DataHandler
         }
         return dataHandler;
     } // end getInstance()
+
+    public static DataHandler gI() {
+        return getInstance();
+    }
 
 
     public void setRealTimeDataHandler(RealTimeDataHandler rtdh) {
@@ -413,5 +419,9 @@ public class DataHandler
 
     public void setNotificationStatus(Notification notificationStatus) {
         this.notificationStatus = notificationStatus;
+    }
+
+    public SocialHandler getSocialCacher() {
+        return sc;
     }
 } // end class DataHandler

@@ -6,7 +6,7 @@ package se.gu.tux.trux.datastructure;
 public class ProtocolMessage extends Data {
     public enum Type {LOGIN_SUCCESS, LOGIN_FAILED, AUTO_LOGIN_REQUEST, LOGOUT_REQUEST, DATA_RECEIVED,
         SUCCESS, ERROR, INVALID_SESSION, PEOPLE_SEARCH, FRIEND_REQUEST, FRIEND_REMOVE, GOODBYE,
-        GET_LATEST_CONVERSATIONS, GET_LATEST_MESSAGES};
+        GET_LATEST_CONVERSATIONS, GET_LATEST_MESSAGES, GET_ONLINE_FRIENDS};
 	private Type responseType;
     private String message;
 	
