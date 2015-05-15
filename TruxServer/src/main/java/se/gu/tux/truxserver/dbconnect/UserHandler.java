@@ -408,10 +408,11 @@ public class UserHandler {
         
         try
 	{
-            String selectStmnt = "SELECT user.userid, username, firstname, lastname "
+            String selectStmnt = "SELECT DISTINCT user.userid, username, firstname, lastname "
                     + "FROM user, isfriendwith WHERE "
                     + "(username LIKE ? OR firstname LIKE ? OR lastname LIKE ?) "
-                    + "AND isfriendwith.userid = ? AND isfriendwith.friendid != user.userid LIMIT 20";
+                    + "AND user.userid NOT IN "
+                    + "(SELECT friendid FROM isfriendwith WHERE userid = ?)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
