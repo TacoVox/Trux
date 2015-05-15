@@ -131,7 +131,7 @@ public class ServerConnector {
      * @return
      */
     public Data answerQuery(Data d, int timeOut) throws NotLoggedInException {
-        System.out.println("Serverconnector forwarding query: " + d.getClass().getSimpleName());
+        //System.out.println("Serverconnector forwarding query: " + d.getClass().getSimpleName());
         d.setTimeStamp(System.currentTimeMillis());
         return connector.sendQuery(d, timeOut);
     }
@@ -240,7 +240,7 @@ public class ServerConnector {
                     try {
 
                         // Send and receive
-                        System.out.println("Sending query...: " + query.getClass().getSimpleName());
+                        //System.out.println("Sending query...: " + query.getClass().getSimpleName());
 
                         // Set user id and session id if it's not a goodbye message
                         if (!(query instanceof ProtocolMessage &&
@@ -253,7 +253,7 @@ public class ServerConnector {
                         out.flush();
                         answer = (Data)in.readObject();
 
-                        System.out.println("Returned type: " + answer.getClass().getSimpleName());
+                        //System.out.println("Returned type: " + answer.getClass().getSimpleName());
 
                         dataSent = true;
 
