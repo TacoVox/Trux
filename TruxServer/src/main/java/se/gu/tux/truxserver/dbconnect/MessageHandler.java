@@ -1,15 +1,3 @@
-package se.gu.tux.truxserver.dbconnect;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import se.gu.tux.trux.datastructure.ArrayResponse;
-import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.Message;
-import se.gu.tux.trux.datastructure.ProtocolMessage;
-import se.gu.tux.truxserver.logger.Logger;
-
 /*
  * Copyright 2015 jonas.
  *
@@ -25,6 +13,17 @@ import se.gu.tux.truxserver.logger.Logger;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package se.gu.tux.truxserver.dbconnect;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import se.gu.tux.trux.datastructure.ArrayResponse;
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Message;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.truxserver.logger.Logger;
 
 /**
  *
@@ -133,7 +132,7 @@ public class MessageHandler {
 	{
             String updateStmnt = "SELECT DISTINCT conversationid, senderid, receiverid, message, timestamp "
                     + "FROM message WHERE conversationid = "
-                    + "(SELECT conversationid FROM conversation WHERE persone = 1 OR perstwo = 1 "
+                    + "(SELECT conversationid FROM conversation WHERE persone = ? OR perstwo = ? "
                     + "ORDER BY timestamp DESC LIMIT 20) ORDER BY timestamp DESC";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
