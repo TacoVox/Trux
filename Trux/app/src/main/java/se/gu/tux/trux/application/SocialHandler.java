@@ -68,6 +68,7 @@ public class SocialHandler {
                     System.out.println("Updating all friends.");
                     friendCache.clear();
                     for (int i = 0; i < friendIds.length; i++) {
+                        System.out.println("Friend "  + i);
                         Data d = null;
                         try {
                             d = DataHandler.gI().getData(new Friend(friendIds[i]));
@@ -75,6 +76,7 @@ public class SocialHandler {
                             listener.FriendsFetched(new ArrayList<Friend>());
                         }
                         if (d instanceof Friend) {
+                            System.out.println("Caching...");
                             // Join this Friend object with its matching picture
                             cacheFriend((Friend)d);
                             // Simultaneously build the list that will be returned to the listener
@@ -84,6 +86,7 @@ public class SocialHandler {
                             System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
                         }
                     }
+                    System.out.println("OK");
                 } else if (updateMode == FriendsUpdateMode.ONLINE) {
                     // If forced update ONLINE fetch online friends and merge with cache
                     System.out.println("Updating online friends.");
@@ -120,7 +123,8 @@ public class SocialHandler {
 
     private void cacheFriend(Friend f) {
         try {
-            f.setProfilePic(getPicture(f.getFriendId()));
+            System.out.println("Setting picture on friend...");
+            f.setProfilePic(getPicture(f.getProfilePicId()));
         } catch (NotLoggedInException e) {
             e.printStackTrace();
         }
@@ -161,6 +165,7 @@ public class SocialHandler {
         // See if the image is not yet cached
         if (pictureCache.get(pictureId) == null) {
             // Try to fecth it
+            System.out.println("Fetching picture...");
             pictureCache.put(pictureId, (Picture)DataHandler.gI().getData(new Picture(pictureId)));
         }
 
