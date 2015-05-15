@@ -90,6 +90,7 @@ public class ConnectionPool {
             return (DBConnector)queue.take();
         }
         catch (Exception e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getMessage());
         }
         
