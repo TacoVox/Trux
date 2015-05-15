@@ -36,52 +36,94 @@ public class SocialHandler {
      * Fetches in its own background thread, then calls back to the FetchFriendListener object.
      * NOTE: FriendsUpdateMode ONLINE only fetches AND ALSO returns the friends that are online.
      * @param listener
-     * @param updateMode
+     * @param reqUpdateMode
      */
-    public void fetchFriends(FriendFetchListener listener, FriendsUpdateMode updateMode)
-            throws NotLoggedInException {
-        ArrayList<Friend> friends = new ArrayList<Friend>();
-        long[] friendIds = DataHandler.gI().getUser().getFriends();
+    public void fetchFriends(final FriendFetchListener listener, FriendsUpdateMode reqUpdateMode) {
+        final long[] friendIds = DataHandler.gI().getUser().getFriends();
 
         // No friends / friends not set
-        if () {
+        if (friendIds == null) {
             System.out.println("Users friends was null.");
-            listener.FriendsFetched(friends);
+            listener.FriendsFetched(new ArrayList<Friend>());
         }
 
-        if (updateMode == FriendsUpdateMode.NONE) {
+        if (reqUpdateMode == FriendsUpdateMode.NONE) {
             // If no forced update, still update ALL if the list doesn't have the correct objects
             if (!allFriendsInCache()) {
-                updateMode = FriendsUpdateMode.ALL;
+                reqUpdateMode = FriendsUpdateMode.ALL;
             }
         }
+        final FriendsUpdateMode updateMode = reqUpdateMode;
 
-        // If forced update ALL, fetch all friend objects
-        if (updateMode == FriendsUpdateMode.ALL) {
-            friendCache.clear();
-            for (int i = 0; i < friendIds.length; i++) {
-                Data d = DataHandler.gI().getData(new Friend(friendIds[i]));
-                if (d instanceof Friend) {
-                    friends.add((Friend)d);
-                } else if (d instanceof ProtocolMessage) {
-                    System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
-                }
-            }
-        } else if (updateMode == FriendsUpdateMode.ONLINE) {
-            // If forced update ONLINE fetch online friends and merge with cache
-            Data d = DataHandler.gI().getData(
-                    new ProtocolMessage(ProtocolMessage.Type.GET_ONLINE_FRIENDS));
-            if (d instanceof ArrayResponse && ((ArrayResponse) d).getArray() != null) {
-                for (Object currentFriendO : ((ArrayResponse) d).getArray()) {
-                    Friend currentFriend = (Friend) currentFriendO;
-                    friendCache.put();
-                }
-            }
 
+        new Thread(new Runnable() {
+            ArrayList<Friend> friends = new ArrayList<Friend>();
+
+            @Override
+            public void run() {
+                // If forced update ALL, fetch all friend objects
+                if (updateMode == FriendsUpdateMode.ALL) {
+                    friendCache.clear();
+                    for (int i = 0; i < friendIds.length; i++) {
+                        Data d = null;
+                        try {
+                            d = DataHandler.gI().getData(new Friend(friendIds[i]));
+                        } catch (NotLoggedInException e) {
+                            listener.FriendsFetched(new ArrayList<Friend>());
+                        }
+                        if (d instanceof Friend) {
+                            // Join this Friend object with its matching picture
+                            cacheFriend((Friend)d);
+                            // Simultaneously build the list that will be returned to the listener
+                            friends.add((Friend)d);
+
+                        } else if (d instanceof ProtocolMessage) {
+                            System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
+                        }
+                    }
+                } else if (updateMode == FriendsUpdateMode.ONLINE) {
+                    // If forced update ONLINE fetch online friends and merge with cache
+                    Data d = null;
+                    try {
+                        d = DataHandler.gI().getData(
+                                new ProtocolMessage(ProtocolMessage.Type.GET_ONLINE_FRIENDS));
+                    } catch (NotLoggedInException e) {
+                        listener.FriendsFetched(new ArrayList<Friend>());
+                    }
+                    if (d instanceof ArrayResponse && ((ArrayResponse) d).getArray() != null) {
+                        for (Object currentFriendO : ((ArrayResponse) d).getArray()) {
+                            // Cache all online friends
+                            cacheFriend((Friend)currentFriendO);
+
+                            // Also put them into a list that will be returned specifically after
+                            // requesting online friends
+                            friends.add((Friend)currentFriendO);
+
+                        }
+                    }
+                    listener.FriendsFetched(friends);
+
+                } else {
+                    // The caceh was not updated, just return the previously cached friends
+                    friends = new ArrayList<Friend>(friendCache.values());
+                }
+                listener.FriendsFetched(friends);
+            }
+        }).start();
+
+
+
+
+    }
+
+
+    private void cacheFriend(Friend f) {
+        try {
+            f.setProfilePic(getPicture(f.getFriendId()));
+        } catch (NotLoggedInException e) {
+            e.printStackTrace();
         }
-
-        // Finally, regardless of update mode, return friends as list
-
+        friendCache.put(f.getFriendId(), f);
     }
 
     private boolean allFriendsInCache() {
