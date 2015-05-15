@@ -65,6 +65,7 @@ public class DBConnector
         catch (ClassNotFoundException | InstantiationException |
                 IllegalAccessException e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.toString());
 	}
     }
@@ -90,6 +91,7 @@ public class DBConnector
 	}
         catch (SQLException ex)
 	{
+            ex.printStackTrace();
             Logger.gI().addError(ex.toString());
 	}
     }
@@ -115,6 +117,7 @@ public class DBConnector
             return connection.isValid(1);
         }
         catch (SQLException e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getMessage());
         }
         
@@ -134,6 +137,7 @@ public class DBConnector
 	}
         catch (SQLException ex)
 	{
+            ex.printStackTrace();
             Logger.gI().addError(ex.toString());
 	}
     }
