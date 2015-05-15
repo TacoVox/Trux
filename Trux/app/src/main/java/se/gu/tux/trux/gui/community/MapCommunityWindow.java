@@ -75,10 +75,14 @@ public class MapCommunityWindow extends Fragment {
     }
 
     public void showInfoWindow() {
+        InfoFragment ifragment = new InfoFragment();
+
+        ifragment.setArguments(this.getArguments());
+
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-        fragmentTransaction.replace(R.id.contentContainer, new InfoFragment());
+        fragmentTransaction.replace(R.id.contentContainer, ifragment);
         fragmentTransaction.commit();
     }
 
