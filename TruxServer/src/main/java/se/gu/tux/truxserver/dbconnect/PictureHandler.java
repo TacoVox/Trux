@@ -69,6 +69,7 @@ public class PictureHandler {
             while(keys.next())
                 return keys.getLong(1);
         } catch (Exception e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
@@ -94,6 +95,7 @@ public class PictureHandler {
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         } catch (Exception e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
@@ -120,6 +122,7 @@ public class PictureHandler {
 	    while (rs.next())
 		return rs.getString("path");
         } catch (SQLException e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         } 
         finally {
@@ -151,6 +154,7 @@ public class PictureHandler {
 	    while (rs.next())
 		return rs.getLong("pictureid");
         } catch (SQLException e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         } 
         finally {
