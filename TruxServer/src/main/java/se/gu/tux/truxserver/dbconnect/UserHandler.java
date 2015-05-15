@@ -481,4 +481,46 @@ public class UserHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
     }
+    
+    public Data getOnlineFriends(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        List onlineFriends = new ArrayList<Friend>();
+        
+        try {
+            String selectStmnt = "SELECT friendid" +
+                    " FROM isfriendwith WHERE userid = ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setLong(1, pm.getUserId());
+	    
+            ResultSet rs = dbc.execSelect(pm, pst);
+            
+	    while (rs.next())
+	    {
+                Friend f = new Friend(rs.getLong("friendid"));
+                
+                Data d = getFriend(f);
+                
+                if(d instanceof ProtocolMessage)
+                    continue;
+                
+                f = (Friend) d;
+                    
+                if(f.getStatus() == Friend.Status.ONLINE)
+                    onlineFriends.add(f);
+	    }
+            
+            return new ArrayResponse(onlineFriends.toArray());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Could not fetch online friends.");
+        } finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
 }
