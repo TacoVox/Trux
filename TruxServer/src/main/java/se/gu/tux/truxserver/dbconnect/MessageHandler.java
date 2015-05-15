@@ -57,7 +57,7 @@ public class MessageHandler {
         try
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                "REPLACE INTO conversation (personone, persontwo, timestamp) "
+                "REPLACE INTO conversation (persone, perstwo, timestamp) "
                     + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
                 
             pst.setLong(1, m.getSenderId());
@@ -130,10 +130,12 @@ public class MessageHandler {
         
         try
 	{
-            String updateStmnt = "SELECT DISTINCT conversationid, senderid, receiverid, message, timestamp "
-                    + "FROM message WHERE conversationid = "
-                    + "(SELECT conversationid FROM conversation WHERE persone = ? OR perstwo = ? "
-                    + "ORDER BY timestamp DESC LIMIT 20) ORDER BY timestamp DESC";
+            String updateStmnt = "SELECT * FROM conversation "
+                    + "JOIN message m on c.conversationid = m.conversationid JOIN "
+                    + "(SELECT conversationid, MAX(timestamp) timestamp "
+                    + "FROM message GROUP BY conversationid) x "
+                    + "ON m.conversationid = x.conversationid AND "
+                    + "x.timestamp = m.timestamp WHERE c.persone = ? OR c.perstwo = ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
