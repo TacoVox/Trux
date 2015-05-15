@@ -289,13 +289,15 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             View view = convertView;
             if (view == null)
                 view = inflater.inflate(R.layout.friend_row, null);
-            TextView text = (TextView) view.findViewById(R.id.friendName);
+            TextView name = (TextView) view.findViewById(R.id.friendName);
+            TextView username = (TextView) view.findViewById(R.id.friendUserName);
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
             Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
 
             // Set the name
-            text.setText(friends[position].getFirstname() + " " + friends[position].getLastname());
+            name.setText(friends[position].getFirstname() + " " + friends[position].getLastname());
+            username.setText("@" + friends[position].getUsername());
 
             // Set the proper button visibility
             if (friends[position].isFriend()) {
