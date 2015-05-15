@@ -106,7 +106,7 @@ public class DataHandler
      */
     public Data getData(Data request) throws NotLoggedInException {
         if (request.isOnServerSide()) {
-
+            System.out.println("Datahandler routing request: " + request.getClass().getSimpleName());
             request = ServerConnector.gI().answerQuery(request);
 
             //request = IServerConnector.getInstance().answerQuery(request);
@@ -146,42 +146,42 @@ public class DataHandler
                         // Then request an array of speed average values for last 30 days.
                         Speed speed = new Speed(0);
                         speed.setTimeStamp(System.currentTimeMillis());
-                        Data[] avgSpeedPerDay = DataHandler.getInstance().getPerDay(speed, 30);
+                        Data[] avgSpeedPerDay = getPerDay(speed, 30);
                         DataPoint[] speedPoints = getDataPoints(avgSpeedPerDay, speed);
                         // Create bundle object
                         DetailedStatsBundle speedBundle = new DetailedStatsBundle(
-                                (Speed) DataHandler.getInstance().getData(new Speed(MetricData.DAY)),
-                                (Speed) DataHandler.getInstance().getData(new Speed(MetricData.WEEK)),
-                                (Speed) DataHandler.getInstance().getData(new Speed(MetricData.THIRTYDAYS)),
-                                (Speed) DataHandler.getInstance().getData(new Speed(MetricData.FOREVER)),
+                                (Speed) getData(new Speed(MetricData.DAY)),
+                                (Speed) getData(new Speed(MetricData.WEEK)),
+                                (Speed) getData(new Speed(MetricData.THIRTYDAYS)),
+                                (Speed) getData(new Speed(MetricData.FOREVER)),
                                 speedPoints);
                         // Store in hash map
                         detailedStats.put(speed.getSignalId(), speedBundle);
 
                         Fuel fuel = new Fuel(0);
                         fuel.setTimeStamp(System.currentTimeMillis());
-                        Data[] avgFuelPerDay = DataHandler.getInstance().getPerDay(fuel, 30);
+                        Data[] avgFuelPerDay = getPerDay(fuel, 30);
                         DataPoint[] fuelPoints = getDataPoints(avgFuelPerDay, fuel);
                         // Create bundle object
                         DetailedStatsBundle fuelBundle = new DetailedStatsBundle(
-                                (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.DAY)),
-                                (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.WEEK)),
-                                (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.THIRTYDAYS)),
-                                (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.FOREVER)),
+                                (Fuel) getData(new Fuel(MetricData.DAY)),
+                                (Fuel) getData(new Fuel(MetricData.WEEK)),
+                                (Fuel) getData(new Fuel(MetricData.THIRTYDAYS)),
+                                (Fuel) getData(new Fuel(MetricData.FOREVER)),
                                 fuelPoints);
                         // Store in hash map
                         detailedStats.put(fuel.getSignalId(), fuelBundle);
 
                         Distance dist = new Distance(0);
                         dist.setTimeStamp(System.currentTimeMillis());
-                        Data[] avgDistancePerDay = DataHandler.getInstance().getPerDay(dist, 30);
+                        Data[] avgDistancePerDay = getPerDay(dist, 30);
                         DataPoint[] distPoints = getDataPoints(avgDistancePerDay, dist);
                         // Create bundle object
                         DetailedStatsBundle distBundle = new DetailedStatsBundle(
-                                (Distance) DataHandler.getInstance().getData(new Distance(MetricData.DAY)),
-                                (Distance) DataHandler.getInstance().getData(new Distance(MetricData.WEEK)),
-                                (Distance) DataHandler.getInstance().getData(new Distance(MetricData.THIRTYDAYS)),
-                                (Distance) DataHandler.getInstance().getData(new Distance(MetricData.FOREVER)),
+                                (Distance) getData(new Distance(MetricData.DAY)),
+                                (Distance) getData(new Distance(MetricData.WEEK)),
+                                (Distance) getData(new Distance(MetricData.THIRTYDAYS)),
+                                (Distance) getData(new Distance(MetricData.FOREVER)),
                                 distPoints);
                         // Store in hash map
                         detailedStats.put(dist.getSignalId(), distBundle);

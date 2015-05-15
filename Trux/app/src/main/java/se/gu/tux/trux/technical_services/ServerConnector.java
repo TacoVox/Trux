@@ -131,6 +131,7 @@ public class ServerConnector {
      * @return
      */
     public Data answerQuery(Data d, int timeOut) throws NotLoggedInException {
+        System.out.println("Serverconnector forwarding query: " + d.getClass().getSimpleName());
         d.setTimeStamp(System.currentTimeMillis());
         return connector.sendQuery(d, timeOut);
     }
@@ -231,6 +232,8 @@ public class ServerConnector {
                             + query.getClass().getSimpleName() + ": " + query.getValue());
                     throw new NotLoggedInException();
                 }
+
+                System.out.println("Wating to send: " + query.getClass().getSimpleName());
 
                 // Make sure no other thread uses the stream resources here
                 synchronized (this) {

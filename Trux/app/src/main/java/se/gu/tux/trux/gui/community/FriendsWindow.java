@@ -38,6 +38,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     private EditText searchField;
     private TextView noFriends;
     private Button searchButton;
+    private AsyncTask friendAS, searchAS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +63,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
             @Override
             public void afterTextChanged(Editable editable) {
+                findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
                 if (searchField.getText().toString().equals("")) {
                     showFriends();
+                } else {
+                    showSearchResults(searchField.getText().toString());
                 }
             }
         });
@@ -88,7 +92,13 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
     private void showFriends() {
         noFriends.setText("You have no friends :(");
-        new AsyncTask() {
+        if (friendAS != null) {
+            friendAS.cancel(true);
+        }
+        if (searchAS != null) {
+            searchAS.cancel(true);
+        }
+        friendAS = new AsyncTask() {
 
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -119,7 +129,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
                 return null;
             }
-        }.execute();
+        };
+        friendAS.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**
@@ -132,9 +143,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         }
         List<Friend> matches = new ArrayList<Friend>();
         for (Friend f : haystack) {
-            if (f.getUsername().indexOf(needle) != -1 ||
-                    f.getFirstname().indexOf(needle) != -1 ||
-                    f.getLastname().indexOf(needle) != -1) {
+            if (f.getUsername().toLowerCase().indexOf(needle.toLowerCase()) != -1 ||
+                    f.getFirstname().toLowerCase().indexOf(needle.toLowerCase()) != -1 ||
+                    f.getLastname().toLowerCase().indexOf(needle.toLowerCase()) != -1) {
                 // Friend matched needle
                 matches.add(f);
             }
@@ -155,7 +166,13 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
      */
     private void showSearchResults(final String needle) {
         noFriends.setText("No people found.");
-        new AsyncTask() {
+        if (searchAS != null) {
+            searchAS.cancel(true);
+        }
+        if (friendAS != null) {
+            friendAS.cancel(true);
+        }
+        searchAS = new AsyncTask() {
 
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -201,7 +218,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
                 return null;
             }
-        }.execute();
+        };
+        searchAS.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**
@@ -289,13 +307,15 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             View view = convertView;
             if (view == null)
                 view = inflater.inflate(R.layout.friend_row, null);
-            TextView text = (TextView) view.findViewById(R.id.friendName);
+            TextView name = (TextView) view.findViewById(R.id.friendName);
+            TextView username = (TextView) view.findViewById(R.id.friendUserName);
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
             Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
 
             // Set the name
-            text.setText(friends[position].getFirstname() + " " + friends[position].getLastname());
+            name.setText(friends[position].getFirstname() + " " + friends[position].getLastname());
+            username.setText("@" + friends[position].getUsername());
 
             // Set the proper button visibility
             if (friends[position].isFriend()) {

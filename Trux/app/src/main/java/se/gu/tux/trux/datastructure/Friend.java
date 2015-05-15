@@ -20,6 +20,9 @@ package se.gu.tux.trux.datastructure;
  * @author jonas
  */
 public class Friend extends Data {
+    public enum Status {OFFLINE, ONLINE, DRIVING, MOVING};
+    
+	private Status userStatus;
 
     private long friendId;
     private long profilePicId;
@@ -84,6 +87,14 @@ public class Friend extends Data {
 
     public void setFriendId(long friendId) {
         this.friendId = friendId;
+    }
+    
+    public Status getStatus() {
+        return userStatus;
+    }
+    
+    public void setStatus(Status status) {
+        userStatus = status;
     }
 
     @Override
