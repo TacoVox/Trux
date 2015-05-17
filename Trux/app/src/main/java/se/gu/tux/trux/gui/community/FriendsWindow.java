@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.FriendFetchListener;
+import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Picture;
@@ -31,7 +33,9 @@ import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
-public class FriendsWindow extends BaseAppActivity implements View.OnClickListener {
+public class FriendsWindow extends BaseAppActivity implements View.OnClickListener, FriendFetchListener {
+    // For knowing which of search / show friends that should be listened to when they finish,
+    // have an enum or so LAST_FETCH_CALL = SEARCH / FRIENDLIST that is checked on callback
 
     private ListView friendsList;
     private FriendAdapter friendAdapter;
@@ -47,7 +51,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         friendsList = (ListView) findViewById(R.id.friendsList);
 
-        friendAdapter = new FriendAdapter(this, new Friend[0], new Bitmap[0]);
+        friendAdapter = new FriendAdapter(this, new ArrayList<Friend>());
         friendsList.setAdapter(friendAdapter);
         friendsList.setEmptyView(findViewById(R.id.noFriends));
         searchField = (EditText) findViewById(R.id.searchField);
@@ -91,6 +95,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
     private void showFriends() {
+        /*
         noFriends.setText("You have no friends :(");
         if (friendAS != null) {
             friendAS.cancel(true);
@@ -131,7 +136,28 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             }
         };
         friendAS.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        */
+        DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
     }
+
+
+    @Override
+    public void FriendsFetched(final ArrayList<Friend> friends) {
+        System.out.println("UPDATING FRIENDS");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Showing friends in list...");
+                friendAdapter.setFriends(friends);
+                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+            }
+        });
+    }
+
+
+
+
+
 
     /**
      * Returns an array with all elements that contain the needle
@@ -211,7 +237,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     @Override
                     public void run() {
                         System.out.println("Showing friends in list...");
-                        friendAdapter.setFriends(finalFriends, finalPictures);
+                       // friendAdapter.setFriends(finalFriends);
                         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                     }
                 });
@@ -257,6 +283,16 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         return pictures;
     }
 
+
+
+
+
+
+
+
+
+
+
     class FriendAdapter extends BaseAdapter {
 
         Context context;
@@ -264,15 +300,13 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         // The reason for not wrapping these together is that sometimes we want to be able to
         // send just friend info without the overhead of sending the picture. Could be handled
         // differentlyt though for example with a request boolean.
-        Friend[] friends;
-        Bitmap[] pictures;
+        ArrayList<Friend> friends;
 
         private LayoutInflater inflater = null;
 
-        public FriendAdapter(Context context, Friend[] friends, Bitmap[] pictures) {
+        public FriendAdapter(Context context,  ArrayList<Friend> friends) {
             this.context = context;
             this.friends = friends;
-            this.pictures = pictures;
             inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -280,14 +314,14 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         @Override
         public int getCount() {
             if (friends != null) {
-                return friends.length;
+                return friends.size();
             }
             return 0;
         }
 
         @Override
         public Object getItem(int position) {
-            return friends[position];
+            return friends.get(position);
         }
 
         @Override
@@ -295,9 +329,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             return position;
         }
 
-        public void setFriends(Friend[] friends, Bitmap[] pictures) {
+        public void setFriends( ArrayList<Friend> friends) {
             this.friends = friends;
-            this.pictures = pictures;
             notifyDataSetChanged();
         }
 
@@ -314,11 +347,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
 
             // Set the name
-            name.setText(friends[position].getFirstname() + " " + friends[position].getLastname());
-            username.setText("@" + friends[position].getUsername());
+            name.setText(friends.get(position).getFirstname() + " " + friends.get(position).getLastname());
+            username.setText("@" + friends.get(position).getUsername());
 
             // Set the proper button visibility
-            if (friends[position].isFriend()) {
+            if (friends.get(position).isFriend()) {
                 friendRequestButton.setVisibility(View.GONE);
                 sendMessageButton.setVisibility(View.VISIBLE);
             } else {
@@ -327,7 +360,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             }
 
             // Set the picture
-            image.setImageBitmap(pictures[position]);
+            image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(position).getProfilePic()));
 
             return view;
         }

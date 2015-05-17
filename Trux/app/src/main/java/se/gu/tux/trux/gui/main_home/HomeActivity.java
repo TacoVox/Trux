@@ -10,6 +10,8 @@ import android.support.v7.app.ActionBar;
 import java.util.ArrayList;
 import java.util.List;
 
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.Community_main;
@@ -17,6 +19,7 @@ import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
 import se.gu.tux.trux.gui.welcome.WelcomeMainFragment;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 /**
@@ -101,8 +104,10 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         }
         else if (id == PROFILE_BUTTON)
         {
-            Intent intent = new Intent(this, CommunityProfileActivity.class);
-            startActivity(intent);
+            if(!isDriving()) {
+                Intent intent = new Intent(this, CommunityProfileActivity.class);
+                startActivity(intent);
+            }
         }
         else if (id == MESSAGE_BUTTON)
         {
@@ -113,6 +118,20 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         {
             showToast("Something is wrong. Called from IMainActivity.class.");
         }
+    }
+
+    private boolean isDriving(){
+        ;
+        try{
+            Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
+            if(speed.getValue() != null && (double) speed.getValue() > 15){
+                return true;
+            }
+        }
+        catch (NotLoggedInException nLIE){
+            nLIE.printStackTrace();
+        }
+        return false;
     }
 
 
