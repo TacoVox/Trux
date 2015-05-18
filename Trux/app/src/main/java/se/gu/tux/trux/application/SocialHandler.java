@@ -185,4 +185,25 @@ public class SocialHandler {
         }
         return bmp;
     }
+
+
+    public void sendFriendRequest(final long friendId) throws NotLoggedInException {
+        if (!DataHandler.gI().isLoggedIn()) {
+            throw new NotLoggedInException();
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ProtocolMessage friendRequest =
+                        new ProtocolMessage(ProtocolMessage.Type.FRIEND_REQUEST,
+                        Long.toString(friendId));
+                try {
+                    DataHandler.gI().getData(friendRequest);
+                } catch (NotLoggedInException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 }
