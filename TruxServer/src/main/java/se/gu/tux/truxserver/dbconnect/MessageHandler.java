@@ -73,8 +73,19 @@ public class MessageHandler {
                 conversationid = rs.getLong("conversationid");
             }
             
-            if(conversationid == -1)
-                return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Could not fetch conversationid!");
+            if(conversationid == -1) {
+                pst = dbc.getConnection().prepareStatement(
+                        "INSERT INTO conversation (persone, perstwo, timestamp) "
+                                + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
+                
+                pst.setLong(1, m.getSenderId());
+                pst.setLong(2, m.getReceiverId());
+                pst.setLong(3, m.getTimeStamp());
+                
+                ResultSet keys = dbc.execInsert(m, pst);
+                
+                conversationid = keys.getLong(1);
+            }
             
             pst = dbc.getConnection().prepareStatement(
                 "UPDATE conversation SET persone = ?, perstwo = ?, timestamp = ? "
