@@ -17,7 +17,11 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -200,6 +204,47 @@ public class FriendshipHandler {
             dbc.execInsert(pm, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            
+            Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
+    
+    public Data getFriendRequests (ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        List friendreqs = new ArrayList<Friend>();
+        
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "SELECT userid, timestamp FROM friendrequest WHERE friendid = ?");
+            
+            pst.setLong(1, pm.getUserId());
+	
+            ResultSet rs = dbc.execSelect(pm, pst);
+            
+            while(rs.next()) {
+                Friend f = new Friend(rs.getLong("userid"));
+                f.setTimeStamp(rs.getLong("timestamp"));
+                
+                Data d = UserHandler.gI().getFriend(f);
+                
+                if(d instanceof Friend)
+                    friendreqs.add((Friend) d);
+                else
+                    return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Cannot fetch info about a user.");
+            }
+            
+            return new ArrayResponse(friendreqs.toArray());
         }
         catch (Exception e)
         {
