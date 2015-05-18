@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Data;
@@ -24,17 +25,22 @@ import se.gu.tux.trux.technical_services.NotLoggedInException;
  */
 public class SocialHandler {
     private HashMap<Long, Friend> friendCache;
+    private HashMap<Long, Friend> friendRequestCache;
     private HashMap<Long, Picture> pictureCache;
     public enum FriendsUpdateMode {NONE, ALL, ONLINE};
-
+    private boolean friendsChanged, friendRequestsChanged;
 
     public SocialHandler() {
         friendCache = new HashMap<Long, Friend>();
+        friendRequestCache = new HashMap<Long, Friend>();
         pictureCache = new HashMap<Long, Picture>();
+        // Assume freind requests have changed so they are fetched the first time the friend
+        // window is shown.
+        friendRequestsChanged = true;
     }
 
     /**
-     * Fetches in its own background thread, then calls back to the FetchFriendListener object.
+     * Fetches in its own background thread, then calls back to the FriendFetchListener object.
      * NOTE: FriendsUpdateMode ONLINE only fetches AND ALSO returns the friends that are online.
      * @param listener
      * @param reqUpdateMode
@@ -50,7 +56,7 @@ public class SocialHandler {
 
         if (reqUpdateMode == FriendsUpdateMode.NONE) {
             // If no forced update, still update ALL if the list doesn't have the correct objects
-            if (!allFriendsInCache()) {
+            if (!allFriendsInCache() || friendsChanged) {
                 System.out.println("Forcing update of all friends.");
                 reqUpdateMode = FriendsUpdateMode.ALL;
             }
@@ -77,10 +83,10 @@ public class SocialHandler {
                         }
                         if (d instanceof Friend) {
                             System.out.println("Caching...");
-                            // Join this Friend object with its matching picture
-                            cacheFriend((Friend)d);
+                            // Join this Friend object with its matching picture and cache it
+                            Friend cachedFriend = cacheFriend((Friend)d, friendCache);
                             // Simultaneously build the list that will be returned to the listener
-                            friends.add((Friend)d);
+                            friends.add(cachedFriend);
 
                         } else if (d instanceof ProtocolMessage) {
                             System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
@@ -100,11 +106,11 @@ public class SocialHandler {
                     if (d instanceof ArrayResponse && ((ArrayResponse) d).getArray() != null) {
                         for (Object currentFriendO : ((ArrayResponse) d).getArray()) {
                             // Cache all online friends
-                            cacheFriend((Friend)currentFriendO);
+                            Friend cachedFriend = cacheFriend((Friend)currentFriendO, friendCache);
 
                             // Also put them into a list that will be returned specifically after
                             // requesting online friends
-                            friends.add((Friend)currentFriendO);
+                            friends.add(cachedFriend);
 
                         }
                     }
@@ -121,15 +127,73 @@ public class SocialHandler {
     }
 
 
-    private void cacheFriend(Friend f) {
+
+    /**
+     * Fetches in its own background thread, then calls back to the FriendRequestFetchListener
+     * object. Only fetches if friendRequestsChanged is set to true, so notifications should
+     * change this boolean. It is set to true in the constructor of this class as well, to
+     * make sure requests are always fetched the first time the friend window is loaded.
+     */
+    public void fetchFriendRequests(final FriendRequestFetchListener listener) {
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                ArrayList<Friend> friendRequests = new ArrayList<Friend>();
+
+                // Return immediately with the cached friend requests unless we know the requests have
+                // changed recently
+                if (friendRequestsChanged) {
+                    friendRequestCache.clear();
+
+                    Data d = null;
+                    try {
+                        d = DataHandler.gI().getData(new ProtocolMessage(ProtocolMessage.Type.
+                                CAN_YOU_PLEASE_GIVE_ME_AN_ARRAY_WITH_EVERYONE_WHO_SENT_THIS_USER_A_FRIEND_REQUEST_THANK_YOU_IN_ADVANCE_DEAR_BROTHER));
+                    } catch (NotLoggedInException e) {
+                        // Return empty list if any problems with session
+                        listener.FriendRequestsFetched(new ArrayList<Friend>());
+                    }
+
+                    // Put friend request friends in friend request cache
+                    if (d instanceof ArrayResponse && ((ArrayResponse) d).getArray() != null) {
+                        Object[] responseArray = ((ArrayResponse) d).getArray();
+
+                        for (Object friendO : ((ArrayResponse) d).getArray()) {
+                            // Put in cache
+                           cacheFriend((Friend) friendO, friendRequestCache);
+                        }
+
+                    } else if (d instanceof ProtocolMessage) {
+                        System.out.println("Problem with friend request fetch: "
+                                + ((ProtocolMessage)d).getMessage());
+                    } else {
+                        System.out.println("No friend requests.");
+                    }
+                } 
+            }
+        }).start();
+    }
+
+
+    /**
+     * Caches this friend after matching it with a profile pic - returns the matched friend
+     * @param f
+     * @param friendMap
+     * @return
+     */
+    private Friend cacheFriend(Friend f, HashMap<Long, Friend> friendMap) {
         try {
             System.out.println("Setting picture on friend...");
             f.setProfilePic(getPicture(f.getProfilePicId()));
         } catch (NotLoggedInException e) {
             e.printStackTrace();
         }
-        friendCache.put(f.getFriendId(), f);
+        friendMap.put(f.getFriendId(), f);
+        return f;
     }
+
 
     private boolean allFriendsInCache() {
         if (DataHandler.gI().getUser().getFriends() == null) {
@@ -171,7 +235,6 @@ public class SocialHandler {
 
         return pictureCache.get(pictureId);
     }
-
 
 
     public static Bitmap pictureToBitMap(Picture p) {
