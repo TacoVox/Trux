@@ -89,6 +89,7 @@ public class SpeedWindow extends Fragment {
         speedGraph = new GraphView(getActivity());
 
         speedGraph.getViewport().setXAxisBoundsManual(true);
+        speedGraph.getViewport().setYAxisBoundsManual(true);
         speedGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
         speedGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
         speedGraph.getGridLabelRenderer().setPadding(50);
