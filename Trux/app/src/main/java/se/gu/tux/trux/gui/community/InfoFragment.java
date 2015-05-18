@@ -23,46 +23,59 @@ import tux.gu.se.trux.R;
 
 public class InfoFragment extends Fragment {
 
-    TextView nameText, infoText;
-    Button removeButton;
-    ImageView profilePic;
+TextView nameText, infoText;
+Button removeButton;
+ImageView profilePic;
 
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_info, container, false);
-        removeButton = (Button) view.findViewById(R.id.infoRemoveButton);
-        nameText = (TextView) view.findViewById(R.id.nameTextView);
-        infoText = (TextView) view.findViewById(R.id.infoTextView);
-        profilePic = (ImageView) view.findViewById(R.id.infoPicture);
+@Override
+public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                         Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.fragment_info, container, false);
+    removeButton = (Button) view.findViewById(R.id.infoRemoveButton);
+    nameText = (TextView) view.findViewById(R.id.nameTextView);
+    infoText = (TextView) view.findViewById(R.id.infoTextView);
+    profilePic = (ImageView) view.findViewById(R.id.infoPicture);
 
-        viewFriendInfo();
+    ViewFriendInfo();
 
-        return view;
-    }
+    return view;
+}
 
-    private void viewFriendInfo() {
+private void ViewFriendInfo() {
 
-        Bundle bundle = this.getArguments();
-        if(bundle != null){
-        final Friend[] newFriend = (Friend[]) bundle.getSerializable("friendArray");
-        System.out.println("FriendArray is sent to the InfoFragment: " + newFriend.length);
-        final Bitmap[] newPicture = (Bitmap[]) bundle.getSerializable("pictureArray");
-        System.out.println("PictureArray is sent to the InfoFragment: " + newPicture.length);
-        HashMap<String, Friend> friendMarker = (HashMap) bundle.getSerializable("hashmap");
+    Bundle bundle = this.getArguments();
+    if(bundle != null){
+        HashMap<String, Friend> friendMarker = (HashMap) bundle.getSerializable("friendHashmap");
+        HashMap<String, Bitmap> pictureMarker = (HashMap) bundle.getSerializable("pictureHashmap");
         String markerID = bundle.getString("markerID");
-        for(int i = 0; i < newFriend.length; i++) {
-            if (friendMarker.containsKey(markerID)) {
-                nameText.setText(newFriend[i].getFirstname() + " " + newFriend[i].getLastname());
 
-                newPicture[i] = Bitmap.createScaledBitmap(newPicture[i], 50, 50, false);
-                profilePic.setImageBitmap(newPicture[i]);
+            if (friendMarker != null && pictureMarker != null ) {
+                Friend friend = friendMarker.get(markerID);
+                Bitmap picture = pictureMarker.get(markerID);
+                nameText.setText(friend.getFirstname() + " " + friend.getLastname());
+                System.out.println("This is the picture: " + picture);
+                picture = Bitmap.createScaledBitmap(picture, 150, 150, false);
+                profilePic.setImageBitmap(picture);
 
                 infoText.setText("");
-            }
         }
-        }
+
+    }
+}
+    public void onStop() {
+        super.onStop();
+        nameText.setText("");
+        profilePic = null;
+    }
+    public void onPause(){
+        super.onPause();
+        nameText.setText("");
+        profilePic = null;
+    }
+    public void onResume(){
+        super.onResume();
+        ViewFriendInfo();
     }
 }
 

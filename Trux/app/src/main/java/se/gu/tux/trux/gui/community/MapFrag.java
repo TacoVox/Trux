@@ -4,9 +4,7 @@ package se.gu.tux.trux.gui.community;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
@@ -16,7 +14,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -35,7 +32,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
@@ -43,10 +39,7 @@ import java.util.TimerTask;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.FriendFetchListener;
-import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
-import se.gu.tux.trux.datastructure.MetricData;
-import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
@@ -54,12 +47,11 @@ import tux.gu.se.trux.R;
 public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetchListener {
 
     private GoogleMap mMap;
-    private LatLng[] latLng;
     private LatLng loc;
     private MapFragment f;
-    String markerID;
     Friend[] friend;
     HashMap<String, Friend> friendMarker;
+    HashMap<String, Bitmap> pictureMarker;
     Bitmap[] picture;
 
 
@@ -119,7 +111,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     private GoogleMap.OnMarkerClickListener markerClickListener = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
-
+        String newMarkerID = marker.getId();
        return false;
         }
     };
@@ -128,16 +120,12 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         @Override
         public void onInfoWindowClick(Marker marker) {
             if (!isDriving()) {
-                markerID = marker.getId();
-                System.out.println("This is the friend length: " + friend.length + " ------------------");
-                System.out.println("This is the picture length: " + picture.length + " ------------------");
-                System.out.println("This is the friendMarkerID: " + markerID  + " ------------------");
+                String markerID = marker.getId();
                 MapCommunityWindow fragment = new MapCommunityWindow();
                 Bundle sendToInfoFragment = new Bundle();
-                sendToInfoFragment.putSerializable("friendArray", friend);
-                sendToInfoFragment.putSerializable("pictureArray", picture);
-                sendToInfoFragment.putSerializable("hashmap", friendMarker);
+                sendToInfoFragment.putSerializable("friendHashmap", friendMarker);
                 sendToInfoFragment.putString("markerID", markerID);
+                sendToInfoFragment.putSerializable("pictureHashmap", pictureMarker);
                 fragment.setArguments(sendToInfoFragment);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -153,7 +141,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         mMap = googleMap;
         //Makes it possible for the map to locate the device
         mMap.setMyLocationEnabled(true);
-        //Gets the satelite pictures as a map
+        //Gets the normal view of the map (not satalite)
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         System.out.println("------MAP READY-----");
@@ -184,11 +172,12 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         mMap.setOnInfoWindowClickListener(markerMenu);
 
         friendMarker = new HashMap<String, Friend>();
+        pictureMarker = new HashMap<String, Bitmap>();
 
         //Creats a timeTask which will uppdate the posion of the friendUsers
         t = new Timer();
         timer = new PopFriends();
-        t.schedule(timer, 0, 10000);
+        t.schedule(timer, 0, 30000);
     }
 
     @Override
@@ -203,71 +192,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
 
     class PopFriends extends TimerTask{
       public  void run(){
-    /*        getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        friend = DataHandler.gI().getFriends();
-                        picture = new Bitmap[friend.length];
-                        if(friend.length > 0){
-                            for(int i = 0; i < friend.length; i++){
-                                try{
-                                    picture[i] = DataHandler.gI().getPicture(friend[i].getProfilePicId());
-                                }
-                                catch (NotLoggedInException n){
-                                    n.printStackTrace();
-                                }
-                            }
-                            final Bitmap[] newPicture = picture;
-                            final Friend[] newFriend = friend;
-                            if(newFriend != null){
-                                if (hasMarker) {
-                                    mMap.clear();
-                                    hasMarker = false;
-                                }
-
-                                for (int i = 0; i < newFriend.length; i++) {
-
-                                    if (newPicture[i] != null && newFriend[i] != null &&
-                                            newFriend[i].getCurrentLoc() != null &&
-                                            newFriend[i].getCurrentLoc().getLoc() != null  &&
-                                                   friend[i].getStatus() == Friend.Status.ONLINE) {
-
-                                        System.out.println("FRIEND: " + i + " picture: " +
-                                                newPicture[i] + " pictureid: " + newFriend[i].getProfilePicId()
-                                                + " loc: " + newFriend[i].getCurrentLoc().getLoc());
-
-                                        double[] loc = newFriend[i].getCurrentLoc().getLoc();
-
-
-                                        newPicture[i] = Bitmap.createScaledBitmap(newPicture[i],40,40,false);
-                                        Canvas canvas = new Canvas(newPicture[i]);
-                                        Drawable shape = getResources().getDrawable(R.drawable.marker_layout);
-                                        shape.setBounds(0, 0, newPicture[i].getWidth(), newPicture[i].getHeight());
-                                        shape.draw(canvas);
-
-
-                                        Marker m = mMap.addMarker(new MarkerOptions()
-                                                .position(new LatLng(loc[0], loc[1]))
-                                                .title(newFriend[i].getFirstname())
-                                                .snippet("DRIVING")
-                                                .icon(BitmapDescriptorFactory.fromBitmap(newPicture[i])));
-                                        String mID = m.getId();
-                                        friendMarker.put(mID, newFriend[i]);
-                                        System.out.println("---Picture is now a marker---");
-                                        hasMarker = true;
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch (NotLoggedInException n){
-                        n.printStackTrace();
-                    }
-                }
-            });
-            */
            new AsyncTask(){
                @Override
                 protected Object doInBackground(Object[] objects){
@@ -332,6 +256,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                                       .icon(BitmapDescriptorFactory.fromBitmap(newPicture[i])));
                               String mID = m.getId();
                               friendMarker.put(mID, newFriend[i]);
+                              pictureMarker.put(mID, newPicture[i]);
                               System.out.println("---Picture is now a marker---");
                               hasMarker = true;
 
