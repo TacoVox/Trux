@@ -259,15 +259,16 @@ public class MessageHandler {
         try
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "UPDATE message SET seen = ? WHERE conversationid = "
+                    "UPDATE message SET seen = ? WHERE receiverid = ? AND conversationid = "
                         + "(SELECT conversationid FROM conversation "
                         + "WHERE (persone = ? AND perstwo = ?) OR (persone = ? AND perstwo = ?))");
             
             pst.setBoolean(1, true);
             pst.setLong(2, pm.getUserId());
-            pst.setLong(3, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, pm.getUserId());
             pst.setLong(4, Long.parseLong(pm.getMessage()));
-            pst.setLong(5, pm.getUserId());
+            pst.setLong(5, Long.parseLong(pm.getMessage()));
+            pst.setLong(6, pm.getUserId());
 	
             dbc.execUpdate(pm, pst);
             
