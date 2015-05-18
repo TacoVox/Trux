@@ -8,7 +8,7 @@
     <ImageView
         android:layout_width="60sp"
         android:layout_height="60sp"
-        android:id="@+id/friendPicture"
+        android:id="@+id/friendRequestPicture"
         android:layout_marginTop="1dp"
         android:layout_gravity="center_vertical" />
 
@@ -23,8 +23,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Alfons"
-            android:id="@+id/friendName"
+            android:text="@string/loading"
+            android:id="@+id/friendRequestName"
             android:textSize="20sp"
             android:textColor="#E0E0E0"
             android:layout_marginTop="5dp" />
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/loading"
-            android:id="@+id/friendUserName"
+            android:id="@+id/friendRequestUserName"
             android:textSize="10sp"
             android:textColor="#ff979797"/>
 
@@ -44,29 +44,19 @@
         android:layout_height="match_parent"
         android:layout_weight="1"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/pending"
-        android:id="@+id/pending"
-        android:layout_gravity="center_vertical|right"
-        android:textColor="#E0E0E0"
-        android:layout_marginRight="10dp"
-        android:textSize="15sp"/>
-
     <Button
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:text="Add Friend"
-        android:id="@+id/friendRequestButton"
+        android:text="A"
+        android:id="@+id/acceptRequest"
         android:layout_gravity="center_vertical|right"
         android:layout_marginRight="10dp"/>
 
     <Button
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:text="M"
-        android:id="@+id/sendMessageButton"
+        android:text="D"
+        android:id="@+id/declineRequest"
         android:layout_gravity="center_vertical|right"
         android:layout_marginRight="10dp"/>
 

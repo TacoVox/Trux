@@ -12,6 +12,12 @@
 
         <ListView
             android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/requestList"
+            android:scrollbars="vertical"/>
+
+        <ListView
+            android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:id="@+id/friendsList"
             android:scrollbars="vertical"
