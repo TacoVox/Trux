@@ -25,6 +25,7 @@
     <string name="community_text">Community</string>
     <string name="friend_requests">FRIEND REQUESTS</string>
     <string name="friends">FRIENDS</string>
+    <string name="pending">Pending...</string>
     <string name="statistics_text">Statistics</string>
     <string name="profile_text">Profile</string>
     <string name="title_activity_fuel">Fuel</string>
