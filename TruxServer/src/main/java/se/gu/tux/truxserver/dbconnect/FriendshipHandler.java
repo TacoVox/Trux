@@ -258,4 +258,36 @@ public class FriendshipHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
     }
+    
+    public boolean isPening(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "SELECT * FROM friendrequest WHERE userid = ? AND friendid = ?");
+            
+            pst.setLong(1, pm.getUserId());
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+	
+            ResultSet rs = dbc.execSelect(pm, pst);
+            
+            while(rs.next()) {
+                return true;
+            }
+            
+            return false;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            
+            Logger.gI().addError(e.getLocalizedMessage());
+            
+            return false;
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
 }

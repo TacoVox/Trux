@@ -379,7 +379,7 @@ public class UserHandler {
                 f.setUsername(rs.getString("username"));
                 f.setFirstname(rs.getString("firstname"));
                 f.setLastname(rs.getString("lastname"));
-                f.setFriend(true);
+                f.setFriendType(Friend.FriendType.FRIEND);
                 
 		break;
 	    }
@@ -425,6 +425,8 @@ public class UserHandler {
     }
     
     public Data findUsers(ProtocolMessage pm) {
+        ArrayResponse reqs = (ArrayResponse)FriendshipHandler.gI().getFriendRequests(pm);
+        
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
         List users = new ArrayList<Friend>();
@@ -460,7 +462,11 @@ public class UserHandler {
                 f.setFirstname(rs.getString("firstname"));
                 f.setLastname(rs.getString("lastname"));
                 
-                f.setFriend(false);
+                if(FriendshipHandler.gI().isPening(new ProtocolMessage(
+                        ProtocolMessage.Type.PEOPLE_SEARCH, Long.toString(f.getFriendId()))))
+                    f.setFriendType(Friend.FriendType.PENDING);
+                else
+                    f.setFriendType(Friend.FriendType.NONE);
                 
                 f.setProfilePicId(PictureHandler.gI().getProfilePictureID(f));
                 
