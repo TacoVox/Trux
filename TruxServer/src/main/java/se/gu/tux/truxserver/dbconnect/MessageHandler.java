@@ -133,7 +133,7 @@ public class MessageHandler {
         
         try
 	{
-            String updateStmnt = "SELECT * FROM conversation "
+            String updateStmnt = "SELECT * FROM conversation c "
                     + "JOIN message m on c.conversationid = m.conversationid JOIN "
                     + "(SELECT conversationid, MAX(timestamp) timestamp "
                     + "FROM message GROUP BY conversationid) x "
@@ -150,7 +150,7 @@ public class MessageHandler {
             
             while(rs.next()) {
                 Message m = new Message();
-                m.setConversationId(rs.getLong("converstaionid"));
+                m.setConversationId(rs.getLong("conversationid"));
                 m.setSenderId(rs.getLong("senderid"));
                 m.setReceiverId(rs.getLong("receiverid"));
                 m.setValue(rs.getString("message"));
