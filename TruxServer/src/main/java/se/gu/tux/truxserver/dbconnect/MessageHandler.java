@@ -94,12 +94,13 @@ public class MessageHandler {
             pst.setLong(1, m.getSenderId());
             pst.setLong(2, m.getReceiverId());
             pst.setLong(3, System.currentTimeMillis());
+            pst.setLong(4, conversationid);
             
             dbc.execUpdate(m, pst);
             
             pst = dbc.getConnection().prepareStatement(
                 "INSERT INTO message (conversationid, senderid, receiverid, message, timestamp, seen) "
-                        + "SELECT * FROM (SELECT ?, ?, ?, ?, ?, ?) AS tmp");
+                        + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C, ? AS D, ? AS E, ? AS F) AS tmp");
               
             pst.setLong(1, conversationid);
             pst.setLong(2, m.getSenderId());
