@@ -105,11 +105,12 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
      * Returns a Trux Location object.
      * @return
      */
-    public se.gu.tux.trux.datastructure.Location getLocation(){
+    public se.gu.tux.trux.datastructure.Location getLocation() {
         double delta = 0.01;
         se.gu.tux.trux.datastructure.Location truxLocation = null;
-        if (currentLocation != null && Math.abs(currentLocation.getLongitude()) < delta
-                && Math.abs(currentLocation.getLatitude()) < delta) {
+
+        if (currentLocation != null && Math.abs(currentLocation.getLongitude()) > delta
+                && Math.abs(currentLocation.getLatitude()) > delta) {
             truxLocation = new se.gu.tux.trux.datastructure.Location(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
             System.out.println("Returning a Location with values.");

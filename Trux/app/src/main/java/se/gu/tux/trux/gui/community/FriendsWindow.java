@@ -126,43 +126,48 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
      */
     @Override
     public void FriendsFetched(final ArrayList<Friend> friends) {
+
+        // Last user action was to show friend list
         if (lastFetchCall == FetchCall.FRIENDLIST) {
-            System.out.println("UPDATING FRIENDS");
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println("Showing friends in list...");
+                    // Update data in friendAdapter and hide loading animation
                     friendAdapter.setFriends(friends);
                     findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                 }
             });
+
         } else if (lastFetchCall == FetchCall.SEARCH) {
+
+            // Last user action was to search for people.
             ArrayList<Friend> allResults = new ArrayList<Friend>();
             try {
-                System.out.println("Fetching friends and people from search...");
-
-                // Fetch friends and see which are matching
+                // Fetch friends and keep the ones which are matching the search needle
                 allResults = matchFriendSearch(friends, lastNeedle);
 
                 // Fetch other people
                 ArrayResponse ar = (ArrayResponse)DataHandler.getInstance().getData(
                         new ProtocolMessage(ProtocolMessage.Type.PEOPLE_SEARCH, lastNeedle));
+
+                // Join friends and people, if there were any results.
                 if (ar.getArray() != null) {
-                    // Join friends and people
                     allResults = appendFriendObjects(allResults, ar.getArray());
                 }
-                System.out.println("Done.");
 
             } catch (NotLoggedInException e) {
                 System.out.println("Trying to fetch friends while not logged in!");
             }
+
+            // Render the updated list
             final ArrayList<Friend> finalResults = allResults;
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    // Verify that this is still the last call
+                    // Verify that this is still the last user action
+                    // (the user hasn't for example removed the text from the search field)
                     if (lastFetchCall == FetchCall.SEARCH) {
-                        System.out.println("Showing friends in list...");
                         friendAdapter.setFriends(finalResults);
                         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                     }
@@ -170,10 +175,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             });
         }
     }
-
-
-
-
 
 
     /**
@@ -196,7 +197,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         return matches;
     }
-
 
 
     /**
