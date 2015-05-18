@@ -21,13 +21,14 @@ package se.gu.tux.trux.datastructure;
  */
 public class Friend extends Data {
     public enum Status {OFFLINE, ONLINE, DRIVING, MOVING};
-    
+    public enum FriendType {NONE, PENDING, FRIEND};
+
 	private Status userStatus;
 
     private long friendId;
     private long profilePicId;
     private transient Picture profilePic;
-    private boolean isFriend;
+    private FriendType friendType;
     private boolean isOnline;
 
     private String username;
@@ -121,12 +122,12 @@ public class Friend extends Data {
         this.profilePicId = profilePic;
     }
 
-    public boolean isFriend() {
-        return isFriend;
+    public FriendType getFriendType() {
+        return friendType;
     }
 
-    public void setFriend(boolean isFriend) {
-        this.isFriend = isFriend;
+    public void setFriendType(FriendType friendType) {
+        this.friendType = friendType;
     }
 
     public boolean isOnline() {
