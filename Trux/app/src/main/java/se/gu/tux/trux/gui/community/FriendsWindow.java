@@ -306,7 +306,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             }
 
             // Set the picture
-            image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(position).getProfilePic()));
+            //image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(position).getProfilePic()));
 
             return view;
         }
