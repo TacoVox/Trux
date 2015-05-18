@@ -211,6 +211,7 @@ public class ServerConnector {
          */
         public Data sendQuery(Data query, int timeOut) throws NotLoggedInException {
             boolean dataSent = false, hasTimedOut = false;
+            long startTime = System.currentTimeMillis();
             Data answer = null;
 
             while (!dataSent && !hasTimedOut) {
@@ -270,8 +271,9 @@ public class ServerConnector {
 
                     } catch (IOException e) {
 
-                        // Server probably shut down or we lost connection. Close sockets so we are sure
-                        // to try to reconnect in the next iteration of while loop
+                        // Server probably shut down or we lost connection. Close sockets so we are
+                        // sure to try to reconnect in the next iteration of while loop (unless we
+                        // timed out, in which case any other send attempt will provoke a reconnect)
                         System.out.println("IOEXception in sendQuery: ");
                         e.printStackTrace();
                         try {
@@ -280,6 +282,11 @@ public class ServerConnector {
                             out.close();
                         } catch (IOException e1) {
                             e1.printStackTrace();
+                        }
+
+                        // Check for timeout - then don't try to send again
+                        if (System.currentTimeMillis() - startTime > timeOut) {
+                            hasTimedOut = true;
                         }
 
                     } catch (ClassNotFoundException e) {
