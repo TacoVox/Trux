@@ -26,6 +26,7 @@ import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.FriendFetchListener;
+import se.gu.tux.trux.application.FriendRequestFetchListener;
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Friend;
@@ -35,7 +36,8 @@ import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
-public class FriendsWindow extends BaseAppActivity implements View.OnClickListener, FriendFetchListener {
+public class FriendsWindow extends BaseAppActivity implements View.OnClickListener, FriendFetchListener,
+        FriendRequestFetchListener {
 
     public enum RowType {REQ_LABEL, REQ, FRIEND_LABEL, FRIEND};
     private ListView friendsList;
@@ -81,6 +83,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         });
         searchButton.setOnClickListener(this);
         noFriends = (TextView) findViewById(R.id.noFriends);
+
+        // Start fetching the friends
         showFriends();
     }
 
@@ -101,6 +105,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     private void showFriends() {
         lastFetchCall = FetchCall.FRIENDLIST;
         DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
+        DataHandler.gI().getSocialHandler().fetchFriendRequests(this);
     }
 
 
@@ -173,6 +178,18 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 }
             });
         }
+    }
+
+
+    @Override
+    public void FriendRequestsFetched(final ArrayList<Friend> friendRequests) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+            // Update data in friendAdapter and hide loading animation
+            friendAdapter.setFriendRequests(friendRequests);
+            }
+        });
     }
 
 
@@ -299,6 +316,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         public void setFriends( ArrayList<Friend> friends) {
             this.friends = friends;
+            notifyDataSetChanged();
+        }
+
+        public void setFriendRequests( ArrayList<Friend> friendRequests) {
+            this.friends = friendRequests;
             notifyDataSetChanged();
         }
 
