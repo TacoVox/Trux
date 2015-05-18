@@ -45,15 +45,15 @@ public class InfoFragment extends Fragment {
     private void viewFriendInfo() {
 
         Bundle bundle = this.getArguments();
-
+        if(bundle != null){
         final Friend[] newFriend = (Friend[]) bundle.getSerializable("friendArray");
         System.out.println("FriendArray is sent to the InfoFragment: " + newFriend.length);
         final Bitmap[] newPicture = (Bitmap[]) bundle.getSerializable("pictureArray");
         System.out.println("PictureArray is sent to the InfoFragment: " + newPicture.length);
         HashMap<String, Friend> friendMarker = (HashMap) bundle.getSerializable("hashmap");
         String markerID = bundle.getString("markerID");
-        for(int i = 0; i < newFriend.length; i++){
-            if(friendMarker.containsKey(markerID)){
+        for(int i = 0; i < newFriend.length; i++) {
+            if (friendMarker.containsKey(markerID)) {
                 nameText.setText(newFriend[i].getFirstname() + " " + newFriend[i].getLastname());
 
                 newPicture[i] = Bitmap.createScaledBitmap(newPicture[i], 50, 50, false);
@@ -61,6 +61,7 @@ public class InfoFragment extends Fragment {
 
                 infoText.setText("");
             }
+        }
         }
     }
 }
