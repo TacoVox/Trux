@@ -277,6 +277,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     try {
                         DataHandler.gI().getSocialHandler().sendFriendRequest(
                                 friends.get(position).getFriendId());
+                        showToast("A friend request was sent.");
+                        friends.get(position).setFriendType(Friend.FriendType.PENDING);
+                        notifyDataSetChanged();
                     } catch (NotLoggedInException e) {
                         e.printStackTrace();
                     }
