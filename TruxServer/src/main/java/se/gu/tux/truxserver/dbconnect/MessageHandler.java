@@ -222,4 +222,35 @@ public class MessageHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }        
     }
+    
+    public ProtocolMessage markAsSeen(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "UPDATE message SET seen = ? WHERE conversationid = "
+                        + "(SELECT conversationid FROM conversation "
+                        + "WHERE (persone = ? AND perstwo = ?) OR (persone = ? AND perstwo = ?))");
+            
+            pst.setBoolean(1, true);
+            pst.setLong(2, pm.getUserId());
+            pst.setLong(3, Long.parseLong(pm.getMessage()));
+            pst.setLong(4, Long.parseLong(pm.getMessage()));
+            pst.setLong(5, pm.getUserId());
+	
+            dbc.execUpdate(pm, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Can't mark the message as seen.");
+    }
 }
