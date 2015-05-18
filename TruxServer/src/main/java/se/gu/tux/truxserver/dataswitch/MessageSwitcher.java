@@ -66,6 +66,8 @@ public class MessageSwitcher {
                 return FriendshipHandler.gI().unfriendUser(pm);
             else if(pm.getType() == ProtocolMessage.Type.CAN_YOU_PLEASE_GIVE_ME_AN_ARRAY_WITH_EVERYONE_WHO_SENT_THIS_USER_A_FRIEND_REQUEST_THANK_YOU_IN_ADVANCE_DEAR_BROTHER)
                 return FriendshipHandler.gI().getFriendRequests(pm);
+            else if(pm.getType() == ProtocolMessage.Type.FRIEND_REQUEST_SEEN)
+                return FriendshipHandler.gI().markAsSeen(pm);
             else if(pm.getType() == ProtocolMessage.Type.ACCEPT_FRIEND)
                 return FriendshipHandler.gI().acceptFriend(pm);
             else if(pm.getType() == ProtocolMessage.Type.GET_LATEST_CONVERSATIONS)
