@@ -113,14 +113,17 @@ public class OverallGraphWindow extends Fragment {
 
 
     private void popFuelGraph(View view) {
+
         fuelGraph = new GraphView(getActivity());
-        fuelGraph.setTitle("Fuel Consumption");
-        fuelGraph.setTitleTextSize(40);
-        fuelGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Consumption");
-        fuelGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
         fuelGraph.getViewport().setXAxisBoundsManual(true);
+        fuelGraph.getViewport().setYAxisBoundsManual(true);
+        fuelGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        fuelGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
+        fuelGraph.getGridLabelRenderer().setPadding(50);
         fuelGraph.getViewport().setMaxX(30);
+        fuelGraph.getViewport().setMaxY(800);
+
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 0, 100, 0);
@@ -135,14 +138,17 @@ public class OverallGraphWindow extends Fragment {
     }
 
     private void popSpeedGraph(View view) {
+
         speedGraph = new GraphView(getActivity());
-        speedGraph.setTitle("Speed");
-        speedGraph.setTitleTextSize(40);
-        speedGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Speed");
-        speedGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
         speedGraph.getViewport().setXAxisBoundsManual(true);
+        speedGraph.getViewport().setYAxisBoundsManual(true);
+        speedGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        speedGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
+        speedGraph.getGridLabelRenderer().setPadding(50);
         speedGraph.getViewport().setMaxX(30);
+        speedGraph.getViewport().setMaxY(150);
+
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 0, 100, 0);
@@ -157,15 +163,17 @@ public class OverallGraphWindow extends Fragment {
     }
 
     private void popDTGraph(View view) {
+
         distGraph = new GraphView(getActivity());
 
-        distGraph.setTitle("Distance Traveled");
-        distGraph.setTitleTextSize(40);
-        distGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Distance");
-        distGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
-
         distGraph.getViewport().setXAxisBoundsManual(true);
+        distGraph.getViewport().setYAxisBoundsManual(true);
+        distGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        distGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
+        distGraph.getGridLabelRenderer().setPadding(50);
         distGraph.getViewport().setMaxX(30);
+        distGraph.getViewport().setMaxY(80);
+
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 0, 100, 0);

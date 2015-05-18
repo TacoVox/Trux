@@ -49,4 +49,21 @@
             android:layout_height="wrap_content"
             android:indeterminate="true"/>
     </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#FFFFFF"
+        android:id="@+id/noData"
+        android:gravity="center">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/noData"
+        android:gravity="center"
+        android:textColor="#3D3D3D"
+        android:textSize="20sp"/>
+
+    </RelativeLayout>
 </FrameLayout>
