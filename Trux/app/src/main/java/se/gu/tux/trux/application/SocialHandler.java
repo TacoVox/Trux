@@ -120,6 +120,8 @@ public class SocialHandler {
                     // The caceh was not updated, just return the previously cached friends
                     friends = new ArrayList<Friend>(friendCache.values());
                 }
+
+                friendsChanged = false;
                 System.out.println("Returning fetched friends.");
                 listener.FriendsFetched(friends);
             }
