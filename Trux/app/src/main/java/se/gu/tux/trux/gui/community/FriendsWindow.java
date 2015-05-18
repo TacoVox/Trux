@@ -186,7 +186,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-            // Update data in friendAdapter and hide loading animation
+            // Update data in friendAdapter
             friendAdapter.setFriendRequests(friendRequests);
             }
         });
@@ -320,7 +320,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         }
 
         public void setFriendRequests( ArrayList<Friend> friendRequests) {
-            this.friends = friendRequests;
+            this.friendRequests = friendRequests;
             notifyDataSetChanged();
         }
 
