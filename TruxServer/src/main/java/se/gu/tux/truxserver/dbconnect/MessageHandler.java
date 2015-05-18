@@ -184,8 +184,8 @@ public class MessageHandler {
             String updateStmnt = "SELECT conversationid, senderid, receiverid, message, timestamp "
                     + "FROM message WHERE conversationid = "
                     + "(SELECT conversationid FROM conversation "
-                    + "WHERE (persone = 3 AND perstwo = 8) OR (persone = 8 AND perstwo = 3)) " 
-                    + "ORDER BY timestamp DESC LIMIT 20";
+                    + "WHERE (persone = ? AND perstwo = ?) OR (persone = ? AND perstwo = ?)) " 
+                    + "ORDER BY timestamp DESC LIMIT 100";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
