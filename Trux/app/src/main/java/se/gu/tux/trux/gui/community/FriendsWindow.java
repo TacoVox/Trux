@@ -225,9 +225,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         Context context;
 
-        // The reason for not wrapping these together is that sometimes we want to be able to
-        // send just friend info without the overhead of sending the picture. Could be handled
-        // differentlyt though for example with a request boolean.
         ArrayList<Friend> friends;
 
         private LayoutInflater inflater = null;
@@ -264,15 +261,30 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View view = convertView;
             if (view == null)
                 view = inflater.inflate(R.layout.friend_row, null);
             TextView name = (TextView) view.findViewById(R.id.friendName);
             TextView username = (TextView) view.findViewById(R.id.friendUserName);
+            TextView pending = (TextView) view.findViewById(R.id.pending);
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
             Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
+            friendRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        DataHandler.gI().getSocialHandler().sendFriendRequest(
+                                friends.get(position).getFriendId());
+                        showToast("A friend request was sent.");
+                        friends.get(position).setFriendType(Friend.FriendType.PENDING);
+                        notifyDataSetChanged();
+                    } catch (NotLoggedInException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
             // Set the name
             name.setText(friends.get(position).getFirstname() + " " + friends.get(position).getLastname());
@@ -282,16 +294,19 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             if (friends.get(position).getFriendType() == Friend.FriendType.FRIEND) {
                 friendRequestButton.setVisibility(View.GONE);
                 sendMessageButton.setVisibility(View.VISIBLE);
+                pending.setVisibility(View.GONE);
             } else if (friends.get(position).getFriendType() == Friend.FriendType.PENDING) {
                 friendRequestButton.setVisibility(View.GONE);
                 sendMessageButton.setVisibility(View.GONE);
+                pending.setVisibility(View.VISIBLE);
             } else {
                 friendRequestButton.setVisibility(View.VISIBLE);
                 sendMessageButton.setVisibility(View.GONE);
+                pending.setVisibility(View.GONE);
             }
 
             // Set the picture
-            image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(position).getProfilePic()));
+            //image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(position).getProfilePic()));
 
             return view;
         }
