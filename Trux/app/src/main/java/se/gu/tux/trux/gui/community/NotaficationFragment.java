@@ -33,7 +33,7 @@ public class NotaficationFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TextView messagesTextView = (TextView) getActivity().findViewById(R.id.notaFicationMessage);
+        //TextView messagesTextView = (TextView) getActivity().findViewById(R.id.notaFicationMessage);
         Space space = (Space) getActivity().findViewById(R.id.notificationSpace);
         LinearLayout linearLayout = (LinearLayout) getActivity().findViewById(R.id.notificationLayout);
 
