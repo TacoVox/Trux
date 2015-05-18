@@ -58,7 +58,7 @@ public class FriendshipHandler {
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO friendrequest (userid, friendid, timestamp) "
-                            + "VALUES(?, ?, ?)");
+                            + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
             
             pst.setLong(1, pm.getUserId());
             pst.setLong(2, Long.parseLong(pm.getMessage()));
