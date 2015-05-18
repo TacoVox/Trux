@@ -84,7 +84,7 @@ public class SocialHandler {
                         if (d instanceof Friend) {
                             System.out.println("Caching...");
                             // Join this Friend object with its matching picture and cache it
-                            Friend cachedFriend = cacheFriend((Friend)d, friendCache);
+                            Friend cachedFriend = cacheFriend((Friend) d, friendCache);
                             // Simultaneously build the list that will be returned to the listener
                             friends.add(cachedFriend);
 
@@ -154,6 +154,7 @@ public class SocialHandler {
                     } catch (NotLoggedInException e) {
                         // Return empty list if any problems with session
                         listener.FriendRequestsFetched(new ArrayList<Friend>());
+                        return;
                     }
 
                     // Put friend request friends in friend request cache
@@ -171,7 +172,10 @@ public class SocialHandler {
                     } else {
                         System.out.println("No friend requests.");
                     }
-                } 
+                }
+
+                // Return the cached friend request list
+                listener.FriendRequestsFetched(new ArrayList<Friend>(friendRequestCache.values()));
             }
         }).start();
     }
