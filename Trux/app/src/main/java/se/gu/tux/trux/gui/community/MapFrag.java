@@ -36,11 +36,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.FriendFetchListener;
+import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Picture;
@@ -48,7 +51,7 @@ import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
-public class MapFrag extends Fragment implements OnMapReadyCallback {
+public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetchListener {
 
     private GoogleMap mMap;
     private LatLng[] latLng;
@@ -126,6 +129,9 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         public void onInfoWindowClick(Marker marker) {
             if (!isDriving()) {
                 markerID = marker.getId();
+                System.out.println("This is the friend length: " + friend.length + " ------------------");
+                System.out.println("This is the picture length: " + picture.length + " ------------------");
+                System.out.println("This is the friendMarkerID: " + markerID  + " ------------------");
                 MapCommunityWindow fragment = new MapCommunityWindow();
                 Bundle sendToInfoFragment = new Bundle();
                 sendToInfoFragment.putSerializable("friendArray", friend);
@@ -185,12 +191,83 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         t.schedule(timer, 0, 10000);
     }
 
+    @Override
+    public void FriendsFetched(ArrayList<Friend> friends) {
+
+    }
+
     /*
      * This method will populate the map with the friend pictures and put
      * them on the currect position.
      */
+
     class PopFriends extends TimerTask{
-        public  void run(){
+      public  void run(){
+    /*        getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        friend = DataHandler.gI().getFriends();
+                        picture = new Bitmap[friend.length];
+                        if(friend.length > 0){
+                            for(int i = 0; i < friend.length; i++){
+                                try{
+                                    picture[i] = DataHandler.gI().getPicture(friend[i].getProfilePicId());
+                                }
+                                catch (NotLoggedInException n){
+                                    n.printStackTrace();
+                                }
+                            }
+                            final Bitmap[] newPicture = picture;
+                            final Friend[] newFriend = friend;
+                            if(newFriend != null){
+                                if (hasMarker) {
+                                    mMap.clear();
+                                    hasMarker = false;
+                                }
+
+                                for (int i = 0; i < newFriend.length; i++) {
+
+                                    if (newPicture[i] != null && newFriend[i] != null &&
+                                            newFriend[i].getCurrentLoc() != null &&
+                                            newFriend[i].getCurrentLoc().getLoc() != null  &&
+                                                   friend[i].getStatus() == Friend.Status.ONLINE) {
+
+                                        System.out.println("FRIEND: " + i + " picture: " +
+                                                newPicture[i] + " pictureid: " + newFriend[i].getProfilePicId()
+                                                + " loc: " + newFriend[i].getCurrentLoc().getLoc());
+
+                                        double[] loc = newFriend[i].getCurrentLoc().getLoc();
+
+
+                                        newPicture[i] = Bitmap.createScaledBitmap(newPicture[i],40,40,false);
+                                        Canvas canvas = new Canvas(newPicture[i]);
+                                        Drawable shape = getResources().getDrawable(R.drawable.marker_layout);
+                                        shape.setBounds(0, 0, newPicture[i].getWidth(), newPicture[i].getHeight());
+                                        shape.draw(canvas);
+
+
+                                        Marker m = mMap.addMarker(new MarkerOptions()
+                                                .position(new LatLng(loc[0], loc[1]))
+                                                .title(newFriend[i].getFirstname())
+                                                .snippet("DRIVING")
+                                                .icon(BitmapDescriptorFactory.fromBitmap(newPicture[i])));
+                                        String mID = m.getId();
+                                        friendMarker.put(mID, newFriend[i]);
+                                        System.out.println("---Picture is now a marker---");
+                                        hasMarker = true;
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (NotLoggedInException n){
+                        n.printStackTrace();
+                    }
+                }
+            });
+            */
            new AsyncTask(){
                @Override
                 protected Object doInBackground(Object[] objects){
@@ -206,55 +283,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                                    System.out.println("NotLoggedInException: " + nLIE);
                                }
                            }
-                           final Bitmap[] newPicture = picture;
-                           final Friend[] newFriend = friend;
 
-                           getActivity().runOnUiThread(new Runnable() {
-                               @Override
-                               public void run() {
-                                   if(newFriend != null) {
-
-                                       if (hasMarker) {
-                                           mMap.clear();
-                                           hasMarker = false;
-                                       }
-
-                                       for (int i = 0; i < newFriend.length; i++) {
-
-                                           if (newPicture[i] != null && newFriend[i] != null &&
-                                                   newFriend[i].getCurrentLoc() != null &&
-                                                   newFriend[i].getCurrentLoc().getLoc() != null /* &&
-                                                   friend[i].getStatus() == Friend.Status.ONLINE*/) {
-
-                                               System.out.println("FRIEND: " + i + " picture: " +
-                                                       newPicture[i] + " pictureid: " + newFriend[i].getProfilePicId()
-                                                       + " loc: " + newFriend[i].getCurrentLoc().getLoc());
-
-                                               double[] loc = newFriend[i].getCurrentLoc().getLoc();
-
-
-                                               newPicture[i] = Bitmap.createScaledBitmap(newPicture[i],40,40,false);
-                                               Canvas canvas = new Canvas(newPicture[i]);
-                                               Drawable shape = getResources().getDrawable(R.drawable.marker_layout);
-                                               shape.setBounds(0, 0, newPicture[i].getWidth(), newPicture[i].getHeight());
-                                               shape.draw(canvas);
-
-
-                                               Marker m = mMap.addMarker(new MarkerOptions()
-                                                       .position(new LatLng(loc[0], loc[1]))
-                                                       .title(newFriend[i].getFirstname())
-                                                       .snippet("DRIVING")
-                                                       .icon(BitmapDescriptorFactory.fromBitmap(newPicture[i])));
-                                               String mID = m.getId();
-                                               friendMarker.put(mID, newFriend[i]);
-                                               System.out.println("---Picture is now a marker---");
-                                               hasMarker = true;
-
-                                           }
-                                       }
-                                   }
-                               }
-                           });
                        }
                    }
                    catch (NotLoggedInException nLIE){
@@ -262,6 +291,55 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
                    }
               return null; }
            }.execute();
+          final Bitmap[] newPicture = picture;
+          final Friend[] newFriend = friend;
+
+          getActivity().runOnUiThread(new Runnable() {
+              @Override
+              public void run() {
+                  if (newFriend != null) {
+
+                      if (hasMarker) {
+                          mMap.clear();
+                          hasMarker = false;
+                      }
+
+                      for (int i = 0; i < newFriend.length; i++) {
+
+                          if (newPicture[i] != null && newFriend[i] != null &&
+                                  newFriend[i].getCurrentLoc() != null &&
+                                  newFriend[i].getCurrentLoc().getLoc() != null/* &&
+                                  friend[i].getStatus() == Friend.Status.ONLINE*/) {
+
+                              System.out.println("FRIEND: " + i + " picture: " +
+                                      newPicture[i] + " pictureid: " + newFriend[i].getProfilePicId()
+                                      + " loc: " + newFriend[i].getCurrentLoc().getLoc());
+
+                              double[] loc = newFriend[i].getCurrentLoc().getLoc();
+
+
+                              newPicture[i] = Bitmap.createScaledBitmap(newPicture[i], 40, 40, false);
+                              Canvas canvas = new Canvas(newPicture[i]);
+                              Drawable shape = getResources().getDrawable(R.drawable.marker_layout);
+                              shape.setBounds(0, 0, newPicture[i].getWidth(), newPicture[i].getHeight());
+                              shape.draw(canvas);
+
+
+                              Marker m = mMap.addMarker(new MarkerOptions()
+                                      .position(new LatLng(loc[0], loc[1]))
+                                      .title(newFriend[i].getFirstname())
+                                      .snippet("DRIVING")
+                                      .icon(BitmapDescriptorFactory.fromBitmap(newPicture[i])));
+                              String mID = m.getId();
+                              friendMarker.put(mID, newFriend[i]);
+                              System.out.println("---Picture is now a marker---");
+                              hasMarker = true;
+
+                          }
+                      }
+                  }
+              }
+          });
         }
     }
 

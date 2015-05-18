@@ -87,6 +87,7 @@ public class SpeedWindow extends Fragment {
     private void popSpeedGraph(View view) {
 
         speedGraph = new GraphView(getActivity());
+
         speedGraph.getViewport().setXAxisBoundsManual(true);
         speedGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
         speedGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
@@ -108,6 +109,7 @@ public class SpeedWindow extends Fragment {
             speedTextViewTotal.setText(new Long(Math.round((Double) stats.getTotal().getValue())).toString() + " km/h");
             LineGraphSeries speedValues = new LineGraphSeries(stats.getGraphPoints());
             speedGraph.addSeries(speedValues);
+
             speedGraph.getViewport().setMaxX(30);
             speedGraph.getViewport().setMaxY(150);
         }

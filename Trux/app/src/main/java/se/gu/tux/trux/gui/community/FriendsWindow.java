@@ -19,7 +19,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
@@ -42,7 +44,10 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     private EditText searchField;
     private TextView noFriends;
     private Button searchButton;
-    private AsyncTask friendAS, searchAS;
+    private enum FetchCall {SEARCH, FRIENDLIST};
+    private FetchCall lastFetchCall = FetchCall.FRIENDLIST;
+    private String lastNeedle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,79 +100,92 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
     private void showFriends() {
-        /*
-        noFriends.setText("You have no friends :(");
-        if (friendAS != null) {
-            friendAS.cancel(true);
-        }
-        if (searchAS != null) {
-            searchAS.cancel(true);
-        }
-        friendAS = new AsyncTask() {
-
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                // Load friend list
-                Friend[] friends = null;
-                Bitmap[] pictures = null;
-                try {
-                    System.out.println("Fetching friends...");
-                    friends = DataHandler.getInstance().getFriends();
-                    pictures = getPicturesFor(friends);
-                    System.out.println("Done.");
-
-                } catch (NotLoggedInException e) {
-                    System.out.println("Trying to fetch friends while not logged in!");
-                    cancel(true);
-                }
-
-                final Friend[] finalFriends = friends;
-                final Bitmap[] finalPictures = pictures;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("Showing friends in list...");
-                        friendAdapter.setFriends(finalFriends, finalPictures);
-                        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                    }
-                });
-
-                return null;
-            }
-        };
-        friendAS.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        */
+        lastFetchCall = FetchCall.FRIENDLIST;
         DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
     }
 
 
-    @Override
-    public void FriendsFetched(final ArrayList<Friend> friends) {
-        System.out.println("UPDATING FRIENDS");
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Showing friends in list...");
-                friendAdapter.setFriends(friends);
-                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-            }
-        });
+    /**
+     * Shows friends that match needle followed by other people who also match needle.
+     *
+     * @param needle
+     */
+    private void showSearchResults(final String needle) {
+        DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.ALL);
+        noFriends.setText("No people found.");
+        lastNeedle = needle;
+        lastFetchCall = FetchCall.SEARCH;
     }
 
 
+    /**
+     * This is run in a background thread created by SocialHandler, so we are using this background
+     * thread to fetch more stuff if relevant (the search results). By looking what request was last
+     * issued by the user (to show list or search), we know what to render here
+     * @param friends
+     */
+    @Override
+    public void FriendsFetched(final ArrayList<Friend> friends) {
 
+        // Last user action was to show friend list
+        if (lastFetchCall == FetchCall.FRIENDLIST) {
 
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // Update data in friendAdapter and hide loading animation
+                    friendAdapter.setFriends(friends);
+                    findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                }
+            });
+
+        } else if (lastFetchCall == FetchCall.SEARCH) {
+
+            // Last user action was to search for people.
+            ArrayList<Friend> allResults = new ArrayList<Friend>();
+            try {
+                // Fetch friends and keep the ones which are matching the search needle
+                allResults = matchFriendSearch(friends, lastNeedle);
+
+                // Fetch other people
+                ArrayResponse ar = (ArrayResponse)DataHandler.getInstance().getData(
+                        new ProtocolMessage(ProtocolMessage.Type.PEOPLE_SEARCH, lastNeedle));
+
+                // Join friends and people, if there were any results.
+                if (ar.getArray() != null) {
+                    allResults = appendFriendObjects(allResults, ar.getArray());
+                }
+
+            } catch (NotLoggedInException e) {
+                System.out.println("Trying to fetch friends while not logged in!");
+            }
+
+            // Render the updated list
+            final ArrayList<Friend> finalResults = allResults;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // Verify that this is still the last user action
+                    // (the user hasn't for example removed the text from the search field)
+                    if (lastFetchCall == FetchCall.SEARCH) {
+                        friendAdapter.setFriends(finalResults);
+                        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                    }
+                }
+            });
+        }
+    }
 
 
     /**
      * Returns an array with all elements that contain the needle
      * (in username, firstname or lastname)
      */
-    public Friend[] matchFriendSearch(Friend[] haystack, String needle) {
-        if (haystack == null || haystack.length == 0) {
-            return new Friend[0];
+    public ArrayList<Friend> matchFriendSearch(ArrayList<Friend> haystack, String needle) {
+        if (haystack == null || haystack.size() == 0) {
+            return new ArrayList<Friend>();
         }
-        List<Friend> matches = new ArrayList<Friend>();
+        ArrayList<Friend> matches = new ArrayList<Friend>();
         for (Friend f : haystack) {
             if (f.getUsername().toLowerCase().indexOf(needle.toLowerCase()) != -1 ||
                     f.getFirstname().toLowerCase().indexOf(needle.toLowerCase()) != -1 ||
@@ -177,114 +195,24 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             }
         }
 
-        // Cannot cast Object[] directly to Friend[]
-        Friend[] matchesArray = new Friend[matches.size()];
-        for (int i = 0; i < matchesArray.length; i++) {
-            matchesArray[i] = matches.get(i);
-        }
-        return matchesArray;
+        return matches;
     }
 
-    /**
-     * Shows friends that match needle followed by other people who also match needle.
-     *
-     * @param needle
-     */
-    private void showSearchResults(final String needle) {
-        noFriends.setText("No people found.");
-        if (searchAS != null) {
-            searchAS.cancel(true);
-        }
-        if (friendAS != null) {
-            friendAS.cancel(true);
-        }
-        searchAS = new AsyncTask() {
-
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                // Load friend list
-                Friend[] friends = null;
-                Object[] people = null;
-                Bitmap[] pictures = null;
-
-                try {
-                    System.out.println("Fetching friends and people from search...");
-
-                    // Fetch friends and see which are matching
-                    friends = matchFriendSearch(DataHandler.getInstance().getFriends(), needle);
-
-                    // Fetch other people
-                    ArrayResponse ar = (ArrayResponse)DataHandler.getInstance().getData(
-                            new ProtocolMessage(ProtocolMessage.Type.PEOPLE_SEARCH, needle));
-                    if (ar.getArray() != null) {
-                        people = ar.getArray();
-                    }
-
-                    // Join friends and people
-                    friends = appendFriendObjects(friends, people);
-                    pictures = getPicturesFor(friends);
-
-                    System.out.println("Done.");
-
-                } catch (NotLoggedInException e) {
-                    System.out.println("Trying to fetch friends while not logged in!");
-                    cancel(true);
-                }
-
-                final Friend[] finalFriends = friends;
-                final Bitmap[] finalPictures = pictures;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("Showing friends in list...");
-                       // friendAdapter.setFriends(finalFriends);
-                        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                    }
-                });
-
-                return null;
-            }
-        };
-        searchAS.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
 
     /**
-     * Appends the second array to the first - also does casting simultaneously
-     * @param firstArray
-     * @param secondArray
+     * Appends the second array to the list - also does casting simultaneously
+     * @param list
+     * @param friendArray
      * @return
      */
-    private Friend[] appendFriendObjects(Friend[] firstArray, Object[] secondArray) {
-        Friend[] sumArray = null;
-        if (secondArray == null) {
-            return firstArray;
-        } else {
-            sumArray = new Friend[firstArray.length + secondArray.length];
-            int i = 0;
-            for (i = 0; i < firstArray.length; i++) {
-                sumArray[i] = firstArray[i];
-            } // Note i is reused
-            for (; i < firstArray.length + secondArray.length; i++) {
-                sumArray[i] = (Friend)secondArray[i - firstArray.length];
+    private ArrayList<Friend> appendFriendObjects(ArrayList<Friend> list, Object[] friendArray) {
+        if (friendArray != null) {
+            for (int i = 0; i < friendArray.length; i++) {
+                list.add((Friend)friendArray[i]);
             }
         }
-        return sumArray;
+        return list;
     }
-
-    private Bitmap[] getPicturesFor(Friend[] friends) throws NotLoggedInException {
-        Bitmap[] pictures = new Bitmap[friends.length];
-        for (int i = 0; i < pictures.length; i++) {
-            System.out.println("Fetching image " + friends[i].getProfilePicId() + " for friend " +
-                    friends[i].getFirstname());
-            if (friends[i].getProfilePicId() != -1) {
-                pictures[i] = DataHandler.getInstance().getPicture(friends[i].getProfilePicId());
-            }
-        }
-        return pictures;
-    }
-
-
-
 
 
 

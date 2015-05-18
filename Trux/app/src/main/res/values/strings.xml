@@ -74,6 +74,7 @@
         The graph shows your average fuel consumption over the last thirty days.
             \nBased on litres/h.
     </string>
+    <string name="noData">No data found for this user.</string>
     <string name="contact_name">Name</string>
     <string name="contact_title">Contact us</string>
     <string name="contact_email">Email</string>
