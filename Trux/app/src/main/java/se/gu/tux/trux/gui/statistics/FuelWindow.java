@@ -35,8 +35,6 @@ public class FuelWindow extends Fragment {
             LineGraphSeries fuelValues = new LineGraphSeries(stats.getGraphPoints());
             fuelGraph.addSeries(fuelValues);
             fuelGraph.invalidate();
-            fuelGraph.getViewport().setMaxX(30);
-            fuelGraph.getViewport().setMaxY(800);
 
         }
     }
@@ -104,11 +102,14 @@ public class FuelWindow extends Fragment {
     private void popFuelGraph(View view) {
 
         fuelGraph = new GraphView(getActivity());
-        fuelGraph.setTitleTextSize(40);
+
         fuelGraph.getViewport().setXAxisBoundsManual(true);
+        fuelGraph.getViewport().setYAxisBoundsManual(true);
         fuelGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
         fuelGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
         fuelGraph.getGridLabelRenderer().setPadding(50);
+        fuelGraph.getViewport().setMaxX(30);
+        fuelGraph.getViewport().setMaxY(800);
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.FuelGraph);

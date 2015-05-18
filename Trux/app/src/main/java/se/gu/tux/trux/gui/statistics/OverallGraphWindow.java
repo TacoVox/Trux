@@ -126,7 +126,6 @@ public class OverallGraphWindow extends Fragment {
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 0, 100, 0);
         fuelGraph.setLayoutParams(lp);
 
         try {
@@ -147,11 +146,10 @@ public class OverallGraphWindow extends Fragment {
         speedGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
         speedGraph.getGridLabelRenderer().setPadding(50);
         speedGraph.getViewport().setMaxX(30);
-        speedGraph.getViewport().setMaxY(150);
+        speedGraph.getViewport().setMaxY(200);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 0, 100, 0);
         speedGraph.setLayoutParams(lp);
 
         try {
@@ -172,11 +170,10 @@ public class OverallGraphWindow extends Fragment {
         distGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
         distGraph.getGridLabelRenderer().setPadding(50);
         distGraph.getViewport().setMaxX(30);
-        distGraph.getViewport().setMaxY(80);
+        distGraph.getViewport().setMaxY(100);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 0, 100, 0);
         distGraph.setLayoutParams(lp);
 
         try {
