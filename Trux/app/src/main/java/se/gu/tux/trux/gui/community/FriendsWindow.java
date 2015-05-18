@@ -247,6 +247,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         public FriendAdapter(Context context,  ArrayList<Friend> friends) {
             this.context = context;
             this.friends = friends;
+            this.friendRequests = new ArrayList<Friend>();
             inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -254,11 +255,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         @Override
         public int getCount() {
             int count, friendCount = 0, friendRequestCount = 0;
-            if (friendRequests != null) {
+            if (friendRequests != null && friendRequests.size() > 0) {
                 // + 1 to reserve a row for a text label "Friend requests"
                 friendRequestCount = friendRequests.size() + 1;
             }
-            if (friends != null) {
+            if (friends != null && friends.size() > 0) {
                 friendCount = friends.size();
             }
             if (friendCount > 0 && friendRequestCount > 0) {
@@ -282,6 +283,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         }
 
         private RowType getRowType(int pos) {
+            System.out.println("Friends size: " + friends.size());
             if (friendRequests != null && friendRequests.size() > 0) {
                 if (friends != null && friends.size() > 0) {
                     // Friends and friends requests
@@ -306,6 +308,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         @Override
         public Object getItem(int position) {
+            System.out.println("Someone is trying to get ITEM from friend adapter. implement this!");
             return friends.get(position);
         }
 
@@ -327,7 +330,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         @Override
         public View getView(final int position, View view, ViewGroup parent) {
-
+            System.out.println("Rendering position " + position + ", total count is " + getCount() + "...");
+            System.out.println("Type is " + getRowType(position));
             if (getRowType(position) == RowType.REQ_LABEL) {
                 view = buildRequestLabelRow(view);
             } else if (getRowType(position) == RowType.REQ) {
@@ -344,11 +348,13 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
         private View buildFriendRow(int position, View view) {
+            System.out.println("Building friend row");
             if (view == null)
                 view = inflater.inflate(R.layout.friend_row, null);
             // Offset the position by getFriendOffset - because there may be a couple of label rows
             // and friend requests - so we can get the index to work on the actual friend list
             final int pos = position - getFriendOffset();
+            System.out.println("Building friend row with pos " + pos);
             TextView name = (TextView) view.findViewById(R.id.friendName);
             TextView username = (TextView) view.findViewById(R.id.friendUserName);
             TextView pending = (TextView) view.findViewById(R.id.pending);
@@ -408,6 +414,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         }
 
         private View buildFriendRequestRow(final int position, View view) {
+            System.out.println("Building friend request row");
             if (view == null)
                 view = inflater.inflate(R.layout.friend_request_row, null);
             TextView name = (TextView) view.findViewById(R.id.friendRequestName);

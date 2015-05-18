@@ -161,7 +161,7 @@ public class SocialHandler {
                     // Put friend request friends in friend request cache
                     if (d instanceof ArrayResponse && ((ArrayResponse) d).getArray() != null) {
                         Object[] responseArray = ((ArrayResponse) d).getArray();
-                        System.out.println("Found " + responseArray + " new friend requests!");
+                        System.out.println("Found " + responseArray.length + " new friend requests!");
                         for (Object friendO : ((ArrayResponse) d).getArray()) {
                             // Put in cache
                            cacheFriend((Friend) friendO, friendRequestCache);
