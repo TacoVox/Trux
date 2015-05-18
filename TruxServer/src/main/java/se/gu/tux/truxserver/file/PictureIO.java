@@ -16,6 +16,9 @@
 
 package se.gu.tux.truxserver.file;
 
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -79,6 +82,8 @@ public class PictureIO {
         if (path != null)
         {
             BufferedImage img = getFromFS(path);
+            
+            img = resizeImage(img);
             
             p.setImg(encodePicture(img));
         }
@@ -150,6 +155,38 @@ public class PictureIO {
         }
         
         return null;
+    }	
+    
+    private static BufferedImage resizeImage(BufferedImage originalImage){
+        int x = originalImage.getWidth();
+        int y = originalImage.getHeight();
+        
+        int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+        
+        if(x >= y) {
+            double factor = 500 / x;
+            x = 500;
+            y = (int)(y * factor);
+        } else {
+            double factor = 500 / y;
+            y = 500;
+            x = (int)(x * factor);
+        }
+ 
+	BufferedImage resizedImage = new BufferedImage(x, x, type);
+	Graphics2D g = resizedImage.createGraphics();
+	g.drawImage(originalImage, 0, 0, x, x, null);
+	g.dispose();	
+	g.setComposite(AlphaComposite.Src);
+ 
+	g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+	RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	g.setRenderingHint(RenderingHints.KEY_RENDERING,
+	RenderingHints.VALUE_RENDER_QUALITY);
+	g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+	RenderingHints.VALUE_ANTIALIAS_ON);
+ 
+	return resizedImage;
     }	
     
     public static void main(String args[]) {
