@@ -83,7 +83,7 @@ public class PictureIO {
         {
             BufferedImage img = getFromFS(path);
             
-            img = resizeImage(img);
+            //img = resizeImage(img);
             
             p.setImg(encodePicture(img));
         }
