@@ -56,21 +56,39 @@ public class MessageHandler {
         
         try
         {   
-            PreparedStatement pst = dbc.getConnection().prepareStatement(
-                "REPLACE INTO conversation (persone, perstwo, timestamp) "
-                    + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
+            long conversationid = -1;
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement("SELECT conversationid "
+                    + "FROM conversation WHERE (persone = ? AND perstwo = ?) OR "
+                    + "(persone = ? AND perstwo = ?)");
+            
+            pst.setLong(1, m.getSenderId());
+            pst.setLong(2, m.getReceiverId());
+            pst.setLong(3, m.getReceiverId());
+            pst.setLong(4, m.getSenderId());
+            
+            ResultSet rs = dbc.execSelect(m, pst);
+            
+            while(rs.next()) {
+                conversationid = rs.getLong("conversationid");
+            }
+            
+            if(conversationid == -1)
+                return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Could not fetch conversationid!");
+            
+            pst = dbc.getConnection().prepareStatement(
+                "UPDATE conversation SET persone = ?, perstwo = ?, timestamp = ? "
+                        + "WHERE conversationid = ?");
                 
             pst.setLong(1, m.getSenderId());
             pst.setLong(2, m.getReceiverId());
             pst.setLong(3, System.currentTimeMillis());
             
-            ResultSet keys = dbc.execReplace(m, pst);
-            
-            long conversationid = keys.getLong(1);
+            dbc.execReplace(m, pst);
             
             pst = dbc.getConnection().prepareStatement(
                 "INSERT INTO message (conversationid, senderid, receiverid, message, timestamp, seen) "
-                        + "VALUES(?, ?, ?, ?, ?, ?)");
+                        + "SELECT * FROM (SELECT ?, ?, ?, ?, ?, ?) AS tmp");
               
             pst.setLong(1, conversationid);
             pst.setLong(2, m.getSenderId());
@@ -90,7 +108,7 @@ public class MessageHandler {
             ConnectionPool.gI().releaseDBC(dbc);
         }
         
-	return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+	return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Could not insert new message!");
     }
     
     public boolean hasNewMessage(Data d) {
