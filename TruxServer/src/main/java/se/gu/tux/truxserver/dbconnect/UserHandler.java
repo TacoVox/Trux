@@ -462,8 +462,12 @@ public class UserHandler {
                 f.setFirstname(rs.getString("firstname"));
                 f.setLastname(rs.getString("lastname"));
                 
-                if(FriendshipHandler.gI().isPening(new ProtocolMessage(
-                        ProtocolMessage.Type.PEOPLE_SEARCH, Long.toString(f.getFriendId()))))
+                ProtocolMessage m = new ProtocolMessage(ProtocolMessage.Type.PEOPLE_SEARCH,
+                        Long.toString(f.getFriendId()));
+                
+                m.setUserId(pm.getUserId());
+                
+                if(FriendshipHandler.gI().isPening(m))
                     f.setFriendType(Friend.FriendType.PENDING);
                 else
                     f.setFriendType(Friend.FriendType.NONE);
