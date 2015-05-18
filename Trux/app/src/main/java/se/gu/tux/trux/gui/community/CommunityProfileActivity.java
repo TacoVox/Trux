@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -69,6 +70,8 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     private EditText eLastName;
     private EditText eEmail;
 
+    // layouts
+    private RelativeLayout loadingPanel;
 
 
     @Override
@@ -91,6 +94,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         editEmail = (Button) findViewById(R.id.profile_email_edit_button);
         saveChanges = (Button) findViewById(R.id.profile_save_changes_button);
         cancel = (Button) findViewById(R.id.profile_cancel_button);
+        loadingPanel = (RelativeLayout) findViewById(R.id.loadingPanel);
 
         eUsername = (EditText) findViewById(R.id.profile_username);
         eFirstName = (EditText) findViewById(R.id.profile_first_name);
@@ -236,24 +240,9 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
      */
     private void setProfile()
     {
-        // get the profile picture
-        Bitmap pic = null;
+        loadingPanel.setVisibility(View.VISIBLE);
 
-        AsyncTask<Void, Void, Bitmap> fetchImageTask = new FetchImageTask().execute();
-
-        try
-        {
-            pic = fetchImageTask.get();
-        }
-        catch (InterruptedException | ExecutionException e)
-        {
-            e.printStackTrace();
-        }
-
-
-        if (pic != null) {
-            imageView.setImageBitmap(pic);
-        }
+        new FetchImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         eUsername.setText(DataHandler.getInstance().getUser().getUsername());
         eFirstName.setText(DataHandler.getInstance().getUser().getFirstName());
@@ -530,6 +519,16 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            if (bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+
+                loadingPanel.setVisibility(View.GONE);
+            }
+        }
     } // end inner class
 
 
