@@ -147,34 +147,6 @@ public class FriendshipHandler {
         }
     }
     
-    public ProtocolMessage sawRequest(Data d) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
-        
-        Long ts = System.currentTimeMillis();
-        try
-        {   
-            PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "UPDATE friendrequest SET seen = ? WHERE ");
-            
-            pst.setBoolean(1, true);
-	
-            dbc.execUpdate(d, pst);
-            
-            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            
-            Logger.gI().addError(e.getLocalizedMessage());
-            
-            return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
-        }
-        finally {
-            ConnectionPool.gI().releaseDBC(dbc);
-        }
-    }
-    
     public ProtocolMessage acceptFriend(ProtocolMessage pm) {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         
@@ -202,6 +174,15 @@ public class FriendshipHandler {
             pst.setLong(3, ts);
 	
             dbc.execInsert(pm, pst);
+            
+            //Update friendrequest table
+            pst = dbc.getConnection().prepareStatement(
+                    "UPDATE friendrequest SET reviewed = ? WHERE userid = ? AND friendid = ?");
+            
+            pst.setLong(1, Long.parseLong(pm.getMessage()));
+            pst.setLong(2, pm.getUserId());
+	
+            dbc.execUpdate(pm, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         }
@@ -289,5 +270,32 @@ public class FriendshipHandler {
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
+    }
+    
+    public ProtocolMessage markAsSeen(ProtocolMessage pm) {
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+        {   
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "UPDATE friendrequest SET seen = ? WHERE userid = ? AND friendid = ?");
+            
+            pst.setBoolean(1, true);
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, pm.getUserId());
+	
+            dbc.execUpdate(pm, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Can't mark the friendrequest as seen.");
     }
 }
