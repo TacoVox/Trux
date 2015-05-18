@@ -74,6 +74,8 @@ public class MessageSwitcher {
                 return MessageHandler.gI().getLatestConv(pm);
             else if(pm.getType() == ProtocolMessage.Type.GET_LATEST_MESSAGES)
                 return MessageHandler.gI().getMessages(pm);
+            else if(pm.getType() == ProtocolMessage.Type.MESSAGE_SEEN)
+                return MessageHandler.gI().markAsSeen(pm);
             else if(pm.getType() == ProtocolMessage.Type.GET_ONLINE_FRIENDS)
                 return UserHandler.gI().getOnlineFriends(pm);
         } else if (m instanceof Message){
