@@ -9,10 +9,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.FriendFetchListener;
+import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.ArrayResponse;
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Message;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
@@ -22,15 +26,23 @@ import tux.gu.se.trux.R;
 
 /**
  * Created by ivryashkov on 2015-05-14.
+ *
+ * Handles the conversations list with friends.
  */
-public class FriendListFragment extends Fragment implements AdapterView.OnItemClickListener
+public class FriendListFragment extends Fragment implements AdapterView.OnItemClickListener, FriendFetchListener
 {
 
+    View view;
     ListView listView;
+    LayoutInflater inflater;
 
     private Friend friend;
 
-    private Friend[] friendsArray;
+    private ArrayList<Friend> friendsList;
+
+    SocialHandler sh;
+
+    Message[] messages;
 
 
 
@@ -38,28 +50,14 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_message_list_holder, container, false);
+        view = inflater.inflate(R.layout.fragment_message_list_holder, container, false);
 
-        // get the friend list
-        AsyncTask<Void, Void, Friend[]> friendTask = new FetchFriendsTask().execute();
+        this.inflater = inflater;
 
-        try
-        {
-            friendsArray = friendTask.get();
-        }
-        catch (InterruptedException | ExecutionException e)
-        {
-            e.printStackTrace();
-        }
+        initMessageService();
 
-        // get the list view
-        listView = (ListView) view.findViewById(R.id.list);
-        // set listener
-        listView.setOnItemClickListener(this);
-        // get the adapter
-        MessageListAdapter messageListAdapter = new MessageListAdapter(inflater, friendsArray);
-        // set adapter
-        listView.setAdapter(messageListAdapter);
+        sh = new SocialHandler();
+        sh.fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
 
         return view;
     }
@@ -93,15 +91,35 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
             e.printStackTrace();
         }
 
-        Message[] messages = null;
-
         if (response != null)
         {
             messages = (Message[]) response.getArray();
         }
 
+    }
 
 
+
+    @Override
+    public void FriendsFetched(ArrayList<Friend> friends)
+    {
+        long userId = DataHandler.getInstance().getUser().getUserId();
+
+        for (Message msg : messages)
+        {
+
+        }
+
+
+
+        // get the list view
+        listView = (ListView) view.findViewById(R.id.list);
+        // set listener
+        listView.setOnItemClickListener(this);
+        // get the adapter
+        MessageListAdapter messageListAdapter = new MessageListAdapter(inflater, friendsList);
+        // set adapter
+        listView.setAdapter(messageListAdapter);
     }
 
 
@@ -139,18 +157,25 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
         @Override
         protected ArrayResponse doInBackground(ProtocolMessage... protocolMessages)
         {
-            ArrayResponse array = null;
+            Data array = null;
 
             try
             {
-                array = (ArrayResponse) ServerConnector.getInstance().answerQuery(protocolMessages[0]);
+                array = ServerConnector.getInstance().answerQuery(protocolMessages[0]);
             }
             catch (NotLoggedInException e)
             {
                 e.printStackTrace();
             }
 
-            return array;
+            if (array instanceof ArrayResponse)
+            {
+                return (ArrayResponse) array;
+            }
+            else
+            {
+                return null;
+            }
         }
 
     } // end inner class

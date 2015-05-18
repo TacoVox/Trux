@@ -44,7 +44,7 @@
             <Spinner
                 android:id="@+id/SpinnerFeedbackType"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:prompt="@string/feedbacktype"
                 android:entries="@array/feedbacktypelist">
             </Spinner>

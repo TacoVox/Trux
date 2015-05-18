@@ -42,7 +42,9 @@ import java.util.TimerTask;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Picture;
+import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
@@ -122,19 +124,21 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
     private GoogleMap.OnInfoWindowClickListener markerMenu = new GoogleMap.OnInfoWindowClickListener() {
         @Override
         public void onInfoWindowClick(Marker marker) {
-            markerID = marker.getId();
-            InfoFragment fragment = new InfoFragment();
-            Bundle sendToInfoFragment = new Bundle();
-            sendToInfoFragment.putSerializable("friendArray", friend);
-            sendToInfoFragment.putSerializable("pictureArray", picture);
-            sendToInfoFragment.putSerializable("hashmap", friendMarker);
-            sendToInfoFragment.putString("markerID", markerID);
-            fragment.setArguments(sendToInfoFragment);
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            fragmentTransaction.replace(R.id.menuContainer, new MapCommunityWindow());
-            fragmentTransaction.commit();
+            if (!isDriving()) {
+                markerID = marker.getId();
+                MapCommunityWindow fragment = new MapCommunityWindow();
+                Bundle sendToInfoFragment = new Bundle();
+                sendToInfoFragment.putSerializable("friendArray", friend);
+                sendToInfoFragment.putSerializable("pictureArray", picture);
+                sendToInfoFragment.putSerializable("hashmap", friendMarker);
+                sendToInfoFragment.putString("markerID", markerID);
+                fragment.setArguments(sendToInfoFragment);
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                fragmentTransaction.replace(R.id.menuContainer, fragment);
+                fragmentTransaction.commit();
+            }
         }
     };
 
@@ -219,21 +223,22 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
 
                                            if (newPicture[i] != null && newFriend[i] != null &&
                                                    newFriend[i].getCurrentLoc() != null &&
-                                                   newFriend[i].getCurrentLoc().getLoc() != null) {
+                                                   newFriend[i].getCurrentLoc().getLoc() != null /* &&
+                                                   friend[i].getStatus() == Friend.Status.ONLINE*/) {
 
                                                System.out.println("FRIEND: " + i + " picture: " +
                                                        newPicture[i] + " pictureid: " + newFriend[i].getProfilePicId()
                                                        + " loc: " + newFriend[i].getCurrentLoc().getLoc());
 
                                                double[] loc = newFriend[i].getCurrentLoc().getLoc();
-                                               //double[] loc = {46, 11};
+
 
                                                newPicture[i] = Bitmap.createScaledBitmap(newPicture[i],40,40,false);
-/*                                               Canvas canvas = new Canvas(newPicture[i]);
+                                               Canvas canvas = new Canvas(newPicture[i]);
                                                Drawable shape = getResources().getDrawable(R.drawable.marker_layout);
                                                shape.setBounds(0, 0, newPicture[i].getWidth(), newPicture[i].getHeight());
                                                shape.draw(canvas);
-*/
+
 
                                                Marker m = mMap.addMarker(new MarkerOptions()
                                                        .position(new LatLng(loc[0], loc[1]))
@@ -260,19 +265,22 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    public Friend[] getFriends() {
-        System.out.println("----------------------------------------" + friend.length);
-        return friend;
-    }
-
-    public Bitmap[] getPictures() {
-        return picture;
-    }
-
     public void onStop(){
         super.onStop();
         if(t != null) {
             t.cancel();
         }
+    }
+    private boolean isDriving(){
+        try{
+            Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
+            if(speed.getValue() != null && (double) speed.getValue() > 15){
+                return true;
+            }
+        }
+        catch (NotLoggedInException nLIE){
+            nLIE.printStackTrace();
+        }
+        return false;
     }
 }
