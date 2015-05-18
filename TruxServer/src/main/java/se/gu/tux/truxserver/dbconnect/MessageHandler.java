@@ -95,7 +95,7 @@ public class MessageHandler {
             pst.setLong(2, m.getReceiverId());
             pst.setLong(3, System.currentTimeMillis());
             
-            dbc.execReplace(m, pst);
+            dbc.execUpdate(m, pst);
             
             pst = dbc.getConnection().prepareStatement(
                 "INSERT INTO message (conversationid, senderid, receiverid, message, timestamp, seen) "
