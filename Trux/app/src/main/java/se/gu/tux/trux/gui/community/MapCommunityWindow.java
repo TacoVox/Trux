@@ -75,10 +75,13 @@ public class MapCommunityWindow extends Fragment {
     }
 
     public void showInfoWindow() {
+
         InfoFragment ifragment = new InfoFragment();
 
+        //Passing the arguments from MapFrag to InfoFragment
         ifragment.setArguments(this.getArguments());
 
+        //Transaction to the InfoFragment
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
