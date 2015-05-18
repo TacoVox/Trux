@@ -10,9 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.datastructure.Message;
 import tux.gu.se.trux.R;
 
 /**
@@ -25,8 +28,13 @@ public class MessageListAdapter extends BaseAdapter
 
     // the data to display
     private ArrayList<Friend> friends;
+    private ArrayList<Message> messages;
+
     // to inflate each layout
     private static LayoutInflater layoutInflater;
+
+    // the activity for reference
+    private Activity activity;
 
 
 
@@ -34,27 +42,49 @@ public class MessageListAdapter extends BaseAdapter
      * Constructor. Takes the activity where to display items and
      * the data to display on those items.
      *
-     * @param inflater          The inflater.
-     * @param friends           The data to display.
+     * @param activity  The inflater.
      */
-    public MessageListAdapter(LayoutInflater inflater, ArrayList<Friend> friends)
+    public MessageListAdapter(Activity activity)
+    {
+        this.activity = activity;
+        layoutInflater = (LayoutInflater) activity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+
+    public void setAdapterData(ArrayList<Friend> friends, ArrayList<Message> messages)
     {
         this.friends = friends;
-        layoutInflater = inflater;
+        this.messages = messages;
+
+        activity.runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                notifyDataSetChanged();
+            }
+        });
+
     }
 
 
     @Override
     public int getCount()
     {
-        return friends.size();
+        if (friends != null)
+        {
+            return friends.size();
+        }
+
+        return 0;
     }
 
 
     @Override
     public Object getItem(int i)
     {
-        return friends.get(i);
+        CustomObject obj = new CustomObject(friends.get(i), messages.get(i));
+        return obj;
     }
 
 
@@ -101,7 +131,9 @@ public class MessageListAdapter extends BaseAdapter
         else
         {
             // set the data to show
+            viewHolder.userPicture.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(i).getProfilePic()));
             viewHolder.username.setText(friends.get(i).getUsername());
+            viewHolder.content.setText((String) messages.get(i).getValue());
         }
 
         // return the view
