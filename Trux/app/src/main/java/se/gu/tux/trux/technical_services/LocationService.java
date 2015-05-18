@@ -3,6 +3,7 @@ package se.gu.tux.trux.technical_services;
 import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
+import android.widget.Toast;
 
 
 import com.google.android.gms.common.ConnectionResult;
@@ -64,8 +65,8 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
 
     protected void startLocationUpdates() {
         LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(6000);
+        locationRequest.setFastestInterval(2000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
     }
@@ -111,8 +112,10 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
                 && Math.abs(currentLocation.getLatitude()) < delta) {
             truxLocation = new se.gu.tux.trux.datastructure.Location(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
+            System.out.println("Returning a Location with values.");
         } else {
             truxLocation = new se.gu.tux.trux.datastructure.Location();
+            System.out.println("Returning a Location with no values.");
         }
         return truxLocation;
     }
