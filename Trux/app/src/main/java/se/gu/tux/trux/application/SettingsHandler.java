@@ -34,7 +34,6 @@ public class SettingsHandler {
     private Properties properties;
 
     //Settings variables
-    private boolean safeDriving = true;
     private boolean normalMap = true;
 
     private SettingsHandler() {
@@ -63,7 +62,6 @@ public class SettingsHandler {
     private void createProperties() {
         properties = new Properties();
 
-        properties.setProperty("safedriving", "on");
         properties.setProperty("maptype", "normal");
 
         try {
@@ -75,9 +73,15 @@ public class SettingsHandler {
     }
 
     private void parseProperties() {
-        if (properties.getProperty("safedriving").equals("off"))
-            safeDriving = false;
         if (properties.getProperty("maptype").equals("hybrid"))
             normalMap = false;
+    }
+
+    public boolean isNormalMap() {
+        return normalMap;
+    }
+
+    public void setNormalMap(boolean normalMap) {
+        this.normalMap = normalMap;
     }
 }
