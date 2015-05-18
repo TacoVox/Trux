@@ -126,8 +126,8 @@ public class MetricInserter implements Runnable {
             PreparedStatement pst;
             
             if(md instanceof Location) {
-                Logger.gI().addDebug(Double.toString(((double[])md.getValue())[0]));
-                Logger.gI().addDebug(Double.toString(((double[])md.getValue())[1]));
+                //Logger.gI().addDebug(Double.toString(((double[])md.getValue())[0]));
+                //Logger.gI().addDebug(Double.toString(((double[])md.getValue())[1]));
                 
                 pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO location (latitude, longitude, timestamp, userid, sessionid) "
