@@ -220,12 +220,12 @@ public class DBConnector
         pst.executeUpdate();
     }
     
-    protected ResultSet execReplace(Data d, PreparedStatement pst) throws SQLException
+    protected void execReplace(Data d, PreparedStatement pst) throws SQLException
     {
         String pststring = pst.toString().substring(pst.toString().indexOf("REPLACE"), pst.toString().length());
         
         PreparedStatement finalpst = this.connection.prepareStatement(
-            getAdvSessionCheck(pststring), Statement.RETURN_GENERATED_KEYS);
+            getAdvSessionCheck(pststring));
         
         finalpst.setLong(1, d.getSessionId());
         finalpst.setLong(2, d.getUserId());
@@ -234,7 +234,7 @@ public class DBConnector
         
         pst.executeUpdate();
         
-        return pst.getGeneratedKeys();
+        //return pst.getGeneratedKeys();
     }
     
     protected void execDelete(Data d, PreparedStatement pst) throws SQLException
