@@ -279,9 +279,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             username.setText("@" + friends.get(position).getUsername());
 
             // Set the proper button visibility
-            if (friends.get(position).isFriend()) {
+            if (friends.get(position).getFriendType() == Friend.FriendType.FRIEND) {
                 friendRequestButton.setVisibility(View.GONE);
                 sendMessageButton.setVisibility(View.VISIBLE);
+            } else if (friends.get(position).getFriendType() == Friend.FriendType.PENDING) {
+                friendRequestButton.setVisibility(View.GONE);
+                sendMessageButton.setVisibility(View.GONE);
             } else {
                 friendRequestButton.setVisibility(View.VISIBLE);
                 sendMessageButton.setVisibility(View.GONE);
