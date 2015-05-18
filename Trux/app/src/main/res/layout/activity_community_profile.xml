@@ -1,181 +1,214 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="se.gu.tux.trux.gui.community.CommunityProfileActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <ScrollView
         android:orientation="vertical"
-        android:paddingRight="5dp"
-        android:paddingLeft="5dp">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="10dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="General Information"
-                android:gravity="center"
-                android:layout_marginBottom="10dp"/>
-
-            <ImageView
-                android:id="@+id/profile_picture_container"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_launcher"
-                android:layout_marginBottom="5dp"/>
-
-            <Button
-                android:id="@+id/profile_upload_picture_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="5dp"
-                android:text="Change Profile Picture"/>
-
-        </LinearLayout>
-
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="10dp">
+            android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/profile_username"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="username here"
-                android:textSize="15sp"
-                android:inputType="text"
-                android:layout_weight="1"
-                android:layout_marginEnd="5dp"/>
+                android:orientation="vertical"
+                android:layout_marginBottom="10dp">
 
-            <Button
-                android:id="@+id/profile_username_edit_button"
+                <ImageView
+                    android:id="@+id/profile_picture_container"
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/image_view"
+                    android:layout_marginTop="20dp"/>
+
+                <Button
+                    android:id="@+id/profile_upload_picture_button"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/bottom_button"
+                    android:text="@string/change_profile_pic"
+                    android:textColor="#E0E0E0"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:text="@string/profile_button_edit_text"/>
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="1dp">
+
+                <EditText
+                    android:id="@+id/profile_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/loading"
+                    android:padding="10dp"
+                    android:textSize="15sp"
+                    android:textColor="#E0E0E0"
+                    android:inputType="text"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="1dp"
+                    android:background="#ff404e68"
+                    android:textCursorDrawable="@drawable/custom_cursor"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/profile_username_edit_button"
+                    android:text="@string/edit"
+                    android:background="@drawable/bottom_button"
+                    android:textColor="#E0E0E0"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="1dp">
+
+                <EditText
+                    android:id="@+id/profile_last_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/loading"
+                    android:padding="10dp"
+                    android:textSize="15sp"
+                    android:textColor="#E0E0E0"
+                    android:inputType="text"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="1dp"
+                    android:background="#ff404e68"
+                    android:textCursorDrawable="@drawable/custom_cursor"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/profile_lastname_edit_button"
+                    android:text="@string/edit"
+                    android:background="@drawable/bottom_button"
+                    android:textColor="#E0E0E0"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="1dp">
+
+                <EditText
+                    android:id="@+id/profile_first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/loading"
+                    android:padding="10dp"
+                    android:textSize="15sp"
+                    android:textColor="#E0E0E0"
+                    android:inputType="text"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="1dp"
+                    android:background="#ff404e68"
+                    android:textCursorDrawable="@drawable/custom_cursor"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/profile_firstname_edit_button"
+                    android:text="@string/edit"
+                    android:background="@drawable/bottom_button"
+                    android:textColor="#E0E0E0"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <EditText
+                    android:id="@+id/profile_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/loading"
+                    android:padding="10dp"
+                    android:textSize="15sp"
+                    android:textColor="#E0E0E0"
+                    android:inputType="text"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="1dp"
+                    android:background="#ff404e68"
+                    android:textCursorDrawable="@drawable/custom_cursor"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/profile_email_edit_button"
+                    android:text="@string/edit"
+                    android:background="@drawable/bottom_button"
+                    android:textColor="#E0E0E0"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <Button
+                    android:id="@+id/profile_save_changes_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:background="@drawable/bottom_button"
+                    android:text="@string/cancel"
+                    android:textColor="#E0E0E0"
+                    android:layout_marginRight="1dp"/>
+
+                <Button
+                    android:id="@+id/profile_cancel_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bottom_button"
+                    android:text="@string/save"
+                    android:textColor="#E0E0E0"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
+    </ScrollView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#3D3D3D"
+        android:alpha="0.7"
+        android:gravity="center">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="5dp">
+            android:indeterminate="true"/>
+    </RelativeLayout>
 
-            <EditText
-                android:id="@+id/profile_last_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="last name here"
-                android:textSize="15sp"
-                android:inputType="text"
-                android:layout_weight="1"
-                android:layout_marginEnd="5dp"/>
-
-            <Button
-                android:id="@+id/profile_lastname_edit_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:text="@string/profile_button_edit_text"/>
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="5dp">
-
-            <EditText
-                android:id="@+id/profile_first_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="first name here"
-                android:textSize="15sp"
-                android:inputType="text"
-                android:layout_weight="1"
-                android:layout_marginEnd="5dp"/>
-
-            <Button
-                android:id="@+id/profile_firstname_edit_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:text="@string/profile_button_edit_text"/>
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="5dp">
-
-            <EditText
-                android:id="@+id/profile_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="email here"
-                android:textSize="15sp"
-                android:inputType="textEmailAddress"
-                android:layout_weight="1"
-                android:layout_marginEnd="5dp"/>
-
-            <Button
-                android:id="@+id/profile_email_edit_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:text="@string/profile_button_edit_text"/>
-
-        </LinearLayout>
-
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="50dp" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp">
-
-            <Button
-                android:id="@+id/profile_save_changes_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Save Changes"
-                android:layout_marginEnd="5dp"/>
-
-            <Button
-                android:id="@+id/profile_cancel_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Cancel"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</ScrollView>
+</FrameLayout>
