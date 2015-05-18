@@ -225,9 +225,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         Context context;
 
-        // The reason for not wrapping these together is that sometimes we want to be able to
-        // send just friend info without the overhead of sending the picture. Could be handled
-        // differentlyt though for example with a request boolean.
         ArrayList<Friend> friends;
 
         private LayoutInflater inflater = null;
@@ -264,7 +261,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View view = convertView;
             if (view == null)
                 view = inflater.inflate(R.layout.friend_row, null);
@@ -274,6 +271,17 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
             Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
+            friendRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        DataHandler.gI().getSocialHandler().sendFriendRequest(
+                                friends.get(position).getFriendId());
+                    } catch (NotLoggedInException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
             // Set the name
             name.setText(friends.get(position).getFirstname() + " " + friends.get(position).getLastname());
