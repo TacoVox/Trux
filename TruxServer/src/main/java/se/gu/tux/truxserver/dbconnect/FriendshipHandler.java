@@ -277,7 +277,7 @@ public class FriendshipHandler {
         }
     }
     
-    public boolean isPening(ProtocolMessage pm) {
+    public boolean isPending(ProtocolMessage pm) {
         DBConnector dbc = ConnectionPool.gI().getDBC();
 
         try
