@@ -284,4 +284,54 @@ public class MessageHandler {
         }
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Can't mark the message as seen.");
     }
+    
+    public Data getUnreadMessages(ProtocolMessage pm) {
+        List messages = new ArrayList<Message>();
+        
+        DBConnector dbc = ConnectionPool.gI().getDBC();
+        
+        try
+	{
+            String updateStmnt = "SELECT conversationid, senderid, receiverid, message, timestamp "
+                    + "FROM message WHERE conversationid = "
+                    + "(SELECT conversationid FROM conversation "
+                    + "WHERE (persone = ? AND perstwo = ?) OR (persone = ? AND perstwo = ?)) " 
+                    + "AND seen = ? ORDER BY timestamp DESC LIMIT 100";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+	    
+            pst.setLong(1, pm.getUserId());
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, Long.parseLong(pm.getMessage()));
+            pst.setLong(4, pm.getUserId());
+            pst.setBoolean(5, false);
+	    
+	    ResultSet rs = dbc.execSelect(pm, pst);
+            
+            while(rs.next()) {
+                Message m = new Message();
+                m.setConversationId(rs.getLong("conversationid"));
+                m.setSenderId(rs.getLong("senderid"));
+                m.setReceiverId(rs.getLong("receiverid"));
+                m.setValue(rs.getString("message"));
+                m.setTimeStamp(rs.getLong("timestamp"));
+                
+                messages.add(m);
+            }
+            
+            return new ArrayResponse(messages.toArray());
+	}
+	catch (Exception e)
+	{
+            e.printStackTrace();
+            
+	    Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR);
+	}
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }      
+    }
 }
