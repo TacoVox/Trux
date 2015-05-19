@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
@@ -30,6 +32,8 @@ import tux.gu.se.trux.R;
 @SuppressWarnings("deprecation")
 public class HomeActivity extends BaseAppActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
+
+    private Button messageButton = (Button) findViewById(R.id.fragment_welcome_message_button);
 
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
@@ -132,6 +136,24 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
             nLIE.printStackTrace();
         }
         return false;
+    }
+
+    private void unseenMessages(){
+        Notification not = DataHandler.getInstance().getNotificationStatus();
+        while(not.isNewMessages()){
+
+            messageButton.setText("Messages " + "(!)");
+        }
+        messageButton.setText("Messages");
+
+    }
+    private void unseenFriendRequest(){
+        Notification not = DataHandler.getInstance().getNotificationStatus();
+        while(not.isNewFriends()){
+            messageButton.setText("Messages " + "(!)");
+        }
+        messageButton.setText("Messages");
+
     }
 
 
