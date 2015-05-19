@@ -52,7 +52,11 @@ public class HeartbeatHandler {
         
         Notification n = new Notification();
         
-        n.setNewFriends(FriendshipHandler.gI().hasNewRequests(hb));
+        if(FriendshipHandler.gI().hasNewRequests(hb) || FriendshipHandler.gI().isReviewed(hb))
+            n.setNewFriends(true);
+        else
+            n.setNewFriends(false);
+        
         n.setNewMessages(MessageHandler.gI().hasNewMessage(hb));
         
         return n;
