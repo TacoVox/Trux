@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.FriendFetchListener;
@@ -266,14 +267,21 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         @Override
         public void onFriendRequestAnswered(long friendId, final boolean accepted) {
             // Update the friend object
-            for (Friend f : friends) {
+            Iterator<Friend> it = friendRequests.iterator();
+            while (it.hasNext()) {
+                Friend f = it.next();
                 if (f.getFriendId() == friendId) {
                     if (accepted) {
+                        // Add to friend list
                         f.setFriendType(Friend.FriendType.FRIEND);
+                        friends.add(f);
                     } else {
+                        // Set as not a friend
                         f.setFriendType(Friend.FriendType.NONE);
                     }
                 }
+                // Remove from list of friend requests regardless
+                it.remove();
             }
 
             runOnUiThread(new Runnable() {
@@ -442,7 +450,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             }
 
             // Set the picture
-            //image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(pos).getProfilePic()));
+            image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(pos).getProfilePic()));
             return view;
         }
 
@@ -499,7 +507,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             username.setText("@" + friendRequests.get(pos).getUsername());
 
             // Set the picture
-            //image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(position).getProfilePic()));
+            image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(position).getProfilePic()));
             return view;
         }
 
