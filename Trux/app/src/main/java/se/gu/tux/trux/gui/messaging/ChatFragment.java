@@ -1,21 +1,45 @@
 package se.gu.tux.trux.gui.messaging;
 
-import android.app.Activity;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import se.gu.tux.trux.datastructure.Friend;
+import java.util.concurrent.ExecutionException;
+
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.ArrayResponse;
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Message;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
+import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 /**
  * Created by ivryashkov on 2015-05-13.
+ *
+ * Handles the chat window.
  */
-public class ChatFragment extends Fragment
+public class ChatFragment extends Fragment implements View.OnClickListener
 {
+
+    private EditText userInput;
+    private Button sendButton;
+
+    private MessageActivity act;
+    private LinearLayout msgContainer;
+
+    private CustomObject object;
+
+    private Message[] messages;
 
 
 
@@ -23,18 +47,203 @@ public class ChatFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
+        // inflate the layout for this view
         View view = inflater.inflate(R.layout.fragment_chat_head, container, false);
+        // send seen confirmation for this conversation
+        setSeenConfirmation();
 
+        // get the components
         TextView tv = (TextView) view.findViewById(R.id.chat_head_username_text_view);
+        userInput = (EditText) view.findViewById(R.id.chat_input_edit_text);
+        sendButton = (Button) view.findViewById(R.id.chat_send_button);
+        // set listener to button
+        sendButton.setOnClickListener(this);
 
-        MessageActivity act = (MessageActivity) getActivity();
+        // get the activity
+        act = (MessageActivity) getActivity();
+        // get the object containing reference to the friend and messages
+        object = act.getCustomObject();
 
-        Friend friend = act.getFriend();
+        // set username of the friend we are writing with
+        tv.setText(object.getFriend().getUsername());
 
-        tv.setText(friend.getUsername());
+        // get the container we gonna use for displaying the messages in
+        msgContainer = (LinearLayout) view.findViewById(R.id.chat_container);
 
+        // fetch the latest messages
+        fetchLatestMessages();
+
+        // return the view
         return view;
     }
+
+
+
+    @Override
+    public void onClick(View view)
+    {
+        int id = view.getId();
+
+        if (id == sendButton.getId())
+        {
+            System.out.println("------ send button clicked in chat fragment -------");
+            sendMessage();
+        }
+    }
+
+
+
+    /**
+     * Sends a confirmation that the messages in this conversation are seen.
+     */
+    private void setSeenConfirmation()
+    {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    // send a new protocol message with the required data
+                    ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.MESSAGE_SEEN,
+                            Long.toString(object.getFriend().getFriendId())));
+                }
+                catch (NotLoggedInException e) { e.printStackTrace(); }
+            }
+        }).start();
+
+    }
+
+
+
+    /**
+     * Fetches the latest messages for this conversation.
+     */
+    private void fetchLatestMessages()
+    {
+        // the protocol message to send
+        ProtocolMessage request = new ProtocolMessage(ProtocolMessage.Type.GET_LATEST_MESSAGES,
+                Long.toString(object.getFriend().getFriendId()));
+
+        // create new async task to fetch the messages
+        AsyncTask<ProtocolMessage, Void, ArrayResponse> conversations = new FetchMessagesTask().execute(request);
+
+        // the array response
+        ArrayResponse response = null;
+
+        // get the response
+        try
+        {
+            response = conversations.get();
+        }
+        catch (InterruptedException | ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+
+        // if the response is not null, get the message objects
+        if (response != null)
+        {
+            Object[] array = response.getArray();
+
+            messages = new Message[array.length];
+
+            for (int i = 0; i < array.length; i++)
+            {
+                messages[i] = (Message) array[i];
+            }
+        }
+
+        // display the messages
+        for (int i = messages.length-1; i >= 0; i--)
+        {
+            // the text view to hold the message
+            final TextView textView = new TextView(act.getApplicationContext());
+
+            textView.setText(messages[i].getValue() + "\n");
+            textView.setTextColor(Color.BLACK);
+
+            // add this text view to the message container
+            msgContainer.addView(textView);
+        }
+
+    }
+
+
+
+    /**
+     * Sends a message.
+     */
+    private void sendMessage()
+    {
+        // get the message
+        String message = userInput.getText().toString();
+
+        // create the text view to hold the message
+        final TextView textView = new TextView(act.getApplicationContext());
+        textView.setText(message);
+        textView.setTextColor(Color.BLACK);
+
+        // add to container and display
+        msgContainer.addView(textView);
+
+        // the message object to send to server
+        final Message msg = new Message();
+        // set required fields
+        msg.setSenderId(DataHandler.getInstance().getUser().getUserId());
+        msg.setReceiverId(object.getFriend().getFriendId());
+        msg.setValue(message);
+
+        // send to server
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ServerConnector.getInstance().answerQuery(msg);
+                } catch (NotLoggedInException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        // after message is sent, clear the message input field
+        userInput.setText("");
+
+    }
+
+
+    /**
+     * Private class. Fetches the messages for this conversation.
+     */
+    private class FetchMessagesTask extends AsyncTask<ProtocolMessage, Void, ArrayResponse>
+    {
+
+        @Override
+        protected ArrayResponse doInBackground(ProtocolMessage... protocolMessages)
+        {
+            Data array = null;
+
+            try
+            {
+                array = ServerConnector.getInstance().answerQuery(protocolMessages[0]);
+            }
+            catch (NotLoggedInException e)
+            {
+                e.printStackTrace();
+            }
+
+            if (array instanceof ArrayResponse)
+            {
+                return (ArrayResponse) array;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+    } // end inner class
 
 
 } // end class

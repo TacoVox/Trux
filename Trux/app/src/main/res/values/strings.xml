@@ -26,6 +26,10 @@
     <string name="friend_requests">FRIEND REQUESTS</string>
     <string name="friends">FRIENDS</string>
     <string name="pending">Pending...</string>
+    <string name="cancel">cancel</string>
+    <string name="edit">edit</string>
+    <string name="save">save changes</string>
+    <string name="change_profile_pic">change profile picture</string>
     <string name="statistics_text">Statistics</string>
     <string name="profile_text">Profile</string>
     <string name="title_activity_fuel">Fuel</string>

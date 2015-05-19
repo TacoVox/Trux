@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import tux.gu.se.trux.R;
 
@@ -30,25 +31,16 @@ public class ContactMenuActivity extends BaseAppActivity {
         // set current view
         setCurrentViewId(LAYOUT_ID);
 
-        EditText nameField = (EditText) findViewById(R.id.EditTextName);
+        EditText nameField = (EditText) findViewById(R.id.contactNameInput);
         String name = nameField.getText().toString();
 
-        EditText emailField = (EditText) findViewById(R.id.EditTextEmail);
+        EditText emailField = (EditText) findViewById(R.id.contactEmailInput);
         String email = emailField.getText().toString();
 
-        EditText feedbackField = (EditText) findViewById(R.id.EditTextFeedbackBody);
+        EditText feedbackField = (EditText) findViewById(R.id.feedbackInput);
         String feedback = feedbackField.getText().toString();
         Spinner feedbackSpinner = (Spinner) findViewById(R.id.SpinnerFeedbackType);
         String feedbackType = feedbackSpinner.getSelectedItem().toString();
-
-    }
-
-    /**
-     * Get the feedback.
-     */
-    private void getfeedback() {
-        checkCredentialvalues();
-        //TODO: create a getfeedback to handle the feedback and send it to email... -->
 
     }
 
@@ -82,6 +74,16 @@ public class ContactMenuActivity extends BaseAppActivity {
 
         }
         return isCorrect;
+    }
+
+    /**
+     * Get the feedback.
+     */
+
+    private void getfeedback() {
+
+        //TODO: create a getfeedback to handle the feedback and send it to email... -->
+
     }
 
 }

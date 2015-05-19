@@ -25,22 +25,37 @@
                 android:textSize="12pt">
 
                 </TextView>
-            <EditText
-                android:id="@+id/EditTextName"
+            <TextView
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/contact_name"
-                android:inputType="textPersonName"
-                android:textSize="10pt"
-                android:layout_width="fill_parent">
-            </EditText>
+                android:text="@string/contact_name"
+                android:textColor="#3D3D3D"
+                android:textStyle="bold"
+                android:id="@+id/contactuserName"
+                android:layout_weight="2"/>
+
             <EditText
-                android:id="@+id/EditTextEmail"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/contact_email"
+                android:id="@+id/contactNameInput"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/contact_email"
+                android:textColor="#3D3D3D"
+                android:textStyle="bold"
+                android:id="@+id/contactEmail"
+                android:layout_weight="2"/>
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:textSize="10pt"
-                android:layout_width="fill_parent">
-            </EditText>
+                android:id="@+id/contactEmailInput"
+                android:layout_weight="1"/>
+
             <Spinner
                 android:id="@+id/SpinnerFeedbackType"
                 android:layout_height="wrap_content"
@@ -49,15 +64,21 @@
                 android:entries="@array/feedbacktypelist">
             </Spinner>
 
-            <EditText
-                android:id="@+id/EditTextFeedbackBody"
+            <TextView
+                android:id="@+id/TextFeedbackBody"
                 android:layout_height="wrap_content"
                 android:hint="@string/feedback_body"
                 android:inputType="textMultiLine"
                 android:textSize="10pt"
                 android:lines="8"
-                android:layout_width="fill_parent">
-            </EditText>
+                android:layout_width="fill_parent"/>
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:id="@+id/feedbackInput"
+                    android:layout_weight="1"/>
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

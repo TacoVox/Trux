@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 
 import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.datastructure.Message;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import tux.gu.se.trux.R;
 
@@ -18,7 +19,7 @@ public class MessageActivity extends BaseAppActivity
 
     private static final int LAYOUT_ID = R.layout.activity_message;
 
-    private Friend friend;
+    CustomObject customObject;
 
     private int homeFragment = R.layout.fragment_message_list_holder;
 
@@ -35,8 +36,10 @@ public class MessageActivity extends BaseAppActivity
         // set current view showing
         setCurrentViewId(LAYOUT_ID);
 
+        currentFragmentId = homeFragment;
+
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.message_frame_container, new FriendListFragment());
+        fragmentTransaction.replace(R.id.message_frame_container, new FriendListFragment());
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
@@ -53,16 +56,13 @@ public class MessageActivity extends BaseAppActivity
 
 
 
-    public Friend getFriend()
+    public CustomObject getCustomObject()   { return  customObject; }
+
+
+
+    public void onItemClick(CustomObject object, int id)
     {
-        return friend;
-    }
-
-
-
-    public void onItemClick(Friend friend, int id)
-    {
-        this.friend = friend;
+        this.customObject = object;
         currentFragmentId = id;
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

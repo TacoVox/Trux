@@ -82,7 +82,6 @@ public class SocialHandler {
                             listener.FriendsFetched(new ArrayList<Friend>());
                         }
                         if (d instanceof Friend) {
-                            System.out.println("Caching...");
                             // Join this Friend object with its matching picture and cache it
                             Friend cachedFriend = cacheFriend((Friend) d, friendCache);
                             // Simultaneously build the list that will be returned to the listener
@@ -92,7 +91,7 @@ public class SocialHandler {
                             System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
                         }
                     }
-                    System.out.println("OK");
+
                 } else if (updateMode == FriendsUpdateMode.ONLINE) {
                     // If forced update ONLINE fetch online friends and merge with cache
                     System.out.println("Updating online friends.");
@@ -120,6 +119,8 @@ public class SocialHandler {
                     // The caceh was not updated, just return the previously cached friends
                     friends = new ArrayList<Friend>(friendCache.values());
                 }
+
+                friendsChanged = false;
                 System.out.println("Returning fetched friends.");
                 listener.FriendsFetched(friends);
             }
@@ -160,7 +161,7 @@ public class SocialHandler {
                     // Put friend request friends in friend request cache
                     if (d instanceof ArrayResponse && ((ArrayResponse) d).getArray() != null) {
                         Object[] responseArray = ((ArrayResponse) d).getArray();
-
+                        System.out.println("Found " + responseArray.length + " new friend requests!");
                         for (Object friendO : ((ArrayResponse) d).getArray()) {
                             // Put in cache
                            cacheFriend((Friend) friendO, friendRequestCache);
@@ -189,7 +190,6 @@ public class SocialHandler {
      */
     private Friend cacheFriend(Friend f, HashMap<Long, Friend> friendMap) {
         try {
-            System.out.println("Setting picture on friend...");
             f.setProfilePic(getPicture(f.getProfilePicId()));
         } catch (NotLoggedInException e) {
             e.printStackTrace();

@@ -26,6 +26,7 @@ import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.FriendFetchListener;
+import se.gu.tux.trux.application.FriendRequestFetchListener;
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Friend;
@@ -35,10 +36,10 @@ import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
-public class FriendsWindow extends BaseAppActivity implements View.OnClickListener, FriendFetchListener {
-    // For knowing which of search / show friends that should be listened to when they finish,
-    // have an enum or so LAST_FETCH_CALL = SEARCH / FRIENDLIST that is checked on callback
+public class FriendsWindow extends BaseAppActivity implements View.OnClickListener, FriendFetchListener,
+        FriendRequestFetchListener {
 
+    public enum RowType {REQ_LABEL, REQ, FRIEND_LABEL, FRIEND};
     private ListView friendsList;
     private FriendAdapter friendAdapter;
     private EditText searchField;
@@ -82,6 +83,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         });
         searchButton.setOnClickListener(this);
         noFriends = (TextView) findViewById(R.id.noFriends);
+
+        // Start fetching the friends
         showFriends();
     }
 
@@ -102,6 +105,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     private void showFriends() {
         lastFetchCall = FetchCall.FRIENDLIST;
         DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
+        DataHandler.gI().getSocialHandler().fetchFriendRequests(this);
     }
 
 
@@ -177,6 +181,18 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     }
 
 
+    @Override
+    public void FriendRequestsFetched(final ArrayList<Friend> friendRequests) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+            // Update data in friendAdapter
+            friendAdapter.setFriendRequests(friendRequests);
+            }
+        });
+    }
+
+
     /**
      * Returns an array with all elements that contain the needle
      * (in username, firstname or lastname)
@@ -223,29 +239,76 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
     class FriendAdapter extends BaseAdapter {
 
-        Context context;
-
-        ArrayList<Friend> friends;
-
+        private Context context;
+        private ArrayList<Friend> friendRequests;
+        private ArrayList<Friend> friends;
         private LayoutInflater inflater = null;
 
         public FriendAdapter(Context context,  ArrayList<Friend> friends) {
             this.context = context;
             this.friends = friends;
+            this.friendRequests = new ArrayList<Friend>();
             inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
         public int getCount() {
-            if (friends != null) {
-                return friends.size();
+            int count, friendCount = 0, friendRequestCount = 0;
+            if (friendRequests != null && friendRequests.size() > 0) {
+                // + 1 to reserve a row for a text label "Friend requests"
+                friendRequestCount = friendRequests.size() + 1;
             }
+            if (friends != null && friends.size() > 0) {
+                friendCount = friends.size();
+            }
+            if (friendCount > 0 && friendRequestCount > 0) {
+                // + 1 more to reserve a row for a text label "Friends"
+                count = friendCount + friendRequestCount + 1;
+            } else {
+                count = friendCount + friendRequestCount;
+            }
+            return count;
+        }
+
+        private int getFriendOffset() {
+            if (friendRequests != null && friendRequests.size() > 0) {
+                if (friends != null && friends.size() > 0) {
+                    // Friends and friends requests
+                    return friendRequests.size() + 2;
+                }
+            }
+            // Else no friend requests (or no friends) - return 0 offset
             return 0;
         }
 
+        private RowType getRowType(int pos) {
+            System.out.println("Friends size: " + friends.size());
+            if (friendRequests != null && friendRequests.size() > 0) {
+                if (friends != null && friends.size() > 0) {
+                    // Friends and friends requests
+                    if (pos == 0) { return RowType.REQ_LABEL; }
+                    if (pos > 0 && pos <= friendRequests.size()) { return RowType.REQ; }
+                    if (pos == friendRequests.size() + 1) { return RowType.FRIEND_LABEL; }
+                    if (pos > friendRequests.size() + 1) { return RowType.FRIEND; }
+
+                } else {
+                    // Friend requests but not friends
+                    if (pos == 0) { return RowType.REQ_LABEL; }
+                    if (pos > 0 && pos <= friendRequests.size()) { return RowType.REQ; }
+                }
+            } else if (friends != null && friends.size() > 0) {
+                // Friends but no friend requests
+                return RowType.FRIEND;
+            }
+            // Else nothing - no need to return anything
+            return null;
+        }
+
+
         @Override
         public Object getItem(int position) {
+            System.out.println("Someone is trying to get ITEM from friend adapter. implement this!");
             return friends.get(position);
         }
 
@@ -259,12 +322,39 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             notifyDataSetChanged();
         }
 
+        public void setFriendRequests( ArrayList<Friend> friendRequests) {
+            this.friendRequests = friendRequests;
+            notifyDataSetChanged();
+        }
+
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View view = convertView;
+        public View getView(final int position, View view, ViewGroup parent) {
+            System.out.println("Rendering position " + position + ", total count is " + getCount() + "...");
+            System.out.println("Type is " + getRowType(position));
+            if (getRowType(position) == RowType.REQ_LABEL) {
+                view = buildRequestLabelRow(view);
+            } else if (getRowType(position) == RowType.REQ) {
+                view = buildFriendRequestRow(position, view);
+            } else if (getRowType(position) == RowType.FRIEND_LABEL) {
+                view = buildFriendLabelRow(view);
+            } else if (getRowType(position) == RowType.FRIEND) {
+                view = buildFriendRow(position, view);
+            }
+
+            return view;
+        }
+
+
+
+        private View buildFriendRow(int position, View view) {
+            System.out.println("Building friend row");
             if (view == null)
                 view = inflater.inflate(R.layout.friend_row, null);
+            // Offset the position by getFriendOffset - because there may be a couple of label rows
+            // and friend requests - so we can get the index to work on the actual friend list
+            final int pos = position - getFriendOffset();
+            System.out.println("Building friend row with pos " + pos);
             TextView name = (TextView) view.findViewById(R.id.friendName);
             TextView username = (TextView) view.findViewById(R.id.friendUserName);
             TextView pending = (TextView) view.findViewById(R.id.pending);
@@ -276,9 +366,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 public void onClick(View view) {
                     try {
                         DataHandler.gI().getSocialHandler().sendFriendRequest(
-                                friends.get(position).getFriendId());
+                                friends.get(pos).getFriendId());
                         showToast("A friend request was sent.");
-                        friends.get(position).setFriendType(Friend.FriendType.PENDING);
+                        friends.get(pos).setFriendType(Friend.FriendType.PENDING);
                         notifyDataSetChanged();
                     } catch (NotLoggedInException e) {
                         e.printStackTrace();
@@ -287,15 +377,15 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             });
 
             // Set the name
-            name.setText(friends.get(position).getFirstname() + " " + friends.get(position).getLastname());
-            username.setText("@" + friends.get(position).getUsername());
+            name.setText(friends.get(pos).getFirstname() + " " + friends.get(pos).getLastname());
+            username.setText("@" + friends.get(pos).getUsername());
 
             // Set the proper button visibility
-            if (friends.get(position).getFriendType() == Friend.FriendType.FRIEND) {
+            if (friends.get(pos).getFriendType() == Friend.FriendType.FRIEND) {
                 friendRequestButton.setVisibility(View.GONE);
                 sendMessageButton.setVisibility(View.VISIBLE);
                 pending.setVisibility(View.GONE);
-            } else if (friends.get(position).getFriendType() == Friend.FriendType.PENDING) {
+            } else if (friends.get(pos).getFriendType() == Friend.FriendType.PENDING) {
                 friendRequestButton.setVisibility(View.GONE);
                 sendMessageButton.setVisibility(View.GONE);
                 pending.setVisibility(View.VISIBLE);
@@ -306,12 +396,47 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             }
 
             // Set the picture
-            //image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(position).getProfilePic()));
-
+            //image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(pos).getProfilePic()));
             return view;
         }
 
-    } // end nested class
+
+        private View buildFriendLabelRow (View view) {
+            if (view == null)
+                view = inflater.inflate(R.layout.friend_title, null);
+            return view;
+        }
+
+        private View buildRequestLabelRow (View view) {
+            if (view == null)
+                view = inflater.inflate(R.layout.friend_request_title, null);
+            return view;
+        }
+
+        private View buildFriendRequestRow(final int position, View view) {
+            System.out.println("Building friend request row");
+            if (view == null)
+                view = inflater.inflate(R.layout.friend_request_row, null);
+            TextView name = (TextView) view.findViewById(R.id.friendRequestName);
+            TextView username = (TextView) view.findViewById(R.id.friendRequestUserName);
+            ImageView image = (ImageView) view.findViewById(R.id.friendRequestPicture);
+            Button acceptButton = (Button) view.findViewById(R.id.acceptRequest);
+            Button declineButton = (Button) view.findViewById(R.id.declineRequest);
+
+            // Offset the position by one since there is a label at row 0
+            // So the elements we access at the list are at a lower position
+            int pos = position - 1;
+
+            // Set the name
+            name.setText(friendRequests.get(pos).getFirstname() + " "
+                    + friendRequests.get(pos).getLastname());
+            username.setText("@" + friendRequests.get(pos).getUsername());
+
+            // Set the picture
+            //image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(position).getProfilePic()));
+            return view;
+        }
+    } // end inner class
 
 
 } // end class

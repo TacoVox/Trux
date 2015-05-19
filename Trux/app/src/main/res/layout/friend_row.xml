@@ -3,7 +3,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/spinner_item_clicked">
+    android:background="#ff404e68">
 
     <ImageView
         android:layout_width="60sp"
@@ -18,7 +18,8 @@
         android:orientation="vertical"
         android:layout_gravity="left|center_vertical"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="5dp"
+        android:layout_weight="1">
 
         <TextView
             android:layout_width="wrap_content"
@@ -38,11 +39,6 @@
             android:textColor="#ff979797"/>
 
     </LinearLayout>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
 
     <TextView
         android:layout_width="wrap_content"

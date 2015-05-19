@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -202,14 +203,18 @@ public class ServerConnector {
 
         /**
          * Sends a query to the server and returns the reply. Returns null on timeout.
+         * NOTE timeout is currently for reconnection + but if a timeout is specified,
+         * this method will not try to resend after a socket timeout of a minute!
+         * TODO fix the above so the timeout is correctly checked on socket timeouts
          * @param query
          * @return
          */
         public Data sendQuery(Data query, int timeOut) throws NotLoggedInException {
-            boolean dataSent = false;
+            boolean dataSent = false, hasTimedOut = false;
+            long startTime = System.currentTimeMillis();
             Data answer = null;
 
-            while (!dataSent) {
+            while (!dataSent && !hasTimedOut) {
                 // If data is null, return null
                 if (query == null) {
                     return null;
@@ -249,18 +254,26 @@ public class ServerConnector {
                             query.setUserId(DataHandler.getInstance().getUser().getUserId());
                         }
 
-                        out.writeObject(query);
-                        out.flush();
-                        answer = (Data)in.readObject();
+                        //try {
+                            out.writeObject(query);
+                            out.flush();
+                            answer = (Data)in.readObject();
+                            dataSent = true;
+                        /*} catch (SocketTimeoutException e) {
+                            // Couldn't send this in time - since dataSent is not true, the loop
+                            // will try again. The only exception is if we reached timeout,
+                            if (timeout != -1) {
+                                hasTimedOut = true;
+                            }
+                        }*/
 
                         //System.out.println("Returned type: " + answer.getClass().getSimpleName());
 
-                        dataSent = true;
-
                     } catch (IOException e) {
 
-                        // Server probably shut down or we lost connection. Close sockets so we are sure
-                        // to try to reconnect in the next iteration of while loop
+                        // Server probably shut down or we lost connection. Close sockets so we are
+                        // sure to try to reconnect in the next iteration of while loop (unless we
+                        // timed out, in which case any other send attempt will provoke a reconnect)
                         System.out.println("IOEXception in sendQuery: ");
                         e.printStackTrace();
                         try {
@@ -269,6 +282,11 @@ public class ServerConnector {
                             out.close();
                         } catch (IOException e1) {
                             e1.printStackTrace();
+                        }
+
+                        // Check for timeout - then don't try to send again
+                        if (System.currentTimeMillis() - startTime > timeOut) {
+                            hasTimedOut = true;
                         }
 
                     } catch (ClassNotFoundException e) {
@@ -302,6 +320,7 @@ public class ServerConnector {
                         if (cs == null || cs.isClosed()) {
                             System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
                             cs = new Socket(serverAddress, 12000);
+                            cs.setSoTimeout(1000 * 60);
                             System.out.println("Connecting output stream...");
                             out = new ObjectOutputStream(cs.getOutputStream());
                             out.flush();
@@ -367,9 +386,16 @@ public class ServerConnector {
                             System.out.println("Server connector: sending " + d.getClass().getSimpleName());
                             Data inD = null;
                             synchronized (this) {
-                                out.writeObject(d);
-                                out.flush();
-                                inD = (Data) in.readObject();
+                                //try {
+                                    out.writeObject(d);
+                                    out.flush();
+                                    inD = (Data) in.readObject();
+                                /*} catch (SocketTimeoutException e) {
+                                    // NOTE for now testing to let SocketTimeoutException be catched
+                                    by later catch for IOException - whihch will also put back in queue and reconnect
+                                    // Couldn't send this in time - put back in queue, try to resend later
+                                    queue.putFirst(d);
+                                }*/
                             }
                             System.out.println("Server connector: received " + inD.getClass().getSimpleName());
 
