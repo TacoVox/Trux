@@ -100,7 +100,7 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
 
     @Override
-    public void FriendsFetched(ArrayList<Friend> friends)
+    public void onFriendsFetched(ArrayList<Friend> friends)
     {
         long userId = DataHandler.getInstance().getUser().getUserId();
 
