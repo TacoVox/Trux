@@ -173,7 +173,7 @@
                 android:layout_marginTop="10dp">
 
                 <Button
-                    android:id="@+id/profile_save_changes_button"
+                    android:id="@+id/profile_cancel_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
@@ -183,7 +183,7 @@
                     android:layout_marginRight="1dp"/>
 
                 <Button
-                    android:id="@+id/profile_cancel_button"
+                    android:id="@+id/profile_save_changes_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

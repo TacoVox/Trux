@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
@@ -31,6 +33,8 @@ import tux.gu.se.trux.R;
 public class HomeActivity extends BaseAppActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
 
+
+    Button messageButton;
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
@@ -65,6 +69,9 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         Fragment welcomeFragment = new WelcomeMainFragment();
         Fragment communityFragment = new CommunityMainFragment();
         Fragment statsFragment = new StatisticsMainFragment();
+
+        // create buttons
+        Button messageButton = (Button) findViewById(R.id.fragment_welcome_message_button);
 
 
         // add fragments to array
@@ -132,6 +139,24 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
             nLIE.printStackTrace();
         }
         return false;
+    }
+
+    private void unseenMessages(){
+        Notification not = DataHandler.getInstance().getNotificationStatus();
+        while(not.isNewMessages()){
+
+            messageButton.setText("Messages " + "(!)");
+        }
+        messageButton.setText("Messages");
+
+    }
+    private void unseenFriendRequest(){
+        Notification not = DataHandler.getInstance().getNotificationStatus();
+        while(not.isNewFriends()){
+            messageButton.setText("Messages " + "(!)");
+        }
+        messageButton.setText("Messages");
+
     }
 
 
