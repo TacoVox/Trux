@@ -157,6 +157,11 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
     } // end friendsFetched()
 
+    
+    @Override
+    public void onFriendRequestsFetched(ArrayList<Friend> friends) {
+
+    }
 
 
     /**
