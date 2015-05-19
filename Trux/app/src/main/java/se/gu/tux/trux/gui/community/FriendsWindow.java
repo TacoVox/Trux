@@ -512,7 +512,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             username.setText("@" + friendRequests.get(pos).getUsername());
 
             // Set the picture
-            image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(pos).getProfilePic()));
+            image.setImageBitmap(SocialHandler.pictureToBitMap(friendRequests.get(pos).getProfilePic()));
             return view;
         }
 
