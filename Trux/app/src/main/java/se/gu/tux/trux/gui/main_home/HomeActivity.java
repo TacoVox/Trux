@@ -33,8 +33,8 @@ import tux.gu.se.trux.R;
 public class HomeActivity extends BaseAppActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
 
-    private Button messageButton = (Button) findViewById(R.id.fragment_welcome_message_button);
 
+    Button messageButton;
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
@@ -69,6 +69,9 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         Fragment welcomeFragment = new WelcomeMainFragment();
         Fragment communityFragment = new CommunityMainFragment();
         Fragment statsFragment = new StatisticsMainFragment();
+
+        // create buttons
+        Button messageButton = (Button) findViewById(R.id.fragment_welcome_message_button);
 
 
         // add fragments to array
