@@ -34,7 +34,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 {
 
 
-
+    Button messageButton;
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
