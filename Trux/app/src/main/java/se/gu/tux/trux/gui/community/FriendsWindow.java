@@ -279,9 +279,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                         // Set as not a friend
                         f.setFriendType(Friend.FriendType.NONE);
                     }
+                    // Remove from list of friend requests regardless
+                    it.remove();
                 }
-                // Remove from list of friend requests regardless
-                it.remove();
             }
 
             runOnUiThread(new Runnable() {
@@ -416,11 +416,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             TextView username = (TextView) view.findViewById(R.id.friendUserName);
             TextView pending = (TextView) view.findViewById(R.id.pending);
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
-            Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
+            final Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
             Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    friendRequestButton.setEnabled(false);
                     try {
                         DataHandler.gI().getSocialHandler().sendFriendRequest(thisAdapter,
                                 friends.get(pos).getFriendId());
@@ -476,11 +477,13 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             TextView name = (TextView) view.findViewById(R.id.friendRequestName);
             TextView username = (TextView) view.findViewById(R.id.friendRequestUserName);
             ImageView image = (ImageView) view.findViewById(R.id.friendRequestPicture);
-            Button acceptButton = (Button) view.findViewById(R.id.acceptRequest);
-            Button declineButton = (Button) view.findViewById(R.id.declineRequest);
+            final Button acceptButton = (Button) view.findViewById(R.id.acceptRequest);
+            final Button declineButton = (Button) view.findViewById(R.id.declineRequest);
             acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    acceptButton.setEnabled(false);
+                    declineButton.setEnabled(false);
                     try {
                         DataHandler.gI().getSocialHandler().answerFriendRequest(thisAdapter,
                                 friends.get(position).getFriendId(), true);
@@ -492,6 +495,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             declineButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    acceptButton.setEnabled(false);
+                    declineButton.setEnabled(false);
                     try {
                         DataHandler.gI().getSocialHandler().answerFriendRequest(thisAdapter,
                                 friends.get(position).getFriendId(), false);
@@ -507,7 +512,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             username.setText("@" + friendRequests.get(pos).getUsername());
 
             // Set the picture
-            image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(position).getProfilePic()));
+            image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(pos).getProfilePic()));
             return view;
         }
 
