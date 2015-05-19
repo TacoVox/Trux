@@ -185,6 +185,11 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
 
     }
 
+    @Override
+    public void onFriendRequestsFetched(ArrayList<Friend> friends) {
+        
+    }
+
     /*
      * This method will populate the map with the friend pictures and put
      * them on the currect position.
