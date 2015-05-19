@@ -54,10 +54,10 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
         friendsList = new ArrayList<>();
         messagesList = new ArrayList<>();
 
+        initMessageService();
+
         sh = new SocialHandler();
         sh.fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
-
-        initMessageService();
 
         // get the list view
         ListView listView = (ListView) view.findViewById(R.id.list);
