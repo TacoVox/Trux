@@ -58,7 +58,7 @@ public class PictureHandler {
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                 "INSERT INTO picture (path, timestamp, userid) "
-                    + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
+                    + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
                 
             pst.setString(1,path);
             pst.setLong(2, pic.getTimeStamp());
@@ -86,7 +86,7 @@ public class PictureHandler {
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                 "REPLACE INTO profilepicture (userid, pictureid) "
-                    + "SELECT * FROM (SELECT ?, ?) AS tmp");
+                    + "SELECT * FROM (SELECT ? AS A, ? AS B) AS tmp");
                 
             pst.setLong(1, pic.getUserId());
             pst.setLong(2, pic.getPictureid());
