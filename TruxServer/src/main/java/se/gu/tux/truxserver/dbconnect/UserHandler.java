@@ -468,7 +468,7 @@ public class UserHandler {
                 
                 m.setUserId(pm.getUserId());
                 
-                if(FriendshipHandler.gI().isPening(m))
+                if(FriendshipHandler.gI().isPending(m))
                     f.setFriendType(Friend.FriendType.PENDING);
                 else
                     f.setFriendType(Friend.FriendType.NONE);
