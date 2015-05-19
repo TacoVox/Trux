@@ -296,7 +296,7 @@ public class MessageHandler {
                     + "FROM message WHERE conversationid = "
                     + "(SELECT conversationid FROM conversation "
                     + "WHERE (persone = ? AND perstwo = ?) OR (persone = ? AND perstwo = ?)) " 
-                    + "AND seen = ? ORDER BY timestamp DESC LIMIT 100";
+                    + "AND seen = ? AND receiverid = ? ORDER BY timestamp DESC LIMIT 100";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
@@ -306,6 +306,7 @@ public class MessageHandler {
             pst.setLong(3, Long.parseLong(pm.getMessage()));
             pst.setLong(4, pm.getUserId());
             pst.setBoolean(5, false);
+            pst.setLong(6, pm.getUserId());
 	    
 	    ResultSet rs = dbc.execSelect(pm, pst);
             
