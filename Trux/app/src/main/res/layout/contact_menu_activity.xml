@@ -12,6 +12,7 @@
     android:padding="10dp"
     android:background="#E0E0E0">
 
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:orientation="vertical"
@@ -79,16 +80,22 @@
                     android:inputType="textEmailAddress"
                     android:id="@+id/feedbackInput"
                     android:layout_weight="1"/>
-            <Button
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:textColor="#E0E0E0"
-                android:background="@drawable/button_clickable_new"
-                android:id="@+id/ButtonSendFeedback"
-                android:text="@string/feedbackbutton"
-                android:onClick="sendFeedback">
-            </Button>
+
+            <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+                <item
+                    android:id="@+id/menu_clear"
+                    android:icon="@android:drawable/ic_menu_close_clear_cancel"
+                    android:showAsAction="ifRoom|withText"
+                    android:title="Clear"/>
+
+                <item
+                    android:id="@+id/menu_send"
+                    android:icon="@android:drawable/ic_menu_send"
+                    android:showAsAction="ifRoom|withText"
+                    android:title="Send"/>
+
+            </menu>
         </LinearLayout>
     </ScrollView>
 
