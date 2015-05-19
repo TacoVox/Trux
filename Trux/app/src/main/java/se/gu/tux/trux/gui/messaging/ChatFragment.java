@@ -148,7 +148,12 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                                 textView.setTextColor(Color.BLACK);
 
                                 // add this text view to the message container
-                                msgContainer.addView(textView);
+                                act.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        msgContainer.addView(textView);
+                                    }
+                                });
                             }
                         }
 
