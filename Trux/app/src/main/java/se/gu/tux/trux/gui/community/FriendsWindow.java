@@ -1,10 +1,12 @@
 package se.gu.tux.trux.gui.community;
 
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.transition.Visibility;
@@ -325,6 +327,19 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         public void setFriendRequests( ArrayList<Friend> friendRequests) {
             this.friendRequests = friendRequests;
             notifyDataSetChanged();
+        }
+
+        public void onClickedFriend(int position){
+            final int pos = position - getFriendOffset();
+            Fragment fragment = new MapFrag();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("clickedFriend", friends.get(pos).getFriendId());
+            fragment.setArguments(bundle);
+          /*  FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            fragmentTransaction.replace(R.id.menuContainer, fragment);
+            fragmentTransaction.commit();*/
         }
 
 

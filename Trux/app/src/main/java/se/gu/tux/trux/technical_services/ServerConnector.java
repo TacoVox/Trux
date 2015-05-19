@@ -286,6 +286,7 @@ public class ServerConnector {
 
                         // Check for timeout - then don't try to send again
                         if (System.currentTimeMillis() - startTime > timeOut) {
+                            System.out.println("Connection timed out.l");
                             hasTimedOut = true;
                         }
 
