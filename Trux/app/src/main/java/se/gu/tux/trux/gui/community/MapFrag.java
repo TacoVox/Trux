@@ -164,7 +164,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         //Creats a timeTask which will uppdate the posion of the friendUsers
         t = new Timer();
         timer = new PopFriends();
-        t.schedule(timer, 0, 30000);
+        t.schedule(timer, 0, 10000);
     }
     
 
@@ -172,11 +172,14 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     public void onFriendsFetched(final ArrayList<Friend> friends) {
         this.friends = friends;
 
-        if (hasMarker) {
-            mMap.clear();
-            hasMarker = false;
-        }
-
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (hasMarker) {
+                    mMap.clear();
+                    hasMarker = false;
+                }
+            }});
         if (friends != null) {
 
             for (final Friend currentFriend : friends) {
@@ -189,7 +192,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
 
                     final Bitmap pic = Bitmap.createScaledBitmap(
                             SocialHandler.pictureToBitMap(currentFriend.getProfilePic())
-                    , 40, 40, false);
+                            , 40, 40, false);
 
                     Canvas canvas = new Canvas(pic);
                     Drawable shape = getResources().getDrawable(R.drawable.marker_layout);

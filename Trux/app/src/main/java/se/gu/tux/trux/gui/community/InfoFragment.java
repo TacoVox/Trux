@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 
+import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
@@ -47,16 +48,17 @@ private void ViewFriendInfo() {
     Bundle bundle = this.getArguments();
     if(bundle != null){
         HashMap<String, Friend> friendMarker = (HashMap) bundle.getSerializable("friendHashmap");
-        HashMap<String, Bitmap> pictureMarker = (HashMap) bundle.getSerializable("pictureHashmap");
+
         String markerID = bundle.getString("markerID");
 
-            if (friendMarker != null && pictureMarker != null ) {
+            if (friendMarker != null ) {
                 Friend friend = friendMarker.get(markerID);
-                Bitmap picture = pictureMarker.get(markerID);
+                Bitmap pic = Bitmap.createScaledBitmap(
+                        SocialHandler.pictureToBitMap(friend.getProfilePic())
+                        , 200, 200, false);
+
                 nameText.setText(friend.getFirstname() + " " + friend.getLastname());
-                System.out.println("This is the picture: " + picture);
-                picture = Bitmap.createScaledBitmap(picture, 150, 150, false);
-                profilePic.setImageBitmap(picture);
+                profilePic.setImageBitmap(pic);
 
                 infoText.setText("");
         }
