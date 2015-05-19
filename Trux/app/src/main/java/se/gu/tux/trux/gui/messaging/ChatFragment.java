@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.concurrent.ExecutionException;
@@ -45,6 +46,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
     private volatile boolean isRunning;
 
+    private ScrollView scrollView;
+
 
 
     @Override
@@ -62,6 +65,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         TextView tv = (TextView) view.findViewById(R.id.chat_head_username_text_view);
         userInput = (EditText) view.findViewById(R.id.chat_input_edit_text);
         sendButton = (Button) view.findViewById(R.id.chat_send_button);
+
+        scrollView = (ScrollView) view.findViewById(R.id.chat_scrool_view);
+
         // set listener to button
         sendButton.setOnClickListener(this);
 
@@ -78,6 +84,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
         // fetch the latest messages
         fetchLatestMessages();
+        
         // start a thread to check for new messages
         checkNewMessages();
 
@@ -93,6 +100,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         isRunning = false;
     }
 
+
     @Override
     public void onClick(View view)
     {
@@ -102,7 +110,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
     }
 
 
-
+    /**
+     * Checks for new messages.
+     */
     private void checkNewMessages()
     {
         new Thread(new Runnable()
@@ -112,13 +122,17 @@ public class ChatFragment extends Fragment implements View.OnClickListener
             {
                 while (isRunning)
                 {
+                    // get notification
                     Notification notification = DataHandler.getInstance().getNotificationStatus();
 
+                    // if there are new messages in general
                     if (notification.isNewMessages())
                     {
+                        // send a request to server to get unread messages for this conversation
                         ProtocolMessage request = new ProtocolMessage(ProtocolMessage.Type.GET_UNREAD_MESSAGES,
                                 Long.toString(object.getFriend().getFriendId()));
 
+                        // get the response
                         ArrayResponse response = null;
 
                         try
@@ -130,6 +144,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                         assert response != null;
                         Object[] array = response.getArray();
 
+                        // get the message objects from the response
                         if (array != null && array.length > 0)
                         {
                             newMessages = new Message[array.length];
@@ -139,10 +154,11 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                                 newMessages[i] = (Message) array[i];
                             }
 
+                            // check if there are new unread messages
                             if (!(newMessages[0].getValue()).equals(messages[0].getValue()))
                             {
                                 // display the messages
-                                for (int i = newMessages.length-1; i >= 0; i--)
+                                for (int i = newMessages.length - 1; i >= 0; i--)
                                 {
                                     // the text view to hold the message
                                     final TextView textView = new TextView(act.getApplicationContext());
@@ -151,25 +167,28 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                                     textView.setTextColor(Color.BLACK);
 
                                     // add this text view to the message container
-                                    act.runOnUiThread(new Runnable() {
+                                    act.runOnUiThread(new Runnable()
+                                    {
                                         @Override
-                                        public void run() {
+                                        public void run()
+                                        {
                                             msgContainer.addView(textView);
                                         }
                                     });
 
-                                    // send a new protocol message with the required data
-                                    try {
+                                    // send a new protocol message that we saw these messages
+                                    try
+                                    {
                                         ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.MESSAGE_SEEN,
                                                 Long.toString(object.getFriend().getFriendId())));
-                                    } catch (NotLoggedInException e) {
-                                        e.printStackTrace();
                                     }
+                                    catch (NotLoggedInException e) { e.printStackTrace(); }
                                 }
-                            }
-                            else
-                            {
+
+                                // set the pointer to the new messages for future reference
                                 messages = newMessages;
+                                // auto scroll to the latest message
+                                scrollView.scrollTo(0, scrollView.getBottom());
                             }
                         }
                     }
@@ -264,6 +283,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener
             // add this text view to the message container
             msgContainer.addView(textView);
         }
+
+        scrollView.scrollTo(0, scrollView.getBottom());
 
     } // end fetchLatestMessages()
 
