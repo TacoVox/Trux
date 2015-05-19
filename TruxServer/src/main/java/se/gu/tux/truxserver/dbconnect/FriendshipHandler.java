@@ -155,7 +155,7 @@ public class FriendshipHandler {
         {   
             //Way one
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO friendrequest (userid, friendid, timestamp) "
+                    "INSERT INTO isfriendwith (userid, friendid, timestamp) "
                             + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
             
             pst.setLong(1, pm.getUserId());
@@ -166,7 +166,7 @@ public class FriendshipHandler {
             
             //Way two
             pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO friendrequest (userid, friendid, timestamp) "
+                    "INSERT INTO isfriendwith (userid, friendid, timestamp) "
                             + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
             
             pst.setLong(1, Long.parseLong(pm.getMessage()));
@@ -177,10 +177,12 @@ public class FriendshipHandler {
             
             //Update friendrequest table
             pst = dbc.getConnection().prepareStatement(
-                    "UPDATE friendrequest SET reviewed = ? WHERE userid = ? AND friendid = ?");
+                    "UPDATE friendrequest SET reviewed = ?, seen = ? WHERE userid = ? AND friendid = ?");
             
-            pst.setLong(1, Long.parseLong(pm.getMessage()));
-            pst.setLong(2, pm.getUserId());
+            pst.setBoolean(1, true);
+            pst.setBoolean(2, true);
+            pst.setLong(3, Long.parseLong(pm.getMessage()));
+            pst.setLong(4, pm.getUserId());
 	
             dbc.execUpdate(pm, pst);
             
@@ -207,9 +209,10 @@ public class FriendshipHandler {
         try
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "SELECT userid, timestamp FROM friendrequest WHERE friendid = ?");
+                    "SELECT userid, timestamp FROM friendrequest WHERE friendid = ? AND reviewed = ?");
             
             pst.setLong(1, pm.getUserId());
+            pst.setBoolean(2, false);
 	
             ResultSet rs = dbc.execSelect(pm, pst);
             
