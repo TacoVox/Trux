@@ -70,6 +70,8 @@ public class MessageSwitcher {
                 return FriendshipHandler.gI().markAsSeen(pm);
             else if(pm.getType() == ProtocolMessage.Type.ACCEPT_FRIEND)
                 return FriendshipHandler.gI().acceptFriend(pm);
+            else if(pm.getType() == ProtocolMessage.Type.DECLINE_FRIEND)
+                return FriendshipHandler.gI().declineRequest(pm);
             else if(pm.getType() == ProtocolMessage.Type.GET_LATEST_CONVERSATIONS)
                 return MessageHandler.gI().getLatestConv(pm);
             else if(pm.getType() == ProtocolMessage.Type.GET_LATEST_MESSAGES)
