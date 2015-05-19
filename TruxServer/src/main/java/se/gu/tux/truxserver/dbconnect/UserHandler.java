@@ -299,7 +299,7 @@ public class UserHandler {
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO register (registerid, username, password, firstname, lastname, "
-                            + "email, timestamp) VALUES(? AS A, ? AS B, ? AS C, ? AS D, ? AS E, ? AS F, ? AS G)");
+                            + "email, timestamp) VALUES(?, ?, ?, ?, ?, ?, ?)");
             
             pst.setInt(1, u.getEmail().hashCode());
             pst.setString(2, u.getUsername());
