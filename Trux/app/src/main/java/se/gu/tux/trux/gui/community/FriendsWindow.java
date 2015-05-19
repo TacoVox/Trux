@@ -430,7 +430,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             TextView pending = (TextView) view.findViewById(R.id.pending);
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             final Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
-            Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
+            final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
+            final Button profileButton = (Button) view.findViewById(R.id.profileButton);
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -453,14 +454,18 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 friendRequestButton.setVisibility(View.GONE);
                 sendMessageButton.setVisibility(View.VISIBLE);
                 pending.setVisibility(View.GONE);
+                profileButton.setVisibility(View.VISIBLE);
+
             } else if (friends.get(pos).getFriendType() == Friend.FriendType.PENDING) {
                 friendRequestButton.setVisibility(View.GONE);
                 sendMessageButton.setVisibility(View.GONE);
                 pending.setVisibility(View.VISIBLE);
+                profileButton.setVisibility(View.GONE);
             } else {
                 friendRequestButton.setVisibility(View.VISIBLE);
                 sendMessageButton.setVisibility(View.GONE);
                 pending.setVisibility(View.GONE);
+                profileButton.setVisibility(View.GONE);
             }
 
             // Set the picture

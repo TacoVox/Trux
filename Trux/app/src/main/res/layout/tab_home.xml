@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/tab_view"
-    android:paddingTop="5dp">
+    android:paddingTop="5dp"
+    android:layout_marginLeft="-1dp">
 
     <ImageView
         android:src="@drawable/homeicon"
