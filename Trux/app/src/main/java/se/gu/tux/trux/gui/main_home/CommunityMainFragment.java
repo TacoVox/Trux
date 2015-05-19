@@ -34,7 +34,7 @@ public class CommunityMainFragment extends Fragment implements View.OnClickListe
 
         // get components
         FrameLayout mapContainer = (FrameLayout) view.findViewById(R.id.mapContainer);
-        ImageButton friendsButton = (ImageButton) view.findViewById(R.id.friendButton);
+        ImageButton friendsButton = (ImageButton) view.findViewById(R.id.fragment_main_friend_button);
         ImageButton profileButton = (ImageButton) view.findViewById(R.id.fragment_main_profile_button);
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

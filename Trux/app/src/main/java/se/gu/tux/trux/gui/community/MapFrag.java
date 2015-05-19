@@ -220,7 +220,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
 
     @Override
     public void onFriendRequestsFetched(ArrayList<Friend> friends) {
-        
+
     }
 
     /*

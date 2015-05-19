@@ -24,7 +24,7 @@
         android:background="@drawable/bottom_button"
         android:src="@drawable/friendsicon"
         android:scaleType="fitCenter"
-        android:id="@+id/friendButton"
+        android:id="@+id/fragment_main_friend_button"
         android:layout_marginRight="1dp"
         android:layout_weight="1"/>
 

@@ -285,6 +285,30 @@ public class SocialHandler {
     }
 
 
+    public void sendFriendRemove(final FriendActionListener listener, final long friendId)
+            throws NotLoggedInException {
+        if (!DataHandler.gI().isLoggedIn()) {
+            throw new NotLoggedInException();
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ProtocolMessage friendRemove =
+                        new ProtocolMessage(ProtocolMessage.Type.FRIEND_REMOVE,
+                                Long.toString(friendId));
+                try {
+                    DataHandler.gI().getData(friendRemove);
+                } catch (NotLoggedInException e) {
+                    e.printStackTrace();
+                }
+
+                listener.onFriendRemoveSent(friendId);
+            }
+        }).start();
+    }
+
+
     public void answerFriendRequest(final FriendActionListener listener, final long friendId,
                                     final boolean accept) throws NotLoggedInException {
         if (!DataHandler.gI().isLoggedIn()) {

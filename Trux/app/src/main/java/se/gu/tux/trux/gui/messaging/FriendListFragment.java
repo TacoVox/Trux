@@ -89,14 +89,20 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
      */
     private void initMessageService()
     {
+        // protocol message to send to server
         ProtocolMessage message = new ProtocolMessage(ProtocolMessage.Type.GET_LATEST_CONVERSATIONS);
-
+        // start fetching conversations in a background thread
         conversations = new FetchConversationTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, message);
 
     } // end initMessageService()
 
 
 
+    /**
+     * Called when the friends are fetched in the social handler.
+     *
+     * @param friends   The friends.
+     */
     @Override
     public void onFriendsFetched(ArrayList<Friend> friends)
     {
@@ -104,6 +110,7 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
         ArrayResponse response = null;
 
+        // get the fetched conversations
         try
         {
             response = conversations.get();
@@ -113,6 +120,7 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
             e.printStackTrace();
         }
 
+        // get the messages for those conversations
         if (response != null)
         {
             Object[] array = response.getArray();
@@ -125,6 +133,7 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
             }
         }
 
+        // initiate the friend and message data to send to adapter
         assert messages != null;
         for (Message msg : messages)
         {
@@ -157,11 +166,9 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
     } // end friendsFetched()
 
-    
-    @Override
-    public void onFriendRequestsFetched(ArrayList<Friend> friends) {
 
-    }
+    @Override
+    public void onFriendRequestsFetched(ArrayList<Friend> friends) {}
 
 
     /**
