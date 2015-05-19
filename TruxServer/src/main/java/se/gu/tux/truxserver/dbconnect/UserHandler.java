@@ -440,7 +440,8 @@ public class UserHandler {
                     + "FROM user, isfriendwith WHERE "
                     + "(username LIKE ? OR firstname LIKE ? OR lastname LIKE ?) "
                     + "AND user.userid NOT IN "
-                    + "(SELECT friendid FROM isfriendwith WHERE userid = ?)";
+                    + "(SELECT friendid FROM isfriendwith WHERE userid = ?) "
+                    + "AND user.userid NOT IN (SELECT userid FROM friendrequest WHERE friendid = ?)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
@@ -449,6 +450,7 @@ public class UserHandler {
             pst.setString(2, name);
             pst.setString(3, name);
             pst.setLong(4, pm.getUserId());
+            pst.setLong(5, pm.getUserId());
 	    
             ResultSet rs = dbc.execSelect(pm, pst);
             
