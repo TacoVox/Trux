@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +35,12 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 {
 
 
-    Button messageButton;
+    ImageButton messageButton;
+    ImageButton friendButton;
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
-    private static final int FRIENDS_BUTTON = R.id.friendButton;
+    private static final int FRIENDS_BUTTON = R.id.fragment_welcome_friend_button;
     private static final int PROFILE_BUTTON = R.id.fragment_main_profile_button;
     private static final int MESSAGE_BUTTON = R.id.fragment_welcome_message_button;
 
@@ -71,7 +73,8 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         Fragment statsFragment = new StatisticsMainFragment();
 
         // create buttons
-        Button messageButton = (Button) findViewById(R.id.fragment_welcome_message_button);
+        ImageButton messageButton = (ImageButton) findViewById(R.id.fragment_welcome_message_button);
+        ImageButton friendButton = (ImageButton) findViewById(R.id.fragment_welcome_friend_button);
 
 
         // add fragments to array
@@ -143,19 +146,20 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     private void unseenMessages(){
         Notification not = DataHandler.getInstance().getNotificationStatus();
-        while(not.isNewMessages()){
-
-            messageButton.setText("Messages " + "(!)");
+        if (not.isNewMessages()) {
+            messageButton.setImageResource(R.drawable.messagenotificationicon);
+        } else {
+            messageButton.setImageResource(R.drawable.messageicon);
         }
-        messageButton.setText("Messages");
 
     }
     private void unseenFriendRequest(){
         Notification not = DataHandler.getInstance().getNotificationStatus();
-        while(not.isNewFriends()){
-            messageButton.setText("Messages " + "(!)");
+        if (not.isNewFriends()) {
+            friendButton.setImageResource(R.drawable.friendsnotificationicon);
+        } else {
+            friendButton.setImageResource(R.drawable.friendsicon);
         }
-        messageButton.setText("Messages");
 
     }
 
