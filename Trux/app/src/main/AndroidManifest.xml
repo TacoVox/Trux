@@ -52,25 +52,29 @@
         <!-- About Menu Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.base.AboutMenuActivity"
-            android:label="About">
+            android:label="About"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- Contact Menu Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.base.ContactMenuActivity"
-            android:label="Contact">
+            android:label="Contact"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- Settings Menu Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.base.SettingsMenuActivity"
-            android:label="Settings">
+            android:label="Settings"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- Register Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.base.RegisterActivity"
             android:label="@string/title_activity_register"
+            android:screenOrientation="portrait"
             android:parentActivityName="se.gu.tux.trux.gui.main_home.MainActivity">
         </activity>
 
@@ -84,13 +88,15 @@
         <!-- FriendWindow Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.community.FriendsWindow"
-            android:label="Friends">
+            android:label="Friends"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- Community Profile Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.community.CommunityProfileActivity"
-            android:label="Community Profile">
+            android:label="Community Profile"
+            android:screenOrientation="portrait">
         </activity>
         <!-- End Home Activity -->
 
@@ -102,7 +108,8 @@
         <!-- Message Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.messaging.MessageActivity"
-            android:label="Friends">
+            android:label="Friends"
+            android:screenOrientation="portrait">
         </activity>
 
 
