@@ -162,18 +162,20 @@ public class PictureIO {
         int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
         
         if(x >= y) {
-            double factor = 500 / x;
+            double factor = (double)500 / x;
             x = 500;
-            y = new Double(y * factor).intValue();
+            double yside = y * factor;
+            y = new Double(yside).intValue();
         } else {
-            double factor = 500 / y;
+            double factor = (double)500 / y;
             y = 500;
-            x = new Double(x * factor).intValue();
+            double xside = x * factor;
+            x = new Double(xside).intValue();
         }
  
-	BufferedImage resizedImage = new BufferedImage(x, x, type);
+	BufferedImage resizedImage = new BufferedImage(x, y, type);
 	Graphics2D g = resizedImage.createGraphics();
-	g.drawImage(originalImage, 0, 0, x, x, null);
+	g.drawImage(originalImage, 0, 0, x, y, null);
 	g.dispose();	
 	g.setComposite(AlphaComposite.Src);
  
