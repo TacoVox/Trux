@@ -9,6 +9,6 @@ import se.gu.tux.trux.datastructure.Friend;
  */
 public interface FriendRequestFetchListener {
 
-    public void FriendRequestsFetched(ArrayList<Friend> friends);
+    public void onFriendRequestsFetched(ArrayList<Friend> friends);
 
 }

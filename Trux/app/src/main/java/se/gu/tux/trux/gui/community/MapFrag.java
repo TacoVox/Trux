@@ -181,7 +181,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     }
 
     @Override
-    public void FriendsFetched(ArrayList<Friend> friends) {
+    public void onFriendsFetched(ArrayList<Friend> friends) {
 
     }
 

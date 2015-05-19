@@ -112,9 +112,9 @@ public class DataHandler
      */
     public Data getData(Data request) throws NotLoggedInException {
         if (request.isOnServerSide()) {
+
             System.out.println("Datahandler routing request: " + request.getClass().getSimpleName());
             request = ServerConnector.gI().answerQuery(request);
-
             //request = IServerConnector.getInstance().answerQuery(request);
 
         } else {
@@ -203,6 +203,7 @@ public class DataHandler
         }
     }
 
+
     /**
      * Returns true if there are cached detailed stats of the same type as md.
      * @param md
@@ -236,7 +237,6 @@ public class DataHandler
         }
         return dStats;
     }
-
 
 
     /**
@@ -305,17 +305,17 @@ public class DataHandler
                 dataPoints[i] = new DataPoint(i + 1, new Double(0.0));
             } else {
                 if (md instanceof Speed || md instanceof Fuel) {
+
                     dataPoints[i] = new DataPoint(i + 1, (Double)data[i].getValue());
+
                 } else if (md instanceof Distance ){
+
                     // Distance are in m so divide by 1000 to get some more reasonable values
                     if ((Long)data[i].getValue() == 0) {
                         dataPoints[i] = new DataPoint(i + 1, new Double(0.0));
                     } else {
                         dataPoints[i] = new DataPoint(i + 1, new Double((Long)data[i].getValue() / 1000));
                     }
-                    //System.out.println("datapoint " + i + ": " + dataPoints[i].getY());
-                    //dataPoints[i] = new DataPoint(i + 1, new Double(i));
-                    //System.out.println("datapoint " + i + ": " + dataPoints[i].getY());
                 }
             }
         }
@@ -341,6 +341,8 @@ public class DataHandler
         detailedStatsFetched = 0;
     }
 
+
+
     public Friend[] getFriends() throws NotLoggedInException {
         Friend[] friends = null;
 
@@ -357,18 +359,17 @@ public class DataHandler
 
         // Copy the array so we are sure no other thread messes with it during fetch
         long[] friendIds = Arrays.copyOf(user.getFriends(), user.getFriends().length);
-        if (friendIds != null) {
-            friends =  new Friend[friendIds.length];
-            for (int i = 0; i < friendIds.length; i++) {
-                Friend queryFriend = new Friend(friendIds[i]);
-                Data d = getData(queryFriend);
-				if (d instanceof Friend) {
-					friends[i] = (Friend)d;
-				} else if (d instanceof ProtocolMessage) {
-					System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
-				}
-			}
-   	     }
+
+        friends =  new Friend[friendIds.length];
+        for (int i = 0; i < friendIds.length; i++) {
+            Friend queryFriend = new Friend(friendIds[i]);
+            Data d = getData(queryFriend);
+            if (d instanceof Friend) {
+                friends[i] = (Friend)d;
+            } else if (d instanceof ProtocolMessage) {
+                System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
+            }
+        }
 
         return friends;
     }
@@ -419,6 +420,20 @@ public class DataHandler
 
     public void setNotificationStatus(Notification notificationStatus) {
         this.notificationStatus = notificationStatus;
+
+        // See if the notification status CHANGED to true for a field just now, so there wasn't
+        // a notificiation before but now there is - in that case, make sure to notify SocialHandler
+        if (!this.notificationStatus.isNewFriends()
+                && notificationStatus.isNewFriends()) {
+
+            // This could either be a friend request or a friend request was accepted (?)
+            // so both list should be updated next time they're used
+            sc.setFriendsChanged(true);
+            sc.setFriendRequestsChanged(true);
+        }
+
+        // The messaging feature is an activity right now so it will query the status of
+        // the new message notification boolean instead
     }
 
     public SocialHandler getSocialHandler() {

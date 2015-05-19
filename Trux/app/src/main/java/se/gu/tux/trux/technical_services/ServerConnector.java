@@ -284,8 +284,9 @@ public class ServerConnector {
                             e1.printStackTrace();
                         }
 
-                        // Check for timeout - then don't try to send again
-                        if (System.currentTimeMillis() - startTime > timeOut) {
+                        // Check for timeout - then don't try to send again. -1 means never timeout.
+                        if (timeOut != -1 && (System.currentTimeMillis() - startTime) > timeOut) {
+                            System.out.println("Connection timed out.l");
                             hasTimedOut = true;
                         }
 

@@ -5,8 +5,6 @@ import android.graphics.BitmapFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Data;
@@ -51,7 +49,7 @@ public class SocialHandler {
         // No friends / friends not set
         if (friendIds == null) {
             System.out.println("Users friends was null.");
-            listener.FriendsFetched(new ArrayList<Friend>());
+            listener.onFriendsFetched(new ArrayList<Friend>());
         }
 
         if (reqUpdateMode == FriendsUpdateMode.NONE) {
@@ -79,7 +77,7 @@ public class SocialHandler {
                         try {
                             d = DataHandler.gI().getData(new Friend(friendIds[i]));
                         } catch (NotLoggedInException e) {
-                            listener.FriendsFetched(new ArrayList<Friend>());
+                            listener.onFriendsFetched(new ArrayList<Friend>());
                         }
                         if (d instanceof Friend) {
                             // Join this Friend object with its matching picture and cache it
@@ -88,7 +86,8 @@ public class SocialHandler {
                             friends.add(cachedFriend);
 
                         } else if (d instanceof ProtocolMessage) {
-                            System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
+                            System.out.println("Friend fetch problem: "
+                                    + ((ProtocolMessage)d).getMessage());
                         }
                     }
 
@@ -100,7 +99,7 @@ public class SocialHandler {
                         d = DataHandler.gI().getData(
                                 new ProtocolMessage(ProtocolMessage.Type.GET_ONLINE_FRIENDS));
                     } catch (NotLoggedInException e) {
-                        listener.FriendsFetched(new ArrayList<Friend>());
+                        listener.onFriendsFetched(new ArrayList<Friend>());
                     }
                     if (d instanceof ArrayResponse && ((ArrayResponse) d).getArray() != null) {
                         for (Object currentFriendO : ((ArrayResponse) d).getArray()) {
@@ -122,7 +121,7 @@ public class SocialHandler {
 
                 friendsChanged = false;
                 System.out.println("Returning fetched friends.");
-                listener.FriendsFetched(friends);
+                listener.onFriendsFetched(friends);
             }
         }).start();
     }
@@ -143,40 +142,48 @@ public class SocialHandler {
             public void run() {
                 ArrayList<Friend> friendRequests = new ArrayList<Friend>();
 
-                // Return immediately with the cached friend requests unless we know the requests have
-                // changed recently
+                // If we know the friend requests have changed recently (also true on startup),
+                // be sure to fetch/update them before returning a list from the cache hashmap
                 if (friendRequestsChanged) {
-                    friendRequestCache.clear();
-
-                    Data d = null;
                     try {
+                        // Empty cache
+                        friendRequestCache.clear();
+
+                        // Get the data
+                        Data d = null;
                         d = DataHandler.gI().getData(new ProtocolMessage(ProtocolMessage.Type.
                                 CAN_YOU_PLEASE_GIVE_ME_AN_ARRAY_WITH_EVERYONE_WHO_SENT_THIS_USER_A_FRIEND_REQUEST_THANK_YOU_IN_ADVANCE_DEAR_BROTHER));
+
+                        // Put friend request friends in friend request cache
+                        if (d instanceof ArrayResponse && ((ArrayResponse) d).getArray() != null) {
+                            Object[] responseArray = ((ArrayResponse) d).getArray();
+
+                            for (Object friendO : ((ArrayResponse) d).getArray()) {
+                                Friend friendRequest = (Friend) friendO;
+                                // Put in cache
+                                cacheFriend(friendRequest, friendRequestCache);
+
+                                // Also notify the server that this is seen
+                                DataHandler.gI().getData(new ProtocolMessage(
+                                        ProtocolMessage.Type.FRIEND_REQUEST_SEEN,
+                                        Long.toString(friendRequest.getFriendId())));
+                            }
+
+                        } else if (d instanceof ProtocolMessage) {
+                            System.out.println("Problem with friend request fetch: "
+                                    + ((ProtocolMessage)d).getMessage());
+                        } else {
+                            System.out.println("No friend requests.");
+                        }
                     } catch (NotLoggedInException e) {
                         // Return empty list if any problems with session
-                        listener.FriendRequestsFetched(new ArrayList<Friend>());
+                        listener.onFriendRequestsFetched(new ArrayList<Friend>());
                         return;
-                    }
-
-                    // Put friend request friends in friend request cache
-                    if (d instanceof ArrayResponse && ((ArrayResponse) d).getArray() != null) {
-                        Object[] responseArray = ((ArrayResponse) d).getArray();
-                        System.out.println("Found " + responseArray.length + " new friend requests!");
-                        for (Object friendO : ((ArrayResponse) d).getArray()) {
-                            // Put in cache
-                           cacheFriend((Friend) friendO, friendRequestCache);
-                        }
-
-                    } else if (d instanceof ProtocolMessage) {
-                        System.out.println("Problem with friend request fetch: "
-                                + ((ProtocolMessage)d).getMessage());
-                    } else {
-                        System.out.println("No friend requests.");
                     }
                 }
 
                 // Return the cached friend request list
-                listener.FriendRequestsFetched(new ArrayList<Friend>(friendRequestCache.values()));
+                listener.onFriendRequestsFetched(new ArrayList<Friend>(friendRequestCache.values()));
             }
         }).start();
     }
@@ -254,7 +261,8 @@ public class SocialHandler {
     }
 
 
-    public void sendFriendRequest(final long friendId) throws NotLoggedInException {
+    public void sendFriendRequest(final FriendRequestSentListener listener, final long friendId)
+            throws NotLoggedInException {
         if (!DataHandler.gI().isLoggedIn()) {
             throw new NotLoggedInException();
         }
@@ -270,7 +278,49 @@ public class SocialHandler {
                 } catch (NotLoggedInException e) {
                     e.printStackTrace();
                 }
+
+                listener.onFriendRequestSent(friendId);
             }
         }).start();
+    }
+
+
+    public void answerFriendRequest(final FriendRequestAnswerListener listener, final long friendId,
+                                    final boolean accept) throws NotLoggedInException {
+        if (!DataHandler.gI().isLoggedIn()) {
+            throw new NotLoggedInException();
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                ProtocolMessage friendRequestAction = null;
+                if (accept) {
+                    friendRequestAction = new ProtocolMessage(ProtocolMessage.Type.ACCEPT_FRIEND,
+                            Long.toString(friendId));
+                } else {
+                    friendRequestAction = new ProtocolMessage(ProtocolMessage.Type.DECLINE_FRIEND,
+                            Long.toString(friendId));
+                }
+
+                try {
+                    DataHandler.gI().getData(friendRequestAction);
+                } catch (NotLoggedInException e) {
+                    e.printStackTrace();
+                }
+
+                listener.onFriendRequestAnswered(friendId, accept);
+            }
+        }).start();
+    }
+
+
+    public void setFriendsChanged(boolean friendsChanged) {
+        this.friendsChanged = friendsChanged;
+    }
+
+    public void setFriendRequestsChanged(boolean friendRequestsChanged) {
+        this.friendRequestsChanged = friendRequestsChanged;
     }
 }
