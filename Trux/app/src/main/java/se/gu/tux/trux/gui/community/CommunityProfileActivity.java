@@ -154,21 +154,21 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         }
         else if (id == editFirstName.getId())
         {
+            isEdited = true;
             eFirstName.setEnabled(true);
             eFirstName.requestFocus();
-            isEdited = true;
         }
         else if (id == editLastName.getId())
         {
+            isEdited = true;
             eLastName.setEnabled(true);
             eLastName.requestFocus();
-            isEdited = true;
         }
         else if (id == editEmail.getId())
         {
+            isEdited = true;
             eEmail.setEnabled(true);
             eEmail.requestFocus();
-            isEdited = true;
         }
         else if (id == saveChanges.getId())
         {
@@ -230,6 +230,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
      */
     private void cancel()
     {
+        showToast("Cancelling profile activity...");
         finish();
     }
 
