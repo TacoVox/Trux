@@ -315,7 +315,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             int count, friendCount = 0, friendRequestCount = 0;
             if (friendRequests != null && friendRequests.size() > 0) {
                 // + 1 to reserve a row for a text label "Friend requests"
-                friendRequestCount = friendRequests.size();
+                friendRequestCount = friendRequests.size() + 1;
             }
             if (friends != null && friends.size() > 0) {
                 friendCount = friends.size();
