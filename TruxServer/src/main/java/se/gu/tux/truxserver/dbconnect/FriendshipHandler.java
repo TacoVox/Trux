@@ -57,14 +57,14 @@ public class FriendshipHandler {
         try
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO friendrequest (userid, friendid, timestamp) "
+                    "REPLACE INTO friendrequest (userid, friendid, timestamp) "
                             + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
             
             pst.setLong(1, pm.getUserId());
             pst.setLong(2, Long.parseLong(pm.getMessage()));
             pst.setLong(3, System.currentTimeMillis());
 	
-            dbc.execInsert(pm, pst);
+            dbc.execReplace(pm, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         }
@@ -155,25 +155,25 @@ public class FriendshipHandler {
         {   
             //Way one
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO isfriendwith (userid, friendid, timestamp) "
+                    "REPLACE INTO isfriendwith (userid, friendid, timestamp) "
                             + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
             
             pst.setLong(1, pm.getUserId());
             pst.setLong(2, Long.parseLong(pm.getMessage()));
             pst.setLong(3, ts);
 	
-            dbc.execInsert(pm, pst);
+            dbc.execReplace(pm, pst);
             
             //Way two
             pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO isfriendwith (userid, friendid, timestamp) "
+                    "REPLACE INTO isfriendwith (userid, friendid, timestamp) "
                             + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
             
             pst.setLong(1, Long.parseLong(pm.getMessage()));
             pst.setLong(2, pm.getUserId());
             pst.setLong(3, ts);
 	
-            dbc.execInsert(pm, pst);
+            dbc.execReplace(pm, pst);
             
             //Update friendrequest table
             pst = dbc.getConnection().prepareStatement(
