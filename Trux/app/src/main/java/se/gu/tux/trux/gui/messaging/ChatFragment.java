@@ -84,7 +84,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
         // fetch the latest messages
         fetchLatestMessages();
-        
+
         // start a thread to check for new messages
         checkNewMessages();
 
