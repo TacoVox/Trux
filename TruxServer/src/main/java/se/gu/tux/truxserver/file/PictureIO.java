@@ -83,8 +83,6 @@ public class PictureIO {
         {
             BufferedImage img = getFromFS(path);
             
-            //img = resizeImage(img);
-            
             p.setImg(encodePicture(img));
         }
         p.setTimeStamp(System.currentTimeMillis());
@@ -110,7 +108,7 @@ public class PictureIO {
         pic.mkdirs();
         
         try {
-            ImageIO.write(img, "png", pic);
+            ImageIO.write(resizeImage(img), "png", pic);
         } catch(IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());
         }
@@ -166,11 +164,11 @@ public class PictureIO {
         if(x >= y) {
             double factor = 500 / x;
             x = 500;
-            y = (int)(y * factor);
+            y = new Double(y * factor).intValue();
         } else {
             double factor = 500 / y;
             y = 500;
-            x = (int)(x * factor);
+            x = new Double(x * factor).intValue();
         }
  
 	BufferedImage resizedImage = new BufferedImage(x, x, type);
@@ -190,7 +188,7 @@ public class PictureIO {
     }	
     
     public static void main(String args[]) {
-        BufferedImage a = PictureIO.gI().getFromFS("C:\\Users\\Jonas\\Desktop\\Screen_shot_2010-01-30_at_2.17.06_AM.png");
+        BufferedImage a = PictureIO.gI().getFromFS("/Users/jonas/Desktop/cc.jpg");
         
         byte[] b = PictureIO.gI().encodePicture(a);
         
