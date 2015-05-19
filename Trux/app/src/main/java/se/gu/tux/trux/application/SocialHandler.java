@@ -88,7 +88,8 @@ public class SocialHandler {
                             friends.add(cachedFriend);
 
                         } else if (d instanceof ProtocolMessage) {
-                            System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
+                            System.out.println("Friend fetch problem: "
+                                    + ((ProtocolMessage)d).getMessage());
                         }
                     }
 
@@ -143,35 +144,43 @@ public class SocialHandler {
             public void run() {
                 ArrayList<Friend> friendRequests = new ArrayList<Friend>();
 
-                // Return immediately with the cached friend requests unless we know the requests have
-                // changed recently
+                // If we know the friend requests have changed recently (also true on startup),
+                // be sure to fetch/update them before returning a list from the cache hashmap
                 if (friendRequestsChanged) {
-                    friendRequestCache.clear();
-
-                    Data d = null;
                     try {
+                        // Empty cache
+                        friendRequestCache.clear();
+
+                        // Get the data
+                        Data d = null;
                         d = DataHandler.gI().getData(new ProtocolMessage(ProtocolMessage.Type.
                                 CAN_YOU_PLEASE_GIVE_ME_AN_ARRAY_WITH_EVERYONE_WHO_SENT_THIS_USER_A_FRIEND_REQUEST_THANK_YOU_IN_ADVANCE_DEAR_BROTHER));
+
+                        // Put friend request friends in friend request cache
+                        if (d instanceof ArrayResponse && ((ArrayResponse) d).getArray() != null) {
+                            Object[] responseArray = ((ArrayResponse) d).getArray();
+
+                            for (Object friendO : ((ArrayResponse) d).getArray()) {
+                                Friend friendRequest = (Friend) friendO;
+                                // Put in cache
+                                cacheFriend(friendRequest, friendRequestCache);
+
+                                // Also notify the server that this is seen
+                                DataHandler.gI().getData(new ProtocolMessage(
+                                        ProtocolMessage.Type.FRIEND_REQUEST_SEEN,
+                                        Long.toString(friendRequest.getFriendId())));
+                            }
+
+                        } else if (d instanceof ProtocolMessage) {
+                            System.out.println("Problem with friend request fetch: "
+                                    + ((ProtocolMessage)d).getMessage());
+                        } else {
+                            System.out.println("No friend requests.");
+                        }
                     } catch (NotLoggedInException e) {
                         // Return empty list if any problems with session
                         listener.FriendRequestsFetched(new ArrayList<Friend>());
                         return;
-                    }
-
-                    // Put friend request friends in friend request cache
-                    if (d instanceof ArrayResponse && ((ArrayResponse) d).getArray() != null) {
-                        Object[] responseArray = ((ArrayResponse) d).getArray();
-                        System.out.println("Found " + responseArray.length + " new friend requests!");
-                        for (Object friendO : ((ArrayResponse) d).getArray()) {
-                            // Put in cache
-                           cacheFriend((Friend) friendO, friendRequestCache);
-                        }
-
-                    } else if (d instanceof ProtocolMessage) {
-                        System.out.println("Problem with friend request fetch: "
-                                + ((ProtocolMessage)d).getMessage());
-                    } else {
-                        System.out.println("No friend requests.");
                     }
                 }
 
@@ -272,5 +281,13 @@ public class SocialHandler {
                 }
             }
         }).start();
+    }
+
+    public void setFriendsChanged(boolean friendsChanged) {
+        this.friendsChanged = friendsChanged;
+    }
+
+    public void setFriendRequestsChanged(boolean friendRequestsChanged) {
+        this.friendRequestsChanged = friendRequestsChanged;
     }
 }

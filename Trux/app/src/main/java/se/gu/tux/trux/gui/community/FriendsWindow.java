@@ -29,6 +29,7 @@ import se.gu.tux.trux.application.FriendFetchListener;
 import se.gu.tux.trux.application.FriendRequestFetchListener;
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.ArrayResponse;
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
@@ -367,7 +368,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     try {
                         DataHandler.gI().getSocialHandler().sendFriendRequest(
                                 friends.get(pos).getFriendId());
-                        showToast("A friend request was sent.");
+                        //if () showToast("A friend request was sent.");
                         friends.get(pos).setFriendType(Friend.FriendType.PENDING);
                         notifyDataSetChanged();
                     } catch (NotLoggedInException e) {
@@ -422,6 +423,36 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             ImageView image = (ImageView) view.findViewById(R.id.friendRequestPicture);
             Button acceptButton = (Button) view.findViewById(R.id.acceptRequest);
             Button declineButton = (Button) view.findViewById(R.id.declineRequest);
+/*
+            friendRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        DataHandler.gI().getSocialHandler().sendFriendRequest(
+                                friends.get(pos).getFriendId());
+                        showToast("A friend request was sent.");
+                        friends.get(pos).setFriendType(Friend.FriendType.PENDING);
+                        notifyDataSetChanged();
+                    } catch (NotLoggedInException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            friendRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        DataHandler.gI().getSocialHandler().sendFriendRequest(
+                                friends.get(pos).getFriendId());
+                        showToast("A friend request was sent.");
+                        friends.get(pos).setFriendType(Friend.FriendType.PENDING);
+                        notifyDataSetChanged();
+                    } catch (NotLoggedInException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });*/
 
             // Offset the position by one since there is a label at row 0
             // So the elements we access at the list are at a lower position
