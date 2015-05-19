@@ -192,7 +192,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
 
                     final Bitmap pic = Bitmap.createScaledBitmap(
                             SocialHandler.pictureToBitMap(currentFriend.getProfilePic())
-                            , 40, 40, false);
+                            , 100, 100, false);
 
                     Canvas canvas = new Canvas(pic);
                     Drawable shape = getResources().getDrawable(R.drawable.marker_layout);
