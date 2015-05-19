@@ -9,7 +9,6 @@
         android:layout_width="60sp"
         android:layout_height="60sp"
         android:id="@+id/friendPicture"
-        android:layout_marginTop="1dp"
         android:layout_gravity="center_vertical" />
 
     <LinearLayout

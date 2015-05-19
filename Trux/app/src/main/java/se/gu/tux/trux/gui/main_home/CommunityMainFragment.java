@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.main_home;
 
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;

@@ -73,8 +73,8 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         Fragment statsFragment = new StatisticsMainFragment();
 
         // create buttons
-        ImageButton messageButton = (ImageButton) findViewById(R.id.fragment_welcome_message_button);
-        ImageButton friendButton = (ImageButton) findViewById(R.id.fragment_welcome_friend_button);
+        messageButton = (ImageButton) findViewById(R.id.fragment_welcome_message_button);
+        friendButton = (ImageButton) findViewById(R.id.fragment_welcome_friend_button);
 
 
         // add fragments to array
