@@ -469,7 +469,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         private View buildFriendRequestRow(final int position, View view) {
             // Offset the position by one since there is a label at row 0
             // So the elements we access at the list are at a lower position
-            int pos = position - 1;
+            final int pos = position - 1;
             System.out.println("Building friend request row");
 
 
@@ -486,7 +486,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     declineButton.setEnabled(false);
                     try {
                         DataHandler.gI().getSocialHandler().answerFriendRequest(thisAdapter,
-                                friends.get(position).getFriendId(), true);
+                                friends.get(pos).getFriendId(), true);
                     } catch (NotLoggedInException e) {
                         e.printStackTrace();
                     }
@@ -499,7 +499,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     declineButton.setEnabled(false);
                     try {
                         DataHandler.gI().getSocialHandler().answerFriendRequest(thisAdapter,
-                                friends.get(position).getFriendId(), false);
+                                friends.get(pos).getFriendId(), false);
                     } catch (NotLoggedInException e) {
                         e.printStackTrace();
                     }
