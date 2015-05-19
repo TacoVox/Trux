@@ -41,6 +41,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
     private CustomObject object;
 
     private Message[] messages;
+    private Message[] newMessages;
 
     private volatile boolean isRunning;
 
@@ -131,41 +132,53 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
                         if (array != null)
                         {
-                            messages = new Message[array.length];
+                            newMessages = new Message[array.length];
 
                             for (int i = 0; i < array.length; i++)
                             {
-                                messages[i] = (Message) array[i];
+                                newMessages[i] = (Message) array[i];
                             }
 
-                            // display the messages
-                            for (int i = messages.length-1; i >= 0; i--)
+                            if (!(newMessages[0].getValue()).equals(messages[0].getValue()))
                             {
-                                // the text view to hold the message
-                                final TextView textView = new TextView(act.getApplicationContext());
+                                // display the messages
+                                for (int i = newMessages.length-1; i >= 0; i--)
+                                {
+                                    // the text view to hold the message
+                                    final TextView textView = new TextView(act.getApplicationContext());
 
-                                textView.setText(messages[i].getValue() + "\n");
-                                textView.setTextColor(Color.BLACK);
+                                    textView.setText(newMessages[i].getValue() + "\n");
+                                    textView.setTextColor(Color.BLACK);
 
-                                // add this text view to the message container
-                                act.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        msgContainer.addView(textView);
+                                    // add this text view to the message container
+                                    act.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            msgContainer.addView(textView);
+                                        }
+                                    });
+
+                                    // send a new protocol message with the required data
+                                    try {
+                                        ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.MESSAGE_SEEN,
+                                                Long.toString(object.getFriend().getFriendId())));
+                                    } catch (NotLoggedInException e) {
+                                        e.printStackTrace();
                                     }
-                                });
+                                }
+                            }
+                            else
+                            {
+                                messages = newMessages;
                             }
                         }
+                    }
 
-                    }
-                    else
+                    try
                     {
-                        try
-                        {
-                            Thread.sleep(100);
-                        }
-                        catch (InterruptedException e) { e.printStackTrace(); }
+                        Thread.sleep(2000);
                     }
+                    catch (InterruptedException e) { e.printStackTrace(); }
 
                 } // end while loop
 
