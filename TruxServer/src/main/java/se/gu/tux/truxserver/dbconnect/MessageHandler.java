@@ -185,6 +185,7 @@ public class MessageHandler {
                 m.setReceiverId(rs.getLong("receiverid"));
                 m.setValue(rs.getString("message"));
                 m.setTimeStamp(rs.getLong("timestamp"));
+                m.setIsSeen(rs.getBoolean("seen"));
                 
                 conversations.add(m);
             }
@@ -211,7 +212,7 @@ public class MessageHandler {
         
         try
 	{
-            String updateStmnt = "SELECT conversationid, senderid, receiverid, message, timestamp "
+            String updateStmnt = "SELECT conversationid, senderid, receiverid, message, timestamp, seen "
                     + "FROM message WHERE conversationid = "
                     + "(SELECT conversationid FROM conversation "
                     + "WHERE (persone = ? AND perstwo = ?) OR (persone = ? AND perstwo = ?)) " 
@@ -234,6 +235,7 @@ public class MessageHandler {
                 m.setReceiverId(rs.getLong("receiverid"));
                 m.setValue(rs.getString("message"));
                 m.setTimeStamp(rs.getLong("timestamp"));
+                m.setIsSeen(rs.getBoolean("seen"));
                 
                 messages.add(m);
             }
@@ -292,7 +294,7 @@ public class MessageHandler {
         
         try
 	{
-            String updateStmnt = "SELECT conversationid, senderid, receiverid, message, timestamp "
+            String updateStmnt = "SELECT conversationid, senderid, receiverid, message, timestamp, seen "
                     + "FROM message WHERE conversationid = "
                     + "(SELECT conversationid FROM conversation "
                     + "WHERE (persone = ? AND perstwo = ?) OR (persone = ? AND perstwo = ?)) " 
@@ -317,6 +319,7 @@ public class MessageHandler {
                 m.setReceiverId(rs.getLong("receiverid"));
                 m.setValue(rs.getString("message"));
                 m.setTimeStamp(rs.getLong("timestamp"));
+                m.setIsSeen(rs.getBoolean("seen"));
                 
                 messages.add(m);
             }
