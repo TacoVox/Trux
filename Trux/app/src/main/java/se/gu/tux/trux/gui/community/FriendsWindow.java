@@ -115,6 +115,14 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     }
 
 
+    public void refresh() {
+        if (lastFetchCall == FetchCall.FRIENDLIST) {
+            showSearchResults(lastNeedle);
+        } else {
+            showFriends();
+        }
+    }
+
     /**
      * This is run in a background thread created by SocialHandler, so we are using this background
      * thread to fetch more stuff if relevant (the search results). By looking what request was last
@@ -250,6 +258,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 }
             }
 
+            DataHandler.gI().getSocialHandler().setFriendsChanged(true);
+            refresh();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -284,6 +294,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 }
             }
 
+            DataHandler.gI().getSocialHandler().setFriendRequestsChanged(true);
+            DataHandler.gI().getSocialHandler().setFriendsChanged(true);
+            refresh();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -302,14 +315,14 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             int count, friendCount = 0, friendRequestCount = 0;
             if (friendRequests != null && friendRequests.size() > 0) {
                 // + 1 to reserve a row for a text label "Friend requests"
-                friendRequestCount = friendRequests.size() + 1;
+                friendRequestCount = friendRequests.size();
             }
             if (friends != null && friends.size() > 0) {
                 friendCount = friends.size();
             }
             if (friendCount > 0 && friendRequestCount > 0) {
-                // + 1 more to reserve a row for a text label "Friends"
-                count = friendCount + friendRequestCount + 1;
+                // + 2 more to reserve rows for text labels
+                count = friendCount + friendRequestCount + 2;
             } else {
                 count = friendCount + friendRequestCount;
             }
