@@ -23,7 +23,8 @@ android:layout_height="match_parent" tools:context="se.gu.tux.trux.gui.community
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="#ff3a475d">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
