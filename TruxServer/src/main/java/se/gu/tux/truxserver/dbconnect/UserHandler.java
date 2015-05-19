@@ -436,8 +436,8 @@ public class UserHandler {
         
         try
 	{
-            String selectStmnt = "SELECT DISTINCT user.userid, username, firstname, lastname "
-                    + "FROM user, isfriendwith WHERE "
+            String selectStmnt = "SELECT DISTINCT userid, username, firstname, lastname "
+                    + "FROM user WHERE "
                     + "(username LIKE ? OR firstname LIKE ? OR lastname LIKE ?) "
                     + "AND user.userid NOT IN "
                     + "(SELECT friendid FROM isfriendwith WHERE userid = ?) "
