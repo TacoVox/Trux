@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.gui.main_home.HomeActivity;
@@ -23,7 +24,7 @@ public class WelcomeMainFragment extends Fragment implements View.OnClickListene
     {
         View view = inflater.inflate(R.layout.fragment_main_welcome, container, false);
 
-        Button messageButton = (Button) view.findViewById(R.id.fragment_welcome_message_button);
+        ImageButton messageButton = (ImageButton) view.findViewById(R.id.fragment_welcome_message_button);
 
         messageButton.setOnClickListener(this);
 

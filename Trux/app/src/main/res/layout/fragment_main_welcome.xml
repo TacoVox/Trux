@@ -41,26 +41,27 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/abc_action_button_min_height_material"
         android:orientation="horizontal"
         android:id="@+id/homeButtons">
 
-        <Button
+        <ImageButton
             android:id="@+id/fragment_welcome_message_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Messages"
+            android:layout_height="match_parent"
             android:background="@drawable/bottom_button"
-            android:textColor="#E0E0E0"
+            android:src="@drawable/messageicon"
+            android:scaleType="fitCenter"
             android:layout_weight="1"
             android:layout_marginRight="1dp"/>
 
-        <Button
+        <ImageButton
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/fragment_welcome_friend_button"
             android:background="@drawable/bottom_button"
-            android:textColor="#E0E0E0"
-            android:text="TODO"
+            android:src="@drawable/friendsicon"
+            android:scaleType="fitCenter"
             android:layout_weight="1"/>
 
     </LinearLayout>

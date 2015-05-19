@@ -24,32 +24,31 @@
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
         android:background="#ff3a475d">
 
         <Space
-            android:layout_width="fill_parent"
+            android:layout_width="40dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"/>
 
         <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Messages"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/messageicon"
             android:id="@+id/messageButton"/>
         <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Info"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/profileicon"
             android:id="@+id/infoButton"/>
         <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Remove Friend"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/removefriendicon"
             android:id="@+id/removeFriend"/>
 
         <Space
-            android:layout_width="fill_parent"
+            android:layout_width="40dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"/>
 

@@ -2,15 +2,9 @@ package se.gu.tux.trux.gui.community;
 
 import android.support.v4.app.Fragment;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.transition.Visibility;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,28 +15,21 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.FriendFetchListener;
-import se.gu.tux.trux.application.FriendRequestAnswerListener;
-import se.gu.tux.trux.application.FriendRequestFetchListener;
-import se.gu.tux.trux.application.FriendRequestSentListener;
+import se.gu.tux.trux.application.FriendActionListener;
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.ArrayResponse;
-import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
-import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
-public class FriendsWindow extends BaseAppActivity implements View.OnClickListener, FriendFetchListener,
-        FriendRequestFetchListener {
+public class FriendsWindow extends BaseAppActivity implements View.OnClickListener,
+        FriendFetchListener {
 
     public enum RowType {REQ_LABEL, REQ, FRIEND_LABEL, FRIEND};
     private ListView friendsList;
@@ -237,8 +224,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
 
-    class FriendAdapter extends BaseAdapter implements FriendRequestSentListener,
-            FriendRequestAnswerListener {
+    class FriendAdapter extends BaseAdapter implements FriendActionListener {
 
         private Context context;
         private ArrayList<Friend> friendRequests;
@@ -270,6 +256,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     notifyDataSetChanged();
                 }
             });
+        }
+
+        @Override
+        public void onFriendRemoveSent(long friendId) {
+
         }
 
         @Override

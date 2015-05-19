@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import se.gu.tux.trux.gui.community.MapFrag;
@@ -33,8 +34,8 @@ public class CommunityMainFragment extends Fragment implements View.OnClickListe
 
         // get components
         FrameLayout mapContainer = (FrameLayout) view.findViewById(R.id.mapContainer);
-        Button friendsButton = (Button) view.findViewById(R.id.friendButton);
-        Button profileButton = (Button) view.findViewById(R.id.fragment_main_profile_button);
+        ImageButton friendsButton = (ImageButton) view.findViewById(R.id.friendButton);
+        ImageButton profileButton = (ImageButton) view.findViewById(R.id.fragment_main_profile_button);
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.mapContainer, new MapFrag());

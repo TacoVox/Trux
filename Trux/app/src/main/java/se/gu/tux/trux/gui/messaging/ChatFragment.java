@@ -130,7 +130,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                         assert response != null;
                         Object[] array = response.getArray();
 
-                        if (array != null)
+                        if (array != null && array.length > 0)
                         {
                             newMessages = new Message[array.length];
 

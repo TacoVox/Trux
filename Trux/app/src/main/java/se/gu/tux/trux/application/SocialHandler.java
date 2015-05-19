@@ -134,7 +134,7 @@ public class SocialHandler {
      * change this boolean. It is set to true in the constructor of this class as well, to
      * make sure requests are always fetched the first time the friend window is loaded.
      */
-    public void fetchFriendRequests(final FriendRequestFetchListener listener) {
+    public void fetchFriendRequests(final FriendFetchListener listener) {
 
         new Thread(new Runnable() {
 
@@ -261,7 +261,7 @@ public class SocialHandler {
     }
 
 
-    public void sendFriendRequest(final FriendRequestSentListener listener, final long friendId)
+    public void sendFriendRequest(final FriendActionListener listener, final long friendId)
             throws NotLoggedInException {
         if (!DataHandler.gI().isLoggedIn()) {
             throw new NotLoggedInException();
@@ -285,7 +285,7 @@ public class SocialHandler {
     }
 
 
-    public void answerFriendRequest(final FriendRequestAnswerListener listener, final long friendId,
+    public void answerFriendRequest(final FriendActionListener listener, final long friendId,
                                     final boolean accept) throws NotLoggedInException {
         if (!DataHandler.gI().isLoggedIn()) {
             throw new NotLoggedInException();
