@@ -187,8 +187,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-            // Update data in friendAdapter
-            friendAdapter.setFriendRequests(friendRequests);
+                // Update data in friendAdapter
+                friendAdapter.setFriendRequests(friendRequests);
             }
         });
     }
@@ -259,12 +259,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             }
 
             DataHandler.gI().getSocialHandler().setFriendsChanged(true);
-            refresh();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     showToast("The friend request was sent.");
                     notifyDataSetChanged();
+                    refresh();
                 }
             });
         }
@@ -296,7 +296,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
             DataHandler.gI().getSocialHandler().setFriendRequestsChanged(true);
             DataHandler.gI().getSocialHandler().setFriendsChanged(true);
-            refresh();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -306,6 +305,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                         showToast("The friend request was declined.");
                     }
                     notifyDataSetChanged();
+                    refresh();
                 }
             });
         }
