@@ -117,7 +117,7 @@ public class SessionHandler {
         try
 	{
             String insertStmnt = "INSERT INTO session(starttime, userid, "
-                    + "lastactive, keepalive) VALUES(?, ?, ?, ?)";
+                    + "lastactive, keepalive) VALUES(? AS A, ? AS B, ? AS C, ? AS D)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     insertStmnt, Statement.RETURN_GENERATED_KEYS);

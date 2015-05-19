@@ -192,7 +192,8 @@ public class UserHandler {
         try
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO loginattempts (userid, timestamp) VALUES(?, ?)");
+                    "INSERT INTO loginattempts (userid, timestamp) "
+                            + "SELECT * FROM (SELECT ? AS A, ? AS B) AS tmp");
             
             pst.setLong(1, userid);
             pst.setLong(2, System.currentTimeMillis());
@@ -298,7 +299,7 @@ public class UserHandler {
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO register (registerid, username, password, firstname, lastname, "
-                            + "email, timestamp) VALUES(?, ?, ?, ?, ?, ?, ?)");
+                            + "email, timestamp) VALUES(? AS A, ? AS B, ? AS C, ? AS D, ? AS E, ? AS F, ? AS G)");
             
             pst.setInt(1, u.getEmail().hashCode());
             pst.setString(2, u.getUsername());

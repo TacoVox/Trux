@@ -76,7 +76,7 @@ public class MessageHandler {
             if(conversationid == -1) {
                 pst = dbc.getConnection().prepareStatement(
                         "INSERT INTO conversation (persone, perstwo, timestamp) "
-                                + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
+                                + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
                 
                 pst.setLong(1, m.getSenderId());
                 pst.setLong(2, m.getReceiverId());

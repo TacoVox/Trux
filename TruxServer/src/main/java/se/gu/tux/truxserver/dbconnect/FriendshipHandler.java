@@ -58,7 +58,7 @@ public class FriendshipHandler {
         {   
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO friendrequest (userid, friendid, timestamp) "
-                            + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
+                            + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
             
             pst.setLong(1, pm.getUserId());
             pst.setLong(2, Long.parseLong(pm.getMessage()));
@@ -156,7 +156,7 @@ public class FriendshipHandler {
             //Way one
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO friendrequest (userid, friendid, timestamp) "
-                            + "VALUES(?, ?, ?)");
+                            + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
             
             pst.setLong(1, pm.getUserId());
             pst.setLong(2, Long.parseLong(pm.getMessage()));
@@ -167,7 +167,7 @@ public class FriendshipHandler {
             //Way two
             pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO friendrequest (userid, friendid, timestamp) "
-                            + "VALUES(?, ?, ?)");
+                            + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
             
             pst.setLong(1, Long.parseLong(pm.getMessage()));
             pst.setLong(2, pm.getUserId());
