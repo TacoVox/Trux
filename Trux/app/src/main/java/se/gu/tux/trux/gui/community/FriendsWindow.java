@@ -486,7 +486,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     declineButton.setEnabled(false);
                     try {
                         DataHandler.gI().getSocialHandler().answerFriendRequest(thisAdapter,
-                                friends.get(pos).getFriendId(), true);
+                                friendRequests.get(pos).getFriendId(), true);
                     } catch (NotLoggedInException e) {
                         e.printStackTrace();
                     }
@@ -499,7 +499,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     declineButton.setEnabled(false);
                     try {
                         DataHandler.gI().getSocialHandler().answerFriendRequest(thisAdapter,
-                                friends.get(pos).getFriendId(), false);
+                                friendRequests.get(pos).getFriendId(), false);
                     } catch (NotLoggedInException e) {
                         e.printStackTrace();
                     }
