@@ -18,6 +18,7 @@ import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Message;
+import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.ServerConnector;
@@ -41,6 +42,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
     private Message[] messages;
 
+    private volatile boolean isRunning;
+
 
 
     @Override
@@ -51,6 +54,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.fragment_chat_head, container, false);
         // send seen confirmation for this conversation
         setSeenConfirmation();
+
+        isRunning = true;
 
         // get the components
         TextView tv = (TextView) view.findViewById(R.id.chat_head_username_text_view);
@@ -72,24 +77,103 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
         // fetch the latest messages
         fetchLatestMessages();
+        // start a thread to check for new messages
+        checkNewMessages();
 
         // return the view
         return view;
     }
 
 
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        isRunning = false;
+    }
 
     @Override
     public void onClick(View view)
     {
         int id = view.getId();
 
-        if (id == sendButton.getId())
-        {
-            System.out.println("------ send button clicked in chat fragment -------");
-            sendMessage();
-        }
+        if (id == sendButton.getId()) { sendMessage(); }
     }
+
+
+
+    private void checkNewMessages()
+    {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                while (isRunning)
+                {
+                    Notification notification = DataHandler.getInstance().getNotificationStatus();
+
+                    if (notification.isNewMessages())
+                    {
+                        ProtocolMessage request = new ProtocolMessage(ProtocolMessage.Type.GET_UNREAD_MESSAGES,
+                                Long.toString(object.getFriend().getFriendId()));
+
+                        ArrayResponse response = null;
+
+                        try
+                        {
+                            response = (ArrayResponse) ServerConnector.getInstance().answerQuery(request);
+                        }
+                        catch (NotLoggedInException e) { e.printStackTrace(); }
+
+                        assert response != null;
+                        Object[] array = response.getArray();
+
+                        if (array != null)
+                        {
+                            messages = new Message[array.length];
+
+                            for (int i = 0; i < array.length; i++)
+                            {
+                                messages[i] = (Message) array[i];
+                            }
+
+                            // display the messages
+                            for (int i = messages.length-1; i >= 0; i--)
+                            {
+                                // the text view to hold the message
+                                final TextView textView = new TextView(act.getApplicationContext());
+
+                                textView.setText(messages[i].getValue() + "\n");
+                                textView.setTextColor(Color.BLACK);
+
+                                // add this text view to the message container
+                                act.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        msgContainer.addView(textView);
+                                    }
+                                });
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Thread.sleep(100);
+                        }
+                        catch (InterruptedException e) { e.printStackTrace(); }
+                    }
+
+                } // end while loop
+
+            } // end run()
+
+        }).start();
+
+    } // end checkNewMessages()
 
 
 
@@ -113,7 +197,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
             }
         }).start();
 
-    }
+    } // end setSeenConfirmation()
 
 
 
@@ -168,7 +252,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
             msgContainer.addView(textView);
         }
 
-    }
+    } // end fetchLatestMessages()
 
 
 
@@ -199,18 +283,19 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
+                try
+                {
                     ServerConnector.getInstance().answerQuery(msg);
-                } catch (NotLoggedInException e) {
-                    e.printStackTrace();
                 }
+                catch (NotLoggedInException e) { e.printStackTrace(); }
             }
         }).start();
 
         // after message is sent, clear the message input field
         userInput.setText("");
 
-    }
+    } // end sendMessage()
+
 
 
     /**
@@ -237,11 +322,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener
             {
                 return (ArrayResponse) array;
             }
-            else
-            {
-                return null;
-            }
-        }
+
+            return null;
+
+        } // end doInBackgorund()
 
     } // end inner class
 
