@@ -525,9 +525,9 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
             if (bitmap != null) {
                 imageView.setImageBitmap(bitmap);
-
-                loadingPanel.setVisibility(View.GONE);
             }
+
+            loadingPanel.setVisibility(View.GONE);
         }
     } // end inner class
 
