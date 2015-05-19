@@ -408,8 +408,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         private View buildFriendRow(int position, View view) {
             System.out.println("Building friend row");
-            if (view == null)
-                view = inflater.inflate(R.layout.friend_row, null);
+            view = inflater.inflate(R.layout.friend_row, null);
             // Offset the position by getFriendOffset - because there may be a couple of label rows
             // and friend requests - so we can get the index to work on the actual friend list
             final int pos = position - getFriendOffset();
@@ -458,14 +457,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
         private View buildFriendLabelRow (View view) {
-            if (view == null)
-                view = inflater.inflate(R.layout.friend_title, null);
+            view = inflater.inflate(R.layout.friend_title, null);
             return view;
         }
 
         private View buildRequestLabelRow (View view) {
-            if (view == null)
-                view = inflater.inflate(R.layout.friend_request_title, null);
+            view = inflater.inflate(R.layout.friend_request_title, null);
             return view;
         }
 
@@ -475,8 +472,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             int pos = position - 1;
             System.out.println("Building friend request row");
 
-            if (view == null)
-                view = inflater.inflate(R.layout.friend_request_row, null);
+
+            view = inflater.inflate(R.layout.friend_request_row, null);
             TextView name = (TextView) view.findViewById(R.id.friendRequestName);
             TextView username = (TextView) view.findViewById(R.id.friendRequestUserName);
             ImageView image = (ImageView) view.findViewById(R.id.friendRequestPicture);
