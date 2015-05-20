@@ -5,10 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import se.gu.tux.trux.gui.messaging.FriendListFragment;
@@ -18,7 +20,8 @@ import tux.gu.se.trux.R;
 public class MapCommunityWindow extends Fragment {
 
     LinearLayout menu, layout;
-    Button messageButton, infoButton;
+    ImageButton messageButton, infoButton;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,8 +36,8 @@ public class MapCommunityWindow extends Fragment {
 
         layout = (LinearLayout) view.findViewById(R.id.backLayout);
         menu = (LinearLayout) view.findViewById(R.id.menu);
-        messageButton = (Button) view.findViewById(R.id.messageButton);
-        infoButton = (Button) view.findViewById(R.id.infoButton);
+        messageButton = (ImageButton) view.findViewById(R.id.messageButton);
+        infoButton = (ImageButton) view.findViewById(R.id.infoButton);
 
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,6 +59,8 @@ public class MapCommunityWindow extends Fragment {
                 showInfoWindow();
             }
         });
+
+
 
         return view;
     }
@@ -84,7 +89,11 @@ public class MapCommunityWindow extends Fragment {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        fragmentTransaction.addToBackStack(null);
+        System.out.println("Count on the popStack in MCW: " + getFragmentManager().getBackStackEntryCount());
         fragmentTransaction.replace(R.id.contentContainer, ifragment);
         fragmentTransaction.commit();
     }
+
+
 }

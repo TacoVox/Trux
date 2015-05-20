@@ -59,6 +59,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     private Timer t;
     private PopFriends timer;
     private boolean hasMarker = false;
+    private boolean mapLoaded = false;
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -119,7 +120,9 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.replace(R.id.menuContainer, fragment);
+                System.out.println("Count on the popStack in mapFrag: " + getFragmentManager().getBackStackEntryCount());
                 fragmentTransaction.commit();
             }
        return false;
@@ -132,10 +135,10 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         //Makes it possible for the map to locate the device
         mMap.setMyLocationEnabled(true);
         //Gets the normal view of the map (not satalite)
-   /*     if(SettingsHandler.getInstance().isNormalMap()) {
+        if(SettingsHandler.getInstance().isNormalMap()) {
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         }
-        else*/ mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        else mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         System.out.println("------MAP READY-----");
 
@@ -169,6 +172,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         t = new Timer();
         timer = new PopFriends();
         t.schedule(timer, 0, 10000);
+
+        mapLoaded = true;
     }
     
 
@@ -234,9 +239,22 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
 
     class PopFriends extends TimerTask{
         public void run(){
+            System.out.println("TimerTask starts ");
             DataHandler.gI().getSocialHandler().fetchFriends(thisMapFrag,
                     SocialHandler.FriendsUpdateMode.ONLINE);
-            
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(SettingsHandler.getInstance().isNormalMap()) {
+                        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        System.out.println("The mapType is Normal in the UIThread ");
+                    }
+                    else {
+                        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                        System.out.println("The mapType is hybrid in the UIThread ");
+                    }
+                }
+            });
         }
     }
 
@@ -244,6 +262,15 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         super.onStop();
         if(t != null) {
             t.cancel();
+            t = null;
+        }
+    }
+    public void onResume(){
+        super.onResume();
+        if(mapLoaded && t == null) {
+            t = new Timer();
+            timer = new PopFriends();
+            t.schedule(timer, 0, 10000);
         }
     }
     private boolean isDriving(){

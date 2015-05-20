@@ -40,7 +40,13 @@
                 android:id="@+id/contactName"
                 android:layout_weight="1"/>
 
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select type"
+                android:layout_marginTop="5dp"
+                android:textColor="#3D3D3D"
+                android:textStyle="bold"/>
 
             <Spinner
                 android:id="@+id/spinnerFeedbackType"
@@ -57,7 +63,8 @@
                 android:inputType="textMultiLine"
                 android:textSize="10pt"
                 android:lines="8"
-                android:layout_width="fill_parent"/>
+                android:layout_width="fill_parent"
+                android:layout_marginTop="5dp" />
 
                 <EditText
                     android:layout_width="fill_parent"
