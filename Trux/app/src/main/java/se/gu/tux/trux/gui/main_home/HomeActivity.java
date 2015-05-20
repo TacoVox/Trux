@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui.main_home;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -168,16 +169,23 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     @Override
     public void onBackPressed()
     {
-        if (getFragmentManager().getBackStackEntryCount() == 0)
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0)
         {
-
-
+            System.out.println("Minimizing...");
+            // Minimize
             moveTaskToBack(true);
-            //this.finish();
         }
         else
         {
-            getFragmentManager().popBackStack();
+
+            if (!getSupportFragmentManager().popBackStackImmediate("MENU",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE) &&
+                !getSupportFragmentManager().popBackStackImmediate("PROFILE",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE)) {
+
+                System.out.println("Poping back stack...");
+                getSupportFragmentManager().popBackStack();
+            }
         }
     }
 

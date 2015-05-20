@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +46,8 @@ import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
-public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetchListener {
+public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetchListener,
+        GoogleMap.OnMapClickListener {
 
     private GoogleMap mMap;
     private LatLng loc;
@@ -101,6 +103,15 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         }
     };
 
+
+    @Override
+    public void onMapClick(LatLng point) {
+        System.out.println("");
+        getActivity().getSupportFragmentManager().popBackStackImmediate("MENU",
+                FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
+
     private GoogleMap.OnCameraChangeListener stopFollowing = new GoogleMap.OnCameraChangeListener() {
         public void onCameraChange(CameraPosition position) {
             startFollowing = null;
@@ -120,7 +131,9 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                fragmentTransaction.addToBackStack(null);
+                getActivity().getSupportFragmentManager().popBackStackImmediate("MENU",
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentTransaction.addToBackStack("MENU");
                 fragmentTransaction.replace(R.id.menuContainer, fragment);
                 System.out.println("Count on the popStack in mapFrag: " + getFragmentManager().getBackStackEntryCount());
                 fragmentTransaction.commit();
@@ -165,6 +178,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         mMap.setOnMyLocationButtonClickListener(onMyLocationButtonClickListener);
         mMap.setOnCameraChangeListener(stopFollowing);
         mMap.setOnMarkerClickListener(markerClickListener);
+        mMap.setOnMapClickListener(this);
 
         friendMarker = new HashMap<String, Friend>();
 
