@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui.community;
 
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,14 +19,17 @@ import java.util.HashMap;
 
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.gui.messaging.MessageActivity;
 import tux.gu.se.trux.R;
 
 
 public class InfoFragment extends Fragment {
 
-TextView profileTitle;
-ImageButton removeButton, messageButton;
-ImageView profilePic;
+    TextView profileTitle;
+    ImageButton removeButton, messageButton;
+    ImageView profilePic;
+
+    Friend friend;
 
 
 @Override
@@ -51,7 +55,7 @@ private void ViewFriendInfo() {
         String markerID = bundle.getString("markerID");
 
             if (friendMarker != null ) {
-                Friend friend = friendMarker.get(markerID);
+                friend = friendMarker.get(markerID);
                 if(friend.getProfilePic()!=null) {
                     Bitmap pic = Bitmap.createScaledBitmap(
                             SocialHandler.pictureToBitMap(friend.getProfilePic())
@@ -61,6 +65,16 @@ private void ViewFriendInfo() {
                             + "(" + friend.getUsername() + ")");
                     profilePic.setImageBitmap(pic);
                 }
+
+                messageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity().getApplicationContext(), MessageActivity.class);
+                        intent.setAction("OPEN_CHAT");
+                        intent.putExtra("FRIEND_ID", friend.getFriendId());
+                        startActivity(intent);
+                    }
+                });
         }
 
     }

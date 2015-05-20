@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui.community;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import java.util.HashMap;
+
+import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.gui.messaging.FriendListFragment;
+import se.gu.tux.trux.gui.messaging.MessageActivity;
 import tux.gu.se.trux.R;
 
 
@@ -52,6 +57,18 @@ public class MapCommunityWindow extends Fragment {
             @Override
             public void onClick(View v) {
                 //removeMenu();
+                Bundle b = getArguments();
+
+                HashMap<String, Friend> friendMarker = (HashMap) b.getSerializable("friendHashmap");
+
+                String markerID = b.getString("markerID");
+
+                Friend friend = friendMarker.get(markerID);
+
+                Intent intent = new Intent(getActivity().getApplicationContext(), MessageActivity.class);
+                intent.setAction("OPEN_CHAT");
+                intent.putExtra("FRIEND_ID", friend.getFriendId());
+                startActivity(intent);
             }
         });
 
