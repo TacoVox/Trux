@@ -119,6 +119,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
     public void refresh() {
         if (lastFetchCall == FetchCall.FRIENDLIST) {
+            System.out.println("Refreshing friend list...");
             showFriends();
         } else {
             showSearchResults(lastNeedle);
@@ -304,6 +305,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 public void run() {
                     if (accepted) {
                         showToast("The friend request was accepted.");
+                        System.out.println("ACCEPTED FRIEND REQUEST.");
                     } else {
                         showToast("The friend request was declined.");
                     }

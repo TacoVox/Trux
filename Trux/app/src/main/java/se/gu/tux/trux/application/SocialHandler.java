@@ -11,6 +11,7 @@ import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 
 /**
@@ -44,13 +45,6 @@ public class SocialHandler {
      * @param reqUpdateMode
      */
     public void fetchFriends(final FriendFetchListener listener, FriendsUpdateMode reqUpdateMode) {
-        final long[] friendIds = DataHandler.gI().getUser().getFriends();
-
-        // No friends / friends not set
-        if (friendIds == null) {
-            System.out.println("Users friends was null.");
-            listener.onFriendsFetched(new ArrayList<Friend>());
-        }
 
         if (reqUpdateMode == FriendsUpdateMode.NONE) {
             // If no forced update, still update ALL if the list doesn't have the correct objects
@@ -67,6 +61,21 @@ public class SocialHandler {
 
             @Override
             public void run() {
+                long[] friendIds = DataHandler.gI().getUser().getFriends();
+
+                if (updateMode == FriendsUpdateMode.ALL || updateMode == FriendsUpdateMode.ONLINE) {
+                    // Update the friend list UNLESS updateMode is still NONE
+                    try {
+                        Data user = DataHandler.gI().getData(DataHandler.gI().getUser());
+                        if (user instanceof User) {
+                            DataHandler.gI().setUser((User) user);
+                        }
+                    } catch (NotLoggedInException e) {
+                        listener.onFriendsFetched(new ArrayList<Friend>());
+                    }
+                    friendIds = DataHandler.gI().getUser().getFriends();
+                }
+
                 // If forced update ALL, fetch all friend objects
                 if (updateMode == FriendsUpdateMode.ALL) {
                     System.out.println("Updating all friends.");

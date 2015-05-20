@@ -238,7 +238,7 @@ public class ServerConnector {
                     throw new NotLoggedInException();
                 }
 
-                System.out.println("Wating to send: " + query.getClass().getSimpleName());
+                //System.out.println("Wating to send: " + query.getClass().getSimpleName());
 
                 // Make sure no other thread uses the stream resources here
                 synchronized (this) {
@@ -286,7 +286,7 @@ public class ServerConnector {
 
                         // Check for timeout - then don't try to send again. -1 means never timeout.
                         if (timeOut != -1 && (System.currentTimeMillis() - startTime) > timeOut) {
-                            System.out.println("Connection timed out.l");
+                            System.out.println("Connection timed out.");
                             hasTimedOut = true;
                         }
 

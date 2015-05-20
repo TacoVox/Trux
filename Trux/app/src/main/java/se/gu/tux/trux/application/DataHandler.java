@@ -113,7 +113,7 @@ public class DataHandler
     public Data getData(Data request) throws NotLoggedInException {
         if (request.isOnServerSide()) {
 
-            System.out.println("Datahandler routing request: " + request.getClass().getSimpleName());
+            //System.out.println("Datahandler routing request: " + request.getClass().getSimpleName());
             request = ServerConnector.gI().answerQuery(request);
             //request = IServerConnector.getInstance().answerQuery(request);
 
