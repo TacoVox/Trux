@@ -56,8 +56,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener
     {
         // inflate the layout for this view
         View view = inflater.inflate(R.layout.fragment_chat_head, container, false);
-        // send seen confirmation for this conversation
-        setSeenConfirmation();
 
         isRunning = true;
 
@@ -75,6 +73,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         act = (MessageActivity) getActivity();
         // get the object containing reference to the friend and messages
         object = act.getCustomObject();
+
+        // send seen confirmation for this conversation
+        setSeenConfirmation();
 
         // set username of the friend we are writing with
         tv.setText(object.getFriend().getUsername());
