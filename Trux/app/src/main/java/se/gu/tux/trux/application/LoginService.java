@@ -4,7 +4,6 @@ package se.gu.tux.trux.application;
 import android.content.Context;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,8 +36,9 @@ public class LoginService
     // reference to the file name for storing user info
     private String fileName = "";
 
-
+    // login service instance
     private static LoginService ls;
+
 
 
     /**
@@ -121,17 +121,13 @@ public class LoginService
             // check if this user is allowed to login
             response = (ProtocolMessage) ServerConnector.getInstance().answerQuery(user);
         }
-        catch (NotLoggedInException e)
-        {
-            e.printStackTrace();
-        }
-        catch (ClassCastException e)
+        catch (NotLoggedInException | ClassCastException e)
         {
             e.printStackTrace();
         }
 
         System.out.println("------- user login info ----------------");
-        System.out.println("user is null? " + response == null);
+        assert response != null;
         System.out.println("session ID: " + response.getSessionId());
         System.out.println("user ID: " + response.getUserId());
         System.out.println("----------------------------------------");
@@ -256,7 +252,7 @@ public class LoginService
             //Convert it to hexadecimal format
             StringBuilder sb = new StringBuilder();
 
-            for(int i=0; i< bytes.length ;i++)
+            for(int i=0; i<bytes.length ;i++)
             {
                 sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
             }
@@ -325,7 +321,7 @@ public class LoginService
 
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-                String receiveString = "";
+                String receiveString;
 
                 StringBuilder stringBuilder = new StringBuilder();
 
@@ -362,13 +358,7 @@ public class LoginService
                     System.out.println("----------------------------------------");
                 }
             }
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-            System.out.println("-------- ERROR: reading from file ----------");
-        }
-        catch (IOException e)
+        } catch (IOException e)
         {
             e.printStackTrace();
             System.out.println("-------- ERROR: reading from file ----------");
