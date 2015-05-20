@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,8 +20,8 @@ import tux.gu.se.trux.R;
 
 public class InfoFragment extends Fragment {
 
-TextView nameText, infoText;
-Button removeButton, messageButton;
+TextView nameText;
+ImageButton removeButton, messageButton;
 ImageView profilePic;
 
 
@@ -28,10 +29,9 @@ ImageView profilePic;
 public View onCreateView(LayoutInflater inflater, ViewGroup container,
                          Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_info, container, false);
-    removeButton = (Button) view.findViewById(R.id.fragment_info_remove_friend_button);
-    messageButton = (Button) view.findViewById(R.id.fragment_info_message_button);
+    removeButton = (ImageButton) view.findViewById(R.id.fragment_info_remove_friend_button);
+    messageButton = (ImageButton) view.findViewById(R.id.fragment_info_message_button);
     nameText = (TextView) view.findViewById(R.id.nameTextView);
-    infoText = (TextView) view.findViewById(R.id.infoTextView);
     profilePic = (ImageView) view.findViewById(R.id.infoPicture);
 
     ViewFriendInfo();
@@ -56,9 +56,6 @@ private void ViewFriendInfo() {
 
                     nameText.setText(friend.getFirstname() + " " + friend.getLastname());
                     profilePic.setImageBitmap(pic);
-
-
-                    infoText.setText("");
                 }
         }
 

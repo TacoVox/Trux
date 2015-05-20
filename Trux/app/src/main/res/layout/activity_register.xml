@@ -7,7 +7,6 @@
     android:id="@+id/registerActivity"
     tools:context="se.gu.tux.trux.gui.base.RegisterActivity"
     android:weightSum="8"
-    android:padding="10dp"
     android:background="#E0E0E0">
 
     <LinearLayout
@@ -15,7 +14,10 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:weightSum="3"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <TextView
             android:layout_width="fill_parent"
@@ -38,7 +40,9 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:weightSum="3"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <TextView
             android:layout_width="fill_parent"
@@ -61,7 +65,9 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:weightSum="3"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <TextView
             android:layout_width="fill_parent"
@@ -84,7 +90,9 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:weightSum="3"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <TextView
             android:layout_width="fill_parent"
@@ -108,7 +116,9 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:weightSum="3"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <TextView
             android:layout_width="fill_parent"
@@ -132,7 +142,9 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:weightSum="3"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <TextView
             android:layout_width="fill_parent"
@@ -155,7 +167,10 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:gravity="center">
 
         <CheckBox
             android:layout_width="wrap_content"
@@ -174,10 +189,10 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:text="@string/register_button_title"
             android:textColor="#E0E0E0"
-            android:background="@drawable/button_clickable_new"
+            android:background="@drawable/bottom_button"
+            android:layout_gravity="bottom"
             android:id="@+id/registerButton"/>
 
     </LinearLayout>
