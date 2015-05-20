@@ -27,6 +27,7 @@ import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
+import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
@@ -436,7 +437,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             sendMessageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent();
+                    Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
                     intent.setAction("OPEN_CHAT");
                     intent.putExtra("FRIEND_ID", friends.get(pos).getFriendId());
                     startActivity(intent);
