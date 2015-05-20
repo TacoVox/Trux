@@ -84,7 +84,7 @@ public class DBConnector
             String password = Config.gI().getDbpass();
 
 	    connection = DriverManager.getConnection("jdbc:mysql://" + addr +
-                    "/" + dbname + "?" + "user=" + user + "&password=" + password);
+                    "/" + dbname + "?" + "user=" + user + "&password=" + password + "&autoReconnect=true");
             dbmd = connection.getMetaData();
             
 	    System.out.println("Connected to " + dbmd.getURL() + "...");
