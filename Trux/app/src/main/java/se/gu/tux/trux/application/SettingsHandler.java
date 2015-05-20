@@ -20,16 +20,14 @@ public class SettingsHandler {
      */
     private static SettingsHandler instance;
 
-    public static void createInstance(Context context) {
-        instance = new SettingsHandler(context);
-    }
-
-    public static SettingsHandler getInstance() {
+    public static SettingsHandler getInstance(Context context) {
+        if(instance == null)
+            instance = new SettingsHandler(context);
         return instance;
     }
 
-    public static SettingsHandler gI() {
-        return getInstance();
+    public static SettingsHandler gI(Context context) {
+        return getInstance(context);
     }
 
     /*
@@ -37,15 +35,13 @@ public class SettingsHandler {
      */
     //Wrapper for the config file itself.
     private Properties properties;
-    private Context context;
     private String configPath;
 
     //Settings variables
     private boolean normalMap = true;
 
     private SettingsHandler(Context context) {
-        this.context = context;
-        configPath = this.context.getFilesDir().getPath().toString() + "/trux.conf";
+        configPath = context.getFilesDir().getPath().toString() + "/trux.conf";
         loadProperties();
 
         if (properties == null)
