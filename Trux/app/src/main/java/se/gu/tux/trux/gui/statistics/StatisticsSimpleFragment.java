@@ -39,6 +39,7 @@ public class StatisticsSimpleFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_statistics_simple, container, false);
 
+        /*
         currentSpeed = (TextView) view.findViewById(R.id.currentSpeed);
         currentFuel = (TextView) view.findViewById(R.id.currentFuel);
         currentDistance = (TextView) view.findViewById(R.id.currentDistance);
@@ -46,6 +47,7 @@ public class StatisticsSimpleFragment extends Fragment
         t = new Timer();
         timer = new myTask();
         t.schedule(timer, 0, 1000);
+        */
 
         return view;
     }
@@ -56,13 +58,15 @@ public class StatisticsSimpleFragment extends Fragment
     public void onStop()
     {
         super.onStop();
-        t.cancel();
+        //t.cancel();
     }
 
 
     /**
      * Private class to post current collectable data to screen.
      */
+
+    /*
     class myTask extends TimerTask {
         public void run() {
             try {
@@ -99,5 +103,6 @@ public class StatisticsSimpleFragment extends Fragment
             }
         }
     }
+    */
 
 } // end class

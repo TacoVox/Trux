@@ -55,7 +55,7 @@ private void ViewFriendInfo() {
                 if(friend.getProfilePic()!=null) {
                     Bitmap pic = Bitmap.createScaledBitmap(
                             SocialHandler.pictureToBitMap(friend.getProfilePic())
-                            , 200, 200, false);
+                            , 500, 500, false);
 
                     profileTitle.setText(friend.getFirstname() + " " + friend.getLastname()
                             + "(" + friend.getUsername() + ")");
