@@ -144,10 +144,10 @@ public class DataHandler
                 public void run() {
                     try {
                         System.out.println("Clearing datahandler " + this.toString());
-                        if (detailedStats == null) {
-                            detailedStats = new HashMap<Integer, DetailedStatsBundle>();
-                        }
-                        detailedStats.clear();
+
+                        HashMap<Integer, DetailedStatsBundle> detailedStatsTmp = new HashMap<Integer, DetailedStatsBundle>();
+
+
                         // NOTE would love to generalize this but slightly unsure on now how to
                         // handle the casting
 
@@ -165,7 +165,13 @@ public class DataHandler
                                 (Speed) getData(new Speed(MetricData.FOREVER)),
                                 speedPoints);
                         // Store in hash map
-                        detailedStats.put(speed.getSignalId(), speedBundle);
+                        if (detailedStatsTmp == null) {
+                            System.out.println("DETAILEDSTATS IS NULL.");
+                        }
+                        if (speedBundle == null) {
+                            System.out.println("SPEEDBUNDLE IS NULL.");
+                        }
+                        detailedStatsTmp.put(speed.getSignalId(), speedBundle);
 
                         Fuel fuel = new Fuel(0);
                         fuel.setTimeStamp(System.currentTimeMillis());
@@ -179,7 +185,7 @@ public class DataHandler
                                 (Fuel) getData(new Fuel(MetricData.FOREVER)),
                                 fuelPoints);
                         // Store in hash map
-                        detailedStats.put(fuel.getSignalId(), fuelBundle);
+                        detailedStatsTmp.put(fuel.getSignalId(), fuelBundle);
 
                         Distance dist = new Distance(0);
                         dist.setTimeStamp(System.currentTimeMillis());
@@ -193,10 +199,12 @@ public class DataHandler
                                 (Distance) getData(new Distance(MetricData.FOREVER)),
                                 distPoints);
                         // Store in hash map
-                        detailedStats.put(dist.getSignalId(), distBundle);
+                        detailedStatsTmp.put(dist.getSignalId(), distBundle);
 
                         // Keep track of when we finished fetching the detailed stats
                         detailedStatsFetched = System.currentTimeMillis();
+
+                        detailedStats = detailedStatsTmp;
 
                     } catch (NotLoggedInException e) {
                         System.out.println("Not logged in in datahandler cache");
