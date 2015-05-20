@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.community;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
+import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
@@ -117,6 +119,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
     public void refresh() {
         if (lastFetchCall == FetchCall.FRIENDLIST) {
+            System.out.println("Refreshing friend list...");
             showFriends();
         } else {
             showSearchResults(lastNeedle);
@@ -302,6 +305,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 public void run() {
                     if (accepted) {
                         showToast("The friend request was accepted.");
+                        System.out.println("ACCEPTED FRIEND REQUEST.");
                     } else {
                         showToast("The friend request was declined.");
                     }
@@ -432,6 +436,15 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             final Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
             final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
+            sendMessageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
+                    intent.setAction("OPEN_CHAT");
+                    intent.putExtra("FRIEND_ID", friends.get(pos).getFriendId());
+                    startActivity(intent);
+                }
+            });
             final Button profileButton = (Button) view.findViewById(R.id.profileButton);
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override

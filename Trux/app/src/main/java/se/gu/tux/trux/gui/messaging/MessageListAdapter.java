@@ -10,8 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
@@ -83,8 +81,7 @@ public class MessageListAdapter extends BaseAdapter
     @Override
     public Object getItem(int i)
     {
-        CustomObject obj = new CustomObject(friends.get(i), messages.get(i));
-        return obj;
+        return new CustomObject(friends.get(i), messages.get(i));
     }
 
 
@@ -132,7 +129,7 @@ public class MessageListAdapter extends BaseAdapter
         {
             // set the data to show
             viewHolder.userPicture.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(i).getProfilePic()));
-            viewHolder.username.setText(friends.get(i).getUsername());
+            viewHolder.username.setText(friends.get(i).getFirstname() + " " + friends.get(i).getLastname());
             viewHolder.content.setText((String) messages.get(i).getValue());
         }
 

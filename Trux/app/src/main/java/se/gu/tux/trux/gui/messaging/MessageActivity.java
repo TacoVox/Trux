@@ -3,8 +3,6 @@ package se.gu.tux.trux.gui.messaging;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 
-import se.gu.tux.trux.datastructure.Friend;
-import se.gu.tux.trux.datastructure.Message;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import tux.gu.se.trux.R;
 
@@ -35,6 +33,8 @@ public class MessageActivity extends BaseAppActivity
 
         // set current view showing
         setCurrentViewId(LAYOUT_ID);
+
+
 
         currentFragmentId = homeFragment;
 

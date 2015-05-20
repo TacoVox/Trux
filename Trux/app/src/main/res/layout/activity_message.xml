@@ -2,16 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingTop="5dp">
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Messages"
+        android:text="@string/messages"
         android:textSize="20sp"
+        android:textColor="#E0E0E0"
         android:gravity="center"
-        android:layout_marginBottom="10dp"/>
+        android:background="#61728d"
+        android:textStyle="bold"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"/>
 
     <FrameLayout
         android:id="@+id/message_frame_container"
