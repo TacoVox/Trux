@@ -2,81 +2,105 @@
 xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
 android:layout_height="match_parent" tools:context="se.gu.tux.trux.gui.community.InfoFragment">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-<Space
-    android:layout_width="match_parent"
-    android:layout_height="fill_parent"
-    android:layout_weight="2"/>
-<LinearLayout
-   android:layout_width="match_parent"
-   android:layout_height="wrap_content"
-   android:orientation="horizontal" >
-
-    <Space
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"/>
-
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#ff3a475d"
-        android:alpha="0.7">
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/profile_info"
+            android:textColor="#E0E0E0"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:padding="5dp"
+            android:textStyle="bold"
+            android:background="#61728d"/>
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            >
+            android:background="#ff3a475d"
+            android:gravity="center"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/loading"
-                android:textSize="20dp"
-                android:id="@+id/nameTextView"
-                />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/infoPicture"
-                />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/loading"
-                android:id="@+id/infoTextView"
-                />
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/community_remove"
-                android:id="@+id/infoRemoveButton"
-                />
+                android:id="@+id/fragment_info_message_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/messageicon"/>
+
+            <Button
+                android:id="@+id/fragment_info_remove_friend_button"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@drawable/removefriendicon"
+                android:layout_marginLeft="10dp"/>
+
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:background="#ff3a475d">
+
+                    <ImageView
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:id="@+id/infoPicture"/>
+
+                </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading"
+                    android:textSize="20sp"
+                    android:textColor="#E0E0E0"
+                    android:gravity="center"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:layout_marginBottom="1dp"
+                    android:id="@+id/nameTextView"
+                    android:background="#ff3a475d"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading"
+                    android:textSize="20sp"
+                    android:textColor="#E0E0E0"
+                    android:gravity="center"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:id="@+id/infoTextView"
+                    android:background="#ff3a475d"/>
+
+        </LinearLayout>
+
     </LinearLayout>
-
-    <Space
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"/>
-
-</LinearLayout>
-
-<Space
-    android:layout_width="match_parent"
-    android:layout_height="fill_parent"
-    android:layout_weight="2"/>
-
-</LinearLayout>
 
 </FrameLayout>

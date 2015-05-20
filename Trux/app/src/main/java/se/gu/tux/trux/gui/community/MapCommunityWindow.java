@@ -11,10 +11,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import se.gu.tux.trux.gui.messaging.FriendListFragment;
 import tux.gu.se.trux.R;
 
 
 public class MapCommunityWindow extends Fragment {
+
+    LinearLayout menu, layout;
+    Button messageButton, infoButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,10 +31,10 @@ public class MapCommunityWindow extends Fragment {
 
         final View view = inflater.inflate(R.layout.fragment_map_community_window, container, false);
 
-        LinearLayout layout = (LinearLayout) view.findViewById(R.id.backLayout);
-        Button messageButton = (Button) view.findViewById(R.id.messageButton);
-        Button infoButton = (Button) view.findViewById(R.id.infoButton);
-        Button removeFriendButton = (Button) view.findViewById(R.id.removeFriend);
+        layout = (LinearLayout) view.findViewById(R.id.backLayout);
+        menu = (LinearLayout) view.findViewById(R.id.menu);
+        messageButton = (Button) view.findViewById(R.id.messageButton);
+        infoButton = (Button) view.findViewById(R.id.infoButton);
 
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,13 +54,6 @@ public class MapCommunityWindow extends Fragment {
             @Override
             public void onClick(View v) {
                 showInfoWindow();
-            }
-        });
-
-        removeFriendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeMenu();
             }
         });
 
@@ -81,6 +78,8 @@ public class MapCommunityWindow extends Fragment {
         //Passing the arguments from MapFrag to InfoFragment
         ifragment.setArguments(this.getArguments());
 
+        menu.setVisibility(View.GONE);
+
         //Transaction to the InfoFragment
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -88,5 +87,16 @@ public class MapCommunityWindow extends Fragment {
         fragmentTransaction.replace(R.id.contentContainer, ifragment);
         fragmentTransaction.commit();
     }
+/*
+    @Override
+    public void onBackPressed()
+    {
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.contentContainer, new MapFrag());
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+
+    }
+    */
 
 }

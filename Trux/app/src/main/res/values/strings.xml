@@ -30,6 +30,7 @@
     <string name="edit">edit</string>
     <string name="save">save changes</string>
     <string name="messages">MESSAGES</string>
+    <string name="profile_info">PROFILE INFO</string>
     <string name="change_profile_pic">change profile picture</string>
     <string name="statistics_text">Statistics</string>
     <string name="profile_text">Profile</string>
