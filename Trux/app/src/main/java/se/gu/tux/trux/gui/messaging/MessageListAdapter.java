@@ -132,7 +132,7 @@ public class MessageListAdapter extends BaseAdapter
         {
             // set the data to show
             viewHolder.userPicture.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(i).getProfilePic()));
-            viewHolder.username.setText(friends.get(i).getUsername());
+            viewHolder.username.setText(friends.get(i).getFirstname() + " " + friends.get(i).getLastname());
             viewHolder.content.setText((String) messages.get(i).getValue());
         }
 
