@@ -21,7 +21,6 @@ import tux.gu.se.trux.R;
  */
 public class ContactMenuActivity extends BaseAppActivity {
     private EditText contactName= null;
-    private EditText contactEmailInput= null;
     private EditText feedbackInput = null;
     private Spinner spinner;
     private User user;

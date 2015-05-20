@@ -210,7 +210,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
             // get the bitmap data
             try
             {
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                bitmap = cropImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri));
             }
             catch (IOException e) { e.printStackTrace(); }
 
@@ -417,6 +417,28 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         return result;
 
     } // end uploadPicture()
+
+    /**
+     * Method to crop an image to a center square.
+     *
+     * @param image Image to be cropped
+     * @return cropeed Image
+     */
+    private Bitmap cropImage(Bitmap image) {
+        Bitmap croppedImg;
+
+        if (image.getWidth() >= image.getHeight()){
+            croppedImg = Bitmap.createBitmap(
+                    image, image.getWidth()/2 - image.getHeight()/2,
+                    0, image.getHeight(), image.getHeight());
+        } else {
+            croppedImg = Bitmap.createBitmap(
+                    image, 0, image.getHeight()/2 - image.getWidth()/2,
+                    image.getWidth(), image.getWidth());
+        }
+
+        return croppedImg;
+    } //end copImage()
 
 
 
