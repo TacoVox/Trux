@@ -29,7 +29,9 @@ public class SettingsMenuActivity extends BaseAppActivity
 
     private void initMapType () {
         if(SettingsHandler.gI().isNormalMap())
-            mapTypes.setSelection(0);
+            if(mapTypes.getSelectedItem().toString().equals("standard")) {
+                mapTypes.setSelection(0);
+            }
         else
             mapTypes.setSelection(1);
 

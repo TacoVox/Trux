@@ -77,8 +77,11 @@ public class SettingsHandler {
     }
 
     private void parseProperties() {
-        if (properties.getProperty("maptype").equals("hybrid"))
+        if (properties.getProperty("maptype").equals("hybrid")) {
             normalMap = false;
+            System.out.println("Map is hybrid.");
+        } else
+            System.out.println("Map is normal motherfucker");
     }
 
     public boolean isNormalMap() {
