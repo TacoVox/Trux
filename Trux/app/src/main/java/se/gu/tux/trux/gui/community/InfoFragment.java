@@ -23,7 +23,7 @@ import tux.gu.se.trux.R;
 
 public class InfoFragment extends Fragment {
 
-TextView nameText;
+TextView profileTitle;
 ImageButton removeButton, messageButton;
 ImageView profilePic;
 
@@ -34,7 +34,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
     View view = inflater.inflate(R.layout.fragment_info, container, false);
     removeButton = (ImageButton) view.findViewById(R.id.fragment_info_remove_friend_button);
     messageButton = (ImageButton) view.findViewById(R.id.fragment_info_message_button);
-    nameText = (TextView) view.findViewById(R.id.nameTextView);
+    profileTitle = (TextView) view.findViewById(R.id.profile_title);
     profilePic = (ImageView) view.findViewById(R.id.infoPicture);
 
     ViewFriendInfo();
@@ -57,7 +57,8 @@ private void ViewFriendInfo() {
                             SocialHandler.pictureToBitMap(friend.getProfilePic())
                             , 200, 200, false);
 
-                    nameText.setText(friend.getFirstname() + " " + friend.getLastname());
+                    profileTitle.setText(friend.getFirstname() + " " + friend.getLastname()
+                            + "(" + friend.getUsername() + ")");
                     profilePic.setImageBitmap(pic);
                 }
         }
@@ -66,12 +67,10 @@ private void ViewFriendInfo() {
 }
     public void onStop() {
         super.onStop();
-        nameText.setText("");
 
     }
     public void onPause(){
         super.onPause();
-        nameText.setText("");
 
     }
     public void onResume(){
