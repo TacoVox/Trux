@@ -63,11 +63,11 @@ public class AGADataParser
                     // Store values wrapped in Double or Long java types...
                     if (value instanceof SCSFloat)
                     {
-                        value = new Double(((Float) ((SCSFloat) value).getFloatValue()).doubleValue());
+                        value = ((Float) ((SCSFloat) value).getFloatValue()).doubleValue();
                     }
                     else if (value instanceof SCSLong)
                     {
-                        value = new Long(((SCSLong) value).getLongValue());
+                        value = ((SCSLong) value).getLongValue();
                     }
 
                     // put into hash map
@@ -130,9 +130,8 @@ public class AGADataParser
     {
         // get the value for the specified signal and return it
         // do not remove it!
-        Object value = dataMap.get(automotiveSignalId);
 
-        return value;
+        return dataMap.get(automotiveSignalId);
     }
 
 
