@@ -29,6 +29,8 @@ public class AGADataParser
     // hash map to keep values for received signals
     private static HashMap<Integer, Object> dataMap;
 
+    private static int distLevel;
+
 
     /**
      * Hidden constructor. Initialises the hash map
@@ -61,11 +63,11 @@ public class AGADataParser
                     // Store values wrapped in Double or Long java types...
                     if (value instanceof SCSFloat)
                     {
-                        value = new Double(((Float) ((SCSFloat) value).getFloatValue()).doubleValue());
+                        value = ((Float) ((SCSFloat) value).getFloatValue()).doubleValue();
                     }
                     else if (value instanceof SCSLong)
                     {
-                        value = new Long(((SCSLong) value).getLongValue());
+                        value = ((SCSLong) value).getLongValue();
                     }
 
                     // put into hash map
@@ -82,7 +84,10 @@ public class AGADataParser
             new DriverDistractionListener()
             {
                 @Override
-                public void levelChanged(DriverDistractionLevel driverDistractionLevel) {}
+                public void levelChanged(DriverDistractionLevel driverDistractionLevel)
+                {
+                    distLevel = driverDistractionLevel.getLevel();
+                }
 
                 @Override
                 public void lightModeChanged(LightMode lightMode)       {}
@@ -125,10 +130,12 @@ public class AGADataParser
     {
         // get the value for the specified signal and return it
         // do not remove it!
-        Object value = dataMap.get(automotiveSignalId);
 
-        return value;
+        return dataMap.get(automotiveSignalId);
     }
+
+
+    public int getDistLevel()   { return distLevel; }
 
 
 } // end class

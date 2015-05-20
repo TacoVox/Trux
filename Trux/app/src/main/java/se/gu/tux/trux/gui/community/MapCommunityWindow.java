@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import se.gu.tux.trux.gui.messaging.FriendListFragment;
@@ -19,7 +20,7 @@ import tux.gu.se.trux.R;
 public class MapCommunityWindow extends Fragment {
 
     LinearLayout menu, layout;
-    Button messageButton, infoButton;
+    ImageButton messageButton, infoButton;
 
 
     @Override
@@ -35,8 +36,8 @@ public class MapCommunityWindow extends Fragment {
 
         layout = (LinearLayout) view.findViewById(R.id.backLayout);
         menu = (LinearLayout) view.findViewById(R.id.menu);
-        messageButton = (Button) view.findViewById(R.id.messageButton);
-        infoButton = (Button) view.findViewById(R.id.infoButton);
+        messageButton = (ImageButton) view.findViewById(R.id.messageButton);
+        infoButton = (ImageButton) view.findViewById(R.id.infoButton);
 
         layout.setOnClickListener(new View.OnClickListener() {
             @Override

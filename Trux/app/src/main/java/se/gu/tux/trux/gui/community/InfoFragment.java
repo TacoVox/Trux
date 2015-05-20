@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,8 +23,8 @@ import tux.gu.se.trux.R;
 
 public class InfoFragment extends Fragment {
 
-TextView nameText, infoText;
-Button removeButton, messageButton;
+TextView profileTitle;
+ImageButton removeButton, messageButton;
 ImageView profilePic;
 
 
@@ -31,10 +32,9 @@ ImageView profilePic;
 public View onCreateView(LayoutInflater inflater, ViewGroup container,
                          Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_info, container, false);
-    removeButton = (Button) view.findViewById(R.id.fragment_info_remove_friend_button);
-    messageButton = (Button) view.findViewById(R.id.fragment_info_message_button);
-    nameText = (TextView) view.findViewById(R.id.nameTextView);
-    infoText = (TextView) view.findViewById(R.id.infoTextView);
+    removeButton = (ImageButton) view.findViewById(R.id.fragment_info_remove_friend_button);
+    messageButton = (ImageButton) view.findViewById(R.id.fragment_info_message_button);
+    profileTitle = (TextView) view.findViewById(R.id.profile_title);
     profilePic = (ImageView) view.findViewById(R.id.infoPicture);
 
     ViewFriendInfo();
@@ -57,11 +57,9 @@ private void ViewFriendInfo() {
                             SocialHandler.pictureToBitMap(friend.getProfilePic())
                             , 200, 200, false);
 
-                    nameText.setText(friend.getFirstname() + " " + friend.getLastname());
+                    profileTitle.setText(friend.getFirstname() + " " + friend.getLastname()
+                            + "(" + friend.getUsername() + ")");
                     profilePic.setImageBitmap(pic);
-
-
-                    infoText.setText("");
                 }
         }
 
@@ -69,12 +67,10 @@ private void ViewFriendInfo() {
 }
     public void onStop() {
         super.onStop();
-        nameText.setText("");
 
     }
     public void onPause(){
         super.onPause();
-        nameText.setText("");
 
     }
     public void onResume(){
