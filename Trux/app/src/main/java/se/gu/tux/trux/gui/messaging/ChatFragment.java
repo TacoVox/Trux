@@ -249,7 +249,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                 Long.toString(object.getFriend().getFriendId()));
 
         // create new async task to fetch the messages
-        AsyncTask<ProtocolMessage, Void, ArrayResponse> conversations = new FetchMessagesTask().execute(request);
+        AsyncTask<ProtocolMessage, Void, ArrayResponse> conversations =
+                new FetchMessagesTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
 
         // the array response
         ArrayResponse response = null;
@@ -306,7 +307,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
         // create the text view to hold the message
         final TextView textView = new TextView(act.getApplicationContext());
-        textView.setText(message);
+        textView.setText(message + "\n");
         textView.setTextColor(Color.BLACK);
 
         // add to container and display
