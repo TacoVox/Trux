@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.LoginService;
+import se.gu.tux.trux.application.SettingsHandler;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
@@ -70,6 +71,9 @@ public class MainActivity extends BaseAppActivity
 
         // Create login service
         LoginService.createInstance(this.getBaseContext(), FILE_NAME);
+
+        //Create instance of SettingsHandler
+        SettingsHandler.createInstance(this.getBaseContext());
 
         // Just make sure a AGA data parser is created
         AGADataParser.getInstance();
