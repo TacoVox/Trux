@@ -12,50 +12,54 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.User;
 import tux.gu.se.trux.R;
 
 /**
  * Created by Aman ghezai on 2015-05-14.
  */
-public class ContactMenuActivity extends BaseAppActivity implements View.OnClickListener{
-    private EditText contactSubjectInput= null;
+public class ContactMenuActivity extends BaseAppActivity {
+    private EditText contactName= null;
     private EditText contactEmailInput= null;
     private EditText feedbackInput = null;
+    private Spinner spinner;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contact_menu_activity);
 
-        contactSubjectInput = (EditText) findViewById(R.id.contactSubjectInput);
-        contactEmailInput = (EditText) findViewById(R.id.contactEmailInput);
+        contactName = (EditText) findViewById(R.id.contactName);
         feedbackInput = (EditText) findViewById(R.id.feedbackInput);
-        Button emailButton = (Button) findViewById(R.id.sendEmail);
-            // set listener to the button
-        emailButton.setOnClickListener(this);
+        spinner = (Spinner) findViewById(R.id.spinnerFeedbackType);
+        if(isOnline()){
+            user = DataHandler.getInstance().getUser();
+            contactName.setText(user.getFirstName() +  " " + user.getLastName());
+        }
 
     }
     protected void sendEmail() {
 
 
-            String[] user = {contactEmailInput.getText().toString()};
+            String rec = "se.gu.trux@gmail.com";
+            String subject = spinner.getSelectedItem().toString();
+            String userName = contactName.getText().toString();
 
-            Intent email = new Intent(Intent.ACTION_SEND, Uri.parse("mailto:"));
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", rec, null));
 
-             // prompts email clients only
-
-              email.setType("message/rfc822");
-
-              email.putExtra(Intent.EXTRA_EMAIL, user);
-
-              email.putExtra(Intent.EXTRA_SUBJECT, contactSubjectInput.getText().toString());
-
-              email.putExtra(Intent.EXTRA_TEXT, feedbackInput.getText().toString());
-
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            if(isOnline()) {
+                emailIntent.putExtra(Intent.EXTRA_TEXT, userName + "\n\n" + feedbackInput.getText().toString() +
+                        "\n\nUserID: " + user.getUserId());
+            }
+            else
+                emailIntent.putExtra(Intent.EXTRA_TEXT, userName + "\n\n" + feedbackInput.getText().toString());
         try {
 
             // the user can choose the email client
-            startActivity(Intent.createChooser(email, "Choose your preferred email client..."));
+            startActivity(Intent.createChooser(emailIntent, "Send eMail..."));
 
 
 
@@ -69,19 +73,17 @@ public class ContactMenuActivity extends BaseAppActivity implements View.OnClick
             }
 
         }
-    @Override
-    public void onClick(View view)
+
+    public void sendFeedback(View view)
     {
-        if (view.getId() == R.id.sendMessageButton)
-        {
             System.out.println("-------- calling onClick in contactWindow --------");
             sendEmail();
             // after sending the email, clear the fields
-            contactSubjectInput.setText("");
-            contactEmailInput.setText("");
+            contactName.setText("");
             feedbackInput.setText("");
 
-
-        }
+    }
+    private boolean isOnline(){
+        return DataHandler.getInstance().isLoggedIn();
     }
 }
