@@ -45,7 +45,7 @@ public class SettingsHandler {
 
         loadProperties();
 
-        if (properties == null)
+        if (properties.isEmpty())
             createProperties();
         else
             parseProperties();
