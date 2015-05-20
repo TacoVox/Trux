@@ -31,7 +31,6 @@ import se.gu.tux.trux.technical_services.ServerConnector;
  */
 public class DataHandler
 {
-
     private static DataHandler dataHandler;
 
     private RealTimeDataHandler realTimeDataHandler;
@@ -53,6 +52,7 @@ public class DataHandler
      * instance of DataHandler instead.
      */
     private DataHandler()    {
+        detailedStats = new HashMap<Integer, DetailedStatsBundle>();
         sc = new SocialHandler();
     }
 
@@ -134,10 +134,7 @@ public class DataHandler
      */
     public void cacheDetailedStats() {
         // Only fetch if they aren't there or aren't up to date
-        if (detailedStats == null ||
-                System.currentTimeMillis() - detailedStatsFetched > 1000 * 60 * 15) {
-
-            detailedStats = new HashMap<Integer, DetailedStatsBundle>();
+        if (System.currentTimeMillis() - detailedStatsFetched > 1000 * 60 * 15) {
 
             System.out.println("Fetching detailed stats.");
 
@@ -145,6 +142,7 @@ public class DataHandler
                 @Override
                 public void run() {
                     try {
+                        detailedStats.clear();
                         // NOTE would love to generalize this but slightly unsure on now how to
                         // handle the casting
 
