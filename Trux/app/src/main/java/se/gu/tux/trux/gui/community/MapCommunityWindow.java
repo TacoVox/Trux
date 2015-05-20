@@ -87,16 +87,4 @@ public class MapCommunityWindow extends Fragment {
         fragmentTransaction.replace(R.id.contentContainer, ifragment);
         fragmentTransaction.commit();
     }
-/*
-    @Override
-    public void onBackPressed()
-    {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.contentContainer, new MapFrag());
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-
-    }
-    */
-
 }

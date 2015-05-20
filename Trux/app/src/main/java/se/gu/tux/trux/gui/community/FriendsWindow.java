@@ -162,7 +162,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
                 // Join friends and people, if there were any results.
                 if (ar.getArray() != null) {
-                    allResults = appendFriendObjects(allResults, ar.getArray());
+                    // This also adds pictures to the serch result friend objects
+                    allResults = appendSearchResults(allResults, ar.getArray());
                 }
 
             } catch (NotLoggedInException e) {
@@ -221,15 +222,18 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
     /**
-     * Appends the second array to the list - also does casting simultaneously
+     * Appends the second array to the list - and fetches images for these people
      * @param list
      * @param friendArray
      * @return
      */
-    private ArrayList<Friend> appendFriendObjects(ArrayList<Friend> list, Object[] friendArray) {
+    private ArrayList<Friend> appendSearchResults(ArrayList<Friend> list, Object[] friendArray)
+            throws NotLoggedInException {
         if (friendArray != null) {
             for (int i = 0; i < friendArray.length; i++) {
-                list.add((Friend)friendArray[i]);
+                Friend f = (Friend)friendArray[i];
+                f.setProfilePic(DataHandler.gI().getSocialHandler().getPicture(f.getProfilePicId()));
+                list.add(f);
             }
         }
         return list;

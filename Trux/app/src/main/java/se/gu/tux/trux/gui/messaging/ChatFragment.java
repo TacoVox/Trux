@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.concurrent.ExecutionException;
@@ -46,9 +45,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
     private volatile boolean isRunning;
 
-    private ScrollView scrollView;
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,8 +52,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener
     {
         // inflate the layout for this view
         View view = inflater.inflate(R.layout.fragment_chat_head, container, false);
-        // send seen confirmation for this conversation
-        setSeenConfirmation();
 
         isRunning = true;
 
@@ -66,8 +60,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         userInput = (EditText) view.findViewById(R.id.chat_input_edit_text);
         sendButton = (Button) view.findViewById(R.id.chat_send_button);
 
-        scrollView = (ScrollView) view.findViewById(R.id.chat_scrool_view);
-
         // set listener to button
         sendButton.setOnClickListener(this);
 
@@ -75,6 +67,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         act = (MessageActivity) getActivity();
         // get the object containing reference to the friend and messages
         object = act.getCustomObject();
+
+        // send seen confirmation for this conversation
+        setSeenConfirmation();
 
         // set username of the friend we are writing with
         tv.setText(object.getFriend().getUsername());
@@ -155,7 +150,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                             }
 
                             // check if there are new unread messages
-                            if (!(newMessages[0].getValue()).equals(messages[0].getValue()))
+                            if (messages.length>0 && !(newMessages[0].getValue()).equals(messages[0].getValue()))
                             {
                                 // display the messages
                                 for (int i = newMessages.length - 1; i >= 0; i--)
@@ -187,8 +182,11 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
                                 // set the pointer to the new messages for future reference
                                 messages = newMessages;
-                                // auto scroll to the latest message
-                                scrollView.scrollTo(0, scrollView.getBottom());
+                            }
+                            else
+                            {
+                                // set the pointer to the new messages for future reference
+                                messages = newMessages;
                             }
                         }
                     }
@@ -243,7 +241,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                 Long.toString(object.getFriend().getFriendId()));
 
         // create new async task to fetch the messages
-        AsyncTask<ProtocolMessage, Void, ArrayResponse> conversations = new FetchMessagesTask().execute(request);
+        AsyncTask<ProtocolMessage, Void, ArrayResponse> conversations =
+                new FetchMessagesTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
 
         // the array response
         ArrayResponse response = null;
@@ -284,8 +283,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener
             msgContainer.addView(textView);
         }
 
-        scrollView.scrollTo(0, scrollView.getBottom());
-
     } // end fetchLatestMessages()
 
 
@@ -300,7 +297,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
         // create the text view to hold the message
         final TextView textView = new TextView(act.getApplicationContext());
-        textView.setText(message);
+        textView.setText(message + "\n");
         textView.setTextColor(Color.BLACK);
 
         // add to container and display
