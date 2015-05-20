@@ -29,6 +29,8 @@ public class AGADataParser
     // hash map to keep values for received signals
     private static HashMap<Integer, Object> dataMap;
 
+    private static int distLevel;
+
 
     /**
      * Hidden constructor. Initialises the hash map
@@ -82,7 +84,10 @@ public class AGADataParser
             new DriverDistractionListener()
             {
                 @Override
-                public void levelChanged(DriverDistractionLevel driverDistractionLevel) {}
+                public void levelChanged(DriverDistractionLevel driverDistractionLevel)
+                {
+                    distLevel = driverDistractionLevel.getLevel();
+                }
 
                 @Override
                 public void lightModeChanged(LightMode lightMode)       {}
@@ -129,6 +134,9 @@ public class AGADataParser
 
         return value;
     }
+
+
+    public int getDistLevel()   { return distLevel; }
 
 
 } // end class

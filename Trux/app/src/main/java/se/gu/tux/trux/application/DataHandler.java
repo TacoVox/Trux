@@ -20,6 +20,7 @@ import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
@@ -404,7 +405,7 @@ public class DataHandler
         // See if the image is not yet cached
         if (imageCache.get(pictureId) == null) {
             // Try to fecth it
-            imageCache.put(pictureId, (Picture)getData(new Picture(pictureId)));
+            imageCache.put(pictureId, (Picture) getData(new Picture(pictureId)));
         }
 
         Picture p = imageCache.get(pictureId);
@@ -446,4 +447,9 @@ public class DataHandler
     public SocialHandler getSocialHandler() {
         return sc;
     }
+
+
+    public int getDistractionLevel()    { return AGADataParser.getInstance().getDistLevel(); }
+
+
 } // end class DataHandler
