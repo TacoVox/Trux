@@ -170,6 +170,8 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     {
         if (getFragmentManager().getBackStackEntryCount() == 0)
         {
+
+
             moveTaskToBack(true);
             //this.finish();
         }

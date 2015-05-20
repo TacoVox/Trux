@@ -532,13 +532,6 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
     @Override
     public void onBackPressed()
     {
-        if (getFragmentManager().getBackStackEntryCount() == 0)
-        {
-            this.finish();
-        }
-        else
-        {
-            getFragmentManager().popBackStack();
-        }
+        this.finish();
     }
 } // end class
