@@ -38,6 +38,7 @@ import java.util.TimerTask;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.FriendFetchListener;
+import se.gu.tux.trux.application.SettingsHandler;
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Speed;
@@ -58,6 +59,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     private Timer t;
     private PopFriends timer;
     private boolean hasMarker = false;
+
 
 
     public void onCreate(Bundle savedInstanceState) {
@@ -131,7 +133,10 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         //Makes it possible for the map to locate the device
         mMap.setMyLocationEnabled(true);
         //Gets the normal view of the map (not satalite)
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        if(SettingsHandler.getInstance().isNormalMap()) {
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+        else mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         System.out.println("------MAP READY-----");
 
