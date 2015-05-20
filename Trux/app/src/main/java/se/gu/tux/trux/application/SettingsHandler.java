@@ -64,6 +64,10 @@ public class SettingsHandler {
 
         properties.setProperty("maptype", "normal");
 
+        writeProperties();
+    }
+
+    private void writeProperties() {
         try {
             OutputStream newfile = new FileOutputStream("trux.conf");
             properties.store(newfile, null);
@@ -73,8 +77,11 @@ public class SettingsHandler {
     }
 
     private void parseProperties() {
-        if (properties.getProperty("maptype").equals("hybrid"))
+        if (properties.getProperty("maptype").equals("hybrid")) {
             normalMap = false;
+            System.out.println("Map is hybrid.");
+        } else
+            System.out.println("Map is normal motherfucker");
     }
 
     public boolean isNormalMap() {
@@ -83,5 +90,15 @@ public class SettingsHandler {
 
     public void setNormalMap(boolean normalMap) {
         this.normalMap = normalMap;
+
+        if(normalMap) {
+            properties.setProperty("maptype", "normal");
+            System.out.println("Changed map to normal.");
+        } else {
+            properties.setProperty("maptype", "hybrid");
+            System.out.println("Changed map to hybrid.");
+        }
+
+        writeProperties();
     }
 }
