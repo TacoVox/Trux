@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui.community;
 
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,40 +19,48 @@ import java.util.HashMap;
 
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.gui.messaging.MessageActivity;
 import tux.gu.se.trux.R;
 
 
 public class InfoFragment extends Fragment {
 
-TextView profileTitle;
-ImageButton removeButton, messageButton;
-ImageView profilePic;
+    TextView profileTitle;
+    ImageButton removeButton, messageButton;
+    ImageView profilePic;
+
+    Friend friend;
 
 
-@Override
-public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                         Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_info, container, false);
-    removeButton = (ImageButton) view.findViewById(R.id.fragment_info_remove_friend_button);
-    messageButton = (ImageButton) view.findViewById(R.id.fragment_info_message_button);
-    profileTitle = (TextView) view.findViewById(R.id.profile_title);
-    profilePic = (ImageView) view.findViewById(R.id.infoPicture);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_info, container, false);
+        removeButton = (ImageButton) view.findViewById(R.id.fragment_info_remove_friend_button);
+        messageButton = (ImageButton) view.findViewById(R.id.fragment_info_message_button);
+        profileTitle = (TextView) view.findViewById(R.id.profile_title);
+        profilePic = (ImageView) view.findViewById(R.id.infoPicture);
 
-    ViewFriendInfo();
+        ViewFriendInfo();
 
-    return view;
-}
+        return view;
+    }
 
-private void ViewFriendInfo() {
+    private void ViewFriendInfo() {
 
-    Bundle bundle = this.getArguments();
-    if(bundle != null){
-        HashMap<String, Friend> friendMarker = (HashMap) bundle.getSerializable("friendHashmap");
+        Bundle bundle = this.getArguments();
+        if(bundle != null){
+            Friend f = (Friend) bundle.getSerializable("friend");
+            if (f == null) {
+                HashMap<String, Friend> friendMarker = (HashMap) bundle.getSerializable("friendHashmap");
 
-        String markerID = bundle.getString("markerID");
+                String markerID = bundle.getString("markerID");
+                if (friendMarker != null ) {
+                    friend = friendMarker.get(markerID);
+                }
+            }
 
-            if (friendMarker != null ) {
-                Friend friend = friendMarker.get(markerID);
+            if (f == null) {
                 if(friend.getProfilePic()!=null) {
                     Bitmap pic = Bitmap.createScaledBitmap(
                             SocialHandler.pictureToBitMap(friend.getProfilePic())
@@ -61,10 +70,20 @@ private void ViewFriendInfo() {
                             + "(" + friend.getUsername() + ")");
                     profilePic.setImageBitmap(pic);
                 }
-        }
 
+                messageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity().getApplicationContext(), MessageActivity.class);
+                        intent.setAction("OPEN_CHAT");
+                        intent.putExtra("FRIEND_ID", friend.getFriendId());
+                        startActivity(intent);
+                    }
+                });
+            }
+        }
     }
-}
+
     public void onStop() {
         super.onStop();
 

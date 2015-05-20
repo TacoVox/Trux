@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui.main_home;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,8 @@ import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Notification;
@@ -49,6 +52,9 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     private List<Fragment> fragmentArrayList;
     private ActionBar actionBar;
+
+    private Timer timer;
+    private UpdateIcons iconUpdater;
 
 
     @Override
@@ -94,6 +100,27 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         viewPager.setOnPageChangeListener(this);
         // set adapter
         viewPager.setAdapter(pagerAdapter);
+
+        timer = new Timer();
+        iconUpdater = new UpdateIcons();
+        timer.schedule(iconUpdater, 0, 10000);
+    }
+
+    public void onStop(){
+        super.onStop();
+        if(timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    public void onResume(){
+        super.onResume();
+        if(timer == null) {
+            timer = new Timer();
+            iconUpdater = new UpdateIcons();
+            timer.schedule(iconUpdater, 0, 10000);
+        }
     }
 
 
@@ -168,16 +195,23 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     @Override
     public void onBackPressed()
     {
-        if (getFragmentManager().getBackStackEntryCount() == 0)
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0)
         {
-
-
+            System.out.println("Minimizing...");
+            // Minimize
             moveTaskToBack(true);
-            //this.finish();
         }
         else
         {
-            getFragmentManager().popBackStack();
+
+            if (!getSupportFragmentManager().popBackStackImmediate("MENU",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE) &&
+                !getSupportFragmentManager().popBackStackImmediate("PROFILE",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE)) {
+
+                System.out.println("Poping back stack...");
+                getSupportFragmentManager().popBackStack();
+            }
         }
     }
 
@@ -237,6 +271,11 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
      * End override methods.                                                               *
      ***************************************************************************************/
 
-
+    class UpdateIcons extends TimerTask {
+        public void run() {
+            unseenMessages();
+            unseenFriendRequest();
+        }
+    }
 
 } // end class
