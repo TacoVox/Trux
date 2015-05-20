@@ -165,6 +165,12 @@ public class DataHandler
                                 (Speed) getData(new Speed(MetricData.FOREVER)),
                                 speedPoints);
                         // Store in hash map
+                        if (detailedStats == null) {
+                            System.out.println("DETAILEDSTATS IS NULL.");
+                        }
+                        if (speedBundle == null) {
+                            System.out.println("SPEEDBUNDLE IS NULL.");
+                        }
                         detailedStats.put(speed.getSignalId(), speedBundle);
 
                         Fuel fuel = new Fuel(0);
