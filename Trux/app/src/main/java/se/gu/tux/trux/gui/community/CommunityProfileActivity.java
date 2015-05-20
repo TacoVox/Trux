@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -212,7 +213,12 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
             {
                 bitmap = cropImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri));
             }
-            catch (IOException e) { e.printStackTrace(); }
+            catch (IOException | OutOfMemoryError e) {
+
+                showToast("Your picture was too large. Please try with a different picture.");
+
+                e.printStackTrace();
+            }
 
             imageView.setImageBitmap(bitmap);
 

@@ -37,9 +37,6 @@ import tux.gu.se.trux.R;
 public class HomeActivity extends BaseAppActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
 
-
-    ImageButton messageButton;
-    ImageButton friendButton;
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
@@ -53,13 +50,8 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     private List<Fragment> fragmentArrayList;
     private ActionBar actionBar;
 
-    private Timer timer;
-    private UpdateIcons iconUpdater;
-
-
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         // set layout for this activity
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT_ID);
@@ -77,11 +69,6 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         Fragment welcomeFragment = new WelcomeMainFragment();
         Fragment communityFragment = new CommunityMainFragment();
         Fragment statsFragment = new StatisticsMainFragment();
-
-        // create buttons
-        messageButton = (ImageButton) findViewById(R.id.fragment_welcome_message_button);
-        friendButton = (ImageButton) findViewById(R.id.fragment_welcome_friend_button);
-
 
         // add fragments to array
         fragmentArrayList.add(welcomeFragment);
@@ -101,26 +88,6 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         // set adapter
         viewPager.setAdapter(pagerAdapter);
 
-        timer = new Timer();
-        iconUpdater = new UpdateIcons();
-        timer.schedule(iconUpdater, 0, 10000);
-    }
-
-    public void onStop(){
-        super.onStop();
-        if(timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
-
-    public void onResume(){
-        super.onResume();
-        if(timer == null) {
-            timer = new Timer();
-            iconUpdater = new UpdateIcons();
-            timer.schedule(iconUpdater, 0, 10000);
-        }
     }
 
 
@@ -170,27 +137,6 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         }
         return false;
     }
-
-    private void unseenMessages(){
-        Notification not = DataHandler.getInstance().getNotificationStatus();
-        if (not.isNewMessages()) {
-            messageButton.setImageResource(R.drawable.messagenotificationicon);
-        } else {
-            messageButton.setImageResource(R.drawable.messageicon);
-        }
-
-    }
-    private void unseenFriendRequest(){
-        Notification not = DataHandler.getInstance().getNotificationStatus();
-        if (not.isNewFriends()) {
-            friendButton.setImageResource(R.drawable.friendsnotificationicon);
-        } else {
-            friendButton.setImageResource(R.drawable.friendsicon);
-        }
-
-    }
-
-
 
     @Override
     public void onBackPressed()
@@ -270,12 +216,5 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     /***************************************************************************************
      * End override methods.                                                               *
      ***************************************************************************************/
-
-    class UpdateIcons extends TimerTask {
-        public void run() {
-            unseenMessages();
-            unseenFriendRequest();
-        }
-    }
 
 } // end class
