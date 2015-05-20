@@ -89,14 +89,16 @@
         <activity
             android:name="se.gu.tux.trux.gui.community.FriendsWindow"
             android:label="Friends"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
         </activity>
 
         <!-- Community Profile Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.community.CommunityProfileActivity"
             android:label="Community Profile"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
         </activity>
         <!-- End Home Activity -->
 
@@ -108,7 +110,7 @@
         <!-- Message Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.messaging.MessageActivity"
-            android:label="Friends"
+            android:label="Messages"
             android:screenOrientation="portrait">
         </activity>
 
