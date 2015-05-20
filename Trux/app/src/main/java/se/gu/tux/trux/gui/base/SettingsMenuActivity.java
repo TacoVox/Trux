@@ -28,6 +28,11 @@ public class SettingsMenuActivity extends BaseAppActivity
     }
 
     private void initMapType () {
+        if(SettingsHandler.gI().isNormalMap())
+            mapTypes.setSelection(0);
+        else
+            mapTypes.setSelection(1);
+
         mapTypes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
