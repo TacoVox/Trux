@@ -1,9 +1,13 @@
 package se.gu.tux.trux.application;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Properties;
 
 /**
@@ -16,15 +20,14 @@ public class SettingsHandler {
      */
     private static SettingsHandler instance;
 
-    public static SettingsHandler getInstance() {
+    public static SettingsHandler getInstance(Context context) {
         if(instance == null)
-            instance = new SettingsHandler();
-
+            instance = new SettingsHandler(context);
         return instance;
     }
 
-    public static SettingsHandler gI() {
-        return getInstance();
+    public static SettingsHandler gI(Context context) {
+        return getInstance(context);
     }
 
     /*
@@ -32,24 +35,38 @@ public class SettingsHandler {
      */
     //Wrapper for the config file itself.
     private Properties properties;
+    private String configPath;
 
     //Settings variables
     private boolean normalMap = true;
 
-    private SettingsHandler() {
-        properties = loadProperties();
+    private SettingsHandler(Context context) {
+        configPath = context.getFilesDir().getPath().toString() + "/trux.conf";
+        loadProperties();
 
-        if(properties == null)
+        if (properties == null)
             createProperties();
         else
             parseProperties();
+    }
+
+    public void writeProperties()
+    {
+        try {
+            FileOutputStream out = new FileOutputStream(configPath);
+            properties.store(out, null);
+            out.close();
+        } catch (IOException e) {
+            System.err.println("Failed to open trux.conf file...");
+            e.printStackTrace();
+        }
     }
 
     private Properties loadProperties() {
         Properties p = new Properties();
 
         try {
-            InputStream input = new FileInputStream("trux.conf");
+            InputStream input = new FileInputStream(configPath);
             p.load(input);
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,15 +84,6 @@ public class SettingsHandler {
         writeProperties();
     }
 
-    private void writeProperties() {
-        try {
-            OutputStream newfile = new FileOutputStream("trux.conf");
-            properties.store(newfile, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void parseProperties() {
         if (properties.getProperty("maptype").equals("hybrid")) {
             normalMap = false;
@@ -91,7 +99,7 @@ public class SettingsHandler {
     public void setNormalMap(boolean normalMap) {
         this.normalMap = normalMap;
 
-        if(normalMap) {
+        if (normalMap) {
             properties.setProperty("maptype", "normal");
             System.out.println("Changed map to normal.");
         } else {
