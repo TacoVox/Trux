@@ -1,9 +1,6 @@
 package se.gu.tux.trux.gui.community;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,8 +14,6 @@ import java.util.HashMap;
 
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
-import se.gu.tux.trux.datastructure.Picture;
-import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 
@@ -53,14 +48,17 @@ private void ViewFriendInfo() {
 
             if (friendMarker != null ) {
                 Friend friend = friendMarker.get(markerID);
-                Bitmap pic = Bitmap.createScaledBitmap(
-                        SocialHandler.pictureToBitMap(friend.getProfilePic())
-                        , 200, 200, false);
+                if(friend.getProfilePic()!=null) {
+                    Bitmap pic = Bitmap.createScaledBitmap(
+                            SocialHandler.pictureToBitMap(friend.getProfilePic())
+                            , 200, 200, false);
 
-                nameText.setText(friend.getFirstname() + " " + friend.getLastname());
-                profilePic.setImageBitmap(pic);
+                    nameText.setText(friend.getFirstname() + " " + friend.getLastname());
+                    profilePic.setImageBitmap(pic);
 
-                infoText.setText("");
+
+                    infoText.setText("");
+                }
         }
 
     }
@@ -68,12 +66,12 @@ private void ViewFriendInfo() {
     public void onStop() {
         super.onStop();
         nameText.setText("");
-        profilePic = null;
+
     }
     public void onPause(){
         super.onPause();
         nameText.setText("");
-        profilePic = null;
+
     }
     public void onResume(){
         super.onResume();
