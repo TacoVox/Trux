@@ -68,6 +68,7 @@ public class MapCommunityWindow extends Fragment {
                 Intent intent = new Intent(getActivity().getApplicationContext(), MessageActivity.class);
                 intent.setAction("OPEN_CHAT");
                 intent.putExtra("FRIEND_ID", friend.getFriendId());
+                intent.putExtra("FRIEND_USERNAME", friend.getUsername());
                 startActivity(intent);
             }
         });

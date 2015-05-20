@@ -164,10 +164,7 @@ public class MainActivity extends BaseAppActivity
 
         if (username.isEmpty() || password.isEmpty())
         {
-            showDialogBox("Login failed", "Invalid username or password");
-            // TODO
-            // something wrong with credentials, display info to user
-            // refresh app, ask for login again
+            showDialogBox("Please", "Insert your username and password");
             return;
         }
 
@@ -191,7 +188,7 @@ public class MainActivity extends BaseAppActivity
 
         if (isAllowed)
         {
-            showToast("You are now logged in.");
+            showToast("Login successful.");
 
             Intent intent = new Intent(this, HomeActivity.class);
 
@@ -204,7 +201,7 @@ public class MainActivity extends BaseAppActivity
         }
         else
         {
-            showToast("Login failed. Please try again.");
+            showToast("Login unsuccessful. Please check your username and password");
         }
 
     } // end goToHome()
@@ -249,7 +246,7 @@ public class MainActivity extends BaseAppActivity
         // if login successful
         if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
         {
-            showToast("You are now logged in.");
+            showToast("Login successful.");
 
             Intent intent = new Intent(this, HomeActivity.class);
 
@@ -262,7 +259,7 @@ public class MainActivity extends BaseAppActivity
         }
         else
         {
-            showToast("Problem logging in.\nMessage: " + msg.getMessage() + ".\nPlease try again.");
+            showToast("Login unsuccessful.\nMessage: " + msg.getMessage() + ".\nPlease try again.");
             DataHandler.getInstance().setUser(null);
         }
 

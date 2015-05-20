@@ -43,7 +43,11 @@ public class MessageActivity extends BaseAppActivity
         if (action != null && action.equals("OPEN_CHAT"))
         {
             long id = getIntent().getLongExtra("FRIEND_ID", 0);
+            String username = getIntent().getStringExtra("FRIEND_USERNAME");
+
             Friend friend = new Friend(id);
+            friend.setUsername(username);
+
             customObject = new CustomObject(friend, null);
 
             currentFragmentId = homeFragment;
@@ -75,12 +79,7 @@ public class MessageActivity extends BaseAppActivity
     }
 
 
-
     public CustomObject getCustomObject()   { return  customObject; }
-
-
-    public String getIntentAction()         { return action; }
-
 
 
     public void onItemClick(CustomObject object, int id)

@@ -32,30 +32,35 @@ public class InfoFragment extends Fragment {
     Friend friend;
 
 
-@Override
-public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                         Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_info, container, false);
-    removeButton = (ImageButton) view.findViewById(R.id.fragment_info_remove_friend_button);
-    messageButton = (ImageButton) view.findViewById(R.id.fragment_info_message_button);
-    profileTitle = (TextView) view.findViewById(R.id.profile_title);
-    profilePic = (ImageView) view.findViewById(R.id.infoPicture);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_info, container, false);
+        removeButton = (ImageButton) view.findViewById(R.id.fragment_info_remove_friend_button);
+        messageButton = (ImageButton) view.findViewById(R.id.fragment_info_message_button);
+        profileTitle = (TextView) view.findViewById(R.id.profile_title);
+        profilePic = (ImageView) view.findViewById(R.id.infoPicture);
 
-    ViewFriendInfo();
+        ViewFriendInfo();
 
-    return view;
-}
+        return view;
+    }
 
-private void ViewFriendInfo() {
+    private void ViewFriendInfo() {
 
-    Bundle bundle = this.getArguments();
-    if(bundle != null){
-        HashMap<String, Friend> friendMarker = (HashMap) bundle.getSerializable("friendHashmap");
+        Bundle bundle = this.getArguments();
+        if(bundle != null){
+            Friend f = (Friend) bundle.getSerializable("friend");
+            if (f == null) {
+                HashMap<String, Friend> friendMarker = (HashMap) bundle.getSerializable("friendHashmap");
 
-        String markerID = bundle.getString("markerID");
+                String markerID = bundle.getString("markerID");
+                if (friendMarker != null ) {
+                    friend = friendMarker.get(markerID);
+                }
+            }
 
-            if (friendMarker != null ) {
-                friend = friendMarker.get(markerID);
+            if (f == null) {
                 if(friend.getProfilePic()!=null) {
                     Bitmap pic = Bitmap.createScaledBitmap(
                             SocialHandler.pictureToBitMap(friend.getProfilePic())
@@ -72,13 +77,14 @@ private void ViewFriendInfo() {
                         Intent intent = new Intent(getActivity().getApplicationContext(), MessageActivity.class);
                         intent.setAction("OPEN_CHAT");
                         intent.putExtra("FRIEND_ID", friend.getFriendId());
+                        intent.putExtra("FRIEND_USERNAME", friend.getUsername());
                         startActivity(intent);
                     }
                 });
+            }
         }
-
     }
-}
+
     public void onStop() {
         super.onStop();
 
