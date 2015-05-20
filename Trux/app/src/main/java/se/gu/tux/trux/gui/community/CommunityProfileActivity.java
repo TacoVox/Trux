@@ -209,19 +209,17 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
             // get the uri address for the picture
             Uri uri = data.getData();
 
-            try
-            {
-                // get the bitmap data
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+            String path = uri.getPath();
 
-                // set profile picture in profile page
-                imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(),
-                        bitmap.getGenerationId(), 4096, 4096));
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            // get the bitmap data
+            //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(path));
+            bitmap = BitmapFactory.decodeFile(path);
+
+            // set profile picture in profile page
+            //imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(),
+                    //bitmap.getGenerationId(), 4096, 4096));
+
+            imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 4096, 4096, false));
         }
 
     } // end onActivityResult()
