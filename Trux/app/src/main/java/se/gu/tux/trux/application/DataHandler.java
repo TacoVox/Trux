@@ -52,7 +52,6 @@ public class DataHandler
      * instance of DataHandler instead.
      */
     private DataHandler()    {
-        System.out.println("Creating datahandler " + this.toString());
         detailedStats = new HashMap<Integer, DetailedStatsBundle>();
         sc = new SocialHandler();
     }
@@ -143,10 +142,7 @@ public class DataHandler
                 @Override
                 public void run() {
                     try {
-                        System.out.println("Clearing datahandler " + this.toString());
-
                         HashMap<Integer, DetailedStatsBundle> detailedStatsTmp = new HashMap<Integer, DetailedStatsBundle>();
-
 
                         // NOTE would love to generalize this but slightly unsure on now how to
                         // handle the casting

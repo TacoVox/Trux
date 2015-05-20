@@ -44,36 +44,30 @@ public class SocialHandler {
      * @param listener
      * @param reqUpdateMode
      */
-    public void fetchFriends(final FriendFetchListener listener, FriendsUpdateMode reqUpdateMode) {
-
-        if (reqUpdateMode == FriendsUpdateMode.NONE) {
-            // If no forced update, still update ALL if the list doesn't have the correct objects
-            if (!allFriendsInCache() || friendsChanged) {
-                System.out.println("Forcing update of all friends.");
-                reqUpdateMode = FriendsUpdateMode.ALL;
-            }
-        }
-        final FriendsUpdateMode updateMode = reqUpdateMode;
-
-
+    public void fetchFriends(final FriendFetchListener listener, final FriendsUpdateMode reqUpdateMode) {
         new Thread(new Runnable() {
             ArrayList<Friend> friends = new ArrayList<Friend>();
 
             @Override
             public void run() {
-                long[] friendIds = DataHandler.gI().getUser().getFriends();
-
-                if (updateMode == FriendsUpdateMode.ALL || updateMode == FriendsUpdateMode.ONLINE) {
-                    // Update the friend list UNLESS updateMode is still NONE
-                    try {
-                        Data user = DataHandler.gI().getData(DataHandler.gI().getUser());
-                        if (user instanceof User) {
-                            DataHandler.gI().setUser((User) user);
-                        }
-                    } catch (NotLoggedInException e) {
-                        listener.onFriendsFetched(new ArrayList<Friend>());
+                // Update the list of friends this user has
+                try {
+                    Data user = DataHandler.gI().getData(DataHandler.gI().getUser());
+                    if (user instanceof User) {
+                        DataHandler.gI().setUser((User) user);
                     }
-                    friendIds = DataHandler.gI().getUser().getFriends();
+                } catch (NotLoggedInException e) {
+                    listener.onFriendsFetched(new ArrayList<Friend>());
+                }
+                final long[] friendIds = DataHandler.gI().getUser().getFriends();
+
+                FriendsUpdateMode updateMode = reqUpdateMode;
+                if (updateMode == FriendsUpdateMode.NONE) {
+                    // If no forced update, still update ALL if the list doesn't have the correct objects
+                    if (!allFriendsInCache() || friendsChanged) {
+                        System.out.println("Forcing update of all friends.");
+                        updateMode = FriendsUpdateMode.ALL;
+                    }
                 }
 
                 // If forced update ALL, fetch all friend objects
@@ -238,6 +232,7 @@ public class SocialHandler {
             pictureCache = new HashMap<Long, Picture>();
         }
         if (pictureId == -1) {
+            System.out.println("User doesn't have a picture");
             return null;
         }
 
