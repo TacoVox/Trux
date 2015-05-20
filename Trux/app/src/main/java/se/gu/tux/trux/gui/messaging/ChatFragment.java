@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.concurrent.ExecutionException;
@@ -46,9 +45,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
     private volatile boolean isRunning;
 
-    private ScrollView scrollView;
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,8 +59,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         TextView tv = (TextView) view.findViewById(R.id.chat_head_username_text_view);
         userInput = (EditText) view.findViewById(R.id.chat_input_edit_text);
         sendButton = (Button) view.findViewById(R.id.chat_send_button);
-
-        scrollView = (ScrollView) view.findViewById(R.id.chat_scrool_view);
 
         // set listener to button
         sendButton.setOnClickListener(this);
@@ -188,8 +182,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
                                 // set the pointer to the new messages for future reference
                                 messages = newMessages;
-                                // auto scroll to the latest message
-                                scrollView.scrollTo(0, scrollView.getBottom());
                             }
                             else
                             {
@@ -290,8 +282,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener
             // add this text view to the message container
             msgContainer.addView(textView);
         }
-
-        scrollView.scrollTo(0, scrollView.getBottom());
 
     } // end fetchLatestMessages()
 

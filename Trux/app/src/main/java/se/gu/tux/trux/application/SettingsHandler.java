@@ -1,10 +1,8 @@
 package se.gu.tux.trux.application;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,14 +18,16 @@ public class SettingsHandler {
      */
     private static SettingsHandler instance;
 
-    public static SettingsHandler getInstance(Context context) {
-        if(instance == null)
-            instance = new SettingsHandler(context);
+    public static void createInstance(Context context) {
+        instance = new SettingsHandler(context);
+    }
+
+    public static SettingsHandler getInstance() {
         return instance;
     }
 
     public static SettingsHandler gI(Context context) {
-        return getInstance(context);
+        return getInstance();
     }
 
     /*
@@ -42,16 +42,41 @@ public class SettingsHandler {
 
     private SettingsHandler(Context context) {
         configPath = context.getFilesDir().getPath().toString() + "/trux.conf";
+
         loadProperties();
 
-        if (properties == null)
+        if (properties.isEmpty())
             createProperties();
         else
             parseProperties();
     }
 
+    private void loadProperties() {
+        Properties p = new Properties();
+
+        try {
+            InputStream input = new FileInputStream(configPath);
+            System.out.println("Loading properties.");
+            p.load(input);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        properties = p;
+    }
+
+    private void createProperties() {
+        System.out.println("Creating new properties.");
+        properties = new Properties();
+
+        properties.setProperty("maptype", "normal");
+
+        writeProperties();
+    }
+
     public void writeProperties()
     {
+        System.out.println("Starting to write properties in a new file.");
         try {
             FileOutputStream out = new FileOutputStream(configPath);
             properties.store(out, null);
@@ -60,28 +85,6 @@ public class SettingsHandler {
             System.err.println("Failed to open trux.conf file...");
             e.printStackTrace();
         }
-    }
-
-    private Properties loadProperties() {
-        Properties p = new Properties();
-
-        try {
-            InputStream input = new FileInputStream(configPath);
-            p.load(input);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return p;
-    }
-
-    private void createProperties() {
-        properties = new Properties();
-
-        properties.setProperty("maptype", "normal");
-
-        writeProperties();
     }
 
     private void parseProperties() {
