@@ -61,7 +61,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     private boolean hasMarker = false;
 
 
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -133,10 +132,10 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         //Makes it possible for the map to locate the device
         mMap.setMyLocationEnabled(true);
         //Gets the normal view of the map (not satalite)
-        if(SettingsHandler.getInstance().isNormalMap()) {
+   /*     if(SettingsHandler.getInstance().isNormalMap()) {
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         }
-        else mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        else*/ mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         System.out.println("------MAP READY-----");
 

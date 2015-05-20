@@ -20,7 +20,7 @@ import tux.gu.se.trux.R;
 public class InfoFragment extends Fragment {
 
 TextView nameText, infoText;
-Button removeButton;
+Button removeButton, messageButton;
 ImageView profilePic;
 
 
@@ -28,7 +28,8 @@ ImageView profilePic;
 public View onCreateView(LayoutInflater inflater, ViewGroup container,
                          Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_info, container, false);
-    removeButton = (Button) view.findViewById(R.id.infoRemoveButton);
+    removeButton = (Button) view.findViewById(R.id.fragment_info_remove_friend_button);
+    messageButton = (Button) view.findViewById(R.id.fragment_info_message_button);
     nameText = (TextView) view.findViewById(R.id.nameTextView);
     infoText = (TextView) view.findViewById(R.id.infoTextView);
     profilePic = (ImageView) view.findViewById(R.id.infoPicture);
