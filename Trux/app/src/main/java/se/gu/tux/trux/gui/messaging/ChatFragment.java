@@ -155,7 +155,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                             }
 
                             // check if there are new unread messages
-                            if (!(newMessages[0].getValue()).equals(messages[0].getValue()))
+                            if (messages.length>0 && !(newMessages[0].getValue()).equals(messages[0].getValue()))
                             {
                                 // display the messages
                                 for (int i = newMessages.length - 1; i >= 0; i--)
@@ -189,6 +189,11 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                                 messages = newMessages;
                                 // auto scroll to the latest message
                                 scrollView.scrollTo(0, scrollView.getBottom());
+                            }
+                            else
+                            {
+                                // set the pointer to the new messages for future reference
+                                messages = newMessages;
                             }
                         }
                     }

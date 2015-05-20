@@ -28,10 +28,8 @@ public class SettingsMenuActivity extends BaseAppActivity
     }
 
     private void initMapType () {
-        if(SettingsHandler.gI().isNormalMap())
-            if(mapTypes.getSelectedItem().toString().equals("standard")) {
-                mapTypes.setSelection(0);
-            }
+        if(SettingsHandler.gI(getApplicationContext()).isNormalMap())
+            mapTypes.setSelection(0);
         else
             mapTypes.setSelection(1);
 
@@ -39,9 +37,9 @@ public class SettingsMenuActivity extends BaseAppActivity
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if (mapTypes.getSelectedItem().toString().equals("Standard"))
-                    SettingsHandler.gI().setNormalMap(true);
+                    SettingsHandler.gI(getApplicationContext()).setNormalMap(true);
                 else
-                    SettingsHandler.gI().setNormalMap(false);
+                    SettingsHandler.gI(getApplicationContext()).setNormalMap(false);
             }
 
             @Override
