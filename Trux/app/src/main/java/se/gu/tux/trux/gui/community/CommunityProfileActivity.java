@@ -1,7 +1,9 @@
 package se.gu.tux.trux.gui.community;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
@@ -207,23 +210,45 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null)
         {
             // get the uri address for the picture
-            Uri uri = data.getData();
+            //Uri uri = data.getData();
 
-            String path = uri.getPath();
+            //String path = uri.getPath();
 
             // get the bitmap data
             //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(path));
-            bitmap = BitmapFactory.decodeFile(path);
 
-            // set profile picture in profile page
-            //imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(),
-                    //bitmap.getGenerationId(), 4096, 4096));
 
-            imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 4096, 4096, false));
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+
+            // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+            Uri tempUri = getImageUri(getApplicationContext(), photo);
+
+            bitmap = BitmapFactory.decodeFile(getRealPathFromURI(tempUri));
+
+            imageView.setImageBitmap(decodeSampledBitmapFromResource(getResources(),
+                    bitmap.getGenerationId(), 4096, 4096));
+
         }
 
     } // end onActivityResult()
 
+
+
+    public Uri getImageUri(Context inContext, Bitmap inImage)
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri)
+    {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
+    }
 
 
     public static int calculateInSampleSize(
