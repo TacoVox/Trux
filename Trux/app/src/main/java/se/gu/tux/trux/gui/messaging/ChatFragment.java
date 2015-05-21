@@ -1,8 +1,6 @@
 package se.gu.tux.trux.gui.messaging;
 
-import android.app.ActionBar;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -48,6 +46,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
     private volatile boolean isRunning;
 
+    private long userId;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +57,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.fragment_chat_head, container, false);
 
         isRunning = true;
+
+        userId = DataHandler.getInstance().getUser().getUserId();
 
         // get the components
         TextView tv = (TextView) view.findViewById(R.id.chat_head_username_text_view);
@@ -159,10 +161,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                                 for (int i = newMessages.length - 1; i >= 0; i--)
                                 {
                                     // the text view to hold the message
-                                    final TextView textView = new TextView(act.getApplicationContext());
+                                    final TextView textView = getFriendTextView();
 
-                                    textView.setText(newMessages[i].getValue() + "\n");
-                                    textView.setTextColor(Color.BLACK);
+                                    textView.setText((String) newMessages[i].getValue());
 
                                     // add this text view to the message container
                                     act.runOnUiThread(new Runnable()
@@ -276,14 +277,26 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         // display the messages
         for (int i = messages.length-1; i >= 0; i--)
         {
-            // the text view to hold the message
-            final TextView textView = new TextView(act.getApplicationContext());
+            if (messages[i].getSenderId() == userId)
+            {
+                // the text view to hold the message
+                final TextView textView = getUserTextView();
 
-            textView.setText(messages[i].getValue() + "\n");
-            textView.setTextColor(Color.parseColor("#E0E0E0"));
+                textView.setText((String) messages[i].getValue());
 
-            // add this text view to the message container
-            msgContainer.addView(textView);
+                // add this text view to the message container
+                msgContainer.addView(textView);
+            }
+            else
+            {
+                // the text view to hold the message
+                final TextView textView = getFriendTextView();
+
+                textView.setText((String) messages[i].getValue());
+
+                // add this text view to the message container
+                msgContainer.addView(textView);
+            }
         }
 
     } // end fetchLatestMessages()
@@ -298,22 +311,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         // get the message
         String message = userInput.getText().toString();
 
-        // create the text view to hold the message
-        final TextView textView = new TextView(act.getApplicationContext());
-        textView.setText(message + "\n");
-
-        //textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.RIGHT;
-
-        textView.setLayoutParams(params);
-        textView.setGravity(Gravity.CENTER_VERTICAL);
-
-        textView.setTextColor(Color.parseColor("#E0E0E0"));
-        textView.setPadding(20, 20, 20, 20);
-        textView.setBackgroundColor(Color.parseColor("#61728d"));
-        textView.setBackgroundColor(Color.parseColor("#ff404e68"));
+        final TextView textView = getUserTextView();
+        textView.setText(message);
 
         // add to container and display
         msgContainer.addView(textView);
@@ -341,6 +340,50 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         userInput.setText("");
 
     } // end sendMessage()
+
+
+
+    private TextView getUserTextView()
+    {
+        // create the text view to hold the message
+        TextView textView = new TextView(act.getApplicationContext());
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.END;
+        params.bottomMargin = 5;
+
+        textView.setLayoutParams(params);
+        textView.setGravity(Gravity.CENTER);
+
+        textView.setTextColor(Color.parseColor("#E0E0E0"));
+        textView.setPadding(20, 20, 20, 20);
+        textView.setBackgroundColor(Color.parseColor("#61728d"));
+
+        return textView;
+    }
+
+
+
+    private TextView getFriendTextView()
+    {
+        // create the text view to hold the message
+        TextView textView = new TextView(act.getApplicationContext());
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.START;
+        params.bottomMargin = 5;
+
+        textView.setLayoutParams(params);
+        textView.setGravity(Gravity.CENTER);
+
+        textView.setTextColor(Color.parseColor("#E0E0E0"));
+        textView.setPadding(20, 20, 20, 20);
+        textView.setBackgroundColor(Color.parseColor("#ff404e68"));
+
+        return textView;
+    }
 
 
 

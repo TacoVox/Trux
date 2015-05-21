@@ -32,6 +32,8 @@ import se.gu.tux.trux.technical_services.ServerConnector;
  */
 public class DataHandler
 {
+    public enum SafetyStatus {IDLE, SLOW_MOVING, MOVING, FAST_MOVING};
+
     private static DataHandler dataHandler;
 
     private RealTimeDataHandler realTimeDataHandler;
@@ -448,8 +450,16 @@ public class DataHandler
         return sc;
     }
 
-
-    public int getDistractionLevel()    { return AGADataParser.getInstance().getDistLevel(); }
+    public SafetyStatus getSafetyStatus() {
+        if(AGADataParser.getInstance().getDistLevel() >= 3)
+            return SafetyStatus.FAST_MOVING;
+        else if(AGADataParser.getInstance().getDistLevel() == 2)
+            return SafetyStatus.MOVING;
+        else if(AGADataParser.getInstance().getDistLevel() == 1)
+            return SafetyStatus.SLOW_MOVING;
+        else
+            return SafetyStatus.IDLE;
+    }
 
 
 } // end class DataHandler

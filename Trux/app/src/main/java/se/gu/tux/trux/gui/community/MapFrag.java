@@ -64,6 +64,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     private boolean mapLoaded = false;
 
 
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -124,9 +125,9 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
             if (!isDriving()) {
                 String markerID = marker.getId();
                 MapCommunityWindow fragment = new MapCommunityWindow();
+                Friend friend = friendMarker.get(markerID);
                 Bundle sendToInfoFragment = new Bundle();
-                sendToInfoFragment.putSerializable("friendHashmap", friendMarker);
-                sendToInfoFragment.putString("markerID", markerID);
+                sendToInfoFragment.putSerializable("friend", friend);
                 fragment.setArguments(sendToInfoFragment);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -259,16 +260,16 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(SettingsHandler.getInstance().isNormalMap()) {
+                    if (SettingsHandler.getInstance().isNormalMap()) {
                         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                         System.out.println("The mapType is Normal in the UIThread ");
-                    }
-                    else {
+                    } else {
                         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                         System.out.println("The mapType is hybrid in the UIThread ");
                     }
                 }
             });
+
         }
     }
 
