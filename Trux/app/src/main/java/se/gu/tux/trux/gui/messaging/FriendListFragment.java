@@ -10,8 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.google.android.gms.games.multiplayer.realtime.RealTimeMultiplayer;
-
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -173,9 +171,12 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
         // set the data fetched into the adapter
         messageListAdapter.setAdapterData(friendsList, messagesList);
 
-        getActivity().runOnUiThread(new Runnable() {
+        // hide the loading panel
+        getActivity().runOnUiThread(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 loadingPanel.setVisibility(View.GONE);
             }
         });
@@ -216,6 +217,7 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
                 return null;
             }
         }
+
     } // end inner class
 
 
