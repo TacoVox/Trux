@@ -135,24 +135,24 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     private GoogleMap.OnMarkerClickListener markerClickListener = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            if (!isDriving()) {
-                String markerID = marker.getId();
-                MapCommunityWindow fragment = new MapCommunityWindow();
-                Friend friend = friendMarker.get(markerID);
-                Bundle sendToInfoFragment = new Bundle();
-                sendToInfoFragment.putSerializable("friend", friend);
-                fragment.setArguments(sendToInfoFragment);
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                getActivity().getSupportFragmentManager().popBackStackImmediate("MENU",
-                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                fragmentTransaction.addToBackStack("MENU");
-                fragmentTransaction.replace(R.id.menuContainer, fragment);
-                System.out.println("Count on the popStack in mapFrag: " + getFragmentManager().getBackStackEntryCount());
-                fragmentTransaction.commit();
-            }
-       return false;
+
+            String markerID = marker.getId();
+            MapCommunityWindow fragment = new MapCommunityWindow();
+            Friend friend = friendMarker.get(markerID);
+            Bundle sendToInfoFragment = new Bundle();
+            sendToInfoFragment.putSerializable("friend", friend);
+            fragment.setArguments(sendToInfoFragment);
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            getActivity().getSupportFragmentManager().popBackStackImmediate("MENU",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentTransaction.addToBackStack("MENU");
+            fragmentTransaction.replace(R.id.menuContainer, fragment);
+            System.out.println("Count on the popStack in mapFrag: " + getFragmentManager().getBackStackEntryCount());
+            fragmentTransaction.commit();
+
+            return false;
         }
     };
 
