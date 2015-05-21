@@ -70,7 +70,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
     private final int PLACE_PICKER_REQUEST = 1;
 
-    String[] spinnerTitles = { "Can't chat right now", "Call you later", "Busy driving", "Meet at..."};
+    String[] spinnerTitles = { "Can't chat right now.", "Call you later.",
+            "Okay", "Maybe", "No, thanks pal!", "Busy driving!", "Meet at..." };
 
     private String placeMessage;
     private int spinnerPosition;
@@ -491,7 +492,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
     {
-        if (i == 3)
+        if (i == spinnerTitles.length-1)
         {
             isPlace = true;
 
