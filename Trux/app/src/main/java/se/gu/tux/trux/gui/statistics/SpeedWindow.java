@@ -81,7 +81,7 @@ public class SpeedWindow extends Fragment {
                 setValues(DataHandler.getInstance().getDetailedStats(s));
                 hideLoading();
             }
-        }.execute();
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void popSpeedGraph(View view) {

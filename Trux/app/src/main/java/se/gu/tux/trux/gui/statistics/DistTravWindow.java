@@ -119,7 +119,7 @@ public class DistTravWindow extends Fragment {
                 setValues(DataHandler.getInstance().getDetailedStats(d));
                 hideLoading();
             }
-        }.execute();
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void hideLoading() {

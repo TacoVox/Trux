@@ -209,16 +209,33 @@ public class SocialHandler {
     }
 
 
+    /**
+     * Finds out if the friendCache matches the friends list - we check if every entry in the users
+     * friend id array matches an entry in the friendCache, AND that the cache doesn't have a
+     * different amount of entries than the friend list. This way we are sure to update even if
+     * someone removed this user as a friend.
+     * @return
+     */
     private boolean allFriendsInCache() {
-        if (DataHandler.gI().getUser().getFriends() == null) {
-            return true;
-        }
-        for (Long friendId : DataHandler.gI().getUser().getFriends()) {
-            if (!friendCache.containsKey(friendId)) {
-                return false;
+        long[] friendIds = DataHandler.gI().getUser().getFriends();
+        boolean friendsMatchCache = false;
+
+        if (friendIds == null) {
+            // Nothing in friends list means cache matches it
+            friendsMatchCache = true;
+
+        } else if (friendCache.size() == friendIds.length){
+
+            // If the size is the same, try to assume cache matches friend list, which is does
+            // UNLESS someone is missing in cache
+            friendsMatchCache = true;
+            for (Long friendId : DataHandler.gI().getUser().getFriends()) {
+                if (!friendCache.containsKey(friendId)) {
+                    friendsMatchCache = false;
+                }
             }
         }
-        return true;
+        return friendsMatchCache;
     }
 
     /**
@@ -350,5 +367,11 @@ public class SocialHandler {
 
     public void setFriendRequestsChanged(boolean friendRequestsChanged) {
         this.friendRequestsChanged = friendRequestsChanged;
+    }
+
+    public void clearCache() {
+        friendCache.clear();
+        pictureCache.clear();
+        friendRequestCache.clear();
     }
 }
