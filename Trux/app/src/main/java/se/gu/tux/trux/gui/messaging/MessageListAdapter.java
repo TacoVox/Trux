@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.messaging;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ public class MessageListAdapter extends BaseAdapter
     private ArrayList<Friend> friends;
     private ArrayList<Message> messages;
 
-    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
+    private DateFormat df;
 
     // to inflate each layout
     private static LayoutInflater layoutInflater;
@@ -47,10 +48,12 @@ public class MessageListAdapter extends BaseAdapter
      *
      * @param activity  The inflater.
      */
+    @SuppressLint("SimpleDateFormat")
     public MessageListAdapter(Activity activity)
     {
         this.activity = activity;
         layoutInflater = (LayoutInflater) activity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        df = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
     }
 
 
