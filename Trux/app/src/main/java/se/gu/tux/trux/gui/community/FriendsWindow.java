@@ -44,7 +44,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     private enum FetchCall {SEARCH, FRIENDLIST};
     private FetchCall lastFetchCall = FetchCall.FRIENDLIST;
     private String lastNeedle;
-    private boolean isClicked = false;
+    public boolean isClicked = false;
+    private boolean friendIsClicked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -241,7 +242,18 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         return list;
     }
 
-
+    public void onStop(){
+        super.onStop();
+        if(friendIsClicked){
+            isClicked = true;
+        }
+    }
+    public void onPause(){
+        super.onPause();
+        if(friendIsClicked){
+            isClicked = true;
+        }
+    }
 
     class FriendAdapter extends BaseAdapter implements FriendActionListener {
 
@@ -426,6 +438,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             TextView pending = (TextView) view.findViewById(R.id.pending);
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             final Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
+            final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
+            final Button profileButton = (Button) view.findViewById(R.id.profileButton);
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -438,7 +452,18 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     }
                 }
             });
-            final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
+            friendRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    friendRequestButton.setEnabled(false);
+                    try {
+                        DataHandler.gI().getSocialHandler().sendFriendRequest(thisAdapter,
+                                friends.get(pos).getFriendId());
+                    } catch (NotLoggedInException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             sendMessageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -449,7 +474,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     startActivity(intent);
                 }
             });
-            final Button profileButton = (Button) view.findViewById(R.id.profileButton);
             profileButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -471,12 +495,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             newName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    isClicked = true;
-                    Fragment fragment = new MapFrag();
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean("isClicked", isClicked);
-                    bundle.putSerializable("clickedFriend", friends.get(pos).getFriendId());
-                    fragment.setArguments(bundle);
+                    Intent data = new Intent();
+                    data.putExtra("FriendID", friends.get(pos).getFriendId());
+                    setResult(RESULT_OK, data);
                     finish();
                 }
             });

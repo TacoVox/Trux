@@ -4,18 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/messages"
-        android:textSize="20sp"
-        android:textColor="#E0E0E0"
-        android:gravity="center"
-        android:background="#61728d"
-        android:textStyle="bold"
-        android:layout_marginTop="1dp"
-        android:layout_marginBottom="1dp"/>
-
     <FrameLayout
         android:id="@+id/message_frame_container"
         android:layout_width="match_parent"
