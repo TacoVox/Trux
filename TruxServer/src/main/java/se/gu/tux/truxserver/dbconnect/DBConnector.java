@@ -65,6 +65,7 @@ public class DBConnector
         catch (ClassNotFoundException | InstantiationException |
                 IllegalAccessException e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.toString());
 	}
     }
@@ -83,13 +84,15 @@ public class DBConnector
             String password = Config.gI().getDbpass();
 
 	    connection = DriverManager.getConnection("jdbc:mysql://" + addr +
-                    "/" + dbname + "?" + "user=" + user + "&password=" + password);
+                    "/" + dbname + "?" + "user=" + user + "&password=" + password + "&autoReconnect=true");
+
             dbmd = connection.getMetaData();
             
 	    System.out.println("Connected to " + dbmd.getURL() + "...");
 	}
         catch (SQLException ex)
 	{
+            ex.printStackTrace();
             Logger.gI().addError(ex.toString());
 	}
     }
@@ -115,6 +118,7 @@ public class DBConnector
             return connection.isValid(1);
         }
         catch (SQLException e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getMessage());
         }
         
@@ -134,6 +138,7 @@ public class DBConnector
 	}
         catch (SQLException ex)
 	{
+            ex.printStackTrace();
             Logger.gI().addError(ex.toString());
 	}
     }
@@ -229,6 +234,8 @@ public class DBConnector
         //Logger.gI().addDebug(finalpst.toString());
         
         pst.executeUpdate();
+        
+        //return pst.getGeneratedKeys();
     }
     
     protected void execDelete(Data d, PreparedStatement pst) throws SQLException

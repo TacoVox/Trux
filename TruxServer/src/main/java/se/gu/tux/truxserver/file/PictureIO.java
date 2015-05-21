@@ -16,6 +16,9 @@
 
 package se.gu.tux.truxserver.file;
 
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -105,7 +108,7 @@ public class PictureIO {
         pic.mkdirs();
         
         try {
-            ImageIO.write(img, "png", pic);
+            ImageIO.write(resizeImage(img), "png", pic);
         } catch(IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());
         }
@@ -152,8 +155,42 @@ public class PictureIO {
         return null;
     }	
     
+    private static BufferedImage resizeImage(BufferedImage originalImage){
+        int x = originalImage.getWidth();
+        int y = originalImage.getHeight();
+        
+        int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+        
+        if(x >= y) {
+            double factor = (double)500 / x;
+            x = 500;
+            double yside = y * factor;
+            y = new Double(yside).intValue();
+        } else {
+            double factor = (double)500 / y;
+            y = 500;
+            double xside = x * factor;
+            x = new Double(xside).intValue();
+        }
+ 
+	BufferedImage resizedImage = new BufferedImage(x, y, type);
+	Graphics2D g = resizedImage.createGraphics();
+	g.drawImage(originalImage, 0, 0, x, y, null);
+	g.dispose();	
+	g.setComposite(AlphaComposite.Src);
+ 
+	g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+	RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	g.setRenderingHint(RenderingHints.KEY_RENDERING,
+	RenderingHints.VALUE_RENDER_QUALITY);
+	g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+	RenderingHints.VALUE_ANTIALIAS_ON);
+ 
+	return resizedImage;
+    }	
+    
     public static void main(String args[]) {
-        BufferedImage a = PictureIO.gI().getFromFS("C:\\Users\\Jonas\\Desktop\\Screen_shot_2010-01-30_at_2.17.06_AM.png");
+        BufferedImage a = PictureIO.gI().getFromFS("/Users/jonas/Desktop/cc.jpg");
         
         byte[] b = PictureIO.gI().encodePicture(a);
         

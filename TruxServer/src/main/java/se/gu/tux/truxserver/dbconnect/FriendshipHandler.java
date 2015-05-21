@@ -17,7 +17,11 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -48,55 +52,68 @@ public class FriendshipHandler {
     private FriendshipHandler() {}
     
     public ProtocolMessage sendFriendRequest(ProtocolMessage pm) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
         {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO friendrequest (userid, friendid, timestamp) "
-                            + "VALUES(?, ?, ?)");
+                    "REPLACE INTO friendrequest (userid, friendid, timestamp) "
+                            + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
             
             pst.setLong(1, pm.getUserId());
             pst.setLong(2, Long.parseLong(pm.getMessage()));
             pst.setLong(3, System.currentTimeMillis());
 	
-            dbc.execInsert(pm, pst);
+            dbc.execReplace(pm, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-        }
-        catch (Exception e)
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
         {
+            e.printStackTrace();
+            
             Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
         }
         finally {
-            ConnectionPool.gI().releaseDBC(dbc);
+            if(dbc != null)
+                ConnectionPool.gI().releaseDBC(dbc);
         }
     }
     
-    public ProtocolMessage unfriendUser(ProtocolMessage pm) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+    public ProtocolMessage unfriendUser(ProtocolMessage pm) {  
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "DELETE FROM isfriendwith " +
-                    "WHERE userid = ? AND friendid = ? OR userid = ? AND friendid = ?";
+                    "WHERE (userid = ? AND friendid = ?) OR (userid = ? AND friendid = ?)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
 	    
             pst.setLong(1, pm.getUserId());
-            pst.setLong(2, Long.parseLong(pm.getMessage()));
-            pst.setLong(3, pm.getUserId());
-            pst.setLong(4, Long.parseLong(pm.getMessage()));
+            pst.setLong(2, Long.parseLong(pm.getMessage()));      
+            pst.setLong(3, Long.parseLong(pm.getMessage()));
+            pst.setLong(4, pm.getUserId());
 	    
             dbc.execDelete(pm, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
+            
 	    Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
@@ -107,10 +124,12 @@ public class FriendshipHandler {
     }
     
     public boolean hasNewRequests(Data d) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "SELECT * FROM friendrequest WHERE friendid = ? AND seen = FALSE";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
@@ -125,9 +144,13 @@ public class FriendshipHandler {
             }
             
             return false;
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return false;
+        } catch (Exception e)
 	{
+            e.printStackTrace();
+            
 	    Logger.gI().addError(e.getLocalizedMessage());
             
             return false;
@@ -137,23 +160,56 @@ public class FriendshipHandler {
         }
     }
     
-    public ProtocolMessage sawRequest(Data d) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+    public ProtocolMessage acceptFriend(ProtocolMessage pm) {
+        DBConnector dbc = null;
         
-        Long ts = System.currentTimeMillis();
         try
         {   
+            dbc = ConnectionPool.gI().getDBC();
+            
+            //Way one
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "UPDATE friendrequest SET seen = ? WHERE ");
+                    "REPLACE INTO isfriendwith (userid, friendid, timestamp) "
+                            + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
+            
+            pst.setLong(1, pm.getUserId());
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, System.currentTimeMillis());
+	
+            dbc.execReplace(pm, pst);
+            
+            //Way two
+            pst = dbc.getConnection().prepareStatement(
+                    "REPLACE INTO isfriendwith (userid, friendid, timestamp) "
+                            + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
+            
+            pst.setLong(1, Long.parseLong(pm.getMessage()));
+            pst.setLong(2, pm.getUserId());
+            pst.setLong(3, System.currentTimeMillis());
+	
+            dbc.execReplace(pm, pst);
+            
+            //Update friendrequest table
+            pst = dbc.getConnection().prepareStatement(
+                    "UPDATE friendrequest SET affirm = ?, seen = ?, reviewed = ? "
+                            + "WHERE userid = ? AND friendid = ?");
             
             pst.setBoolean(1, true);
+            pst.setBoolean(2, true);
+            pst.setBoolean(3, true);
+            pst.setLong(4, Long.parseLong(pm.getMessage()));
+            pst.setLong(5, pm.getUserId());
 	
-            dbc.execUpdate(d, pst);
+            dbc.execUpdate(pm, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-        }
-        catch (Exception e)
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
         {
+            e.printStackTrace();
+            
             Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
@@ -163,41 +219,200 @@ public class FriendshipHandler {
         }
     }
     
-    public ProtocolMessage acceptFriend(ProtocolMessage pm) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+    public Data declineRequest(ProtocolMessage pm) {
+        DBConnector dbc = null;
         
-        Long ts = System.currentTimeMillis();
         try
         {   
-            //Way one
+            dbc = ConnectionPool.gI().getDBC();
+            
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO friendrequest (userid, friendid, timestamp) "
-                            + "VALUES(?, ?, ?)");
+                "UPDATE friendrequest SET affirm = ?, seen = ?, reviewed = ? "
+                            + "WHERE userid = ? AND friendid = ?");
             
-            pst.setLong(1, pm.getUserId());
-            pst.setLong(2, Long.parseLong(pm.getMessage()));
-            pst.setLong(3, ts);
+            pst.setBoolean(1, false);
+            pst.setBoolean(2, true);
+            pst.setBoolean(3, true);
+            pst.setLong(4, Long.parseLong(pm.getMessage()));
+            pst.setLong(5, pm.getUserId());
 	
-            dbc.execInsert(pm, pst);
-            
-            //Way two
-            pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO friendrequest (userid, friendid, timestamp) "
-                            + "VALUES(?, ?, ?)");
-            
-            pst.setLong(1, Long.parseLong(pm.getMessage()));
-            pst.setLong(2, pm.getUserId());
-            pst.setLong(3, ts);
-	
-            dbc.execInsert(pm, pst);
+            dbc.execUpdate(pm, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-        }
-        catch (Exception e)
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
         {
+            e.printStackTrace();
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Can't mark the request as not accepted.");
+    }
+    
+    public Data getFriendRequests (ProtocolMessage pm) {
+        List friendreqs = new ArrayList<Friend>();
+        
+        DBConnector dbc = null;
+        
+        try
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "SELECT userid, timestamp FROM friendrequest WHERE friendid = ? "
+                            + "AND reviewed = ? AND completed = ?");
+            
+            pst.setLong(1, pm.getUserId());
+            pst.setBoolean(2, false);
+            pst.setBoolean(3, false);
+	
+            ResultSet rs = dbc.execSelect(pm, pst);
+            
+            while(rs.next()) {
+                Friend f = new Friend(rs.getLong("userid"));
+                f.setTimeStamp(rs.getLong("timestamp"));
+                
+                Data d = UserHandler.gI().getFriend(f);
+                
+                if(d instanceof Friend)
+                    friendreqs.add((Friend) d);
+                else
+                    return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Cannot fetch info about a user.");
+            }
+            
+            return new ArrayResponse(friendreqs.toArray());
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            
             Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
+    
+    public boolean isPending(ProtocolMessage pm) {
+        DBConnector dbc = null;
+        
+        try
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "SELECT * FROM friendrequest WHERE userid = ? AND friendid = ? "
+                            + "AND reviewed = ? AND completed = ?");
+            
+            pst.setLong(1, pm.getUserId());
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setBoolean(3, false);
+            pst.setBoolean(4, false);
+	
+            ResultSet rs = dbc.execSelect(pm, pst);
+            
+            while(rs.next()) {
+                return true;
+            }
+            
+            return false;
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return false;
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            
+            Logger.gI().addError(e.getLocalizedMessage());
+            
+            return false;
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
+    
+    public ProtocolMessage markAsSeen(ProtocolMessage pm) {
+        DBConnector dbc = null;
+        
+        try
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "UPDATE friendrequest SET seen = ? WHERE userid = ? AND friendid = ?");
+            
+            pst.setBoolean(1, true);
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, pm.getUserId());
+	
+            dbc.execUpdate(pm, pst);
+            
+            return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            Logger.gI().addError(e.getLocalizedMessage());
+        }
+        finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+        return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Can't mark the friendrequest as seen.");
+    }
+    
+    public boolean isReviewed(Data d) {
+        DBConnector dbc = null;
+        
+        try
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    "SELECT * FROM friendrequest WHERE userid = ? AND reviewed = ? AND completed = ?");
+            
+            pst.setLong(1, d.getUserId());
+            pst.setBoolean(2, true);
+            pst.setBoolean(3, false);
+	
+            ResultSet rs = dbc.execSelect(d, pst);
+            
+            if(rs.next()) {
+                pst = dbc.getConnection().prepareStatement(
+                    "UPDATE friendrequest SET completed = ? WHERE userid = ? "
+                            + "AND reviewed = ? AND completed = ?");
+            
+                pst.setBoolean(1, true);
+                pst.setLong(2, d.getUserId());
+                pst.setBoolean(3, true);
+                pst.setBoolean(4, false);
+	
+                dbc.execUpdate(d, pst);
+                
+                return true;
+            } else {
+                return false;
+            }
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return false;
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            
+            Logger.gI().addError(e.getLocalizedMessage());
+            
+            return false;
         }
         finally {
             ConnectionPool.gI().releaseDBC(dbc);

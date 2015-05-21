@@ -13,6 +13,7 @@ import java.net.SocketTimeoutException;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Heartbeat;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.ProtocolMessage.Type;
 import se.gu.tux.truxserver.dataswitch.DataSwitcher;
@@ -72,9 +73,9 @@ public class ServerRunnable implements Runnable {
                         // loop running at regular intervals
                         d = (Data) in.readObject();
                         idleTime = 0;
-                        if(!(d instanceof MetricData) && !(d instanceof Heartbeat)) {
-                            Logger.gI().addError(d.getClass().getSimpleName());
-                        }
+//                        if(!(d instanceof MetricData) && !(d instanceof Heartbeat) && !(d instanceof Picture)) {
+//                            Logger.gI().addError(d.getClass().getSimpleName());
+//                        }
                     } catch (ClassCastException e) {
                         Logger.gI().addError(connectionId + ": Classcast:" + e.getLocalizedMessage());
                     } catch (SocketTimeoutException e) {
