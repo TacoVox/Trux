@@ -351,6 +351,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.END;
+        params.bottomMargin = 5;
 
         textView.setLayoutParams(params);
         textView.setGravity(Gravity.CENTER);
@@ -372,6 +373,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.START;
+        params.bottomMargin = 5;
 
         textView.setLayoutParams(params);
         textView.setGravity(Gravity.CENTER);
