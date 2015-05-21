@@ -86,7 +86,8 @@ public class MessageHandler {
                 
                 ResultSet keys = dbc.execInsert(m, pst);
                 
-                conversationid = keys.getLong(1);
+                if(keys.next())
+                    conversationid = keys.getLong(1);
             }
             
             pst = dbc.getConnection().prepareStatement(
