@@ -428,16 +428,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             final Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
             final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
-            sendMessageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
-                    intent.setAction("OPEN_CHAT");
-                    intent.putExtra("FRIEND_ID", friends.get(pos).getFriendId());
-                    intent.putExtra("FRIEND_USERNAME", friends.get(pos).getUsername());
-                    startActivity(intent);
-                }
-            });
             final Button profileButton = (Button) view.findViewById(R.id.profileButton);
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -449,6 +439,33 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     } catch (NotLoggedInException e) {
                         e.printStackTrace();
                     }
+                }
+            });
+            sendMessageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
+                    intent.setAction("OPEN_CHAT");
+                    intent.putExtra("FRIEND_ID", friends.get(pos).getFriendId());
+                    intent.putExtra("FRIEND_USERNAME", friends.get(pos).getUsername());
+                    startActivity(intent);
+                }
+            });
+            profileButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Create fragment and pass the current friend object
+                    Fragment infoFragment = new InfoFragment();
+                    Bundle sendToInfoFragment = new Bundle();
+                    sendToInfoFragment.putSerializable("friend", friends.get(pos));
+                    infoFragment.setArguments(sendToInfoFragment);
+
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                    fragmentTransaction.addToBackStack("PROFILE");
+                    fragmentTransaction.replace(R.id.infoContainer, infoFragment);
+                    fragmentTransaction.commit();
                 }
             });
 /*
