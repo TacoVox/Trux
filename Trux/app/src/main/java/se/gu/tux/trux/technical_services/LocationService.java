@@ -76,7 +76,7 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
     public void onLocationChanged(Location location) {
         currentLocation = location;
         locationTimeStamp = System.currentTimeMillis();
-        System.out.println("New location: " + location.getLongitude());
+        //System.out.println("New location: " + location.getLongitude());
     }
 
     public void setLatitude(double latitude){
@@ -113,10 +113,10 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
                 && Math.abs(currentLocation.getLatitude()) > delta) {
             truxLocation = new se.gu.tux.trux.datastructure.Location(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
-            System.out.println("Returning a Location with values.");
+            //System.out.println("Returning a Location with values.");
         } else {
             truxLocation = new se.gu.tux.trux.datastructure.Location();
-            System.out.println("Returning a Location with no values.");
+            //System.out.println("Returning a Location with no values.");
         }
         return truxLocation;
     }

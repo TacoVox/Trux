@@ -15,7 +15,9 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.DetailedStatsBundle;
+import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.Speed;
 import tux.gu.se.trux.R;
 
 
@@ -61,41 +63,41 @@ public class FuelWindow extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         myFragmentView = getView();
+    }
 
-        AsyncTask myTask = new AsyncTask<Void, Void, Boolean>()
-        {
-            Fuel f = new Fuel(0);
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        new Thread(new Runnable() {
             @Override
-            protected Boolean doInBackground(Void... voids)
-            {
-                while (!(DataHandler.getInstance().detailedStatsReady(f)))
-                {
+            public void run() {
+                final Fuel f = new Fuel(0);
+                boolean cancelled = false;
+                while (!cancelled && !(DataHandler.getInstance().detailedStatsReady(f))) {
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(200);
                         // Stop waiting if fragment was cancelled
                         if (!isVisible()) {
-                            cancel(true);
+                            cancelled = true;
                         }
                     } catch (InterruptedException e) {
                         System.out.println("Wait interrupted.");
                     }
                 }
-                return null;
-            }
 
-            @Override
-            public void onPreExecute() {
-                super.onPreExecute();
+                Activity a = getActivity();
+                if (!cancelled && a != null) {
+                    a.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setValues(DataHandler.getInstance().getDetailedStats(f));
+                            hideLoading();
+                        }
+                    });
+                }
             }
-
-            @Override
-            protected void onPostExecute(Boolean b) {
-                super.onPostExecute(b);
-                setValues(DataHandler.getInstance().getDetailedStats(f));
-                hideLoading();
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }).start();
     }
 
 
