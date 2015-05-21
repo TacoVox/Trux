@@ -43,6 +43,7 @@ import se.gu.tux.trux.application.SettingsHandler;
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.gui.main_home.HomeActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
@@ -64,7 +65,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     private boolean mapLoaded = false;
 
 
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -77,6 +77,9 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         //Setting a Mapfragment so that it calls to the getMapAsync which is connected to onMapReady
         f = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map);
         f.getMapAsync(this);
+
+
+
         return view;
 
     }
@@ -195,6 +198,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     @Override
     public void onFriendsFetched(final ArrayList<Friend> friends) {
         this.friends = friends;
+        final long selectedFriend = ((HomeActivity) getActivity()).getSelectedFriend();
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -235,8 +239,14 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                             friendMarker.put(mID, currentFriend);
                             System.out.println("---Picture is now a marker---");
                             hasMarker = true;
+                            if(selectedFriend == currentFriend.getFriendId()){
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(loc[0], loc[1])));
+
+                            }
+
                         }
                     });
+
                 }
             }
         }
@@ -254,7 +264,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
 
     class PopFriends extends TimerTask{
         public void run(){
-            System.out.println("TimerTask starts ");
             DataHandler.gI().getSocialHandler().fetchFriends(thisMapFrag,
                     SocialHandler.FriendsUpdateMode.ONLINE);
             getActivity().runOnUiThread(new Runnable() {
@@ -269,7 +278,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                     }
                 }
             });
-
         }
     }
 
