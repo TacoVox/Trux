@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui.community;
 
 import android.content.Intent;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -59,6 +60,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         friendsList.setEmptyView(findViewById(R.id.noFriends));
         searchField = (EditText) findViewById(R.id.searchField);
         searchButton = (Button) findViewById(R.id.searchButton);
+
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -88,12 +90,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
     private void showLoadingBar() {
         findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
-        noFriends.setVisibility(View.GONE);
+        noFriends.setText(R.string.loading);
     }
 
     private void hideLoadingBar() {
         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-        noFriends.setVisibility(View.VISIBLE);
+        //noFriends.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -136,7 +138,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     private void showSearchResults(final String needle) {
         showLoadingBar();
         DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.ALL);
-        noFriends.setText("No people found.");
+        noFriends.setText(R.string.loading);
         lastNeedle = needle;
         lastFetchCall = FetchCall.SEARCH;
     }

@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.messaging;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -173,12 +174,15 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
         // set the data fetched into the adapter
         messageListAdapter.setAdapterData(friendsList, messagesList);
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                loadingPanel.setVisibility(View.GONE);
-            }
-        });
+        Activity a = getActivity();
+        if (a!= null) {
+            a.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadingPanel.setVisibility(View.GONE);
+                }
+            });
+        }
 
     } // end friendsFetched()
 

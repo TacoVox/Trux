@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 
 import java.util.HashMap;
 
+import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.gui.messaging.FriendListFragment;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
@@ -58,18 +59,14 @@ public class MapCommunityWindow extends Fragment {
             public void onClick(View v) {
                 //removeMenu();
                 Bundle b = getArguments();
-
-                HashMap<String, Friend> friendMarker = (HashMap) b.getSerializable("friendHashmap");
-
-                String markerID = b.getString("markerID");
-
-                Friend friend = friendMarker.get(markerID);
-
-                Intent intent = new Intent(getActivity().getApplicationContext(), MessageActivity.class);
-                intent.setAction("OPEN_CHAT");
-                intent.putExtra("FRIEND_ID", friend.getFriendId());
-                intent.putExtra("FRIEND_USERNAME", friend.getUsername());
-                startActivity(intent);
+                Friend friend = (Friend) b.getSerializable("friend");
+                if (friend != null) {
+                    Intent intent = new Intent(getActivity().getApplicationContext(), MessageActivity.class);
+                    intent.setAction("OPEN_CHAT");
+                    intent.putExtra("FRIEND_ID", friend.getFriendId());
+                    intent.putExtra("FRIEND_USERNAME", friend.getUsername());
+                    startActivity(intent);
+                }
             }
         });
 
@@ -80,7 +77,10 @@ public class MapCommunityWindow extends Fragment {
             }
         });
 
-
+        System.out.println("Level: " + DataHandler.gI().getSafetyStatus());
+        if(isSimple()) {
+            infoButton.setVisibility(View.GONE);
+        }
 
         return view;
     }
@@ -119,5 +119,8 @@ public class MapCommunityWindow extends Fragment {
         fragmentTransaction.commit();
     }
 
+    private boolean isSimple() {
+        return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
+    }
 
 }
