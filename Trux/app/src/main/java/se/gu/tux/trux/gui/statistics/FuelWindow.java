@@ -95,7 +95,7 @@ public class FuelWindow extends Fragment {
                 setValues(DataHandler.getInstance().getDetailedStats(f));
                 hideLoading();
             }
-        }.execute();
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
 

@@ -86,7 +86,7 @@ public class OverallGraphWindow extends Fragment {
                         DataHandler.getInstance().getDetailedStats(f),
                         DataHandler.getInstance().getDetailedStats(d));
             }
-        }.execute();
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
 
