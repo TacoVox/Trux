@@ -1,9 +1,11 @@
 package se.gu.tux.trux.gui.community;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,19 +13,24 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.FriendActionListener;
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.gui.base.BaseAppActivity;
+import se.gu.tux.trux.gui.main_home.HomeActivity;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 
-public class InfoFragment extends Fragment {
+public class InfoFragment extends Fragment implements FriendActionListener {
 
-    TextView profileTitle;
-    ImageButton removeButton, messageButton;
-    ImageView profilePic;
-    Friend friend;
-
+    private TextView profileTitle;
+    private ImageButton removeButton, messageButton;
+    private ImageView profilePic;
+    private Friend friend;
+    private InfoFragment thisFragment = this;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,6 +72,20 @@ public class InfoFragment extends Fragment {
                     startActivity(intent);
                 }
             });
+
+            removeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    removeButton.setEnabled(false);
+                    messageButton.setEnabled(false);
+                    try {
+                        DataHandler.gI().getSocialHandler().sendFriendRemove(thisFragment,
+                                friend.getFriendId());
+                    } catch (NotLoggedInException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
 
@@ -80,6 +101,55 @@ public class InfoFragment extends Fragment {
         super.onResume();
     }
 
+    @Override
+    public void onFriendRequestAnswered(long friendId, boolean accepted) {
+
+    }
+
+    @Override
+    public void onFriendRequestSent(long friendId) {
+
+    }
+
+    /**
+     * Called from a background thread, so we must run some things on UI thread when showing
+     * updates here
+     * @param friendId
+     */
+    @Override
+    public void onFriendRemoveSent(long friendId) {
+        DataHandler.gI().getSocialHandler().setFriendRequestsChanged(true);
+        DataHandler.gI().getSocialHandler().setFriendsChanged(true);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                FragmentActivity a = getActivity();
+
+                // Show a toast
+                if (a instanceof BaseAppActivity) {
+                    ((BaseAppActivity) a).showToast("The friend was removed.");
+                }
+
+                // Force update of the friends list, if we're in that activity
+                if (a instanceof FriendsWindow) {
+                    ((FriendsWindow) a).refresh();
+
+                    // Go back
+                    a.getSupportFragmentManager().popBackStack();
+                } else if (a instanceof HomeActivity){
+                    // If not, we created this window from the map.
+                    // Then we need to clear the backstack from for example the short menu that
+                    // pops up before you choose to show the profile.
+                    // Let's pretent we did a back press
+                    a.onBackPressed();
+                }
+
+
+
+
+            }
+        });
+    }
 }
 
 

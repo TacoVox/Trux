@@ -34,6 +34,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
+    private static final int FRIENDS_BUTTON_WELCOME = R.id.fragment_welcome_friend_button;
     private static final int FRIENDS_BUTTON = R.id.fragment_main_friend_button;
     private static final int PROFILE_BUTTON = R.id.fragment_main_profile_button;
     private static final int MESSAGE_BUTTON = R.id.fragment_welcome_message_button;
@@ -99,7 +100,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
      */
     public void onFragmentViewClick(int id)
     {
-        if (id == FRIENDS_BUTTON)
+        if (id == FRIENDS_BUTTON || id == FRIENDS_BUTTON_WELCOME)
         {
             Intent intent = new Intent(this, FriendsWindow.class);
             startActivityForResult(intent, CLICKED_FRIEND);

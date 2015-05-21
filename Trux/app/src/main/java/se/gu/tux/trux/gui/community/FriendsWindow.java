@@ -70,7 +70,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
             @Override
             public void afterTextChanged(Editable editable) {
-                findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+                showLoadingBar();
                 if (searchField.getText().toString().equals("")) {
                     showFriends();
                 } else {
@@ -86,11 +86,20 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
     }
 
+    private void showLoadingBar() {
+        findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+        noFriends.setVisibility(View.GONE);
+    }
+
+    private void hideLoadingBar() {
+        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+        noFriends.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onClick(View view) {
         if (view == findViewById(R.id.searchButton)) {
             // Show loading animation and proceed to load friends or search results
-            findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
             if (searchField.getText().toString().equals("")) {
                 showFriends();
             } else {
@@ -101,9 +110,21 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
     private void showFriends() {
+        showLoadingBar();
         lastFetchCall = FetchCall.FRIENDLIST;
         DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
-        DataHandler.gI().getSocialHandler().fetchFriendRequests(this);
+
+        if (isSimple()) {
+            // Simplified UI- hide the search bar
+            searchField.setVisibility(View.GONE);
+            searchButton.setVisibility(View.GONE);
+        } else {
+            // Otherwise include the friend requests on top provided that the user is not too distracted
+            DataHandler.gI().getSocialHandler().fetchFriendRequests(this);
+
+            searchField.setVisibility(View.VISIBLE);
+            searchButton.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -113,6 +134,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
      * @param needle
      */
     private void showSearchResults(final String needle) {
+        showLoadingBar();
         DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.ALL);
         noFriends.setText("No people found.");
         lastNeedle = needle;
@@ -147,7 +169,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 public void run() {
                     // Update data in friendAdapter and hide loading animation
                     friendAdapter.setFriends(friends);
-                    findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                    hideLoadingBar();
                 }
             });
 
@@ -182,7 +204,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     // (the user hasn't for example removed the text from the search field)
                     if (lastFetchCall == FetchCall.SEARCH) {
                         friendAdapter.setFriends(finalResults);
-                        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                        hideLoadingBar();
                     }
                 }
             });
@@ -509,21 +531,24 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             // Set the proper button visibility
             if (friends.get(pos).getFriendType() == Friend.FriendType.FRIEND) {
                 friendRequestButton.setVisibility(View.GONE);
-                sendMessageButton.setVisibility(View.VISIBLE);
                 pending.setVisibility(View.GONE);
-                profileButton.setVisibility(View.VISIBLE);
 
             } else if (friends.get(pos).getFriendType() == Friend.FriendType.PENDING) {
                 friendRequestButton.setVisibility(View.GONE);
                 sendMessageButton.setVisibility(View.GONE);
-                pending.setVisibility(View.VISIBLE);
                 profileButton.setVisibility(View.GONE);
             } else {
-                friendRequestButton.setVisibility(View.VISIBLE);
                 sendMessageButton.setVisibility(View.GONE);
                 pending.setVisibility(View.GONE);
                 profileButton.setVisibility(View.GONE);
             }
+
+            if(isSimple()) {
+                friendRequestButton.setVisibility(View.GONE);
+                pending.setVisibility(View.GONE);
+                profileButton.setVisibility(View.GONE);
+            }
+
 
             // Set the picture
             image.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(pos).getProfilePic()));
@@ -593,5 +618,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
     } // end inner class
 
+    private boolean isSimple() {
+        return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
+    }
 
 } // end class

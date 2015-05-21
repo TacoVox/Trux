@@ -50,7 +50,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/searchField"
                 android:layout_weight="1"
-                android:background="#ff404e68"
+                android:background="#61728d"
                 android:padding="10dp"
                 android:textColor="#E0E0E0"
                 android:textCursorDrawable="@drawable/custom_cursor"/>
