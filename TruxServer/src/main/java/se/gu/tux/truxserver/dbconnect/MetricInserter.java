@@ -20,7 +20,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import se.gu.tux.trux.datastructure.Location;
 
 import se.gu.tux.trux.datastructure.MetricData;
-import se.gu.tux.trux.datastructure.ProtocolMessage;
 
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -100,7 +99,7 @@ public class MetricInserter implements Runnable {
      * 
      * @param md the MetricData object which shall be inserted to the DB
      */
-    public synchronized void addToDB(MetricData md) {
+    public void addToDB(MetricData md) {
         if(md != null) {
             while(!queue.offer(md)) {
                 try {
