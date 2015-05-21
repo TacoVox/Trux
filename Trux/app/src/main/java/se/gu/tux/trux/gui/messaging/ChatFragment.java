@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.messaging;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +14,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.application.DataHandler;
@@ -48,7 +52,11 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
     private long userId;
 
+    private DateFormat df;
 
+
+
+    @SuppressLint("SimpleDateFormat")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -59,6 +67,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         isRunning = true;
 
         userId = DataHandler.getInstance().getUser().getUserId();
+
+        df = new SimpleDateFormat("MM-dd-HH:mm");
 
         // get the components
         TextView tv = (TextView) view.findViewById(R.id.chat_head_username_text_view);
@@ -163,7 +173,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                                     // the text view to hold the message
                                     final TextView textView = getFriendTextView();
 
-                                    textView.setText((String) newMessages[i].getValue());
+                                    Date date = new Date(messages[i].getTimeStamp());
+
+                                    textView.setText(df.format(date) + "\n\n" + messages[i].getValue());
 
                                     // add this text view to the message container
                                     act.runOnUiThread(new Runnable()
@@ -282,7 +294,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                 // the text view to hold the message
                 final TextView textView = getUserTextView();
 
-                textView.setText((String) messages[i].getValue());
+                Date date = new Date(messages[i].getTimeStamp());
+
+                textView.setText(df.format(date) + "\n\n" + messages[i].getValue());
 
                 // add this text view to the message container
                 msgContainer.addView(textView);
@@ -292,7 +306,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                 // the text view to hold the message
                 final TextView textView = getFriendTextView();
 
-                textView.setText((String) messages[i].getValue());
+                Date date = new Date(messages[i].getTimeStamp());
+
+                textView.setText(df.format(date) + "\n\n" + messages[i].getValue());
 
                 // add this text view to the message container
                 msgContainer.addView(textView);
