@@ -202,18 +202,13 @@ public class BaseAppActivity extends ActionBarActivity
         }
         else if (viewID == R.layout.activity_home)
         {
-            aboutData[0] = "Home Screen";
+            aboutData[0] = "Help";
             aboutData[1] = getResources().getString(R.string.driver_home_screen_help);
-        }
-        else if (viewID == R.layout.activity_message)
-        {
-            aboutData[0] = "Message Screen";
-            aboutData[1] = getResources().getString(R.string.message_screen_help);
         }
         else
         {
-            aboutData[0] = "No Help Available Yet";
-            aboutData[1] = "No help information available yet for this screen.";
+            aboutData[0] = "Help";
+            aboutData[1] = getResources().getString(R.string.driver_home_screen_help);
         }
 
         // return the array
