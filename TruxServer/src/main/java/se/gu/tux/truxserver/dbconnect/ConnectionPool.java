@@ -92,9 +92,8 @@ public class ConnectionPool {
         catch (Exception e) {
             e.printStackTrace();
             Logger.gI().addError(e.getMessage());
+            throw new RuntimeException(e);
         }
-        
-        return null;
     }
     
     /**
@@ -102,7 +101,16 @@ public class ConnectionPool {
      * 
      * @param dbc a DBConnector to be released back to the pool
      */
-    public synchronized void releaseDBC(DBConnector dbc) {
-        queue.add(dbc);
+    public synchronized void releaseDBC(DBConnector dbc){
+        if(dbc != null)
+        {
+            while(!queue.offer(dbc)) {
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

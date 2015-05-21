@@ -87,15 +87,15 @@ public class FriendshipHandler {
         try
 	{
             String updateStmnt = "DELETE FROM isfriendwith " +
-                    "WHERE userid = ? AND friendid = ? OR userid = ? AND friendid = ?";
+                    "WHERE (userid = ? AND friendid = ?) OR (userid = ? AND friendid = ?)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
 	    
             pst.setLong(1, pm.getUserId());
-            pst.setLong(2, Long.parseLong(pm.getMessage()));
-            pst.setLong(3, pm.getUserId());
-            pst.setLong(4, Long.parseLong(pm.getMessage()));
+            pst.setLong(2, Long.parseLong(pm.getMessage()));      
+            pst.setLong(3, Long.parseLong(pm.getMessage()));
+            pst.setLong(4, pm.getUserId());
 	    
             dbc.execDelete(pm, pst);
             
