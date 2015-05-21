@@ -426,6 +426,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             TextView pending = (TextView) view.findViewById(R.id.pending);
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             final Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
+            final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
+            final Button profileButton = (Button) view.findViewById(R.id.profileButton);
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -438,7 +440,18 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     }
                 }
             });
-            final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
+            friendRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    friendRequestButton.setEnabled(false);
+                    try {
+                        DataHandler.gI().getSocialHandler().sendFriendRequest(thisAdapter,
+                                friends.get(pos).getFriendId());
+                    } catch (NotLoggedInException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             sendMessageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -449,7 +462,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     startActivity(intent);
                 }
             });
-            final Button profileButton = (Button) view.findViewById(R.id.profileButton);
             profileButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

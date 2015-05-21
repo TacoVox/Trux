@@ -22,7 +22,6 @@ public class InfoFragment extends Fragment {
     TextView profileTitle;
     ImageButton removeButton, messageButton;
     ImageView profilePic;
-
     Friend friend;
 
 
@@ -39,20 +38,20 @@ public class InfoFragment extends Fragment {
             friend = (Friend) this.getArguments().getSerializable("friend");
         }
 
-        ViewFriendInfo();
+        showFriendInfo();
 
         return view;
     }
 
-    private void ViewFriendInfo() {
+    private void showFriendInfo() {
         if (friend != null) {
+            profileTitle.setText(friend.getFirstname() + " " + friend.getLastname()
+                    + "(" + friend.getUsername() + ")");
+
             if (friend.getProfilePic() != null) {
                 Bitmap pic = Bitmap.createScaledBitmap(
                         SocialHandler.pictureToBitMap(friend.getProfilePic())
                         , 500, 500, false);
-
-                profileTitle.setText(friend.getFirstname() + " " + friend.getLastname()
-                        + "(" + friend.getUsername() + ")");
                 profilePic.setImageBitmap(pic);
             }
 
@@ -79,7 +78,6 @@ public class InfoFragment extends Fragment {
     }
     public void onResume(){
         super.onResume();
-        ViewFriendInfo();
     }
 
 }
