@@ -33,6 +33,7 @@ public class WelcomeMainFragment extends Fragment implements View.OnClickListene
             friendButton = (ImageButton) view.findViewById(R.id.fragment_welcome_friend_button);
 
             messageButton.setOnClickListener(this);
+            friendButton.setOnClickListener(this);
 
             timer = new Timer();
             iconUpdater = new UpdateIcons();
@@ -62,7 +63,7 @@ public class WelcomeMainFragment extends Fragment implements View.OnClickListene
         @Override
         public void onClick(View view)
         {
-            ((HomeActivity) getActivity() ).onFragmentViewClick(view.getId());
+            ((HomeActivity) getActivity()).onFragmentViewClick(view.getId());
         }
 
         public void unseenMessages(){

@@ -134,7 +134,7 @@ public class BaseAppActivity extends ActionBarActivity
      *
      * @param message   The message to show.
      */
-    protected void showToast(String message)
+    public void showToast(String message)
     {
         // if message is empty, return
         if (message.isEmpty())
