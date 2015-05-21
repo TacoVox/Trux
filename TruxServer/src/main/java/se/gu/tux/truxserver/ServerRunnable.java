@@ -93,7 +93,7 @@ public class ServerRunnable implements Runnable {
                 		ProtocolMessage.Type.GOODBYE) ) {
                     throw new InterruptedException();
                 }
-
+                
                 // Send data to DataSwitcher
                 d = DataSwitcher.gI().handleData(d);
 
@@ -104,6 +104,7 @@ public class ServerRunnable implements Runnable {
                 // server to be up and running...                
                 if (d instanceof ProtocolMessage && ((ProtocolMessage) d).getType() ==
                 		Type.GOODBYE) {
+                	Logger.gI().addMsg(connectionId + ": Received GOODBYE from DataSwitcher...");
                 	throw new InterruptedException();
                 }
                 
