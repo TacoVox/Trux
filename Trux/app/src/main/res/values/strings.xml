@@ -52,9 +52,13 @@
     <string name="agree_button_title">I agree to the Terms and Conditions of Use</string>
     <string name="register_button_title">Register</string>
     <string name="average_today">Average Today:</string>
-    <string name="average_lastweek">Average Last Week:</string>
-    <string name="average_lastmonth">Average Last Month:</string>
+    <string name="average_lastweek">Average This Week:</string>
+    <string name="average_lastmonth">Average This Month:</string>
     <string name="average_total">Average Total:</string>
+    <string name="today">Today:</string>
+    <string name="last_week">This Week:</string>
+    <string name="last_month">This Month:</string>
+    <string name="total">Total:</string>
     <string name="title_activity_distance">Distance</string>
     <string name="title_activity_simple_stats">SimpleStats</string>
     <string name="title_activity_overall_stats">OverallStats</string>
