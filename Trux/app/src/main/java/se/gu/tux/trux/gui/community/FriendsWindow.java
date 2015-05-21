@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -29,8 +28,6 @@ import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
-import se.gu.tux.trux.gui.main_home.HomeActivity;
-import se.gu.tux.trux.gui.main_home.HomePagerAdapter;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
@@ -47,7 +44,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     private enum FetchCall {SEARCH, FRIENDLIST};
     private FetchCall lastFetchCall = FetchCall.FRIENDLIST;
     private String lastNeedle;
-
+    private boolean isClicked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -429,18 +426,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             TextView pending = (TextView) view.findViewById(R.id.pending);
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             final Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
-            final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
-            sendMessageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
-                    intent.setAction("OPEN_CHAT");
-                    intent.putExtra("FRIEND_ID", friends.get(pos).getFriendId());
-                    intent.putExtra("FRIEND_USERNAME", friends.get(pos).getUsername());
-                    startActivity(intent);
-                }
-            });
-            final Button profileButton = (Button) view.findViewById(R.id.profileButton);
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -453,25 +438,49 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     }
                 }
             });
-/*
+            final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
+            sendMessageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
+                    intent.setAction("OPEN_CHAT");
+                    intent.putExtra("FRIEND_ID", friends.get(pos).getFriendId());
+                    intent.putExtra("FRIEND_USERNAME", friends.get(pos).getUsername());
+                    startActivity(intent);
+                }
+            });
+            final Button profileButton = (Button) view.findViewById(R.id.profileButton);
+            profileButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    InfoFragment friendInfo = new InfoFragment();
+                    Bundle friendBundle = new Bundle();
+                    friendBundle.putSerializable("friend", friends.get(pos));
+                    friendInfo.setArguments(friendBundle);
+
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    fragmentTransaction.addToBackStack("FRIENDPROFILE");
+                    fragmentTransaction.replace(R.id.friendsContainer, friendInfo);
+                    fragmentTransaction.commit();
+                }
+            });
+
             final TextView newName = (TextView) view.findViewById(R.id.friendName);
             newName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    HomePagerAdapter hpa = new HomePagerAdapter();
+                    isClicked = true;
                     Fragment fragment = new MapFrag();
                     Bundle bundle = new Bundle();
+                    bundle.putBoolean("isClicked", isClicked);
                     bundle.putSerializable("clickedFriend", friends.get(pos).getFriendId());
                     fragment.setArguments(bundle);
-                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                    ViewPager pager = (ViewPager) findViewById(R.id.activity_main_i_container);
-                    pager.setCurrentItem(1);
-                    intent.putExtra("username", friends.get(pos).getFriendId());
-                    startActivity(intent);
-
+                    finish();
                 }
             });
-*/
+
             // Set the name
             name.setText(friends.get(pos).getFirstname() + " " + friends.get(pos).getLastname());
             username.setText("@" + friends.get(pos).getUsername());

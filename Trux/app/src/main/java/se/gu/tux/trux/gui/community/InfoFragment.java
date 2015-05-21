@@ -1,21 +1,15 @@
 package se.gu.tux.trux.gui.community;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.HashMap;
 
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
@@ -41,47 +35,37 @@ public class InfoFragment extends Fragment {
         profileTitle = (TextView) view.findViewById(R.id.profile_title);
         profilePic = (ImageView) view.findViewById(R.id.infoPicture);
 
+        if(this.getArguments() != null) {
+            friend = (Friend) this.getArguments().getSerializable("friend");
+        }
+
         ViewFriendInfo();
 
         return view;
     }
 
     private void ViewFriendInfo() {
+        if (friend != null) {
+            if (friend.getProfilePic() != null) {
+                Bitmap pic = Bitmap.createScaledBitmap(
+                        SocialHandler.pictureToBitMap(friend.getProfilePic())
+                        , 500, 500, false);
 
-        Bundle bundle = this.getArguments();
-        if(bundle != null){
-            Friend f = (Friend) bundle.getSerializable("friend");
-            if (f == null) {
-                HashMap<String, Friend> friendMarker = (HashMap) bundle.getSerializable("friendHashmap");
-
-                String markerID = bundle.getString("markerID");
-                if (friendMarker != null ) {
-                    friend = friendMarker.get(markerID);
-                }
+                profileTitle.setText(friend.getFirstname() + " " + friend.getLastname()
+                        + "(" + friend.getUsername() + ")");
+                profilePic.setImageBitmap(pic);
             }
 
-            if (f == null) {
-                if(friend.getProfilePic()!=null) {
-                    Bitmap pic = Bitmap.createScaledBitmap(
-                            SocialHandler.pictureToBitMap(friend.getProfilePic())
-                            , 500, 500, false);
-
-                    profileTitle.setText(friend.getFirstname() + " " + friend.getLastname()
-                            + "(" + friend.getUsername() + ")");
-                    profilePic.setImageBitmap(pic);
+            messageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity().getApplicationContext(), MessageActivity.class);
+                    intent.setAction("OPEN_CHAT");
+                    intent.putExtra("FRIEND_ID", friend.getFriendId());
+                    intent.putExtra("FRIEND_USERNAME", friend.getUsername());
+                    startActivity(intent);
                 }
-
-                messageButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(getActivity().getApplicationContext(), MessageActivity.class);
-                        intent.setAction("OPEN_CHAT");
-                        intent.putExtra("FRIEND_ID", friend.getFriendId());
-                        intent.putExtra("FRIEND_USERNAME", friend.getUsername());
-                        startActivity(intent);
-                    }
-                });
-            }
+            });
         }
     }
 
