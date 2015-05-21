@@ -52,13 +52,15 @@ public class PictureHandler {
      * Non-static part.
      */
     public long savePicturePath(Picture pic, String path) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
         {   
+            dbc = ConnectionPool.gI().getDBC();
+               
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                 "INSERT INTO picture (path, timestamp, userid) "
-                    + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
+                    + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
                 
             pst.setString(1,path);
             pst.setLong(2, pic.getTimeStamp());
@@ -68,7 +70,11 @@ public class PictureHandler {
             
             while(keys.next())
                 return keys.getLong(1);
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return -1;
         } catch (Exception e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
@@ -79,13 +85,15 @@ public class PictureHandler {
     }
     
     public ProtocolMessage setProfilePicture(Picture pic) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
         {   
+            dbc = ConnectionPool.gI().getDBC();
+              
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                 "REPLACE INTO profilepicture (userid, pictureid) "
-                    + "SELECT * FROM (SELECT ?, ?) AS tmp");
+                    + "SELECT * FROM (SELECT ? AS A, ? AS B) AS tmp");
                 
             pst.setLong(1, pic.getUserId());
             pst.setLong(2, pic.getPictureid());
@@ -93,7 +101,11 @@ public class PictureHandler {
             dbc.execReplace(pic, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
         } catch (Exception e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
@@ -104,10 +116,12 @@ public class PictureHandler {
     }
     
     public String getProfilePicturePath(Picture p) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String selectStmnt = "SELECT path FROM picture" +
                     " WHERE pictureid = ?";
             
@@ -119,7 +133,11 @@ public class PictureHandler {
             
 	    while (rs.next())
 		return rs.getString("path");
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return null;
         } catch (SQLException e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         } 
         finally {
@@ -130,10 +148,12 @@ public class PictureHandler {
     }
     
     public long getProfilePictureID(Data d) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String selectStmnt = "SELECT pictureid FROM profilepicture" +
                     " WHERE userid = ?";
             
@@ -150,7 +170,11 @@ public class PictureHandler {
             
 	    while (rs.next())
 		return rs.getLong("pictureid");
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return -1;
         } catch (SQLException e) {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         } 
         finally {

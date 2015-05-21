@@ -18,6 +18,7 @@ package se.gu.tux.truxserver.dbconnect;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import se.gu.tux.trux.datastructure.Data;
+
 import se.gu.tux.trux.datastructure.Location;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.logger.Logger;
@@ -52,39 +53,44 @@ public class LocationReceiver {
         return null;
     }
     
-    public Location getCurrent(long userid) {
-        Location l = new Location();
+    public Data getCurrent(long userid) {
+        Location l = null;
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String selectStmnt = "SELECT latitude, longitude " +
                     "FROM location WHERE userid = ? ORDER BY timestamp DESC LIMIT 1";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 	    
-            pst.setLong(1, l.getUserId());
+            pst.setLong(1, userid);
             
 	    ResultSet rs = pst.executeQuery();
 	    
 	    while (rs.next())
 	    {
-                l.setLatitude(rs.getDouble("latitude"));
-                l.setLongitude(rs.getDouble("longitude"));
+                l = new Location(rs.getDouble("latitude"), rs.getDouble("longitude"));
                 
 		break;
 	    }           
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
+            
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
-        
+
         return l;
     }
 }

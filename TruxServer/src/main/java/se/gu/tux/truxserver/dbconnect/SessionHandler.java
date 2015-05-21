@@ -75,10 +75,12 @@ public class SessionHandler {
      */
     public void updateActive(Data d)
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "UPDATE session SET lastactive = ? " +
                     "WHERE userid = ? AND sessionid = ? AND ISNULL(endtime)";
             
@@ -90,9 +92,11 @@ public class SessionHandler {
             pst.setLong(3, d.getSessionId());
             
             dbc.execUpdate(d, pst);
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -111,10 +115,12 @@ public class SessionHandler {
      */
     public long startSession(User u)
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String insertStmnt = "INSERT INTO session(starttime, userid, "
                     + "lastactive, keepalive) VALUES(?, ?, ?, ?)";
             
@@ -131,7 +137,7 @@ public class SessionHandler {
             //No check for active session here!
             pst.executeUpdate();
             
-            Logger.gI().addDebug(pst.toString());
+            //Logger.gI().addDebug(pst.toString());
             
             ResultSet keys = pst.getGeneratedKeys();
             
@@ -140,9 +146,12 @@ public class SessionHandler {
             
             return - 1;
             
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return -1;
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -161,10 +170,12 @@ public class SessionHandler {
      */
     public ProtocolMessage endSession(ProtocolMessage pm)
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "UPDATE session SET endtime = ? " +
                     "WHERE userid = ? AND sessionid = ?";
             
@@ -178,9 +189,12 @@ public class SessionHandler {
 	    dbc.execUpdate(pm, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -197,10 +211,12 @@ public class SessionHandler {
      */
     public ResultSet getCurrentSessions()
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "SELECT * FROM session WHERE endtime IS NULL";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
@@ -211,9 +227,12 @@ public class SessionHandler {
                     Config.gI().getSessionTimeout() * 60000);
 	    
 	    return pst.executeQuery();
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return null;
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -230,10 +249,12 @@ public class SessionHandler {
      */
     public ProtocolMessage purgeSessions()
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "UPDATE session SET endtime = ? " +
                     "WHERE (lastactive < ? AND keepalive = FALSE"
                     + " AND endtime IS NULL) OR "
@@ -252,9 +273,12 @@ public class SessionHandler {
             pst.executeUpdate();
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {

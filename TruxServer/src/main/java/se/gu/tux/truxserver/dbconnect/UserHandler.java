@@ -82,10 +82,12 @@ public class UserHandler {
     {
         String passwd = null;
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String selectStmnt = "SELECT userid, password" +
                     " FROM user WHERE username = ?";
             
@@ -103,9 +105,12 @@ public class UserHandler {
                 
 		break;
 	    }
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -137,13 +142,15 @@ public class UserHandler {
         String passwd = null;
         long sessionid = -1;
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String selectStmnt = "SELECT user.userid, user.password, session.sessionid" +
                     " FROM user, session WHERE user.userid = session.userid AND"
-                    + " user.userid = ? AND session.sessionid = ? AND session.endtime IS NULL;";
+                    + " user.userid = ? AND session.sessionid = ? AND session.endtime IS NULL";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
@@ -161,9 +168,12 @@ public class UserHandler {
                 
 		break;
 	    }
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -186,20 +196,25 @@ public class UserHandler {
     }
     
     private void failedLogin(long userid) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
         {   
+            dbc = ConnectionPool.gI().getDBC();
+               
             PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO loginattempts (userid, timestamp) VALUES(?, ?)");
+                    "INSERT INTO loginattempts (userid, timestamp) "
+                            + "SELECT * FROM (SELECT ? AS A, ? AS B) AS tmp");
             
             pst.setLong(1, userid);
             pst.setLong(2, System.currentTimeMillis());
 	
             pst.executeUpdate();
-        }
-        catch (Exception e)
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+        } catch (Exception e)
         {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
@@ -216,10 +231,12 @@ public class UserHandler {
      */
     public Data getUser(User u)
     {   
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String selectStmnt = "SELECT userid, firstname, lastname, email" +
                     " FROM user WHERE userid = ?";
             
@@ -270,9 +287,12 @@ public class UserHandler {
             u.setProfilePicId(PictureHandler.gI().getProfilePictureID(u));
             
             return u;
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
 	}
@@ -290,9 +310,12 @@ public class UserHandler {
      */
     public ProtocolMessage register(User u)
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
+        
         try
         {   
+            dbc = ConnectionPool.gI().getDBC();
+               
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO register (registerid, username, password, firstname, lastname, "
                             + "email, timestamp) VALUES(?, ?, ?, ?, ?, ?, ?)");
@@ -310,9 +333,12 @@ public class UserHandler {
             EMailSender.gI().sendConfirmationMail(u.getEmail(), Integer.toString(u.getEmail().hashCode()));
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-        }
-        catch (Exception e)
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
         {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
@@ -322,10 +348,12 @@ public class UserHandler {
     }
         
     public ProtocolMessage updateUser(User u) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
         {   
+            dbc = ConnectionPool.gI().getDBC();
+               
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     "UPDATE user SET firstname = ?, lastname = ?, email = ? WHERE userid = ?");
             
@@ -337,9 +365,12 @@ public class UserHandler {
             dbc.execUpdate(u, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-        }
-        catch (Exception e)
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
         {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {
@@ -350,10 +381,14 @@ public class UserHandler {
     
     public Data getFriend(Friend f)
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        long lastActive = Long.MAX_VALUE;
+        
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String selectStmnt = "SELECT username, firstname, lastname" +
                     " FROM user WHERE userid = ?";
             
@@ -372,18 +407,44 @@ public class UserHandler {
                 f.setUsername(rs.getString("username"));
                 f.setFirstname(rs.getString("firstname"));
                 f.setLastname(rs.getString("lastname"));
-                f.setFriend(true);
+                f.setFriendType(Friend.FriendType.FRIEND);
                 
 		break;
 	    }
             
-            f.setCurrentLoc(LocationReceiver.gI().getCurrent(f.getFriendId()));
+            selectStmnt = "SELECT MAX(lastactive) AS ts FROM session WHERE userid = ? "
+                    + "AND endtime IS NULL";
+            
+            pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setLong(1, f.getFriendId());
+	    
+            rs = pst.executeQuery();
+	    
+            
+            f.setStatus(Friend.Status.OFFLINE);
+            
+	    while (rs.next())
+	    {
+                lastActive = System.currentTimeMillis() - rs.getLong("ts");
+                
+		break;
+	    }
+            
+            if(lastActive <= 300000)
+                f.setStatus(Friend.Status.ONLINE);
+            
+            f.setCurrentLoc((Location)LocationReceiver.gI().getCurrent(f.getFriendId()));
             f.setProfilePicId(PictureHandler.gI().getProfilePictureID(f));
             
             return f;
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -394,18 +455,24 @@ public class UserHandler {
     }
     
     public Data findUsers(ProtocolMessage pm) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        ArrayResponse reqs = (ArrayResponse)FriendshipHandler.gI().getFriendRequests(pm);
         
         List users = new ArrayList<Friend>();
         
         String name = "%" + pm.getMessage() + "%";
         
+        DBConnector dbc = null;
+        
         try
-	{
-            String selectStmnt = "SELECT user.userid, username, firstname, lastname "
-                    + "FROM user, isfriendwith WHERE "
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
+            String selectStmnt = "SELECT DISTINCT userid, username, firstname, lastname "
+                    + "FROM user WHERE "
                     + "(username LIKE ? OR firstname LIKE ? OR lastname LIKE ?) "
-                    + "AND isfriendwith.userid = ? AND isfriendwith.friendid != user.userid LIMIT 20";
+                    + "AND user.userid NOT IN "
+                    + "(SELECT friendid FROM isfriendwith WHERE userid = ?) "
+                    + "AND user.userid NOT IN (SELECT userid FROM friendrequest WHERE friendid = ?)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
@@ -414,6 +481,7 @@ public class UserHandler {
             pst.setString(2, name);
             pst.setString(3, name);
             pst.setLong(4, pm.getUserId());
+            pst.setLong(5, pm.getUserId());
 	    
             ResultSet rs = dbc.execSelect(pm, pst);
             
@@ -428,7 +496,15 @@ public class UserHandler {
                 f.setFirstname(rs.getString("firstname"));
                 f.setLastname(rs.getString("lastname"));
                 
-                f.setFriend(false);
+                ProtocolMessage m = new ProtocolMessage(ProtocolMessage.Type.PEOPLE_SEARCH,
+                        Long.toString(f.getFriendId()));
+                
+                m.setUserId(pm.getUserId());
+                
+                if(FriendshipHandler.gI().isPending(m))
+                    f.setFriendType(Friend.FriendType.PENDING);
+                else
+                    f.setFriendType(Friend.FriendType.NONE);
                 
                 f.setProfilePicId(PictureHandler.gI().getProfilePictureID(f));
                 
@@ -436,14 +512,66 @@ public class UserHandler {
 	    }
             
             return new ArrayResponse(users.toArray());
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
+            
 	    Logger.gI().addError(e.getLocalizedMessage());
             
             return new ProtocolMessage(ProtocolMessage.Type.ERROR, e.getLocalizedMessage());
 	}
         finally {
+            ConnectionPool.gI().releaseDBC(dbc);
+        }
+    }
+    
+    public Data getOnlineFriends(ProtocolMessage pm) {       
+        List onlineFriends = new ArrayList<Friend>();
+        
+        DBConnector dbc = null;
+        
+        try
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
+            String selectStmnt = "SELECT friendid" +
+                    " FROM isfriendwith WHERE userid = ?";
+            
+            PreparedStatement pst = dbc.getConnection().prepareStatement(
+                    selectStmnt);
+	    
+            pst.setLong(1, pm.getUserId());
+	    
+            ResultSet rs = dbc.execSelect(pm, pst);
+            
+	    while (rs.next())
+	    {
+                Friend f = new Friend(rs.getLong("friendid"));
+                
+                Data d = getFriend(f);
+                
+                if(d instanceof ProtocolMessage)
+                    continue;
+                
+                f = (Friend) d;
+                    
+                if(f.getStatus() == Friend.Status.ONLINE)
+                    onlineFriends.add(f);
+	    }
+            
+            return new ArrayResponse(onlineFriends.toArray());
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Logger.gI().addError(e.getLocalizedMessage());
+            
+            return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Could not fetch online friends.");
+        } finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
     }
