@@ -127,7 +127,7 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
             // error, display message to user
             showDialogBox("Registration failed!",
                     "There was a problem while registering. Please try " +
-                            "again later. If the problem persists, please contact the development team.");
+                            "again later. If the problem persists, please contact the Trux developers.");
         }
 
     } // end registerUser()
