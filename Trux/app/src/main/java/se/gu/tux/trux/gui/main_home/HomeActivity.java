@@ -102,6 +102,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         if (id == FRIENDS_BUTTON || id == FRIENDS_BUTTON_WELCOME)
         {
             Intent intent = new Intent(this, FriendsWindow.class);
+            //Want to recieve results from clicked friend
             startActivityForResult(intent, CLICKED_FRIEND);
         }
         else if (id == PROFILE_BUTTON)
@@ -123,23 +124,16 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     }
 
     private boolean isDriving(){
-        try{
-            Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
-            if(speed.getValue() != null && (double) speed.getValue() > 15){
-                return true;
-            }
-        }
-        catch (NotLoggedInException nLIE){
-            nLIE.printStackTrace();
-        }
-        return false;
+        return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
     }
-    
 
+    //Getting results from the FriendsWindow
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == CLICKED_FRIEND) {
             if (resultCode == RESULT_OK) {
+                //Gets the friendID of the friend which was clicked
                 selectedFriendID = data.getLongExtra("FriendID",  -1);
+                //Sets the new view to the map
                 viewPager.setCurrentItem(1, true);
             }
             else selectedFriendID = -1;
