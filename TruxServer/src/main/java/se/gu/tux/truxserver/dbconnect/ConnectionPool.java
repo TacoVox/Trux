@@ -36,7 +36,7 @@ public class ConnectionPool {
      * 
      * @return an Instance of ConnectionPool
      */
-    public static ConnectionPool getInstance() {
+    public synchronized static ConnectionPool getInstance() {
         if(cp == null)
             cp = new ConnectionPool();
         return cp;
@@ -85,7 +85,7 @@ public class ConnectionPool {
      * 
      * @return a connector as soon as a connector is available.
      */
-    public DBConnector getDBC() {
+    public synchronized DBConnector getDBC() {
         try {
             return (DBConnector)queue.take();
         }
@@ -102,7 +102,7 @@ public class ConnectionPool {
      * 
      * @param dbc a DBConnector to be released back to the pool
      */
-    public void releaseDBC(DBConnector dbc) {
+    public synchronized void releaseDBC(DBConnector dbc) {
         queue.add(dbc);
     }
 }
