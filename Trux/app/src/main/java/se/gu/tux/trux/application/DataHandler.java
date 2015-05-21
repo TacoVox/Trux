@@ -321,12 +321,13 @@ public class DataHandler
 
                 } else if (md instanceof Distance ){
 
-                    // Distance are in m so divide by 1000 * 1000 to get some more reasonable values
+                    // Distance are in m so divide by 1000 * 10 to get some more reasonable values
+                    // 10 kilometers, Swedish mil
                     if ((Long)data[i].getValue() == 0) {
                         dataPoints[i] = new DataPoint(i + 1, new Double(0.0));
                     } else {
                         dataPoints[i] = new DataPoint(i + 1,
-                                new Double((Long)data[i].getValue() / (1000 * 1000)));
+                                new Double((Long)data[i].getValue() / (1000 * 10)));
                     }
                 }
             }
