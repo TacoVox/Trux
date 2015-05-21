@@ -17,11 +17,13 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import se.gu.tux.trux.datastructure.Data;
 
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Location;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.Speed;
 
 import se.gu.tux.truxserver.logger.Logger;
@@ -73,7 +75,7 @@ public class MetricReceiver {
      * 
      * @return a filled MetricData object.
      */
-    public MetricData getMetric(MetricData md)
+    public Data getMetric(MetricData md)
     {
         if(md instanceof Fuel || md instanceof Speed) {            
             //Set the value to a default 0
@@ -98,22 +100,24 @@ public class MetricReceiver {
      * 
      * @return a filled MetricData object.
      */
-    private MetricData getAverage(MetricData md)
+    private Data getAverage(MetricData md)
     {
         String type = md.getClass().getSimpleName().toLowerCase();
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String selectStmnt = "SELECT AVG(value) AS avg FROM " + type +
                     " WHERE userid = ? AND timestamp BETWEEN ? AND ?";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 
-            Logger.gI().addDebug("Timestamp: " + Long.toString(md.getTimeStamp()));
-            Logger.gI().addDebug("Timeframe: " + Long.toString(md.getTimeFrame()));
+            //Logger.gI().addDebug("Timestamp: " + Long.toString(md.getTimeStamp()));
+            //Logger.gI().addDebug("Timeframe: " + Long.toString(md.getTimeFrame()));
             
             pst.setLong(1, md.getUserId());
             
@@ -132,10 +136,13 @@ public class MetricReceiver {
 		break;
 	    }
             
-            Logger.gI().addDebug("After query: " + Double.toString((Double)md.getValue()));
-	}
-	catch (Exception e)
+            //Logger.gI().addDebug("After query: " + Double.toString((Double)md.getValue()));
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getMessage());
 	}
         finally {
@@ -152,14 +159,16 @@ public class MetricReceiver {
      * 
      * @return a filled MetricData object.
      */
-    private MetricData getSum(MetricData md)
+    private Data getSum(MetricData md)
     {
         String type = md.getClass().getSimpleName().toLowerCase();
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String selectStmnt = "SELECT SUM(value) AS sum FROM " + type +
                     " WHERE userid = ? AND timestamp BETWEEN ? AND ?";
             
@@ -173,9 +182,12 @@ public class MetricReceiver {
 		md.setValue(rs.getObject("sum"));
 		break;
 	    }
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -192,14 +204,16 @@ public class MetricReceiver {
      * 
      * @return a filled MetricData object.
      */
-    private MetricData getDiff(MetricData md)
+    private Data getDiff(MetricData md)
     {
         String type = md.getClass().getSimpleName().toLowerCase();
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             long val = 0;
             
             String selectStmnt = "SELECT value FROM " + type + " WHERE "
@@ -235,9 +249,12 @@ public class MetricReceiver {
             md.setValue(val);
             
             return md;
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -247,11 +264,13 @@ public class MetricReceiver {
         return md;
     }
     
-    private Location getLocation(Location loc) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
-
+    private Data getLocation(Location loc) {
+        DBConnector dbc = null;
+        
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             long val = 0;
             
             String selectStmnt = "SELECT latitude, longitude FROM location WHERE "
@@ -282,8 +301,12 @@ public class MetricReceiver {
             
             return loc;
             
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
         } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {

@@ -1,5 +1,8 @@
 package se.gu.tux.trux.application;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import com.jjoe64.graphview.series.DataPoint;
 
 import java.util.Arrays;
@@ -12,9 +15,12 @@ import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.datastructure.Picture;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
@@ -26,12 +32,15 @@ import se.gu.tux.trux.technical_services.ServerConnector;
  */
 public class DataHandler
 {
+    public enum SafetyStatus {IDLE, SLOW_MOVING, MOVING, FAST_MOVING};
 
     private static DataHandler dataHandler;
 
     private RealTimeDataHandler realTimeDataHandler;
+    private SocialHandler sc;
 
     private volatile User user;
+    private volatile Notification notificationStatus;
 
     // Stores detailed stats with signal id as key
     private volatile HashMap<Integer, DetailedStatsBundle> detailedStats;
@@ -46,7 +55,8 @@ public class DataHandler
      * instance of DataHandler instead.
      */
     private DataHandler()    {
-        realTimeDataHandler = new RealTimeDataHandler();
+        detailedStats = new HashMap<Integer, DetailedStatsBundle>();
+        sc = new SocialHandler();
     }
 
 
@@ -72,6 +82,16 @@ public class DataHandler
         return dataHandler;
     } // end getInstance()
 
+    public static DataHandler gI() {
+        return getInstance();
+    }
+
+
+    public void setRealTimeDataHandler(RealTimeDataHandler rtdh) {
+        realTimeDataHandler = rtdh;
+    }
+
+
     /**
      * Returns true if the user is logged in.
      * @return
@@ -96,8 +116,8 @@ public class DataHandler
     public Data getData(Data request) throws NotLoggedInException {
         if (request.isOnServerSide()) {
 
+            //System.out.println("Datahandler routing request: " + request.getClass().getSimpleName());
             request = ServerConnector.gI().answerQuery(request);
-
             //request = IServerConnector.getInstance().answerQuery(request);
 
         } else {
@@ -117,10 +137,7 @@ public class DataHandler
      */
     public void cacheDetailedStats() {
         // Only fetch if they aren't there or aren't up to date
-        if (detailedStats == null ||
-                System.currentTimeMillis() - detailedStatsFetched > 1000 * 60 * 15) {
-
-            detailedStats = new HashMap<Integer, DetailedStatsBundle>();
+        if (detailedStats == null || System.currentTimeMillis() - detailedStatsFetched > 1000 * 60 * 15) {
 
             System.out.println("Fetching detailed stats.");
 
@@ -128,6 +145,8 @@ public class DataHandler
                 @Override
                 public void run() {
                     try {
+                        detailedStats.clear();
+
                         // NOTE would love to generalize this but slightly unsure on now how to
                         // handle the casting
 
@@ -135,48 +154,56 @@ public class DataHandler
                         // Then request an array of speed average values for last 30 days.
                         Speed speed = new Speed(0);
                         speed.setTimeStamp(System.currentTimeMillis());
-                        Data[] avgSpeedPerDay = DataHandler.getInstance().getPerDay(speed, 30);
+                        Data[] avgSpeedPerDay = getPerDay(speed, 30);
                         DataPoint[] speedPoints = getDataPoints(avgSpeedPerDay, speed);
                         // Create bundle object
                         DetailedStatsBundle speedBundle = new DetailedStatsBundle(
-                                (Speed) DataHandler.getInstance().getData(new Speed(MetricData.DAY)),
-                                (Speed) DataHandler.getInstance().getData(new Speed(MetricData.WEEK)),
-                                (Speed) DataHandler.getInstance().getData(new Speed(MetricData.THIRTYDAYS)),
-                                (Speed) DataHandler.getInstance().getData(new Speed(MetricData.FOREVER)),
+                                (Speed) getData(new Speed(MetricData.DAY)),
+                                (Speed) getData(new Speed(MetricData.WEEK)),
+                                (Speed) getData(new Speed(MetricData.THIRTYDAYS)),
+                                (Speed) getData(new Speed(MetricData.FOREVER)),
                                 speedPoints);
                         // Store in hash map
+                        if (detailedStats == null) {
+                            System.out.println("DETAILEDSTATS IS NULL.");
+                        }
+                        if (speedBundle == null) {
+                            System.out.println("SPEEDBUNDLE IS NULL.");
+                        }
                         detailedStats.put(speed.getSignalId(), speedBundle);
 
                         Fuel fuel = new Fuel(0);
                         fuel.setTimeStamp(System.currentTimeMillis());
-                        Data[] avgFuelPerDay = DataHandler.getInstance().getPerDay(fuel, 30);
+                        Data[] avgFuelPerDay = getPerDay(fuel, 30);
                         DataPoint[] fuelPoints = getDataPoints(avgFuelPerDay, fuel);
                         // Create bundle object
                         DetailedStatsBundle fuelBundle = new DetailedStatsBundle(
-                                (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.DAY)),
-                                (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.WEEK)),
-                                (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.THIRTYDAYS)),
-                                (Fuel) DataHandler.getInstance().getData(new Fuel(MetricData.FOREVER)),
+                                (Fuel) getData(new Fuel(MetricData.DAY)),
+                                (Fuel) getData(new Fuel(MetricData.WEEK)),
+                                (Fuel) getData(new Fuel(MetricData.THIRTYDAYS)),
+                                (Fuel) getData(new Fuel(MetricData.FOREVER)),
                                 fuelPoints);
                         // Store in hash map
                         detailedStats.put(fuel.getSignalId(), fuelBundle);
 
                         Distance dist = new Distance(0);
                         dist.setTimeStamp(System.currentTimeMillis());
-                        Data[] avgDistancePerDay = DataHandler.getInstance().getPerDay(dist, 30);
+                        Data[] avgDistancePerDay = getPerDay(dist, 30);
                         DataPoint[] distPoints = getDataPoints(avgDistancePerDay, dist);
                         // Create bundle object
                         DetailedStatsBundle distBundle = new DetailedStatsBundle(
-                                (Distance) DataHandler.getInstance().getData(new Distance(MetricData.DAY)),
-                                (Distance) DataHandler.getInstance().getData(new Distance(MetricData.WEEK)),
-                                (Distance) DataHandler.getInstance().getData(new Distance(MetricData.THIRTYDAYS)),
-                                (Distance) DataHandler.getInstance().getData(new Distance(MetricData.FOREVER)),
+                                (Distance) getData(new Distance(MetricData.DAY)),
+                                (Distance) getData(new Distance(MetricData.WEEK)),
+                                (Distance) getData(new Distance(MetricData.THIRTYDAYS)),
+                                (Distance) getData(new Distance(MetricData.FOREVER)),
                                 distPoints);
                         // Store in hash map
                         detailedStats.put(dist.getSignalId(), distBundle);
 
                         // Keep track of when we finished fetching the detailed stats
                         detailedStatsFetched = System.currentTimeMillis();
+
+                        detailedStats = detailedStats;
 
                     } catch (NotLoggedInException e) {
                         System.out.println("Not logged in in datahandler cache");
@@ -186,6 +213,7 @@ public class DataHandler
         }
     }
 
+
     /**
      * Returns true if there are cached detailed stats of the same type as md.
      * @param md
@@ -194,10 +222,9 @@ public class DataHandler
     public boolean detailedStatsReady(MetricData md) {
         // See if there is a stats object in the hashmap
         if (detailedStats != null && detailedStats.get(md.getSignalId()) != null) {
-            //System.out.println("Stats were ready: " + md.getClass().getSimpleName());
             return true;
         }
-        //System.out.println("Stats were not ready: " + md.getClass().getSimpleName());
+        System.out.println("Stats were not ready: " + md.getClass().getSimpleName());
         return false;
     }
 
@@ -221,13 +248,14 @@ public class DataHandler
     }
 
 
-
     /**
      * Please provide a metric object of the right class and with the current timestamp
      * set.
      */
     public Data[] getPerDay (MetricData metricData, int days) throws NotLoggedInException {
         Data[] perDay = new Data[days];
+        System.out.println("Getting per day: " + metricData.getClass().getSimpleName() +
+                        "  // Datahandler: " + this.toString());
 
         // Use a calendar to know when days start and end.
         // Initiate based on metricData's timestamp.
@@ -266,6 +294,14 @@ public class DataHandler
 
             // Move forward one day
             cal.add(Calendar.DATE, +1);
+
+            // Let this thread sleep for a slight while just to make other threads able to
+            // use the ServerConnector inbetween - since this is background prefetching
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         return perDay;
@@ -280,17 +316,19 @@ public class DataHandler
                 dataPoints[i] = new DataPoint(i + 1, new Double(0.0));
             } else {
                 if (md instanceof Speed || md instanceof Fuel) {
+
                     dataPoints[i] = new DataPoint(i + 1, (Double)data[i].getValue());
+
                 } else if (md instanceof Distance ){
-                    // Distance are in m so divide by 1000 to get some more reasonable values
+
+                    // Distance are in m so divide by 1000 * 10 to get some more reasonable values
+                    // 10 kilometers, Swedish mil
                     if ((Long)data[i].getValue() == 0) {
                         dataPoints[i] = new DataPoint(i + 1, new Double(0.0));
                     } else {
-                        dataPoints[i] = new DataPoint(i + 1, new Double((Long)data[i].getValue() / 1000));
+                        dataPoints[i] = new DataPoint(i + 1,
+                                new Double((Long)data[i].getValue() / (1000 * 10)));
                     }
-                    //System.out.println("datapoint " + i + ": " + dataPoints[i].getY());
-                    //dataPoints[i] = new DataPoint(i + 1, new Double(i));
-                    //System.out.println("datapoint " + i + ": " + dataPoints[i].getY());
                 }
             }
         }
@@ -299,7 +337,7 @@ public class DataHandler
 
     public void setUser(User user)
     {
-        if (user == null || this.user != user) {
+        if (user == null || (this.user != null && this.user.getUserId() != user.getUserId())) {
             // The user has changed or been removed due to logout, so cleanup the session data
             cleanupSessionData();
         }
@@ -311,10 +349,16 @@ public class DataHandler
         return user;
     }
 
+    /**
+     * Used on logout to make sure no stats or social data is left in cache
+     */
     public void cleanupSessionData() {
         detailedStats = null;
         detailedStatsFetched = 0;
+        sc.clearCache();
     }
+
+
 
     public Friend[] getFriends() throws NotLoggedInException {
         Friend[] friends = null;
@@ -332,10 +376,15 @@ public class DataHandler
 
         // Copy the array so we are sure no other thread messes with it during fetch
         long[] friendIds = Arrays.copyOf(user.getFriends(), user.getFriends().length);
-        if (friendIds != null) {
-            friends =  new Friend[friendIds.length];
-            for (int i = 0; i < friendIds.length; i++) {
-                friends[i] = (Friend)getData(new Friend(friendIds[i]));
+
+        friends =  new Friend[friendIds.length];
+        for (int i = 0; i < friendIds.length; i++) {
+            Friend queryFriend = new Friend(friendIds[i]);
+            Data d = getData(queryFriend);
+            if (d instanceof Friend) {
+                friends[i] = (Friend)d;
+            } else if (d instanceof ProtocolMessage) {
+                System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
             }
         }
 
@@ -343,8 +392,81 @@ public class DataHandler
     }
 
 
-    public Picture getPicture() {
-        return null;
+    /**
+     * Get the requested picture as a Bitmap object.
+     * @param pictureId
+     * @return
+     * @throws NotLoggedInException
+     */
+    public Bitmap getPicture(Long pictureId) throws NotLoggedInException {
+        if (imageCache == null) {
+            imageCache = new HashMap<Long, Picture>();
+        }
+        if (pictureId == -1) {
+            return null;
+        }
+
+        // Empty cache if it is really big
+        if (imageCache.size() > 500) {
+            imageCache.clear();
+        }
+
+        // See if the image is not yet cached
+        if (imageCache.get(pictureId) == null) {
+            // Try to fecth it
+            imageCache.put(pictureId, (Picture) getData(new Picture(pictureId)));
+        }
+
+        Picture p = imageCache.get(pictureId);
+
+        // Now we have the picture - convert it to a bitmap so it can be used in the app
+        Bitmap bmp = null;
+        if (p != null && p.getImg() != null) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inMutable = true;
+            bmp = BitmapFactory.decodeByteArray(p.getImg(), 0,
+                    p.getImg().length, options);
+        }
+
+        return bmp;
     }
+
+    public Notification getNotificationStatus() {
+        return notificationStatus;
+    }
+
+    public void setNotificationStatus(Notification notificationStatus) {
+        this.notificationStatus = notificationStatus;
+
+        // See if the notification status CHANGED to true for a field just now, so there wasn't
+        // a notificiation before but now there is - in that case, make sure to notify SocialHandler
+        if (!this.notificationStatus.isNewFriends()
+                && notificationStatus.isNewFriends()) {
+
+            // This could either be a friend request or a friend request was accepted (?)
+            // so both list should be updated next time they're used
+            sc.setFriendsChanged(true);
+            sc.setFriendRequestsChanged(true);
+        }
+
+        // The messaging feature is an activity right now so it will query the status of
+        // the new message notification boolean instead
+    }
+
+    public SocialHandler getSocialHandler() {
+        return sc;
+    }
+
+    public SafetyStatus getSafetyStatus() {
+        if(AGADataParser.getInstance().getDistLevel() >= 3)
+            return SafetyStatus.FAST_MOVING;
+        else if(AGADataParser.getInstance().getDistLevel() == 2)
+            return SafetyStatus.MOVING;
+        else if(AGADataParser.getInstance().getDistLevel() == 1)
+            return SafetyStatus.SLOW_MOVING;
+        else
+            return SafetyStatus.IDLE;
+    }
+
 
 } // end class DataHandler

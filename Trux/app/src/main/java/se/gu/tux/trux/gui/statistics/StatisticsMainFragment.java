@@ -8,8 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import se.gu.tux.trux.application.DataHandler;
-import se.gu.tux.trux.datastructure.Speed;
-import se.gu.tux.trux.technical_services.NotLoggedInException;
+
 import tux.gu.se.trux.R;
 
 /**
@@ -21,8 +20,7 @@ import tux.gu.se.trux.R;
 public class StatisticsMainFragment extends Fragment
 {
 
-    // to check if in driving mode or not
-    Speed speed;
+    private DataHandler.SafetyStatus status;
 
 
 
@@ -30,34 +28,40 @@ public class StatisticsMainFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
+        // get the view
         View view = inflater.inflate(R.layout.fragment_statistics_main, container, false);
 
-        // start fetching data for the statistics
         DataHandler.getInstance().cacheDetailedStats();
 
-        // check if in driving mode by getting a speed object
-        try
-        {
-            speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
-        }
-        catch (NotLoggedInException e) { e.printStackTrace(); }
+        status = DataHandler.getInstance().getSafetyStatus();
 
-
-        if (speed.getValue() != null && ((Double) speed.getValue()) > 5)
+        // check if driving or not and add fragments
+        if (status == DataHandler.SafetyStatus.MOVING || status == DataHandler.SafetyStatus.FAST_MOVING)
         {
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.statistics_main_container, new StatisticsSimpleFragment());
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
         }
         else
         {
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.statistics_main_container, new StatisticsDetailedFragment());
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
         }
 
+        // return the view
         return view;
     }
+
+
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        status = null;
+    }
+
 
 
     @Override
@@ -65,15 +69,11 @@ public class StatisticsMainFragment extends Fragment
     {
         super.onResume();
 
-        // check if in driving mode by getting a speed object
-        try
-        {
-            speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
-        }
-        catch (NotLoggedInException e) { e.printStackTrace(); }
+        status = DataHandler.getInstance().getSafetyStatus();
 
-
-        if (speed.getValue() != null && ((Double) speed.getValue()) > 5)
+        // when we resume from previous state
+        // check if driving or not to display right fragments
+        if (status == DataHandler.SafetyStatus.MOVING || status == DataHandler.SafetyStatus.FAST_MOVING)
         {
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.statistics_main_container, new StatisticsSimpleFragment());

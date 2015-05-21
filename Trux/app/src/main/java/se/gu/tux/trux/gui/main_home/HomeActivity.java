@@ -1,6 +1,7 @@
 package se.gu.tux.trux.gui.main_home;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,11 +11,15 @@ import android.support.v7.app.ActionBar;
 import java.util.ArrayList;
 import java.util.List;
 
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
-import se.gu.tux.trux.gui.community.Community_main;
+import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.FriendsWindow;
+import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
 import se.gu.tux.trux.gui.welcome.WelcomeMainFragment;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 /**
@@ -29,20 +34,22 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
-    private static final int MAP_VIEW = R.id.fragment_main_i_image_view;
-    private static final int FRIENDS_BUTTON = R.id.friendButton;
+    private static final int FRIENDS_BUTTON_WELCOME = R.id.fragment_welcome_friend_button;
+    private static final int FRIENDS_BUTTON = R.id.fragment_main_friend_button;
+    private static final int PROFILE_BUTTON = R.id.fragment_main_profile_button;
+    private static final int MESSAGE_BUTTON = R.id.fragment_welcome_message_button;
+    private static final int CLICKED_FRIEND = 1;
+    public long selectedFriendID = (long) -1;
+    public boolean hasclicked = false;
 
 
-    HomePagerAdapter pagerAdapter;
-    ViewPager viewPager;
+    private ViewPager viewPager;
 
-    List<Fragment> fragmentArrayList;
-    static ActionBar actionBar;
-
+    private List<Fragment> fragmentArrayList;
+    private ActionBar actionBar;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         // set layout for this activity
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT_ID);
@@ -61,31 +68,23 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         Fragment communityFragment = new CommunityMainFragment();
         Fragment statsFragment = new StatisticsMainFragment();
 
-
         // add fragments to array
         fragmentArrayList.add(welcomeFragment);
         fragmentArrayList.add(communityFragment);
         fragmentArrayList.add(statsFragment);
 
         // set adapter and view pager
-        pagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), fragmentArrayList);
+        HomePagerAdapter pagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), fragmentArrayList);
 
         // get action bar
         actionBar = getSupportActionBar();
-
-        // specify that we will be displaying tabs in the action bar.
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        // initialise action bar
+        initActionBar(actionBar);
 
         // set page listener
         viewPager.setOnPageChangeListener(this);
         // set adapter
         viewPager.setAdapter(pagerAdapter);
-
-        // adding tabs here for now
-        // TODO: create tabs in separate method
-        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_home).setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_community).setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_statistics).setTabListener(this));
 
     }
 
@@ -100,14 +99,24 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
      */
     public void onFragmentViewClick(int id)
     {
-        if (id == MAP_VIEW)
-        {
-            Intent intent = new Intent(this, Community_main.class);
-            startActivity(intent);
-        }
-        else if (id == FRIENDS_BUTTON)
+        if (id == FRIENDS_BUTTON || id == FRIENDS_BUTTON_WELCOME)
         {
             Intent intent = new Intent(this, FriendsWindow.class);
+            //Want to recieve results from clicked friend
+            startActivityForResult(intent, CLICKED_FRIEND);
+        }
+        else if (id == PROFILE_BUTTON)
+        {
+            if(!isSimple()) {
+                Intent intent = new Intent(this, CommunityProfileActivity.class);
+                startActivity(intent);
+            } else {
+                showToast("DRIVING: You cannot access your profile while driving.");
+            }
+        }
+        else if (id == MESSAGE_BUTTON)
+        {
+            Intent intent = new Intent(this, MessageActivity.class);
             startActivity(intent);
         }
         else
@@ -116,21 +125,77 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         }
     }
 
+    private boolean isDriving(){
+        return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
+    }
+
+    //Getting results from the FriendsWindow
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == CLICKED_FRIEND) {
+            if (resultCode == RESULT_OK) {
+                //Gets the friendID of the friend which was clicked
+                selectedFriendID = data.getLongExtra("FriendID",  -1);
+                //Sets the new view to the map
+                viewPager.setCurrentItem(1, true);
+            }
+            else selectedFriendID = -1;
+        }
+
+    }
+
+    public void setSelectedFriend(Long friendID){
+        this.selectedFriendID = friendID;
+    }
+
+    public long getSelectedFriend() {
+        return selectedFriendID;
+    }
 
 
     @Override
-    public void onBackPressed()
-    {
-        if (getFragmentManager().getBackStackEntryCount() == 0)
-        {
-            this.finish();
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            System.out.println("Minimizing...");
+            // Minimize
+            moveTaskToBack(true);
         }
         else
         {
-            getFragmentManager().popBackStack();
+
+            if (!getSupportFragmentManager().popBackStackImmediate("MENU",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE) &&
+                !getSupportFragmentManager().popBackStackImmediate("PROFILE",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE)) {
+
+                System.out.println("Poping back stack...");
+                getSupportFragmentManager().popBackStack();
+            }
         }
     }
 
+
+    /**
+     * Helper method to initialise the action bar.
+     *
+     * @param actionBar     The action bar.
+     */
+    private void initActionBar(ActionBar actionBar)
+    {
+        // if null, return
+        if (actionBar == null) { return; }
+
+        // specify that we will be displaying tabs in the action bar.
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        // add tabs
+        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_home).setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_community).setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_statistics).setTabListener(this));
+    }
+
+    private boolean isSimple() {
+        return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
+    }
 
 
     /*****************************************************************************************
@@ -167,7 +232,5 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     /***************************************************************************************
      * End override methods.                                                               *
      ***************************************************************************************/
-
-
 
 } // end class

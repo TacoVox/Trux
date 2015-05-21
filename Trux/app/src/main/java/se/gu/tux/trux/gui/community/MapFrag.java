@@ -2,8 +2,11 @@ package se.gu.tux.trux.gui.community;
 
 
 
-import android.app.FragmentManager;
+
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 
@@ -11,34 +14,59 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-import org.slf4j.Marker;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.FriendFetchListener;
+import se.gu.tux.trux.application.SettingsHandler;
+import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
-import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.gui.main_home.HomeActivity;
+import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
-public class MapFrag extends Fragment implements OnMapReadyCallback {
+public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetchListener,
+        GoogleMap.OnMapClickListener {
 
-    GoogleMap mMap;
-    User user;
-    Friend friend;
+    private GoogleMap mMap;
+    private LatLng loc;
+    private MapFragment f;
+    
+    private HashMap<String, Friend> friendMarker;
+    
+    private ArrayList<Friend> friends;
+    private MapFrag thisMapFrag = this;
+    
+    private Timer t;
+    private PopFriends timer;
+    private boolean hasMarker = false;
+    private boolean mapLoaded = false;
 
-    @Override
+    private RelativeLayout loadingPanel;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -47,74 +75,255 @@ public class MapFrag extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        MapFragment f = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map);
+
+        loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
+
+        //Setting a Mapfragment so that it calls to the getMapAsync which is connected to onMapReady
+        f = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map);
         f.getMapAsync(this);
+
+
 
         return view;
 
     }
 
-    private GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
+    private GoogleMap.OnCameraChangeListener onCameraChangeListener =
+            new GoogleMap.OnCameraChangeListener() {
+                @Override
+                public void onCameraChange(CameraPosition cameraPosition) {
+                    if(isDriving()){
+                        mMap.getUiSettings().setScrollGesturesEnabled(false);
+                    }
+                }
+            };
+
+    private GoogleMap.OnMyLocationButtonClickListener onMyLocationButtonClickListener =
+            new GoogleMap.OnMyLocationButtonClickListener() {
+
+        @Override
+        public boolean onMyLocationButtonClick(){
+            {
+                mMap.setOnMyLocationChangeListener(startFollowing);
+            }
+            return false;
+        }
+    };
+    //A listner which listen to the location of the user
+    private GoogleMap.OnMyLocationChangeListener startFollowing = new GoogleMap.OnMyLocationChangeListener() {
         @Override
         public void onMyLocationChange(Location location) {
-            LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-            System.out.println("Inside onMyLocationChange");
-            if(mMap == null) {
-                System.out.println("Map is null ");
-            }
+            loc = new LatLng(location.getLatitude(), location.getLongitude());
             if(mMap != null){
-                System.out.println("Position is changed");
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 13));
-                mMap.addMarker(new MarkerOptions().position(loc).title("Here You Are"));
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(loc));
+
             }
+        }
+    };
+
+
+    @Override
+    public void onMapClick(LatLng point) {
+        System.out.println("");
+        getActivity().getSupportFragmentManager().popBackStackImmediate("MENU",
+                FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
+
+    private GoogleMap.OnCameraChangeListener stopFollowing = new GoogleMap.OnCameraChangeListener() {
+        public void onCameraChange(CameraPosition position) {
+            startFollowing = null;
+        }
+    };
+
+    private GoogleMap.OnMarkerClickListener markerClickListener = new GoogleMap.OnMarkerClickListener() {
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+
+            String markerID = marker.getId();
+            MapCommunityWindow fragment = new MapCommunityWindow();
+            Friend friend = friendMarker.get(markerID);
+            Bundle sendToInfoFragment = new Bundle();
+            sendToInfoFragment.putSerializable("friend", friend);
+            fragment.setArguments(sendToInfoFragment);
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            getActivity().getSupportFragmentManager().popBackStackImmediate("MENU",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentTransaction.addToBackStack("MENU");
+            fragmentTransaction.replace(R.id.menuContainer, fragment);
+            System.out.println("Count on the popStack in mapFrag: " + getFragmentManager().getBackStackEntryCount());
+            fragmentTransaction.commit();
+
+            return false;
         }
     };
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        //Makes it possible for the map to locate the device
         mMap.setMyLocationEnabled(true);
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        //Gets the normal view of the map (not satalite)
+        if(SettingsHandler.getInstance().isNormalMap()) {
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+        else mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+        System.out.println("------MAP READY-----");
+
+
+
+        //These lines will give you the last known position of the device
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String provider = locationManager.getBestProvider(criteria, true);
+        Location mylocation = locationManager.getLastKnownLocation(provider);
+        if(mylocation != null) {
+            double latitude = mylocation.getLatitude();
+            double longitude = mylocation.getLongitude();
+            LatLng latLng = new LatLng(latitude, longitude);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
+        else {
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(0, 0)));
+        }
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
-        mMap.setOnMyLocationChangeListener(myLocationChangeListener);
-        System.out.println("Adding on location change listener...");
 
+        mMap.setOnMyLocationButtonClickListener(onMyLocationButtonClickListener);
+        mMap.setOnCameraChangeListener(stopFollowing);
+        mMap.setOnMarkerClickListener(markerClickListener);
+        mMap.setOnMapClickListener(this);
 
+        friendMarker = new HashMap<String, Friend>();
+
+        //Creats a timeTask which will uppdate the posion of the friendUsers
+        t = new Timer();
+        timer = new PopFriends();
+        t.schedule(timer, 0, 10000);
+
+        mapLoaded = true;
     }
-/*
-    private void setUpMap(){
-        mMap.setMyLocationEnabled(true);
+    
 
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+    @Override
+    public void onFriendsFetched(final ArrayList<Friend> friends) {
+        this.friends = friends;
+        final long selectedFriend = ((HomeActivity) getActivity()).getSelectedFriend();
 
-        Criteria criteria = new Criteria();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (hasMarker) {
+                    mMap.clear();
+                    hasMarker = false;
+                }
+            }});
+        if (friends != null) {
 
-        String provider = locationManager.getBestProvider(criteria, true);
+            for (final Friend currentFriend : friends) {
 
-        Location mylocation = locationManager.getLastKnownLocation(provider);
+                if (currentFriend != null && currentFriend.getProfilePic() != null &&
+                        currentFriend.getCurrentLoc() != null &&
+                        currentFriend.getCurrentLoc().getLoc() != null) {
 
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    final double[] loc = currentFriend.getCurrentLoc().getLoc();
 
-        double latitude = mylocation.getLatitude();
-        double longitude = mylocation.getLongitude();
+                    final Bitmap pic = Bitmap.createScaledBitmap(
+                            SocialHandler.pictureToBitMap(currentFriend.getProfilePic())
+                            , 100, 100, false);
 
-        LatLng latLng = new LatLng(latitude, longitude);
+                    Canvas canvas = new Canvas(pic);
+                    Drawable shape = getResources().getDrawable(R.drawable.marker_layout);
+                    shape.setBounds(0, 0, pic.getWidth(), pic.getHeight());
+                    shape.draw(canvas);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
 
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+                            Marker m = mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(loc[0], loc[1]))
+                                    .title(currentFriend.getFirstname())
+                                    .icon(BitmapDescriptorFactory.fromBitmap(pic)));
+                            if(isDriving()){
+                                m.setSnippet("DRIVING");
+                            }
+                            String mID = m.getId();
+                            friendMarker.put(mID, currentFriend);
+                            System.out.println("---Picture is now a marker---");
+                            hasMarker = true;
+                            if(selectedFriend == currentFriend.getFriendId()){
+                                mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(loc[0], loc[1])));
+                            }
+                        }
+                    });
+                }
+            }
+            ((HomeActivity) getActivity()).setSelectedFriend(new Long(-1));
 
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("You Are Here"));
-    }
-
-    private boolean isGooglePlayServicesAvailable() {
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity());
-        if (ConnectionResult.SUCCESS == status) {
-            return true;
-        } else {
-            GooglePlayServicesUtil.getErrorDialog(status, getActivity(), 0).show();
-            return false;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadingPanel.setVisibility(View.GONE);
+                }
+            });
         }
-    }*/
+    }
+
+    @Override
+    public void onFriendRequestsFetched(ArrayList<Friend> friends) {
+
+    }
+
+    /*
+     * This method will populate the map with the friend pictures and put
+     * them on the currect position.
+     */
+
+    class PopFriends extends TimerTask{
+        public void run(){
+            DataHandler.gI().getSocialHandler().fetchFriends(thisMapFrag,
+                    SocialHandler.FriendsUpdateMode.ONLINE);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (SettingsHandler.getInstance().isNormalMap()) {
+                        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        System.out.println("The mapType is Normal in the UIThread ");
+                    } else {
+                        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                        System.out.println("The mapType is hybrid in the UIThread ");
+                    }
+                }
+            });
+        }
+    }
+
+    public void onStop(){
+        super.onStop();
+        if(t != null) {
+            t.cancel();
+            t = null;
+        }
+    }
+
+    public void onResume(){
+        super.onResume();
+
+        loadingPanel.setVisibility(View.VISIBLE);
+
+        if(mapLoaded && t == null) {
+            t = new Timer();
+            timer = new PopFriends();
+            t.schedule(timer, 0, 10000);
+        }
+    }
+
+    private boolean isDriving(){
+        return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
+    }
 }

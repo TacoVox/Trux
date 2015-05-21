@@ -20,9 +20,17 @@ package se.gu.tux.trux.datastructure;
  * @author jonas
  */
 public class Friend extends Data {
-    private long userid;
-    private long profilePic;
-    
+    public enum Status {OFFLINE, ONLINE, DRIVING, MOVING};
+    public enum FriendType {NONE, PENDING, FRIEND};
+
+	private Status userStatus;
+
+    private long friendId;
+    private long profilePicId;
+    private transient Picture profilePic;
+    private FriendType friendType;
+    private boolean isOnline;
+
     private String username;
     private String firstname;
     private String lastname;
@@ -33,8 +41,8 @@ public class Friend extends Data {
         this.username = username;
     }
     
-    public Friend(long userid) {
-        this.userid = userid;
+    public Friend(long friendId) {
+        this.friendId = friendId;
     }
     
     public Friend(String username, String firstname, String lanstname) {
@@ -43,22 +51,6 @@ public class Friend extends Data {
         this.lastname = lastname;
     }
     
-    public long getUserid() {
-        return userid;
-    }
-
-    public void setUserid(long userID) {
-        this.userid = userID;
-    }
-
-    public long getProfilePic() {
-        return profilePic;
-    }
-
-    public void setProfilePic(long profilePic) {
-        this.profilePic = profilePic;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -91,18 +83,74 @@ public class Friend extends Data {
         this.currentLoc = currentLoc;
     }
 
+    public long getFriendId() {
+        return friendId;
+    }
+
+    public void setFriendId(long friendId) {
+        this.friendId = friendId;
+    }
+    
+    public Status getStatus() {
+        return userStatus;
+    }
+    
+    public void setStatus(Status status) {
+        userStatus = status;
+    }
+
     @Override
     public Object getValue() {
-        return userid;
+        return friendId;
     }
 
     @Override
     public void setValue(Object value) {
-        setUserid((Long)value);
+        setFriendId((Long) value);
     }
 
     @Override
     public boolean isOnServerSide() {
         return true;
+    }
+
+    public long getProfilePicId() {
+        return profilePicId;
+    }
+
+    public void setProfilePicId(long profilePic) {
+        this.profilePicId = profilePic;
+    }
+
+    public FriendType getFriendType() {
+        return friendType;
+    }
+
+    public void setFriendType(FriendType friendType) {
+        this.friendType = friendType;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean isOnline) {
+        this.isOnline = isOnline;
+    }
+
+    public Picture getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(Picture profilePic) {
+        this.profilePic = profilePic;
+    }
+
+    public int hashCode() {
+        if (friendId != 0) {
+            return (int)(friendId);
+        } else {
+            return 0;
+        }
     }
 }

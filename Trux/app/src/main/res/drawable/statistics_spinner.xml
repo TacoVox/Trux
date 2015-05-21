@@ -1,33 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:state_pressed="true" >
+    <item android:state_pressed="true"
+        android:drawable="@drawable/spinner_item_clicked"/>
 
-        <shape android:shape="rectangle"  >
-            <corners android:radius="10dp" />
-            <stroke android:width="3dp"
-                android:color="#ff5f7162" />
-            <solid android:color="#ff88a590"/>
-        </shape>
-    </item>
+    <item android:state_focused="true"
+        android:drawable="@drawable/spinner_item"/>
 
-    <item android:state_focused="true">
-
-        <shape android:shape="rectangle"  >
-            <corners android:radius="10dp" />
-            <stroke android:width="3dp"
-                android:color="#ffbfdec9" />
-            <solid android:color="#ffd4f3de"/>
-        </shape>
-    </item>
-
-    <item >
-        <shape android:shape="rectangle"  >
-            <corners android:radius="10dp" />
-            <stroke android:width="3dp"
-                android:color="#ffbfdec9" />
-            <solid android:color="#ffd4f3de"/>
-        </shape>
-    </item>
+    <item android:drawable="@drawable/spinner_item"/>
 
 </selector>

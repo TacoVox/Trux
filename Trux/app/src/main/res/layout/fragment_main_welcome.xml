@@ -4,9 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/white"
-    android:layout_gravity="center"
-    android:paddingRight="5dp"
-    android:paddingLeft="5dp">
+    android:layout_gravity="center">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,20 +39,31 @@
 
     </LinearLayout>
 
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="unread messages: 5"
-        android:background="@drawable/button_clickable_new"
-        android:textColor="#E0E0E0"
-        android:layout_marginBottom="5dp"/>
+        android:layout_height="@dimen/abc_action_button_min_height_material"
+        android:orientation="horizontal"
+        android:id="@+id/homeButtons">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_clickable_new"
-        android:textColor="#E0E0E0"
-        android:text="some other info"
-        android:layout_marginBottom="5dp"/>
+        <ImageButton
+            android:id="@+id/fragment_welcome_message_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bottom_button"
+            android:src="@drawable/messageicon"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            android:layout_marginRight="1dp"/>
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/fragment_welcome_friend_button"
+            android:background="@drawable/bottom_button"
+            android:src="@drawable/friendsicon"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
 
 </LinearLayout>

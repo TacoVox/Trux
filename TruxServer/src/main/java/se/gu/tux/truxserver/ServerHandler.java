@@ -18,19 +18,36 @@ public class ServerHandler implements Runnable {
     private ServerSocket ss;
     private TruxServer truxServer;
     private ExecutorService threadPool
-            = Executors.newFixedThreadPool(10);
+            = Executors.newFixedThreadPool(1000);
     private long nextConnectionId = 0;
+    private int port = 0;
+    private long connectionTimeout = 0;
 
-    public ServerHandler(TruxServer truxServer) {
+    
+    /**
+     * Creates a new ServerHandler instance that listens for connections on the specified port.
+     * 
+     * @param truxServer		TruxServer object, in case we need to cancel execution
+     * @param port				Port where the server listens to requests
+     * @param connectionTimeout	Timeout in seconds for idle connections
+     */
+    public ServerHandler(TruxServer truxServer, int port, long connectionTimeout) {
         this.truxServer = truxServer;
+        this.port = port;
+        this.connectionTimeout = connectionTimeout;
     }
 
+    
+    /**
+     * The main server handler runnable. Listens for connections and diverts them to
+     * threads running ServerRunnables.
+     */
     @Override
     public void run() {
 
         // Initialize serversocket - NOTE port will be configurable later
         try {
-            ss = new ServerSocket(12000);
+            ss = new ServerSocket(port);
         } catch (IOException e2) {
             // Fatal error
             Logger.gI().addError("Fatal error on server socket initialization: "
@@ -51,7 +68,7 @@ public class ServerHandler implements Runnable {
                 Logger.gI().addDebug("Connection from " + cs.getInetAddress()
                         + ". Creating ServerRunnable instance...");
 
-                threadPool.execute(new ServerRunnable(cs, nextConnectionId));
+                threadPool.execute(new ServerRunnable(cs, nextConnectionId, connectionTimeout));
                 nextConnectionId++;
 
             } catch (SocketException e) {

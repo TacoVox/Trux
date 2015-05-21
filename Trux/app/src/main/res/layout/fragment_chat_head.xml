@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/chat_head_username_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/loading"
+        android:textSize="25sp"
+        android:textColor="#E0E0E0"
+        android:gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="1dp"
+        android:padding="5dp"
+        android:background="#61728d"/>
+
+    <ScrollView
+        android:id="@+id/chat_scrool_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/chat_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <LinearLayout
+        android:id="@+id/chat_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="5dp">
+
+        <Spinner
+            android:id="@+id/chat_input_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ff404e68"
+            android:textColor="#E0E0E0"
+            android:textCursorDrawable="@drawable/custom_cursor"
+            android:layout_marginTop="-2dp"
+            android:layout_weight="1"/>
+
+        <EditText
+            android:id="@+id/chat_input_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#ff404e68"
+            android:padding="10dp"
+            android:textColor="#E0E0E0"
+            android:textCursorDrawable="@drawable/custom_cursor"/>
+
+        <Button
+            android:id="@+id/chat_send_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/send"
+            android:background="@drawable/bottom_button"
+            android:textColor="#E0E0E0"
+            android:layout_marginLeft="1dp"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

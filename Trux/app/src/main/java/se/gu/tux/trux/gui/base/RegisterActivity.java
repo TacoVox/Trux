@@ -113,7 +113,7 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
                 showDialogBox("Registration successful!",
                         "You have now been registered. To confirm registration, " +
                                 "please go to the e-mail you provided and click on the link. To enjoy our services, " +
-                                "login with your username and password. Have a nice day!");
+                                "login with your username and password.");
             }
             else
             {
@@ -127,7 +127,7 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
             // error, display message to user
             showDialogBox("Registration failed!",
                     "There was a problem while registering. Please try " +
-                            "again later. If the problem persists, please contact the development team. Have a nice day!");
+                            "again later. If the problem persists, please contact the Trux developers.");
         }
 
     } // end registerUser()

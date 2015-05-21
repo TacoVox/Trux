@@ -26,13 +26,16 @@ public class Location extends MetricData {
         return loc;
     }
     
-    public Location() {}
+    public Location() {
+		// Leave location as null
+	}
     
     public Location(double lat, double lng) {
         loc = new double[2];
-        
         setLoc(lat, lng);
-    }
+   }
+
+
 
     public void setLoc(double lat, double lng) {
         loc[0] = lat;
@@ -56,5 +59,13 @@ public class Location extends MetricData {
     public void setValue(Object loc) {
         if(loc instanceof double[])
             this.loc = (double[]) loc;
+    }
+
+    public boolean equals(Object o) {
+        if (o instanceof Location && ((Location) o).getLoc() != null) {
+            return (((Location)o).getLoc()[0] == loc[0] && ((Location)o).getLoc()[1] == loc[1]);
+        } else {
+            return false;
+        }
     }
 }

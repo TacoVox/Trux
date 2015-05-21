@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="lib" path="libs/Automotive-API-1.1.jar"/>
+	<classpathentry kind="lib" path="libs/lib.jar"/>
+	<classpathentry kind="lib" path="libs/SDP-1.1.jar"/>
+	<classpathentry kind="lib" path="libs/VIL-1.1.jar"/>
+	<classpathentry kind="lib" path="TruxServer.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -134,7 +134,7 @@ public class BaseAppActivity extends ActionBarActivity
      *
      * @param message   The message to show.
      */
-    protected void showToast(String message)
+    public void showToast(String message)
     {
         // if message is empty, return
         if (message.isEmpty())
@@ -200,10 +200,15 @@ public class BaseAppActivity extends ActionBarActivity
             aboutData[0] = "Main Screen";
             aboutData[1] = getResources().getString(R.string.main_screen_help);
         }
+        else if (viewID == R.layout.activity_home)
+        {
+            aboutData[0] = "Help";
+            aboutData[1] = getResources().getString(R.string.driver_home_screen_help);
+        }
         else
         {
-            aboutData[0] = "No Help Available Yet";
-            aboutData[1] = "No help information available yet for this screen.";
+            aboutData[0] = "Help";
+            aboutData[1] = getResources().getString(R.string.driver_home_screen_help);
         }
 
         // return the array

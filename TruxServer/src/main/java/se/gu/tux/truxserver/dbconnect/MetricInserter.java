@@ -82,6 +82,7 @@ public class MetricInserter implements Runnable {
                 insertMetric((MetricData)queue.take());
             }
             catch (InterruptedException e) {
+                Logger.gI().addMsg("Server shutting down. Goodbye. Har det bra!");
             	// Received interrupt() call from managing thread
             	running = false;
             }
@@ -98,8 +99,18 @@ public class MetricInserter implements Runnable {
      * 
      * @param md the MetricData object which shall be inserted to the DB
      */
-    public synchronized void addToDB(MetricData md) {
-        queue.add(md);
+    public void addToDB(MetricData md) {
+        if(md != null) {
+            while(!queue.offer(md)) {
+                try {
+                    Thread.sleep(10);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Logger.gI().addError("Someone tried to insert an empty MetricData object to the database.");
+        }
     }
     
     /**
@@ -119,23 +130,30 @@ public class MetricInserter implements Runnable {
     		return false; 
         }
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
+        
         try
         {   
+            dbc = ConnectionPool.gI().getDBC();
+             
             PreparedStatement pst;
             
             if(md instanceof Location) {
+                //Logger.gI().addDebug(Double.toString(((double[])md.getValue())[0]));
+                //Logger.gI().addDebug(Double.toString(((double[])md.getValue())[1]));
+                
                 pst = dbc.getConnection().prepareStatement(
-                    "INSERT INTO location (latitude, logitude, timestamp, userid) "
-                            + "SELECT * FROM (SELECT ?, ?, ?, ?) AS tmp");
+                    "INSERT INTO location (latitude, longitude, timestamp, userid, sessionid) "
+                            + "SELECT * FROM (SELECT ?, ?, ?, ?, ?) AS tmp");
                 pst.setDouble(1, ((double[])md.getValue())[0]);
-                pst.setObject(2, ((double[])md.getValue())[1]);
+                pst.setDouble(2, ((double[])md.getValue())[1]);
                 pst.setLong(3, md.getTimeStamp());
                 pst.setLong(4, md.getUserId());
+                pst.setLong(5, md.getSessionId());
             } else {
                 pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO " + type + "(value, timestamp, userid) "
-                            + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
+                            + "SELECT * FROM (SELECT ? AS A, ? AS B, ? AS C) AS tmp");
                 
                 pst.setObject(1, md.getValue());
                 pst.setLong(2, md.getTimeStamp());
@@ -145,9 +163,12 @@ public class MetricInserter implements Runnable {
             dbc.execInsert(md, pst);
             
             return true;
-        }
-        catch (Exception e)
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return false;
+        } catch (Exception e)
         {
+            e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
         }
         finally {

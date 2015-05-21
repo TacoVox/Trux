@@ -5,12 +5,18 @@
     <string name="main_screen_help">To login, please fill in your username and password
     in the corresponding fields. Click on the Login button.\nIf you miss one, please click
     on the Register button to create an account.\nHave a nice day!</string>
-    <string name="driver_home_screen_help">To check profile, click on the Profile button.\n
-    To check community, click on the Community button.\nTo check statistics, click on the
-    Statistics button.\nHave a nice day!</string>
+    <string name="driver_home_screen_help">Standard Mode.\n
+        In the standard mode you can access the following features.\n
+        Messaging.\n
+        Statistics.\n
+        Map view.\n
+        Profile.\n
+        Adding/Accepting friends.\n
+        Driving Mode.\n
+        In driving mode some features are disabled to insure driver safety.</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
-    <string name="action_contact">Contact</string>
+    <string name="action_contact">Contact us</string>
     <string name="action_logout">Logout</string>
     <string name="login">Login</string>
     <string name="autoLogin">Keep me logged in</string>
@@ -20,9 +26,20 @@
     <string name="distance_traveled_text">Distance</string>
     <string name="title_activity_speed">Speed</string>
     <string name="coming_soon_text">COMING SOON</string>
+    <string name="collecting_data">COLLECTING DATA</string>
     <string name="overall_statistics_text">Overall Statistics</string>
     <string name="compare_statistics_text">Compare Statistics</string>
     <string name="community_text">Community</string>
+    <string name="friend_requests">FRIEND REQUESTS</string>
+    <string name="friends">FRIENDS</string>
+    <string name="no_friends">No friends found.</string>
+    <string name="search_hint">SEARCH HERE</string>
+    <string name="pending">Pending...</string>
+    <string name="cancel">cancel</string>
+    <string name="edit">edit</string>
+    <string name="save">save changes</string>
+    <string name="send">send</string>
+    <string name="change_profile_pic">change profile picture</string>
     <string name="statistics_text">Statistics</string>
     <string name="profile_text">Profile</string>
     <string name="title_activity_fuel">Fuel</string>
@@ -35,9 +52,13 @@
     <string name="agree_button_title">I agree to the Terms and Conditions of Use</string>
     <string name="register_button_title">Register</string>
     <string name="average_today">Average Today:</string>
-    <string name="average_lastweek">Average Last Week:</string>
-    <string name="average_lastmonth">Average Last Month:</string>
+    <string name="average_lastweek">Average This Week:</string>
+    <string name="average_lastmonth">Average This Month:</string>
     <string name="average_total">Average Total:</string>
+    <string name="today">Today:</string>
+    <string name="last_week">This Week:</string>
+    <string name="last_month">This Month:</string>
+    <string name="total">Total:</string>
     <string name="title_activity_distance">Distance</string>
     <string name="title_activity_simple_stats">SimpleStats</string>
     <string name="title_activity_overall_stats">OverallStats</string>
@@ -53,6 +74,9 @@
     <string name="settings">Here we will have settings later</string>
     <string name="action_help">Help</string>
     <string name="title_activity_community_main">Community_main</string>
+    <string name="remove_dialog_message">Do you want to remove friend?</string>
+    <string name="community_remove">Remove Friend</string>
+    <string name="decline">Cancel</string>
     <string name="title_activity_fragment_page_adapter_community">FragmentPageAdapterCommunity</string>
     <string name="title_activity_test_map">TestMap</string>
     <string name="welcome">Welcome to Trux!</string>
@@ -60,5 +84,36 @@
     <string name="search_button_text">Search</string>
     <string name="title_activity_friends_window">FriendsWindow</string>
     <string name="hello_world">Hello world!</string>
+    <string name="profile_button_edit_text">Edit</string>
+    <string name="speed_graph_explanation">
+        The graph shows your average speed over the last thirty days.
+            \nBased on km/h.
+    </string>
+    <string name="distance_graph_explanation">
+        The graph shows your average distance traveled over the last thirty days.
+            \nShown in km.
+    </string>
+    <string name="fuel_graph_explanation">
+        The graph shows your average fuel consumption over the last thirty days.
+            \nBased on litres/h.
+    </string>
+    <string name="speed_title">SPEED</string>
+    <string name="fuel_title">FUEL</string>
+    <string name="distance_title">DISTANCE</string>
+    <string name="noData">No data found for this user.</string>
+    <string name="contact_name">Name</string>
+    <string name="contact_title">Contact us</string>
+    <string name="contact_email">Email</string>
+    <string name="feedback_body">Your feedback</string>
+    <string name="feedbacktype">Enter your feedback type</string>
+    <string name="feedbacktype1">Reset Password</string>
+    <string name="feedbacktype2">Constructive suggestion</string>
+    <string name="feedbacktype3">Report service issues</string>
+    <string name="feedbackbutton">Send Feedback</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 
 </resources>

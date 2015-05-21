@@ -15,15 +15,17 @@
  */
 package se.gu.tux.truxserver.dataswitch;
 
+import se.gu.tux.trux.datastructure.Message;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.datastructure.Heartbeat;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.truxserver.HeartbeatHandler;
 
 import se.gu.tux.truxserver.dbconnect.MetricInserter;
-import se.gu.tux.truxserver.file.PictureIO;
 
 /**
  *
@@ -68,10 +70,12 @@ public class DataSwitcher {
             return MetricSwitcher.gI().handleMetricData((MetricData)d);
         else if (d instanceof User || d instanceof Friend)
             return UserSwitcher.gI().handleUser(d);
-        else if (d instanceof ProtocolMessage)
-            return MessageSwitcher.gI().handleMessage((ProtocolMessage) d);
+        else if (d instanceof ProtocolMessage || d instanceof Message)
+            return MessageSwitcher.gI().handleMessage(d);
         else if (d instanceof Picture)
             return PictureSwitcher.gI().handlePicture((Picture) d);
+        else if (d instanceof Heartbeat)
+            return HeartbeatHandler.gI().handleHB((Heartbeat) d);
         else
             return null;
     }

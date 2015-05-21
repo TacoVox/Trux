@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -20,7 +21,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/truxicon"
         android:label="@string/app_name"
-        android:theme="@style/CustomActionBarTheme" >
+        android:theme="@style/CustomActionBarTheme">
 
 
         <!-- META DATA -->
@@ -30,7 +31,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCbI5lHKz2EEGWe3X4ozbVuLbHXVy458Cw" />
+            android:value="AIzaSyDL4n8nLWhoqVqhGxi6zHUzNfrtCjmQccg" />
 
 
         <!-- ACTIVITIES -->
@@ -51,65 +52,67 @@
         <!-- About Menu Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.base.AboutMenuActivity"
-            android:label="About">
+            android:label="About"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- Contact Menu Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.base.ContactMenuActivity"
-            android:label="Contact">
+            android:label="Contact"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- Settings Menu Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.base.SettingsMenuActivity"
-            android:label="Settings">
+            android:label="Settings"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- Register Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.base.RegisterActivity"
             android:label="@string/title_activity_register"
+            android:screenOrientation="portrait"
             android:parentActivityName="se.gu.tux.trux.gui.main_home.MainActivity">
         </activity>
 
         <!-- Home Activity and its children activities go here below -->
         <activity
             android:name="se.gu.tux.trux.gui.main_home.HomeActivity"
-            android:label="Home">
+            android:label="Home"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- FriendWindow Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.community.FriendsWindow"
-            android:label="Friends">
+            android:label="Friends"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+
+        <!-- Community Profile Activity -->
+        <activity
+            android:name="se.gu.tux.trux.gui.community.CommunityProfileActivity"
+            android:label="Community Profile"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
         </activity>
         <!-- End Home Activity -->
-
-
-        <!-- UNDER DEVELOPMENT -->
-        <!-- Below activities are not used at the moment or are under development. Remove later! -->
-        <activity
-            android:name="se.gu.tux.trux.gui.simpleStats.SimpleStats"
-            android:screenOrientation="portrait" >
-        </activity>
-
-        <activity
-            android:name="se.gu.tux.trux.gui.detailedStats.OverallStats"
-            android:label="@string/title_activity_overall_stats">
-        </activity>
-
-        <activity
-            android:name="se.gu.tux.trux.gui.community.FragmentPageAdapterCommunity"
-            android:label="@string/title_activity_fragment_page_adapter_community" >
-        </activity>
-        <!---->
 
         <activity
             android:name="se.gu.tux.trux.gui.community.Community_main"
             android:label="@string/title_activity_community_main" >
         </activity>
-        <!-- End unused or under development activities -->
+
+        <!-- Message Activity -->
+        <activity
+            android:name="se.gu.tux.trux.gui.messaging.MessageActivity"
+            android:label="Messages"
+            android:screenOrientation="portrait">
+        </activity>
 
 
     </application>

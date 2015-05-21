@@ -46,7 +46,54 @@ public class OverallGraphWindow extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         myFragmentView = getView();
+        //refresh();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refresh();
+    }
+
+    public void refresh() {
+        System.out.println("REFRESHING Overall....");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final Speed s = new Speed(0);
+                final Fuel f = new Fuel(0);
+                final Distance d = new Distance(0);
+                boolean cancelled = false;
+                while (!cancelled && !(DataHandler.getInstance().detailedStatsReady(s)
+                        && DataHandler.getInstance().detailedStatsReady(f)
+                        && DataHandler.getInstance().detailedStatsReady(d))) {
+                    try {
+                        Thread.sleep(1000);
+                        // Stop waiting if fragment was cancelled
+                        if (!isVisible()) {
+                           cancelled = true;
+                        }
+                    } catch (InterruptedException e) {
+                        System.out.println("Wait interrupted.");
+                    }
+                }
+
+                Activity a = getActivity();
+                if (!cancelled && a != null) {
+                    a.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setValues(DataHandler.getInstance().getDetailedStats(s),
+                                    DataHandler.getInstance().getDetailedStats(f),
+                                    DataHandler.getInstance().getDetailedStats(d));
+                        }
+                    });
+                }
+            }
+        }).start();
+
+        /*
         // Make sure values are set once they are loaded
         AsyncTask myTask = new AsyncTask<Void, Void, Boolean>()
         {
@@ -86,10 +133,9 @@ public class OverallGraphWindow extends Fragment {
                         DataHandler.getInstance().getDetailedStats(f),
                         DataHandler.getInstance().getDetailedStats(d));
             }
-        }.execute();
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                 */
     }
-
-
 
 
     public void setValues(DetailedStatsBundle speedBundle, DetailedStatsBundle fuelBundle,
@@ -113,17 +159,19 @@ public class OverallGraphWindow extends Fragment {
 
 
     private void popFuelGraph(View view) {
+
         fuelGraph = new GraphView(getActivity());
-        fuelGraph.setTitle("Fuel Consumption");
-        fuelGraph.setTitleTextSize(40);
-        fuelGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Consumption");
-        fuelGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
         fuelGraph.getViewport().setXAxisBoundsManual(true);
+        fuelGraph.getViewport().setYAxisBoundsManual(true);
+        fuelGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        fuelGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
+        fuelGraph.getGridLabelRenderer().setPadding(50);
         fuelGraph.getViewport().setMaxX(30);
+        fuelGraph.getViewport().setMaxY(800);
+
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 0, 100, 0);
         fuelGraph.setLayoutParams(lp);
 
         try {
@@ -135,17 +183,20 @@ public class OverallGraphWindow extends Fragment {
     }
 
     private void popSpeedGraph(View view) {
+
         speedGraph = new GraphView(getActivity());
-        speedGraph.setTitle("Speed");
-        speedGraph.setTitleTextSize(40);
-        speedGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Speed");
-        speedGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
 
         speedGraph.getViewport().setXAxisBoundsManual(true);
+        speedGraph.getViewport().setYAxisBoundsManual(true);
+        speedGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        speedGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
+        speedGraph.getGridLabelRenderer().setNumVerticalLabels(4);
+        speedGraph.getGridLabelRenderer().setPadding(50);
         speedGraph.getViewport().setMaxX(30);
+        speedGraph.getViewport().setMaxY(150);
+
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 0, 100, 0);
         speedGraph.setLayoutParams(lp);
 
         try {
@@ -157,18 +208,19 @@ public class OverallGraphWindow extends Fragment {
     }
 
     private void popDTGraph(View view) {
+
         distGraph = new GraphView(getActivity());
 
-        distGraph.setTitle("Distance Traveled");
-        distGraph.setTitleTextSize(40);
-        distGraph.getGridLabelRenderer().setVerticalAxisTitle("Avg Distance");
-        distGraph.getGridLabelRenderer().setHorizontalAxisTitle("Date");
-
         distGraph.getViewport().setXAxisBoundsManual(true);
+        distGraph.getViewport().setYAxisBoundsManual(true);
+        distGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        distGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
+        distGraph.getGridLabelRenderer().setPadding(50);
         distGraph.getViewport().setMaxX(30);
+        distGraph.getViewport().setMaxY(1000);
+
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0, 0, 100, 0);
         distGraph.setLayoutParams(lp);
 
         try {

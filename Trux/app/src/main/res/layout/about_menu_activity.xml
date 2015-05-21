@@ -3,23 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/imageView"
+        android:background="@drawable/truxlogo"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"/>
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="About Go Here"
-        android:textSize="40sp"/>
+        android:text="Trux ™ is an application developed by a group of software engineering and management students, as a group project at the University of  Gothenburg, Sweden.
+2015"
+        android:textSize="30sp"/>
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="More About Here"
-        android:textSize="40sp"/>
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="And So On"
-        android:textSize="40sp"/>
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.main_home;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -17,13 +18,16 @@ import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.LoginService;
+import se.gu.tux.trux.application.SettingsHandler;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.base.RegisterActivity;
 import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
+import se.gu.tux.trux.technical_services.LocationService;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
+import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
@@ -63,16 +67,24 @@ public class MainActivity extends BaseAppActivity
 
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
-        ServerConnector.gI().connect("www.derkahler.de");
+        ServerConnector.gI().connect("trux.derkahler.de");
 
         // Create login service
         LoginService.createInstance(this.getBaseContext(), FILE_NAME);
 
+        //Create instance of SettingsHandler
+        SettingsHandler.createInstance(this.getBaseContext());
+
         // Just make sure a AGA data parser is created
         AGADataParser.getInstance();
 
-        // Start the DataPoller that will send AGA metrics to the server with regular interavals
-        DataPoller.gI().start();
+        LocationService ls = new LocationService(this);
+
+        // Start the DataPoller that will send AGA metrics and location data
+        // to the server with regular interavals
+        RealTimeDataHandler rtdh = new RealTimeDataHandler(ls);
+        DataHandler.getInstance().setRealTimeDataHandler(rtdh);
+        DataPoller.gI().start(rtdh);
 
         file = new File(getFilesDir(), FILE_NAME);
 
@@ -119,10 +131,15 @@ public class MainActivity extends BaseAppActivity
     }
 
     @Override
-    public void onStop(){
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
+    /*    new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ServerConnector.gI().disconnect();
+            }
+        }).start();*/
     }
-
 
     public void goToRegister(View view)
     {
@@ -147,10 +164,7 @@ public class MainActivity extends BaseAppActivity
 
         if (username.isEmpty() || password.isEmpty())
         {
-            showDialogBox("Login failed", "Invalid username or password");
-            // TODO
-            // something wrong with credentials, display info to user
-            // refresh app, ask for login again
+            showToast("Please, Insert your username and password.");
             return;
         }
 
@@ -174,7 +188,7 @@ public class MainActivity extends BaseAppActivity
 
         if (isAllowed)
         {
-            showToast("You are now logged in.");
+            showToast("Login successful.");
 
             Intent intent = new Intent(this, HomeActivity.class);
 
@@ -187,7 +201,7 @@ public class MainActivity extends BaseAppActivity
         }
         else
         {
-            showToast("Login failed. Please try again.");
+            showToast("Login unsuccessful. Please check your Trux username and password.");
         }
 
     } // end goToHome()
@@ -222,19 +236,17 @@ public class MainActivity extends BaseAppActivity
         {
             msg = check.get();
         }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-        catch (ExecutionException e)
+        catch (InterruptedException | ExecutionException e)
         {
             e.printStackTrace();
         }
 
-
+        // check message is not null
+        assert msg != null;
+        // if login successful
         if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
         {
-            showToast("You are now logged in.");
+            showToast("Login successful.");
 
             Intent intent = new Intent(this, HomeActivity.class);
 
@@ -247,7 +259,8 @@ public class MainActivity extends BaseAppActivity
         }
         else
         {
-            showToast("Problem logging in.\nMessage: " + msg.getMessage() + ".\nPlease try again.");
+            showToast("Login unsuccessful.\nMessage: " + msg.getMessage() + ".\nPlease try again.");
+            DataHandler.getInstance().setUser(null);
         }
 
     } // end autoLogin()
@@ -283,10 +296,9 @@ public class MainActivity extends BaseAppActivity
         @Override
         protected Boolean doInBackground(String... strings)
         {
-            boolean isAllowed =
-                    LoginService.getInstance().login(strings[0], strings[1], Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
 
-            return isAllowed;
+            return LoginService.getInstance().login(strings[0], strings[1],
+                    Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
         }
         
     } // end inner class
@@ -298,12 +310,12 @@ public class MainActivity extends BaseAppActivity
      */
     private class AutoLoginCheck extends AsyncTask<ProtocolMessage, Void, ProtocolMessage>
     {
-        ProtocolMessage msg = null;
+        private ProtocolMessage pMessage = null;
 
         @Override
         protected void onPreExecute()
         {
-            Toast.makeText(getApplicationContext(), "Auto-logging in. Please wait...", Toast.LENGTH_SHORT).show();
+            showToast("Auto-logging in. Please wait...");
         }
 
         @Override
@@ -311,8 +323,8 @@ public class MainActivity extends BaseAppActivity
         {
             try
             {
-                msg = (ProtocolMessage) ServerConnector.gI().answerQuery(protocolMessages[0]);
-                if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS) {
+                pMessage = (ProtocolMessage) ServerConnector.gI().answerQuery(protocolMessages[0]);
+                if (pMessage.getType() == ProtocolMessage.Type.LOGIN_SUCCESS) {
                     System.out.println("Current user: "  + DataHandler.getInstance().getUser().getUserId());
                     // Also update the user info by making a request for a User object
                     DataHandler.getInstance().setUser((User)DataHandler.getInstance().getData(
@@ -326,7 +338,7 @@ public class MainActivity extends BaseAppActivity
                 e.printStackTrace();
             }
 
-            return msg;
+            return pMessage;
         }
 
     } // end inner class

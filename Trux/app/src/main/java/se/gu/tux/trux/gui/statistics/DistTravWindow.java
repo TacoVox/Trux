@@ -16,6 +16,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.DetailedStatsBundle;
 import se.gu.tux.trux.datastructure.Distance;
+import se.gu.tux.trux.datastructure.Speed;
 import tux.gu.se.trux.R;
 
 
@@ -65,10 +66,14 @@ public class DistTravWindow extends Fragment {
     private void popDistanceGraph(View view) {
 
         distanceGraph = new GraphView(getActivity());
-        distanceGraph.setTitle("Distance Traveled");
-        distanceGraph.setTitleTextSize(40);
+
         distanceGraph.getViewport().setXAxisBoundsManual(true);
+        distanceGraph.getViewport().setYAxisBoundsManual(true);
+        distanceGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        distanceGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
+        distanceGraph.getGridLabelRenderer().setPadding(50);
         distanceGraph.getViewport().setMaxX(30);
+        distanceGraph.getViewport().setMaxY(100);
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.DistanceGraph);
@@ -82,41 +87,44 @@ public class DistTravWindow extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         myFragmentView = getView();
+    }
 
-        AsyncTask myTask = new AsyncTask<Void, Void, Boolean>() {
-            Distance d = new Distance(0);
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        new Thread(new Runnable() {
             @Override
-            protected Boolean doInBackground(Void... voids)
-            {
-                while (!(DataHandler.getInstance().detailedStatsReady(d)))
-                {
+            public void run() {
+                final Distance d = new Distance(0);
+                boolean cancelled = false;
+
+                while (!cancelled && !DataHandler.getInstance().detailedStatsReady(d)) {
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(200);
                         // Stop waiting if fragment was cancelled
                         if (!isVisible()) {
-                            cancel(true);
+                            cancelled = true;
                         }
                     } catch (InterruptedException e) {
                         System.out.println("Wait interrupted.");
                     }
                 }
-                return null;
+                Activity a = getActivity();
+                if (!cancelled && a != null) {
+                    a.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setValues(DataHandler.getInstance().getDetailedStats(d));
+                            hideLoading();
+                        }
+                    });
+                }
             }
-
-            @Override
-            public void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(Boolean b) {
-                super.onPostExecute(b);
-                setValues(DataHandler.getInstance().getDetailedStats(d));
-                hideLoading();
-            }
-        }.execute();
+        }).start();
     }
+
 
     public void hideLoading() {
         myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);

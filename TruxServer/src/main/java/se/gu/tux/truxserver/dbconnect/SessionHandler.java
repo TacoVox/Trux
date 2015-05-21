@@ -18,6 +18,7 @@ package se.gu.tux.truxserver.dbconnect;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import se.gu.tux.trux.datastructure.Data;
 
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
@@ -72,25 +73,30 @@ public class SessionHandler {
      * 
      * @param u the user which session shall be updated
      */
-    public void updateActive(User u)
+    public void updateActive(Data d)
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
-            String updateStmnt = "UPDATE session SET lastactive = ?" +
-                    "WHERE userid = ? AND ISNULL(endtime)";
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
+            String updateStmnt = "UPDATE session SET lastactive = ? " +
+                    "WHERE userid = ? AND sessionid = ? AND ISNULL(endtime)";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     updateStmnt);
 	    
             pst.setLong(1, System.currentTimeMillis());
-            pst.setLong(2, u.getUserId());
+            pst.setLong(2, d.getUserId());
+            pst.setLong(3, d.getSessionId());
             
-            dbc.execUpdate(u, pst);
-	}
-	catch (Exception e)
+            dbc.execUpdate(d, pst);
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -109,10 +115,12 @@ public class SessionHandler {
      */
     public long startSession(User u)
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String insertStmnt = "INSERT INTO session(starttime, userid, "
                     + "lastactive, keepalive) VALUES(?, ?, ?, ?)";
             
@@ -124,12 +132,12 @@ public class SessionHandler {
             pst.setLong(3, System.currentTimeMillis());
             pst.setBoolean(4, u.getStayLoggedIn());
             
-            Logger.gI().addDebug(Boolean.toString(u.getStayLoggedIn()));
+            //Logger.gI().addDebug(Boolean.toString(u.getStayLoggedIn()));
             
             //No check for active session here!
             pst.executeUpdate();
             
-            Logger.gI().addDebug(pst.toString());
+            //Logger.gI().addDebug(pst.toString());
             
             ResultSet keys = pst.getGeneratedKeys();
             
@@ -138,9 +146,12 @@ public class SessionHandler {
             
             return - 1;
             
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return -1;
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -159,10 +170,12 @@ public class SessionHandler {
      */
     public ProtocolMessage endSession(ProtocolMessage pm)
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "UPDATE session SET endtime = ? " +
                     "WHERE userid = ? AND sessionid = ?";
             
@@ -176,9 +189,12 @@ public class SessionHandler {
 	    dbc.execUpdate(pm, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -195,10 +211,12 @@ public class SessionHandler {
      */
     public ResultSet getCurrentSessions()
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "SELECT * FROM session WHERE endtime IS NULL";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
@@ -209,9 +227,12 @@ public class SessionHandler {
                     Config.gI().getSessionTimeout() * 60000);
 	    
 	    return pst.executeQuery();
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return null;
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {
@@ -228,10 +249,12 @@ public class SessionHandler {
      */
     public ProtocolMessage purgeSessions()
     {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "UPDATE session SET endtime = ? " +
                     "WHERE (lastactive < ? AND keepalive = FALSE"
                     + " AND endtime IS NULL) OR "
@@ -250,9 +273,12 @@ public class SessionHandler {
             pst.executeUpdate();
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
+            e.printStackTrace();
 	    Logger.gI().addError(e.getLocalizedMessage());
 	}
         finally {

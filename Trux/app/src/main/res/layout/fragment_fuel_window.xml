@@ -2,35 +2,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#E0E0E0"
-    android:padding="5dp"
     tools:context="se.gu.tux.trux.gui.statistics.FuelWindow">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:weightSum="2">
-
-        <!--
-        android:padding="10dp"
-        android:background="@drawable/custom_border"
-        -->
+        android:layout_height="fill_parent">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:weightSum="4"
-            android:layout_weight="1">
+            android:layout_weight="1.5">
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background= "@drawable/label_border"
                 android:layout_margin="5dp"
-                android:padding="10dp"
+                android:paddingLeft="10dp"
                 android:layout_weight="1">
 
                 <TextView
@@ -40,7 +31,7 @@
                     android:id="@+id/avg_today_fuel"
                     android:layout_gravity="center"
                     android:textSize="15sp"
-                    android:textColor="#E0E0E0"  />
+                    android:textColor="#3D3D3D"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -49,7 +40,7 @@
                     android:id="@+id/avg_today_fuel_value"
                     android:layout_gravity="center"
                     android:textSize="15sp"
-                    android:textColor="#E0E0E0"
+                    android:textColor="#3D3D3D"
                     android:layout_marginLeft="10dp"/>
             </LinearLayout>
 
@@ -57,9 +48,8 @@
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background= "@drawable/label_border"
                 android:layout_margin="5dp"
-                android:padding="10dp"
+                android:paddingLeft="10dp"
                 android:layout_weight="1">
 
                 <TextView
@@ -69,7 +59,7 @@
                     android:id="@+id/avg_lastweek_fuel"
                     android:layout_gravity="center"
                     android:textSize="15sp"
-                    android:textColor="#E0E0E0"  />
+                    android:textColor="#3D3D3D"  />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -78,7 +68,7 @@
                     android:id="@+id/avg_lastweek_fuel_value"
                     android:layout_gravity="center"
                     android:textSize="15sp"
-                    android:textColor="#E0E0E0"
+                    android:textColor="#3D3D3D"
                     android:layout_marginLeft="10dp"/>
             </LinearLayout>
 
@@ -86,9 +76,8 @@
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background= "@drawable/label_border"
                 android:layout_margin="5dp"
-                android:padding="10dp"
+                android:paddingLeft="10dp"
                 android:layout_weight="1">
 
                 <TextView
@@ -98,7 +87,7 @@
                     android:id="@+id/avg_lastmonth_fuel"
                     android:layout_gravity="center"
                     android:textSize="15sp"
-                    android:textColor="#E0E0E0"  />
+                    android:textColor="#3D3D3D"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -107,7 +96,7 @@
                     android:id="@+id/avg_lastmonth_fuel_value"
                     android:layout_gravity="center"
                     android:textSize="15sp"
-                    android:textColor="#E0E0E0"
+                    android:textColor="#3D3D3D"
                     android:layout_marginLeft="10dp"/>
             </LinearLayout>
 
@@ -115,9 +104,8 @@
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background= "@drawable/label_border"
                 android:layout_margin="5dp"
-                android:padding="10dp"
+                android:paddingLeft="10dp"
                 android:layout_weight="1">
 
                 <TextView
@@ -127,7 +115,7 @@
                     android:id="@+id/avg_total_fuel"
                     android:layout_gravity="center"
                     android:textSize="15sp"
-                    android:textColor="#E0E0E0"/>
+                    android:textColor="#3D3D3D"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -136,18 +124,39 @@
                     android:id="@+id/avg_total_fuel_value"
                     android:layout_gravity="center"
                     android:textSize="15sp"
-                    android:textColor="#E0E0E0"
+                    android:textColor="#3D3D3D"
                     android:layout_marginLeft="10dp"/>
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/FuelGraph"
+            android:orientation="vertical"
             android:layout_weight="1">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/FuelGraph"
+                android:layout_weight="1">
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fuel_graph_help"
+                android:text="@string/fuel_graph_explanation"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="10sp"
+                android:textColor="#3D3D3D"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"/>
+
         </LinearLayout>
 
     </LinearLayout>
