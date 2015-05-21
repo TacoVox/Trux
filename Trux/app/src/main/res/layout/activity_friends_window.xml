@@ -4,6 +4,11 @@
     android:layout_height="match_parent"
     tools:context="se.gu.tux.trux.gui.community.FriendsWindow">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/infoContainer"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -45,8 +50,8 @@
                 android:layout_height="match_parent"
                 android:id="@+id/searchField"
                 android:layout_weight="1"
-                android:background="#61728d"
-                android:padding="5dp"
+                android:background="#ff404e68"
+                android:padding="10dp"
                 android:textColor="#E0E0E0"
                 android:textCursorDrawable="@drawable/custom_cursor"/>
 
@@ -78,4 +83,10 @@
             android:id="@+id/progressBar" />
 
     </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/friendsContainer" />
+
 </RelativeLayout>

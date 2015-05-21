@@ -1,9 +1,12 @@
 package se.gu.tux.trux.gui.messaging;
 
+import android.app.ActionBar;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -277,7 +280,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
             final TextView textView = new TextView(act.getApplicationContext());
 
             textView.setText(messages[i].getValue() + "\n");
-            textView.setTextColor(Color.BLACK);
+            textView.setTextColor(Color.parseColor("#E0E0E0"));
 
             // add this text view to the message container
             msgContainer.addView(textView);
@@ -298,7 +301,19 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         // create the text view to hold the message
         final TextView textView = new TextView(act.getApplicationContext());
         textView.setText(message + "\n");
-        textView.setTextColor(Color.BLACK);
+
+        //textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.RIGHT;
+
+        textView.setLayoutParams(params);
+        textView.setGravity(Gravity.CENTER_VERTICAL);
+
+        textView.setTextColor(Color.parseColor("#E0E0E0"));
+        textView.setPadding(20, 20, 20, 20);
+        textView.setBackgroundColor(Color.parseColor("#61728d"));
+        textView.setBackgroundColor(Color.parseColor("#ff404e68"));
 
         // add to container and display
         msgContainer.addView(textView);

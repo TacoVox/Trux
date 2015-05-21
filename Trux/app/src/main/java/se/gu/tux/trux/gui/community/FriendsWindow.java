@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -438,16 +439,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             final Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
             final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
-            sendMessageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
-                    intent.setAction("OPEN_CHAT");
-                    intent.putExtra("FRIEND_ID", friends.get(pos).getFriendId());
-                    intent.putExtra("FRIEND_USERNAME", friends.get(pos).getUsername());
-                    startActivity(intent);
-                }
-            });
             final Button profileButton = (Button) view.findViewById(R.id.profileButton);
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -459,6 +450,44 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     } catch (NotLoggedInException e) {
                         e.printStackTrace();
                     }
+                }
+            });
+            friendRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    friendRequestButton.setEnabled(false);
+                    try {
+                        DataHandler.gI().getSocialHandler().sendFriendRequest(thisAdapter,
+                                friends.get(pos).getFriendId());
+                    } catch (NotLoggedInException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            sendMessageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
+                    intent.setAction("OPEN_CHAT");
+                    intent.putExtra("FRIEND_ID", friends.get(pos).getFriendId());
+                    intent.putExtra("FRIEND_USERNAME", friends.get(pos).getUsername());
+                    startActivity(intent);
+                }
+            });
+            profileButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    InfoFragment friendInfo = new InfoFragment();
+                    Bundle friendBundle = new Bundle();
+                    friendBundle.putSerializable("friend", friends.get(pos));
+                    friendInfo.setArguments(friendBundle);
+
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    fragmentTransaction.addToBackStack("FRIENDPROFILE");
+                    fragmentTransaction.replace(R.id.friendsContainer, friendInfo);
+                    fragmentTransaction.commit();
                 }
             });
 

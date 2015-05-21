@@ -8,6 +8,8 @@
     <string name="driver_home_screen_help">To check profile, click on the Profile button.\n
     To check community, click on the Community button.\nTo check statistics, click on the
     Statistics button.\nHave a nice day!</string>
+    <string name="message_screen_help">To start a conversation, please click on the friend
+    you want to communicate with.\nHave a nice day!</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
     <string name="action_contact">Contact us</string>
@@ -30,7 +32,7 @@
     <string name="cancel">cancel</string>
     <string name="edit">edit</string>
     <string name="save">save changes</string>
-    <string name="messages">MESSAGES</string>
+    <string name="send">send</string>
     <string name="change_profile_pic">change profile picture</string>
     <string name="statistics_text">Statistics</string>
     <string name="profile_text">Profile</string>
