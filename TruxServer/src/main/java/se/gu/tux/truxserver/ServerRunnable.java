@@ -14,6 +14,7 @@ import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Heartbeat;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.trux.datastructure.ProtocolMessage.Type;
 import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -88,25 +89,29 @@ public class ServerRunnable implements Runnable {
                 // If thread was interrupted while waiting for input, just shut down.
                 // The same goes for if connection timeout was reached or the client said goodbye.
                 if (currentThread.isInterrupted() || timedOut || 
-                		(d instanceof ProtocolMessage && ((ProtocolMessage)d).getType() == ProtocolMessage.Type.GOODBYE) ) {
+                		(d instanceof ProtocolMessage && ((ProtocolMessage)d).getType() == 
+                		ProtocolMessage.Type.GOODBYE) ) {
                     Logger.gI().addMsg(connectionId + ": Thread interrupted, shutting down...");
                     shutDown();
                     return;
                 }
 
-//                // Debugging output
-//                if (d.getValue() != null) {
-//                    Logger.gI().addDebug(d.getValue().toString());
-//                    if (d instanceof MetricData) {
-//                        Logger.gI().addDebug("TS: " + Long.toString(d.getTimeStamp()));
-//                    }
-//                } else {
-//                    Logger.gI().addDebug(connectionId + ": Received object with null value from " + cs.getInetAddress());
-//                }
-
                 // Send data to DataSwitcher
                 d = DataSwitcher.gI().handleData(d);
 
+                // If the server is shut down during the above handling, it will possibly return
+                // a ProtocolMessage saying GOODBYE. No need to forward this to client, catch it
+                // here to avoid casting errors on the client. The client will try to  reconnect 
+                // eventually when it notices the connection went stale, and then it's up to the
+                // server to be up and running...                
+                if (d instanceof ProtocolMessage && ((ProtocolMessage) d).getType() ==
+                		Type.GOODBYE) {
+                	// Exit thread
+                	Logger.gI().addMsg(connectionId + ": GOODBYE from DataSwitcher, shutting down...");
+                    shutDown();
+                    return;
+                }
+                
                 // Send data back to respond to the request or acknowledge.
                 out.writeObject(d);
                 out.flush();		
