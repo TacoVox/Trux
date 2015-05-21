@@ -7,16 +7,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.widget.Button;
-import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import se.gu.tux.trux.application.DataHandler;
-import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
@@ -43,6 +38,9 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     private static final int FRIENDS_BUTTON = R.id.fragment_main_friend_button;
     private static final int PROFILE_BUTTON = R.id.fragment_main_profile_button;
     private static final int MESSAGE_BUTTON = R.id.fragment_welcome_message_button;
+    private static final int CLICKED_FRIEND = 1;
+    public long selectedFriendID = (long) -1;
+    public boolean hasclicked = false;
 
 
     private ViewPager viewPager;
@@ -104,7 +102,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         if (id == FRIENDS_BUTTON || id == FRIENDS_BUTTON_WELCOME)
         {
             Intent intent = new Intent(this, FriendsWindow.class);
-            startActivity(intent);
+            startActivityForResult(intent, CLICKED_FRIEND);
         }
         else if (id == PROFILE_BUTTON)
         {
@@ -125,7 +123,6 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     }
 
     private boolean isDriving(){
-        ;
         try{
             Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
             if(speed.getValue() != null && (double) speed.getValue() > 15){
@@ -137,12 +134,31 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         }
         return false;
     }
+    
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == CLICKED_FRIEND) {
+            if (resultCode == RESULT_OK) {
+                selectedFriendID = data.getLongExtra("FriendID",  -1);
+                viewPager.setCurrentItem(1, true);
+            }
+            else selectedFriendID = -1;
+        }
+
+    }
+
+    public void setSelectedFriend(Long friendID){
+        this.selectedFriendID = friendID;
+    }
+
+    public long getSelectedFriend() {
+        return selectedFriendID;
+    }
+
 
     @Override
-    public void onBackPressed()
-    {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0)
-        {
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             System.out.println("Minimizing...");
             // Minimize
             moveTaskToBack(true);

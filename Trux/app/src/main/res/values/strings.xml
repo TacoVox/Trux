@@ -28,6 +28,8 @@
     <string name="community_text">Community</string>
     <string name="friend_requests">FRIEND REQUESTS</string>
     <string name="friends">FRIENDS</string>
+    <string name="no_friends">No friends found.</string>
+    <string name="search_hint">SEARCH HERE</string>
     <string name="pending">Pending...</string>
     <string name="cancel">cancel</string>
     <string name="edit">edit</string>

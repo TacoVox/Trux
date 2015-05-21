@@ -43,6 +43,7 @@ import se.gu.tux.trux.application.SettingsHandler;
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Speed;
+import se.gu.tux.trux.gui.main_home.HomeActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
@@ -64,7 +65,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     private boolean mapLoaded = false;
 
 
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -77,9 +77,22 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         //Setting a Mapfragment so that it calls to the getMapAsync which is connected to onMapReady
         f = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map);
         f.getMapAsync(this);
+
+
+
         return view;
 
     }
+
+    private GoogleMap.OnCameraChangeListener onCameraChangeListener =
+            new GoogleMap.OnCameraChangeListener() {
+                @Override
+                public void onCameraChange(CameraPosition cameraPosition) {
+                    if(isDriving()){
+                        mMap.getUiSettings().setScrollGesturesEnabled(false);
+                    }
+                }
+            };
 
     private GoogleMap.OnMyLocationButtonClickListener onMyLocationButtonClickListener =
             new GoogleMap.OnMyLocationButtonClickListener() {
@@ -122,24 +135,24 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     private GoogleMap.OnMarkerClickListener markerClickListener = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            if (!isDriving()) {
-                String markerID = marker.getId();
-                MapCommunityWindow fragment = new MapCommunityWindow();
-                Friend friend = friendMarker.get(markerID);
-                Bundle sendToInfoFragment = new Bundle();
-                sendToInfoFragment.putSerializable("friend", friend);
-                fragment.setArguments(sendToInfoFragment);
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                getActivity().getSupportFragmentManager().popBackStackImmediate("MENU",
-                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                fragmentTransaction.addToBackStack("MENU");
-                fragmentTransaction.replace(R.id.menuContainer, fragment);
-                System.out.println("Count on the popStack in mapFrag: " + getFragmentManager().getBackStackEntryCount());
-                fragmentTransaction.commit();
-            }
-       return false;
+
+            String markerID = marker.getId();
+            MapCommunityWindow fragment = new MapCommunityWindow();
+            Friend friend = friendMarker.get(markerID);
+            Bundle sendToInfoFragment = new Bundle();
+            sendToInfoFragment.putSerializable("friend", friend);
+            fragment.setArguments(sendToInfoFragment);
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            getActivity().getSupportFragmentManager().popBackStackImmediate("MENU",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentTransaction.addToBackStack("MENU");
+            fragmentTransaction.replace(R.id.menuContainer, fragment);
+            System.out.println("Count on the popStack in mapFrag: " + getFragmentManager().getBackStackEntryCount());
+            fragmentTransaction.commit();
+
+            return false;
         }
     };
 
@@ -195,6 +208,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     @Override
     public void onFriendsFetched(final ArrayList<Friend> friends) {
         this.friends = friends;
+        final long selectedFriend = ((HomeActivity) getActivity()).getSelectedFriend();
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -226,17 +240,26 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+
                             Marker m = mMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(loc[0], loc[1]))
                                     .title(currentFriend.getFirstname())
-                                    .snippet("DRIVING")
                                     .icon(BitmapDescriptorFactory.fromBitmap(pic)));
+                            if(isDriving()){
+                                m.setSnippet("DRIVING");
+                            }
                             String mID = m.getId();
                             friendMarker.put(mID, currentFriend);
                             System.out.println("---Picture is now a marker---");
                             hasMarker = true;
+                            if(selectedFriend == currentFriend.getFriendId()){
+                                mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(loc[0], loc[1])));
+
+                            }
+
                         }
                     });
+
                 }
             }
         }
@@ -254,7 +277,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
 
     class PopFriends extends TimerTask{
         public void run(){
-            System.out.println("TimerTask starts ");
             DataHandler.gI().getSocialHandler().fetchFriends(thisMapFrag,
                     SocialHandler.FriendsUpdateMode.ONLINE);
             getActivity().runOnUiThread(new Runnable() {
@@ -269,7 +291,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                     }
                 }
             });
-
         }
     }
 
@@ -289,15 +310,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         }
     }
     private boolean isDriving(){
-        try{
-            Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
-            if(speed.getValue() != null && (double) speed.getValue() > 15){
-                return true;
-            }
-        }
-        catch (NotLoggedInException nLIE){
-            nLIE.printStackTrace();
-        }
-        return false;
+        return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
     }
 }
