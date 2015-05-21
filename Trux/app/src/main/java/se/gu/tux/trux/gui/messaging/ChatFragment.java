@@ -70,7 +70,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
     private final int PLACE_PICKER_REQUEST = 1;
 
-    String[] spinnerTitles = { "Meet at...", "Can't chat right now", "Call you later", "Busy driving"};
+    String[] spinnerTitles = { "Can't chat right now", "Call you later", "Busy driving", "Meet at..."};
 
     private String placeMessage;
     private int spinnerPosition;
@@ -109,9 +109,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
         }
 
         ArrayAdapter<String> arrayAdapter =
-                new SimpleMessageSpinner(view.getContext(), R.layout.spinner_item, spinnerTitles);
+                new SimpleMessageSpinner(view.getContext(), R.layout.spinner_message_item, spinnerTitles);
 
-        arrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_message_item);
 
         spinnerInput.setAdapter(arrayAdapter);
 
@@ -491,7 +491,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
     {
-        if (i == 0)
+        if (i == 3)
         {
             isPlace = true;
 

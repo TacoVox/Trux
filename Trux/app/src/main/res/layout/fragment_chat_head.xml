@@ -48,7 +48,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#ff404e68"
-            android:padding="10dp"
             android:textColor="#E0E0E0"
             android:textCursorDrawable="@drawable/custom_cursor"
             android:layout_weight="1"/>
