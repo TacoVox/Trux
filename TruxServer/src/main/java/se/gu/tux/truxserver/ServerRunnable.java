@@ -91,9 +91,7 @@ public class ServerRunnable implements Runnable {
                 if (currentThread.isInterrupted() || timedOut || 
                 		(d instanceof ProtocolMessage && ((ProtocolMessage)d).getType() == 
                 		ProtocolMessage.Type.GOODBYE) ) {
-                    Logger.gI().addMsg(connectionId + ": Thread interrupted, shutting down...");
-                    shutDown();
-                    return;
+                    throw new InterruptedException();
                 }
 
                 // Send data to DataSwitcher
@@ -106,19 +104,20 @@ public class ServerRunnable implements Runnable {
                 // server to be up and running...                
                 if (d instanceof ProtocolMessage && ((ProtocolMessage) d).getType() ==
                 		Type.GOODBYE) {
-                	// Exit thread
-                	Logger.gI().addMsg(connectionId + ": GOODBYE from DataSwitcher, shutting down...");
-                    shutDown();
-                    return;
+                	throw new InterruptedException();
                 }
                 
                 // Send data back to respond to the request or acknowledge.
                 out.writeObject(d);
                 out.flush();		
 
+                // Repeating the shutDown() call intentionally where needed below.
+            } catch (InterruptedException e) {
+            	Logger.gI().addMsg(connectionId + ": Thread interrupted, shutting down...");
+                shutDown();
             } catch (ClassNotFoundException e) {
                 Logger.gI().addError(connectionId + ": Class not found! Exiting.");
-                isRunning = false;
+                shutDown();
             } catch (InvalidClassException e) {
                 Logger.gI().addError(connectionId + ": Client sent invalid class: " + e.getMessage());
             } catch (EOFException e) {
@@ -128,10 +127,12 @@ public class ServerRunnable implements Runnable {
             	Logger.gI().addError(connectionId + " Stream corrupted: " + e.getLocalizedMessage());
             	shutDown();
             } catch (SocketException e) {
-            	Logger.gI().addDebug(connectionId + ": Socket exception - assuming server is shutting down or client disconnected.");
+            	Logger.gI().addDebug(connectionId + ": Socket exception - assuming server is "
+            			+ "shutting down or client disconnected.");
             	shutDown();
             } catch (IOException e) {
-                Logger.gI().addMsg(connectionId + ": Closing ServerRunnable socket... (" + e.getClass() + ")");   
+                Logger.gI().addMsg(connectionId + ": Closing ServerRunnable socket... (" 
+                		+ e.getClass() + ")");   
                 shutDown();
             }
         }
