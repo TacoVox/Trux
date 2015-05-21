@@ -20,6 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import se.gu.tux.trux.datastructure.Location;
 
 import se.gu.tux.trux.datastructure.MetricData;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 
 import se.gu.tux.truxserver.logger.Logger;
 
@@ -130,9 +131,12 @@ public class MetricInserter implements Runnable {
     		return false; 
         }
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
+        
         try
         {   
+            dbc = ConnectionPool.gI().getDBC();
+             
             PreparedStatement pst;
             
             if(md instanceof Location) {
@@ -160,8 +164,10 @@ public class MetricInserter implements Runnable {
             dbc.execInsert(md, pst);
             
             return true;
-        }
-        catch (Exception e)
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return false;
+        } catch (Exception e)
         {
             e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());

@@ -91,7 +91,7 @@ public class ConnectionPool {
      * 
      * @return a connector as soon as a connector is available.
      */
-    public DBConnector getDBC() {
+    public DBConnector getDBC() throws InterruptedException{
         try {
             
             DBConnector dbc = (DBConnector)queue.poll();

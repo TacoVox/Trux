@@ -52,10 +52,12 @@ public class MessageHandler {
     private MessageHandler() {}
     
     public ProtocolMessage newMessage(Message m) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
         {   
+            dbc = ConnectionPool.gI().getDBC();
+              
             long conversationid = -1;
             
             PreparedStatement pst = dbc.getConnection().prepareStatement("SELECT conversationid "
@@ -112,6 +114,9 @@ public class MessageHandler {
             dbc.execInsert(m, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
         } catch (Exception e) {
             e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
@@ -124,10 +129,12 @@ public class MessageHandler {
     }
     
     public boolean hasNewMessage(Data d) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "SELECT * FROM message WHERE receiverid = ? AND seen = FALSE";
             
             PreparedStatement pst = dbc.getConnection().prepareStatement(
@@ -142,8 +149,10 @@ public class MessageHandler {
             }
             
             return false;
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return false;
+        } catch (Exception e)
 	{
             e.printStackTrace();
             
@@ -159,10 +168,12 @@ public class MessageHandler {
     public Data getLatestConv(ProtocolMessage pm) {
         List conversations = new ArrayList<Message>();
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "SELECT * FROM conversation c "
                     + "JOIN message m on c.conversationid = m.conversationid JOIN "
                     + "(SELECT conversationid, MAX(timestamp) timestamp "
@@ -191,8 +202,10 @@ public class MessageHandler {
             }
             
             return new ArrayResponse(conversations.toArray());
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
             e.printStackTrace();
             
@@ -208,10 +221,12 @@ public class MessageHandler {
     public Data getMessages(ProtocolMessage pm) {
         List messages = new ArrayList<Message>();
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "SELECT conversationid, senderid, receiverid, message, timestamp, seen "
                     + "FROM message WHERE conversationid = "
                     + "(SELECT conversationid FROM conversation "
@@ -241,8 +256,10 @@ public class MessageHandler {
             }
             
             return new ArrayResponse(messages.toArray());
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
             e.printStackTrace();
             
@@ -256,10 +273,12 @@ public class MessageHandler {
     }
     
     public ProtocolMessage markAsSeen(ProtocolMessage pm) {
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
         {   
+            dbc = ConnectionPool.gI().getDBC();
+               
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     "UPDATE message SET seen = ? WHERE receiverid = ? AND conversationid = "
                         + "(SELECT conversationid FROM conversation "
@@ -275,8 +294,10 @@ public class MessageHandler {
             dbc.execUpdate(pm, pst);
             
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
-        }
-        catch (Exception e)
+        } catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
         {
             e.printStackTrace();
             Logger.gI().addError(e.getLocalizedMessage());
@@ -290,10 +311,12 @@ public class MessageHandler {
     public Data getUnreadMessages(ProtocolMessage pm) {
         List messages = new ArrayList<Message>();
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String updateStmnt = "SELECT conversationid, senderid, receiverid, message, timestamp, seen "
                     + "FROM message WHERE conversationid = "
                     + "(SELECT conversationid FROM conversation "
@@ -325,8 +348,10 @@ public class MessageHandler {
             }
             
             return new ArrayResponse(messages.toArray());
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
             e.printStackTrace();
             

@@ -17,8 +17,10 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import se.gu.tux.trux.datastructure.Data;
 
 import se.gu.tux.trux.datastructure.Location;
+import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
@@ -51,15 +53,15 @@ public class LocationReceiver {
         return null;
     }
     
-    public Location getCurrent(long userid) {
+    public Data getCurrent(long userid) {
         Location l = null;
         
-        DBConnector dbc = ConnectionPool.gI().getDBC();
-        
-        //Logger.gI().addDebug(Long.toString(userid));
+        DBConnector dbc = null;
         
         try
-	{
+        {   
+            dbc = ConnectionPool.gI().getDBC();
+            
             String selectStmnt = "SELECT latitude, longitude " +
                     "FROM location WHERE userid = ? ORDER BY timestamp DESC LIMIT 1";
             
@@ -76,8 +78,10 @@ public class LocationReceiver {
                 
 		break;
 	    }           
-	}
-	catch (Exception e)
+	} catch (InterruptedException ie) {
+            Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
+            return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
+        } catch (Exception e)
 	{
             e.printStackTrace();
             
