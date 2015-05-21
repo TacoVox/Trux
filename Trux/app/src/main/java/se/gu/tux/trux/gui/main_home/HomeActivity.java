@@ -47,7 +47,6 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     private List<Fragment> fragmentArrayList;
     private ActionBar actionBar;
-    HomePagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +74,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         fragmentArrayList.add(statsFragment);
 
         // set adapter and view pager
-        pagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), fragmentArrayList);
+        HomePagerAdapter pagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), fragmentArrayList);
 
         // get action bar
         actionBar = getSupportActionBar();
@@ -135,15 +134,17 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         }
         return false;
     }
+    
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == CLICKED_FRIEND) {
             if (resultCode == RESULT_OK) {
                 selectedFriendID = data.getLongExtra("FriendID",  -1);
-                pagerAdapter.getItem(1);
+                viewPager.setCurrentItem(1, true);
             }
             else selectedFriendID = -1;
         }
+
     }
 
     public void setSelectedFriend(Long friendID){

@@ -40,13 +40,13 @@ public class StatisticsMainFragment extends Fragment
         {
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.statistics_main_container, new StatisticsSimpleFragment());
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
         }
         else
         {
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.statistics_main_container, new StatisticsDetailedFragment());
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
         }
 
         // return the view

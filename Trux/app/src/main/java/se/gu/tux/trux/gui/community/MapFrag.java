@@ -84,6 +84,16 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
 
     }
 
+    private GoogleMap.OnCameraChangeListener onCameraChangeListener =
+            new GoogleMap.OnCameraChangeListener() {
+                @Override
+                public void onCameraChange(CameraPosition cameraPosition) {
+                    if(isDriving()){
+                        mMap.getUiSettings().setScrollGesturesEnabled(false);
+                    }
+                }
+            };
+
     private GoogleMap.OnMyLocationButtonClickListener onMyLocationButtonClickListener =
             new GoogleMap.OnMyLocationButtonClickListener() {
 
@@ -230,17 +240,20 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+
                             Marker m = mMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(loc[0], loc[1]))
                                     .title(currentFriend.getFirstname())
-                                    .snippet("DRIVING")
                                     .icon(BitmapDescriptorFactory.fromBitmap(pic)));
+                            if(isDriving()){
+                                m.setSnippet("DRIVING");
+                            }
                             String mID = m.getId();
                             friendMarker.put(mID, currentFriend);
                             System.out.println("---Picture is now a marker---");
                             hasMarker = true;
                             if(selectedFriend == currentFriend.getFriendId()){
-                                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(loc[0], loc[1])));
+                                mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(loc[0], loc[1])));
 
                             }
 
@@ -297,15 +310,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         }
     }
     private boolean isDriving(){
-        try{
-            Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
-            if(speed.getValue() != null && (double) speed.getValue() > 15){
-                return true;
-            }
-        }
-        catch (NotLoggedInException nLIE){
-            nLIE.printStackTrace();
-        }
-        return false;
+        return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
     }
 }
