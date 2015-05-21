@@ -62,7 +62,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     private Message[] newMessages;
 
     private volatile boolean isRunning;
-    private boolean isPlace;
 
     private long userId;
 
@@ -70,7 +69,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
     private final int PLACE_PICKER_REQUEST = 1;
 
-    String[] spinnerTitles = { "Can't chat right now.", "Call you later.",
+    String[] spinnerTitles = { "Can't chat right now", "Call you later", "Yes",
             "Okay", "Maybe", "No, thanks pal!", "Busy driving!", "Meet at..." };
 
     private String placeMessage;
@@ -168,7 +167,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     {
         int id = view.getId();
 
-        if (id == sendButton.getId()) { sendMessage(); }
+        if (id == sendButton.getId()) { sendMessage(false); }
     }
 
 
@@ -378,7 +377,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     /**
      * Sends a message.
      */
-    private void sendMessage()
+    private void sendMessage(boolean isPlace)
     {
         String message;
 
@@ -388,7 +387,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
             if (isPlace)
             {
                 message = placeMessage;
-                isPlace = false;
             }
             else
             {
@@ -494,8 +492,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     {
         if (i == spinnerTitles.length-1)
         {
-            isPlace = true;
-
             try
             {
                 PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
@@ -532,7 +528,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
             String name = place.getName().toString();
             String address = place.getAddress().toString();
 
-            placeMessage = name + " / " + address;
+            placeMessage = "MEET AT\n" + name + " / " + address;
+
+            sendMessage(true);
         }
     }
 
