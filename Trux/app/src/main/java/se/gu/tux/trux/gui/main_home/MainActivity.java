@@ -164,7 +164,7 @@ public class MainActivity extends BaseAppActivity
 
         if (username.isEmpty() || password.isEmpty())
         {
-            showDialogBox("Please", "Insert your username and password");
+            showToast("Please, Insert your username and password.");
             return;
         }
 
@@ -201,7 +201,7 @@ public class MainActivity extends BaseAppActivity
         }
         else
         {
-            showToast("Login unsuccessful. Please check your username and password");
+            showToast("Login unsuccessful. Please check your Trux username and password.");
         }
 
     } // end goToHome()

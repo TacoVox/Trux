@@ -28,7 +28,6 @@ import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
-import se.gu.tux.trux.gui.main_home.HomeActivity;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
@@ -45,7 +44,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     private enum FetchCall {SEARCH, FRIENDLIST};
     private FetchCall lastFetchCall = FetchCall.FRIENDLIST;
     private String lastNeedle;
-
+    private boolean isClicked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -441,6 +440,18 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     }
                 }
             });
+            friendRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    friendRequestButton.setEnabled(false);
+                    try {
+                        DataHandler.gI().getSocialHandler().sendFriendRequest(thisAdapter,
+                                friends.get(pos).getFriendId());
+                    } catch (NotLoggedInException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             sendMessageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -454,34 +465,34 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             profileButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // Create fragment and pass the current friend object
-                    Fragment infoFragment = new InfoFragment();
-                    Bundle sendToInfoFragment = new Bundle();
-                    sendToInfoFragment.putSerializable("friend", friends.get(pos));
-                    infoFragment.setArguments(sendToInfoFragment);
+                    InfoFragment friendInfo = new InfoFragment();
+                    Bundle friendBundle = new Bundle();
+                    friendBundle.putSerializable("friend", friends.get(pos));
+                    friendInfo.setArguments(friendBundle);
 
                     FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-                    fragmentTransaction.addToBackStack("PROFILE");
-                    fragmentTransaction.replace(R.id.infoContainer, infoFragment);
+                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    fragmentTransaction.addToBackStack("FRIENDPROFILE");
+                    fragmentTransaction.replace(R.id.friendsContainer, friendInfo);
                     fragmentTransaction.commit();
                 }
             });
-/*
+
             final TextView newName = (TextView) view.findViewById(R.id.friendName);
             newName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                        Fragment fragment = new MapFrag();
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("clickedFriend", friends.get(pos).getFriendId());
-                        fragment.setArguments(bundle);
-                        Intent intent = new Intent(this, HomeActivity.class);
-
+                    isClicked = true;
+                    Fragment fragment = new MapFrag();
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("isClicked", isClicked);
+                    bundle.putSerializable("clickedFriend", friends.get(pos).getFriendId());
+                    fragment.setArguments(bundle);
+                    finish();
                 }
             });
-*/
+
             // Set the name
             name.setText(friends.get(pos).getFirstname() + " " + friends.get(pos).getLastname());
             username.setText("@" + friends.get(pos).getUsername());

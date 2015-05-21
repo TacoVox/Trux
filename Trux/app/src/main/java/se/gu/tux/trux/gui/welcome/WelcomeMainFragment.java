@@ -67,7 +67,7 @@ public class WelcomeMainFragment extends Fragment implements View.OnClickListene
 
         public void unseenMessages(){
             Notification not = DataHandler.getInstance().getNotificationStatus();
-            if (not.isNewMessages()) {
+            if (not != null && not.isNewMessages()) {
                 messageButton.setImageResource(R.drawable.messagenotificationicon);
             } else {
                 messageButton.setImageResource(R.drawable.messageicon);
@@ -76,7 +76,7 @@ public class WelcomeMainFragment extends Fragment implements View.OnClickListene
         }
         public void unseenFriendRequest(){
             Notification not = DataHandler.getInstance().getNotificationStatus();
-            if (not.isNewFriends()) {
+            if (not != null && not.isNewFriends()) {
                 friendButton.setImageResource(R.drawable.friendsnotificationicon);
             } else {
                 friendButton.setImageResource(R.drawable.friendsicon);
