@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/statistics_spinner">
+
+    <ImageView
+        android:src="@drawable/statsicon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center|start"/>
+
+    <TextView
+        android:id="@+id/spinner_item_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:text="Stats here"
+        android:textSize="20sp"
+        android:textColor="#E0E0E0" />
+
+</LinearLayout>

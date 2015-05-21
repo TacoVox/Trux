@@ -17,6 +17,7 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.util.concurrent.LinkedBlockingQueue;
+import se.gu.tux.trux.datastructure.Location;
 
 import se.gu.tux.trux.datastructure.MetricData;
 
@@ -121,16 +122,27 @@ public class MetricInserter implements Runnable {
         DBConnector dbc = ConnectionPool.gI().getDBC();
         try
         {   
-            PreparedStatement pst = dbc.getConnection().prepareStatement(
-                    //"INSERT INTO " + type + "(value, timestamp, userid) " + 
-                    //        "VALUES(?, ?, ?)");
+            PreparedStatement pst;
+            
+            if(md instanceof Location) {
+                pst = dbc.getConnection().prepareStatement(
+                    "INSERT INTO location (latitude, logitude, timestamp, userid, sessionid) "
+                            + "SELECT * FROM (SELECT ?, ?, ?, ?, ?) AS tmp");
+                pst.setDouble(1, ((double[])md.getValue())[0]);
+                pst.setObject(2, ((double[])md.getValue())[1]);
+                pst.setLong(3, md.getTimeStamp());
+                pst.setLong(4, md.getUserId());
+                pst.setLong(5, md.getSignalId());
+            } else {
+                pst = dbc.getConnection().prepareStatement(
                     "INSERT INTO " + type + "(value, timestamp, userid) "
                             + "SELECT * FROM (SELECT ?, ?, ?) AS tmp");
+                
+                pst.setObject(1, md.getValue());
+                pst.setLong(2, md.getTimeStamp());
+                pst.setLong(3, md.getUserId());
+            }
             
-            pst.setObject(1, md.getValue());
-            pst.setLong(2, md.getTimeStamp());
-            pst.setLong(3, md.getUserId());
-		
             dbc.execInsert(md, pst);
             
             return true;

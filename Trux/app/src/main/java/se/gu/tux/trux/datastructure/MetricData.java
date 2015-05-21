@@ -61,7 +61,7 @@ public class MetricData extends Data
     }
 
     public boolean equals(Object o) {
-        if (o instanceof MetricData) {
+        if (o instanceof MetricData && ((MetricData) o).getValue() != null) {
             return ((MetricData)o).getValue().equals(value);
         } else {
             return false;
@@ -69,6 +69,10 @@ public class MetricData extends Data
     }
 
     public int hashCode() {
-        return (int)(tf + Math.round((Double)getValue() * 1000));
+        if (getValue() != null) {
+            return (int)(tf + Math.round((Double)getValue() * 1000));
+        } else {
+            return 0;
+        }
     }
 }

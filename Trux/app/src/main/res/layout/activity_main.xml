@@ -1,94 +1,103 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="10dp"
     android:background="#E0E0E0"
     android:layout_gravity="center"
     android:id="@+id/mainActivity"
-    tools:context="se.gu.tux.trux.gui.MainActivity">
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="center"
-        android:weightSum="40">
-
-        <Space
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="15"/>
+    tools:context="se.gu.tux.trux.gui.main_home.MainActivity">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:layout_weight="10">
+            android:layout_gravity="center">
 
-            <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/username"
-            android:layout_gravity="center_horizontal"
-            android:hint="Username"/>
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:id="@+id/imageView"
+                android:background="@drawable/truxlogo"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"/>
 
-            <EditText
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:ems="10"
-                android:id="@+id/password"
-                android:layout_centerVertical="true"
-                android:textIsSelectable="false"
-                android:password="false"
-                android:hint="Password"/>
+                android:orientation="vertical"
+                android:layout_weight="1">
 
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/autoLogin"
-                android:id="@+id/autoLogin"
-                android:layout_marginTop="20dp"/>
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:id="@+id/username"
+                    android:hint="Username"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:ems="10"
+                    android:id="@+id/password"
+                    android:textIsSelectable="false"
+                    android:password="false"
+                    android:hint="Password"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/autoLogin"
+                    android:id="@+id/autoLogin"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="center" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginTop="20dp"
-                android:weightSum="3">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Register"
+                    android:background="@drawable/bottom_button"
+                    android:textColor="#E0E0E0"
+                    android:onClick="goToRegister"
+                    android:id="@+id/register"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"/>
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/login"
                     android:id="@+id/login"
-                    android:background="@drawable/button_clickable"
+                    android:background="@drawable/bottom_button"
                     android:textColor="#E0E0E0"
-                    android:layout_margin="5dp"
                     android:onClick="goToHome"
                     android:layout_weight="2"/>
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Register"
-                    android:background="@drawable/button_clickable"
-                    android:textColor="#E0E0E0"
-                    android:layout_margin="5dp"
-                    android:id="@+id/register"
-                    android:layout_weight="1"/>
             </LinearLayout>
+
         </LinearLayout>
 
-        <Space
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="15"/>
-
-    </LinearLayout>
-
-</RelativeLayout>
+</FrameLayout>

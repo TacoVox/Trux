@@ -1,21 +1,21 @@
 package se.gu.tux.trux.technical_services;
 
-import android.os.AsyncTask;
+import android.net.wifi.WifiConfiguration;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
-import se.gu.tux.trux.appplication.DataHandler;
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.Fuel;
+import se.gu.tux.trux.datastructure.Heartbeat;
+import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 
@@ -28,17 +28,16 @@ import se.gu.tux.trux.datastructure.User;
 public class ServerConnector {
 
     private Thread transmitThread = null;
-    private ConnectorRunnable connector = null;
-    private static LinkedBlockingDeque<Data> queue;
-
+    private volatile ConnectorRunnable connector = null;
+    private volatile LinkedBlockingDeque<Data> queue;
 
     /**
      * Some more singleton....!
      */
     private static ServerConnector instance = null;
     private ServerConnector() { queue = new LinkedBlockingDeque<>(); }
-    public static ServerConnector getInstance()
-    {
+
+    public static ServerConnector getInstance() {
         if (instance == null) {
             synchronized (ServerConnector.class) {
                 // Yes, double check!
@@ -49,6 +48,7 @@ public class ServerConnector {
         }
         return instance;
     }
+
     public synchronized static ServerConnector gI()
     {
         return getInstance();
@@ -71,6 +71,10 @@ public class ServerConnector {
      * Disconnect from the server.
      */
     public void disconnect() {
+       try {
+           answerQuery(new ProtocolMessage(ProtocolMessage.Type.GOODBYE), 20);
+       } catch (NotLoggedInException e) {}
+
         // transmitThread will exit naturally on socket close
         if (connector != null) {
             connector.shutDown();
@@ -100,26 +104,49 @@ public class ServerConnector {
      * */
     public void removeFirst() { queue.removeFirst(); }
 
+    public void purgeHeartbeats() {
+        for (Iterator<Data> it = queue.iterator(); it.hasNext(); ) {
+            Data d = it.next();
+            if (d instanceof Heartbeat) {
+                it.remove();
+            }
+        }
+    }
+
+
     /**
      * Forwards a data query to the server and returns the reply.
      * @param d
      * @return
      */
     public Data answerQuery(Data d) throws NotLoggedInException {
+        return answerQuery(d, -1);
+    }
+
+
+    /**
+     * Forwards a data query to the server and returns the reply, and stops trying after the
+     * desired timeOut.
+     * @param d
+     * @param timeOut
+     * @return
+     */
+    public Data answerQuery(Data d, int timeOut) throws NotLoggedInException {
+        //System.out.println("Serverconnector forwarding query: " + d.getClass().getSimpleName());
         d.setTimeStamp(System.currentTimeMillis());
-        return connector.sendQuery(d);
+        return connector.sendQuery(d, timeOut);
     }
 
     public Data answerTimestampedQuery(Data d) throws NotLoggedInException {
-        return connector.sendQuery(d);
+        return connector.sendQuery(d, -1);
     }
 
-
     class ConnectorRunnable implements Runnable {
-        private Socket cs;
+        private volatile Socket cs;
+        private volatile ObjectInputStream in = null;
+        private volatile ObjectOutputStream out = null;
         private String serverAddress;
-        private ObjectInputStream in = null;
-        private ObjectOutputStream out = null;
+
         private boolean isRunning = true;
         // For debugging, checking the instance
         private ServerConnector sc = null;
@@ -136,7 +163,11 @@ public class ServerConnector {
 
         public void shutDown() {
             if (cs != null) try {
-                cs.close();
+                synchronized (this) {
+                    cs.close();
+                    in.close();
+                    out.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -145,16 +176,42 @@ public class ServerConnector {
 
 
         /**
-         * Synchronized, which means if the thread is busy sending/receiving,
-         * this will have to wait, and vice versa
+         * Return true if anything should be filtered (blocked) due to not logged in.
+         * Packages allowed to pass: login/register requests, autologin requests, goodbye
+         * messages, logout requests.
          * @param query
          * @return
          */
-        public Data sendQuery(Data query) throws NotLoggedInException {
-            boolean dataSent = false;
+        private boolean filter(Data query) {
+            if (DataHandler.getInstance().isLoggedIn()) {
+
+                // If logged in, everything is allowed
+                return false;
+
+                // Otherwise, block if its NOT login request OR ... etc  ...
+            } else if (!(query.getSessionId() == User.LOGIN_REQUEST ||
+                    query.getSessionId() == User.REGISTER_REQUEST ||
+                    (query instanceof ProtocolMessage &&
+                        (((ProtocolMessage) query).getType() == ProtocolMessage.Type.AUTO_LOGIN_REQUEST ||
+                        ((ProtocolMessage) query).getType() == ProtocolMessage.Type.GOODBYE ||
+                        ((ProtocolMessage) query).getType() == ProtocolMessage.Type.LOGOUT_REQUEST)))) {
+                return true;
+            }
+            return false;
+        }
+
+
+        /**
+         * Sends a query to the server and returns the reply. Returns null on timeout.
+         * @param query
+         * @return
+         */
+        public Data sendQuery(Data query, int timeOut) throws NotLoggedInException {
+            boolean dataSent = false, hasTimedOut = false;
+            long startTime = System.currentTimeMillis();
             Data answer = null;
 
-            while (!dataSent) {
+            while (!dataSent && !hasTimedOut) {
                 // If data is null, return null
                 if (query == null) {
                     return null;
@@ -163,45 +220,63 @@ public class ServerConnector {
                 // Check if socket is not closed and the out and in streams are open, if not, connect
                 if (cs == null || cs.isClosed() || out == null || in == null) {
                     System.out.println("SendQuery requesting connect...");
-                    connect();
+                    boolean connectedInTime = connect(timeOut);
+                    if (!connectedInTime) {
+                        System.out.println("Connection timed out, giving up.");
+                        return null;
+                    }
                 }
 
                 // If not logged in, throw exception so the using code may take approperiate action
-                // Login attempts, auto login attempts and register requests are allowed regardless
-                if (!DataHandler.getInstance().isLoggedIn() &&
-                        !(query.getSessionId() == User.LOGIN_REQUEST ||
-                        query.getSessionId() == User.REGISTER_REQUEST ||
-                        (query instanceof ProtocolMessage && ((ProtocolMessage) query).getType()
-                                == ProtocolMessage.Type.AUTO_LOGIN_REQUEST))) {
+                // Login attempts, auto login attempts and register requests etc are allowed regardless
+                if (filter(query)) {
+                    System.out.println("Not logged in: filtering "
+                            + query.getClass().getSimpleName() + ": " + query.getValue());
                     throw new NotLoggedInException();
                 }
+
+                //System.out.println("Wating to send: " + query.getClass().getSimpleName());
 
                 // Make sure no other thread uses the stream resources here
                 synchronized (this) {
                     try {
 
                         // Send and receive
-                        //System.out.println("Sending query...: " + query.getTimeStamp());
-                        query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
-                        query.setUserId(DataHandler.getInstance().getUser().getUserId());
+                        //System.out.println("Sending query...: " + query.getClass().getSimpleName());
+
+                        // Set user id and session id if it's not a goodbye message
+                        if (!(query instanceof ProtocolMessage &&
+                                ((ProtocolMessage) query).getType() == ProtocolMessage.Type.GOODBYE)) {
+                            query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
+                            query.setUserId(DataHandler.getInstance().getUser().getUserId());
+                        }
+
                         out.writeObject(query);
+                        out.flush();
                         answer = (Data)in.readObject();
-
-                        //System.out.println("returned values: " + answer.getValue());
-
                         dataSent = true;
+
+                        //System.out.println("Returned type: " + answer.getClass().getSimpleName());
 
                     } catch (IOException e) {
 
-                        // Server probably shut down or we lost connection. Close sockets so we are sure
-                        // to try to reconnect in the next iteration of while loop
-                        System.out.println("IOEXception in sendQuery.");
+                        // Server probably shut down or we lost connection. Close sockets so we are
+                        // sure to try to reconnect in the next iteration of while loop (unless we
+                        // timed out, in which case any other send attempt will provoke a reconnect)
+                        System.out.println("IOEXception in sendQuery: ");
+                        e.printStackTrace();
                         try {
                             cs.close();
                             in.close();
                             out.close();
                         } catch (IOException e1) {
                             e1.printStackTrace();
+                        }
+
+                        // Check for timeout - then don't try to send again. -1 means never timeout.
+                        if (timeOut != -1 && (System.currentTimeMillis() - startTime) > timeOut) {
+                            System.out.println("Connection timed out.");
+                            hasTimedOut = true;
                         }
 
                     } catch (ClassNotFoundException e) {
@@ -221,16 +296,28 @@ public class ServerConnector {
             return answer;
         }
 
+        private boolean connect() {
+            return connect(-1);
+        }
 
-        private void connect() {
+        private boolean connect(int timeOut) {
+            int time = 0;
             while (cs == null || cs.isClosed()) {
                 try {
                     // Make sure no other thread uses the stream resources here
                     synchronized(this) {
-                        System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
-                        cs = new Socket(serverAddress, 12000);
-                        out = new ObjectOutputStream(cs.getOutputStream());
-                        in = new ObjectInputStream(cs.getInputStream());
+                        // Double checked locking
+                        if (cs == null || cs.isClosed()) {
+                            System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
+                            cs = new Socket(serverAddress, 12000);
+                            cs.setSoTimeout(1000 * 30); // 30 Second timeout
+                            System.out.println("Connecting output stream...");
+                            out = new ObjectOutputStream(cs.getOutputStream());
+                            out.flush();
+                            System.out.println("Connecting input stream...");
+                            in = new ObjectInputStream(cs.getInputStream());
+                            System.out.println("Connected.");
+                        }
                     }
                 } catch (IOException e) {
                     // Problem connecting.
@@ -238,11 +325,18 @@ public class ServerConnector {
                             ". Retrying in 10s...");
                     try {
                         Thread.sleep(10000);
+                        // Stop trying if we reach timeout
+                        time += 10;
+                        if (time > timeOut && timeOut != -1) {
+                            System.err.println("Connect stopped trying.");
+                            return false;
+                        }
                     } catch (InterruptedException e1) {
                         System.out.println("Interrupted!");
                     }
                 }
             }
+            return true;
         }
 
 
@@ -257,19 +351,15 @@ public class ServerConnector {
                 // Connected. Send anything in the queue.
                 try {
 
-
                     // Wait for queue to have objects
-                    System.out.println("Server connector: waiting  at queue... (" + sc.toString() + ")");
+                    //System.out.println("Server connector: waiting  at queue... (" + sc.toString() + ")");
                     d = queue.takeFirst();
 
-                    // Then STOP ANYTHING ELSE from using this object (most importantly
-                    // the in and out streams) while sending and receiving data
                     //System.out.println("Server connector: Found object in queue.");
                     if (d != null) {
-                        System.out.println("Server connector: Sending...");
+                        //System.out.println("Server connector: next up is " + d.getClass().getSimpleName());
 
-                        // Connect if not already connected.
-                        // If we ever lose connection, try reconnecting at regular intervals
+                        // Connect if not connected at this point.
                         if (cs == null || cs.isClosed() || out == null || in == null) {
                             connect();
                         }
@@ -280,17 +370,29 @@ public class ServerConnector {
                             d.setSessionId(DataHandler.getInstance().getUser().getSessionId());
                             d.setUserId(DataHandler.getInstance().getUser().getUserId());
 
+                            // Then stop other threads from using this object (most importantly
+                            // the in and out streams) while sending and receiving data
                             // Send the data
+                            //System.out.println("Server connector: sending " + d.getClass().getSimpleName());
+                            Data inD = null;
                             synchronized (this) {
-                                out.writeObject(d);
-                                Data inD = (Data) in.readObject();
+                                //try {
+                                    out.writeObject(d);
+                                    out.flush();
+                                    inD = (Data) in.readObject();
+                                /*} catch (SocketTimeoutException e) {
+                                    // NOTE for now testing to let SocketTimeoutException be catched
+                                    by later catch for IOException - whihch will also put back in queue and reconnect
+                                    // Couldn't send this in time - put back in queue, try to resend later
+                                    queue.putFirst(d);
+                                }*/
+                            }
+                            //System.out.println("Server connector: received " + inD.getClass().getSimpleName());
 
-                                if (inD.getValue() == null) {
-                                    System.out.println("Server connector: Received data with null value");
-                                } else {
-                                    System.out.println("Server connector: Received data " + inD.getValue().toString());
-                                    System.out.println("returned values: " + inD.getSessionId() + " : " + inD.getUserId());
-                                }
+                            // If we sent a heartbeat object just now, update the notification object
+                            // in DataHandler
+                            if (d instanceof Heartbeat && inD instanceof Notification) {
+                                DataHandler.getInstance().setNotificationStatus((Notification)inD);
                             }
 
                         } else {
@@ -318,10 +420,11 @@ public class ServerConnector {
 
                     if (cs != null) {
                         try {
-                            cs.close();
-                            in.close();
-                            out.close();
-
+                            synchronized (this) {
+                                cs.close();
+                                in.close();
+                                out.close();
+                            }
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }

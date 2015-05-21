@@ -2,43 +2,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#E0E0E0"
-    tools:context="se.gu.tux.trux.gui.detailedStats.DistTravWindow">
+    tools:context="se.gu.tux.trux.gui.statistics.DistTravWindow">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:weightSum="2">
-
-        <!--
-        android:padding="10dp"
-        android:background="@drawable/custom_border"
-        -->
+        android:layout_height="fill_parent">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:weightSum="4"
-        android:layout_weight="1">
+        android:layout_weight="1.5">
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background= "@drawable/label_border"
             android:layout_margin="5dp"
-            android:padding="10dp"
+            android:paddingLeft="10dp"
             android:layout_weight="1">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/average_today"
+                android:text="@string/today"
                 android:id="@+id/avg_today_distance_traveled"
                 android:layout_gravity="center"
                 android:textSize="15sp"
-                android:textColor="#E0E0E0"/>
+                android:textColor="#3D3D3D"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -47,7 +39,7 @@
                 android:id="@+id/avg_today_distance_traveled_value"
                 android:layout_gravity="center"
                 android:textSize="15sp"
-                android:textColor="#E0E0E0"
+                android:textColor="#3D3D3D"
                 android:layout_marginLeft="10dp"/>
         </LinearLayout>
 
@@ -55,19 +47,18 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background= "@drawable/label_border"
             android:layout_margin="5dp"
-            android:padding="10dp"
+            android:paddingLeft="10dp"
             android:layout_weight="1">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/average_lastweek"
+                android:text="@string/last_week"
                 android:id="@+id/avg_lastweek_distance_traveled"
                 android:layout_gravity="center"
                 android:textSize="15sp"
-                android:textColor="#E0E0E0"/>
+                android:textColor="#3D3D3D"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -76,7 +67,7 @@
                 android:id="@+id/avg_lastweek_distance_traveled_value"
                 android:layout_gravity="center"
                 android:textSize="15sp"
-                android:textColor="#E0E0E0"
+                android:textColor="#3D3D3D"
                 android:layout_marginLeft="10dp"/>
         </LinearLayout>
 
@@ -84,19 +75,18 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background= "@drawable/label_border"
             android:layout_margin="5dp"
-            android:padding="10dp"
+            android:paddingLeft="10dp"
             android:layout_weight="1">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/average_lastmonth"
+                android:text="@string/last_month"
                 android:id="@+id/avg_lastmonth_distance_traveled"
                 android:layout_gravity="center"
                 android:textSize="15sp"
-                android:textColor="#E0E0E0"/>
+                android:textColor="#3D3D3D"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -105,7 +95,7 @@
                 android:id="@+id/avg_lastmonth_distance_traveled_value"
                 android:layout_gravity="center"
                 android:textSize="15sp"
-                android:textColor="#E0E0E0"
+                android:textColor="#3D3D3D"
                 android:layout_marginLeft="10dp"/>
         </LinearLayout>
 
@@ -113,19 +103,18 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background= "@drawable/label_border"
             android:layout_margin="5dp"
-            android:padding="10dp"
+            android:paddingLeft="10dp"
             android:layout_weight="1">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/average_total"
+                android:text="@string/total"
                 android:id="@+id/avg_total_distance_traveled"
                 android:layout_gravity="center"
                 android:textSize="15sp"
-                android:textColor="#E0E0E0"/>
+                android:textColor="#3D3D3D"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -134,18 +123,39 @@
                 android:id="@+id/avg_total_distance_traveled_value"
                 android:layout_gravity="center"
                 android:textSize="15sp"
-                android:textColor="#E0E0E0"
+                android:textColor="#3D3D3D"
                 android:layout_marginLeft="10dp"/>
         </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/DistanceGraph"
-        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/DistanceGraph"
+                android:layout_weight="1">
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/distance_graph_help"
+                android:text="@string/distance_graph_explanation"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="10sp"
+                android:textColor="#3D3D3D"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"/>
+
         </LinearLayout>
 
     </LinearLayout>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff404e68">
+
+    <ImageView
+        android:layout_width="60sp"
+        android:layout_height="60sp"
+        android:id="@+id/friendPicture"
+        android:layout_gravity="center_vertical" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alfons"
+            android:id="@+id/friendName"
+            android:textSize="20sp"
+            android:textColor="#E0E0E0"
+            android:layout_marginTop="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading"
+            android:id="@+id/friendUserName"
+            android:textSize="10sp"
+            android:textColor="#ff979797"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pending"
+        android:id="@+id/pending"
+        android:layout_gravity="center_vertical|right"
+        android:textColor="#E0E0E0"
+        android:layout_marginRight="10dp"
+        android:textSize="15sp"/>
+
+    <Button
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/addfriendicon"
+        android:id="@+id/friendRequestButton"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="10dp"/>
+
+    <Button
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@drawable/profileicon"
+        android:id="@+id/profileButton"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="10dp"/>
+
+    <Button
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/messageicon"
+        android:id="@+id/sendMessageButton"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="10dp"/>
+
+</LinearLayout>

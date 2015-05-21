@@ -16,46 +16,65 @@
 package se.gu.tux.truxserver.config;
 
 /**
- * Wrapper class for the system config.
+ * Wrapper class for the system configuration.
+ *
  * @author jonas
  */
 public class Config {
+
     /**
      * Static part.
      */
     private static Config config = null;
 
-    static {
-    	if (config == null) {
-    		config = new Config();
-    	}
-    }
-    
-    private Config() {}
-    
-    public static Config getInstance()
-    {
+    /**
+     * Method returning an instance of the Config wrapper.
+     *
+     * @return Config instance
+     */
+    public static Config getInstance() {
+        if (config == null) {
+            config = new Config();
+        }
         return config;
     }
-    
-    public static Config gI()
-    {
-        return config;
+
+    /**
+     * Method returning an instance of the Config wrapper.
+     *
+     * @return Config instance
+     */
+    public static Config gI() {
+        return getInstance();
     }
-    
+
     /**
      * Non-static part.
      */
+    //Verbose console output flag
     private boolean verbose;
-    
+
+    //MySQL DB config
     private String dbaddress;
     private int port;
     private String dbname;
     private String dbuser;
     private String dbpass;
+    private short maxNoDBConnections;
+
+    //Sessionhandler config
     private int cleanupInterval;
     private int sessionTimeout;
-    private short maxNoDBConnections;
+
+    //eMail config
+    private String gmailUser;
+    private String gmailPass;
+
+    /**
+     * Constructor.
+     */
+    private Config() {
+    }
 
     public String getDbaddress() {
         return dbaddress;
@@ -104,7 +123,7 @@ public class Config {
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
-    
+
     public int getCleanupInterval() {
         return cleanupInterval;
     }
@@ -112,7 +131,7 @@ public class Config {
     public void setCleanupInterval(int cleanUpInterval) {
         this.cleanupInterval = cleanUpInterval;
     }
-    
+
     public short getMaxNoDBConnections() {
         return maxNoDBConnections;
     }
@@ -120,12 +139,28 @@ public class Config {
     public void setMaxNoDBConnections(short maxNoDBConnections) {
         this.maxNoDBConnections = maxNoDBConnections;
     }
-    
+
     public int getSessionTimeout() {
         return sessionTimeout;
     }
 
     public void setSessionTimeout(int sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
+    }
+
+    public String getGmailUser() {
+        return gmailUser;
+    }
+
+    public void setGmailUser(String gmailUser) {
+        this.gmailUser = gmailUser;
+    }
+
+    public String getGmailPass() {
+        return gmailPass;
+    }
+
+    public void setGmailPass(String gmailPass) {
+        this.gmailPass = gmailPass;
     }
 }
