@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.messaging;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -35,6 +37,8 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
     private ArrayList<Friend> friendsList;
     private ArrayList<Message> messagesList;
 
+    private RelativeLayout loadingPanel;
+
     SocialHandler sh;
 
     Message[] messages;
@@ -53,6 +57,10 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
         friendsList = new ArrayList<>();
         messagesList = new ArrayList<>();
+
+        loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
+
+        loadingPanel.setVisibility(View.VISIBLE);
 
         initMessageService();
 
@@ -89,14 +97,20 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
      */
     private void initMessageService()
     {
+        // protocol message to send to server
         ProtocolMessage message = new ProtocolMessage(ProtocolMessage.Type.GET_LATEST_CONVERSATIONS);
-
+        // start fetching conversations in a background thread
         conversations = new FetchConversationTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, message);
 
     } // end initMessageService()
 
 
 
+    /**
+     * Called when the friends are fetched in the social handler.
+     *
+     * @param friends   The friends.
+     */
     @Override
     public void onFriendsFetched(ArrayList<Friend> friends)
     {
@@ -104,6 +118,7 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
         ArrayResponse response = null;
 
+        // get the fetched conversations
         try
         {
             response = conversations.get();
@@ -113,6 +128,7 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
             e.printStackTrace();
         }
 
+        // get the messages for those conversations
         if (response != null)
         {
             Object[] array = response.getArray();
@@ -125,6 +141,7 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
             }
         }
 
+        // initiate the friend and message data to send to adapter
         assert messages != null;
         for (Message msg : messages)
         {
@@ -155,8 +172,23 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
         // set the data fetched into the adapter
         messageListAdapter.setAdapterData(friendsList, messagesList);
 
+        // hide the loading panel
+
+        Activity a = getActivity();
+        if (a!= null) {
+            a.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadingPanel.setVisibility(View.GONE);
+                }
+            });
+        }
+
     } // end friendsFetched()
 
+
+    @Override
+    public void onFriendRequestsFetched(ArrayList<Friend> friends) {}
 
 
     /**

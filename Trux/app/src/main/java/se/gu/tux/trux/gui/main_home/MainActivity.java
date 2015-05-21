@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.LoginService;
+import se.gu.tux.trux.application.SettingsHandler;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
@@ -70,6 +71,9 @@ public class MainActivity extends BaseAppActivity
 
         // Create login service
         LoginService.createInstance(this.getBaseContext(), FILE_NAME);
+
+        //Create instance of SettingsHandler
+        SettingsHandler.createInstance(this.getBaseContext());
 
         // Just make sure a AGA data parser is created
         AGADataParser.getInstance();
@@ -160,10 +164,7 @@ public class MainActivity extends BaseAppActivity
 
         if (username.isEmpty() || password.isEmpty())
         {
-            showDialogBox("Login failed", "Invalid username or password");
-            // TODO
-            // something wrong with credentials, display info to user
-            // refresh app, ask for login again
+            showToast("Please, Insert your username and password.");
             return;
         }
 
@@ -187,7 +188,7 @@ public class MainActivity extends BaseAppActivity
 
         if (isAllowed)
         {
-            showToast("You are now logged in.");
+            showToast("Login successful.");
 
             Intent intent = new Intent(this, HomeActivity.class);
 
@@ -200,7 +201,7 @@ public class MainActivity extends BaseAppActivity
         }
         else
         {
-            showToast("Login failed. Please try again.");
+            showToast("Login unsuccessful. Please check your Trux username and password.");
         }
 
     } // end goToHome()
@@ -245,7 +246,7 @@ public class MainActivity extends BaseAppActivity
         // if login successful
         if (msg.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
         {
-            showToast("You are now logged in.");
+            showToast("Login successful.");
 
             Intent intent = new Intent(this, HomeActivity.class);
 
@@ -258,7 +259,7 @@ public class MainActivity extends BaseAppActivity
         }
         else
         {
-            showToast("Problem logging in.\nMessage: " + msg.getMessage() + ".\nPlease try again.");
+            showToast("Login unsuccessful.\nMessage: " + msg.getMessage() + ".\nPlease try again.");
             DataHandler.getInstance().setUser(null);
         }
 

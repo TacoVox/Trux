@@ -1,22 +1,20 @@
 package se.gu.tux.trux.gui.main_home;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
-import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
-import se.gu.tux.trux.gui.community.Community_main;
 import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
@@ -33,14 +31,16 @@ import tux.gu.se.trux.R;
 public class HomeActivity extends BaseAppActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
 
-
-    Button messageButton;
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
     //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
-    private static final int FRIENDS_BUTTON = R.id.friendButton;
+    private static final int FRIENDS_BUTTON_WELCOME = R.id.fragment_welcome_friend_button;
+    private static final int FRIENDS_BUTTON = R.id.fragment_main_friend_button;
     private static final int PROFILE_BUTTON = R.id.fragment_main_profile_button;
     private static final int MESSAGE_BUTTON = R.id.fragment_welcome_message_button;
+    private static final int CLICKED_FRIEND = 1;
+    public long selectedFriendID = (long) -1;
+    public boolean hasclicked = false;
 
 
     private ViewPager viewPager;
@@ -48,10 +48,8 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     private List<Fragment> fragmentArrayList;
     private ActionBar actionBar;
 
-
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         // set layout for this activity
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT_ID);
@@ -70,10 +68,6 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         Fragment communityFragment = new CommunityMainFragment();
         Fragment statsFragment = new StatisticsMainFragment();
 
-        // create buttons
-        Button messageButton = (Button) findViewById(R.id.fragment_welcome_message_button);
-
-
         // add fragments to array
         fragmentArrayList.add(welcomeFragment);
         fragmentArrayList.add(communityFragment);
@@ -91,6 +85,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         viewPager.setOnPageChangeListener(this);
         // set adapter
         viewPager.setAdapter(pagerAdapter);
+
     }
 
 
@@ -104,10 +99,11 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
      */
     public void onFragmentViewClick(int id)
     {
-        if (id == FRIENDS_BUTTON)
+        if (id == FRIENDS_BUTTON || id == FRIENDS_BUTTON_WELCOME)
         {
             Intent intent = new Intent(this, FriendsWindow.class);
-            startActivity(intent);
+            //Want to recieve results from clicked friend
+            startActivityForResult(intent, CLICKED_FRIEND);
         }
         else if (id == PROFILE_BUTTON)
         {
@@ -128,49 +124,50 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     }
 
     private boolean isDriving(){
-        ;
-        try{
-            Speed speed = (Speed) DataHandler.getInstance().getData(new Speed(0));
-            if(speed.getValue() != null && (double) speed.getValue() > 15){
-                return true;
+        return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
+    }
+
+    //Getting results from the FriendsWindow
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == CLICKED_FRIEND) {
+            if (resultCode == RESULT_OK) {
+                //Gets the friendID of the friend which was clicked
+                selectedFriendID = data.getLongExtra("FriendID",  -1);
+                //Sets the new view to the map
+                viewPager.setCurrentItem(1, true);
             }
+            else selectedFriendID = -1;
         }
-        catch (NotLoggedInException nLIE){
-            nLIE.printStackTrace();
-        }
-        return false;
-    }
-
-    private void unseenMessages(){
-        Notification not = DataHandler.getInstance().getNotificationStatus();
-        while(not.isNewMessages()){
-
-            messageButton.setText("Messages " + "(!)");
-        }
-        messageButton.setText("Messages");
-
-    }
-    private void unseenFriendRequest(){
-        Notification not = DataHandler.getInstance().getNotificationStatus();
-        while(not.isNewFriends()){
-            messageButton.setText("Messages " + "(!)");
-        }
-        messageButton.setText("Messages");
 
     }
 
+    public void setSelectedFriend(Long friendID){
+        this.selectedFriendID = friendID;
+    }
+
+    public long getSelectedFriend() {
+        return selectedFriendID;
+    }
 
 
     @Override
-    public void onBackPressed()
-    {
-        if (getFragmentManager().getBackStackEntryCount() == 0)
-        {
-            this.finish();
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            System.out.println("Minimizing...");
+            // Minimize
+            moveTaskToBack(true);
         }
         else
         {
-            getFragmentManager().popBackStack();
+
+            if (!getSupportFragmentManager().popBackStackImmediate("MENU",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE) &&
+                !getSupportFragmentManager().popBackStackImmediate("PROFILE",
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE)) {
+
+                System.out.println("Poping back stack...");
+                getSupportFragmentManager().popBackStack();
+            }
         }
     }
 
@@ -229,7 +226,5 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     /***************************************************************************************
      * End override methods.                                                               *
      ***************************************************************************************/
-
-
 
 } // end class

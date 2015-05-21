@@ -20,6 +20,7 @@ import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
@@ -31,6 +32,7 @@ import se.gu.tux.trux.technical_services.ServerConnector;
  */
 public class DataHandler
 {
+    public enum SafetyStatus {IDLE, SLOW_MOVING, MOVING, FAST_MOVING};
 
     private static DataHandler dataHandler;
 
@@ -53,6 +55,7 @@ public class DataHandler
      * instance of DataHandler instead.
      */
     private DataHandler()    {
+        detailedStats = new HashMap<Integer, DetailedStatsBundle>();
         sc = new SocialHandler();
     }
 
@@ -113,7 +116,7 @@ public class DataHandler
     public Data getData(Data request) throws NotLoggedInException {
         if (request.isOnServerSide()) {
 
-            System.out.println("Datahandler routing request: " + request.getClass().getSimpleName());
+            //System.out.println("Datahandler routing request: " + request.getClass().getSimpleName());
             request = ServerConnector.gI().answerQuery(request);
             //request = IServerConnector.getInstance().answerQuery(request);
 
@@ -134,10 +137,7 @@ public class DataHandler
      */
     public void cacheDetailedStats() {
         // Only fetch if they aren't there or aren't up to date
-        if (detailedStats == null ||
-                System.currentTimeMillis() - detailedStatsFetched > 1000 * 60 * 15) {
-
-            detailedStats = new HashMap<Integer, DetailedStatsBundle>();
+        if (System.currentTimeMillis() - detailedStatsFetched > 1000 * 60 * 15) {
 
             System.out.println("Fetching detailed stats.");
 
@@ -145,6 +145,8 @@ public class DataHandler
                 @Override
                 public void run() {
                     try {
+                        HashMap<Integer, DetailedStatsBundle> detailedStatsTmp = new HashMap<Integer, DetailedStatsBundle>();
+
                         // NOTE would love to generalize this but slightly unsure on now how to
                         // handle the casting
 
@@ -162,7 +164,13 @@ public class DataHandler
                                 (Speed) getData(new Speed(MetricData.FOREVER)),
                                 speedPoints);
                         // Store in hash map
-                        detailedStats.put(speed.getSignalId(), speedBundle);
+                        if (detailedStatsTmp == null) {
+                            System.out.println("DETAILEDSTATS IS NULL.");
+                        }
+                        if (speedBundle == null) {
+                            System.out.println("SPEEDBUNDLE IS NULL.");
+                        }
+                        detailedStatsTmp.put(speed.getSignalId(), speedBundle);
 
                         Fuel fuel = new Fuel(0);
                         fuel.setTimeStamp(System.currentTimeMillis());
@@ -176,7 +184,7 @@ public class DataHandler
                                 (Fuel) getData(new Fuel(MetricData.FOREVER)),
                                 fuelPoints);
                         // Store in hash map
-                        detailedStats.put(fuel.getSignalId(), fuelBundle);
+                        detailedStatsTmp.put(fuel.getSignalId(), fuelBundle);
 
                         Distance dist = new Distance(0);
                         dist.setTimeStamp(System.currentTimeMillis());
@@ -190,10 +198,12 @@ public class DataHandler
                                 (Distance) getData(new Distance(MetricData.FOREVER)),
                                 distPoints);
                         // Store in hash map
-                        detailedStats.put(dist.getSignalId(), distBundle);
+                        detailedStatsTmp.put(dist.getSignalId(), distBundle);
 
                         // Keep track of when we finished fetching the detailed stats
                         detailedStatsFetched = System.currentTimeMillis();
+
+                        detailedStats = detailedStatsTmp;
 
                     } catch (NotLoggedInException e) {
                         System.out.println("Not logged in in datahandler cache");
@@ -397,7 +407,7 @@ public class DataHandler
         // See if the image is not yet cached
         if (imageCache.get(pictureId) == null) {
             // Try to fecth it
-            imageCache.put(pictureId, (Picture)getData(new Picture(pictureId)));
+            imageCache.put(pictureId, (Picture) getData(new Picture(pictureId)));
         }
 
         Picture p = imageCache.get(pictureId);
@@ -439,4 +449,17 @@ public class DataHandler
     public SocialHandler getSocialHandler() {
         return sc;
     }
+
+    public SafetyStatus getSafetyStatus() {
+        if(AGADataParser.getInstance().getDistLevel() >= 3)
+            return SafetyStatus.FAST_MOVING;
+        else if(AGADataParser.getInstance().getDistLevel() == 2)
+            return SafetyStatus.MOVING;
+        else if(AGADataParser.getInstance().getDistLevel() == 1)
+            return SafetyStatus.SLOW_MOVING;
+        else
+            return SafetyStatus.IDLE;
+    }
+
+
 } // end class DataHandler

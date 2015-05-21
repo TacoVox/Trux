@@ -1,6 +1,8 @@
 package se.gu.tux.trux.gui.base;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -8,82 +10,79 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.User;
 import tux.gu.se.trux.R;
 
 /**
  * Created by Aman ghezai on 2015-05-14.
  */
 public class ContactMenuActivity extends BaseAppActivity {
-    private static final int LAYOUT_ID = R.layout.contact_menu_activity;
-
-
-    private EditText name;
-    private EditText email;
-    private String nameField;
-    private String emailField;
+    private EditText contactName= null;
+    private EditText feedbackInput = null;
+    private Spinner spinner;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.contact_menu_activity);
 
-        setContentView(LAYOUT_ID);
-        // set current view
-        setCurrentViewId(LAYOUT_ID);
-
-        EditText nameField = (EditText) findViewById(R.id.contactNameInput);
-        String name = nameField.getText().toString();
-
-        EditText emailField = (EditText) findViewById(R.id.contactEmailInput);
-        String email = emailField.getText().toString();
-
-        EditText feedbackField = (EditText) findViewById(R.id.feedbackInput);
-        String feedback = feedbackField.getText().toString();
-        Spinner feedbackSpinner = (Spinner) findViewById(R.id.SpinnerFeedbackType);
-        String feedbackType = feedbackSpinner.getSelectedItem().toString();
+        contactName = (EditText) findViewById(R.id.contactName);
+        feedbackInput = (EditText) findViewById(R.id.feedbackInput);
+        spinner = (Spinner) findViewById(R.id.spinnerFeedbackType);
+        if(isOnline()){
+            user = DataHandler.getInstance().getUser();
+            contactName.setText(user.getFirstName() +  " " + user.getLastName());
+        }
 
     }
+    protected void sendEmail() {
 
 
-//TODO: checkCredentialvalues not working accordingly !
+            String rec = "se.gu.trux@gmail.com";
+            String subject = spinner.getSelectedItem().toString();
+            String userName = contactName.getText().toString();
 
-    private boolean checkCredentialvalues() {
-        boolean isCorrect = true;
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", rec, null));
 
-        // get the name
-        nameField = name.getText().toString();
-        // perform check on name
-        if (nameField.isEmpty() || name.length() < 3) {
-            name.setBackgroundColor(Color.RED);
-            showToast("Name should have at least 4 characters ");
-            nameField = "";
-            isCorrect = false;
-        }
-        // get the e-mail address
-        emailField = email.getText().toString();
-        // regex for checking if the e-mail is in the correct format
-        String regex1 = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@" +
-                "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            if(isOnline()) {
+                emailIntent.putExtra(Intent.EXTRA_TEXT, userName + "\n\n" + feedbackInput.getText().toString() +
+                        "\n\nUserID: " + user.getUserId());
+            }
+            else
+                emailIntent.putExtra(Intent.EXTRA_TEXT, userName + "\n\n" + feedbackInput.getText().toString());
+        try {
 
-        // perform check on e-mail
-        if (!emailField.matches(regex1)) {
-            email.setBackgroundColor(Color.RED);
-            showToast("Email address is incorrect.");
-            emailField = "";
-            isCorrect = false;
+            // the user can choose the email client
+            startActivity(Intent.createChooser(emailIntent, "Send eMail..."));
+
+
+
+            } catch (android.content.ActivityNotFoundException ex) {
+
+            Toast.makeText(ContactMenuActivity.this, "No email client found.",
+
+                    Toast.LENGTH_LONG).show();
+
+
+            }
 
         }
-        return isCorrect;
-    }
 
-    /**
-     * Get the feedback.
-     */
-
-    private void getfeedback() {
-
-        //TODO: create a getfeedback to handle the feedback and send it to email... -->
+    public void sendFeedback(View view)
+    {
+            System.out.println("-------- calling onClick in contactWindow --------");
+            sendEmail();
+            // after sending the email, clear the fields
+            contactName.setText("");
+            feedbackInput.setText("");
 
     }
-
+    private boolean isOnline(){
+        return DataHandler.getInstance().isLoggedIn();
+    }
 }

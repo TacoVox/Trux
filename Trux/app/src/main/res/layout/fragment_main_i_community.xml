@@ -14,27 +14,27 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/abc_action_button_min_height_material"
         android:orientation="horizontal"
         android:id="@+id/communityButtons">
 
-    <Button
+    <ImageButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bottom_button"
-        android:text="friends"
-        android:id="@+id/friendButton"
-        android:textColor="#E0E0E0"
+        android:src="@drawable/friendsiconwithtext"
+        android:scaleType="fitCenter"
+        android:id="@+id/fragment_main_friend_button"
         android:layout_marginRight="1dp"
         android:layout_weight="1"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/fragment_main_profile_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bottom_button"
-        android:text="Profile"
-        android:textColor="#E0E0E0"
+        android:src="@drawable/profileiconwithtext"
+        android:scaleType="fitCenter"
         android:layout_weight="1"/>
 
     </LinearLayout>

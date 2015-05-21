@@ -203,9 +203,6 @@ public class ServerConnector {
 
         /**
          * Sends a query to the server and returns the reply. Returns null on timeout.
-         * NOTE timeout is currently for reconnection + but if a timeout is specified,
-         * this method will not try to resend after a socket timeout of a minute!
-         * TODO fix the above so the timeout is correctly checked on socket timeouts
          * @param query
          * @return
          */
@@ -238,7 +235,7 @@ public class ServerConnector {
                     throw new NotLoggedInException();
                 }
 
-                System.out.println("Wating to send: " + query.getClass().getSimpleName());
+                //System.out.println("Wating to send: " + query.getClass().getSimpleName());
 
                 // Make sure no other thread uses the stream resources here
                 synchronized (this) {
@@ -254,18 +251,10 @@ public class ServerConnector {
                             query.setUserId(DataHandler.getInstance().getUser().getUserId());
                         }
 
-                        //try {
-                            out.writeObject(query);
-                            out.flush();
-                            answer = (Data)in.readObject();
-                            dataSent = true;
-                        /*} catch (SocketTimeoutException e) {
-                            // Couldn't send this in time - since dataSent is not true, the loop
-                            // will try again. The only exception is if we reached timeout,
-                            if (timeout != -1) {
-                                hasTimedOut = true;
-                            }
-                        }*/
+                        out.writeObject(query);
+                        out.flush();
+                        answer = (Data)in.readObject();
+                        dataSent = true;
 
                         //System.out.println("Returned type: " + answer.getClass().getSimpleName());
 
@@ -286,7 +275,7 @@ public class ServerConnector {
 
                         // Check for timeout - then don't try to send again. -1 means never timeout.
                         if (timeOut != -1 && (System.currentTimeMillis() - startTime) > timeOut) {
-                            System.out.println("Connection timed out.l");
+                            System.out.println("Connection timed out.");
                             hasTimedOut = true;
                         }
 
@@ -321,7 +310,7 @@ public class ServerConnector {
                         if (cs == null || cs.isClosed()) {
                             System.out.println("Connecting to " + serverAddress + ": ServerConnector " + this.toString());
                             cs = new Socket(serverAddress, 12000);
-                            cs.setSoTimeout(1000 * 60);
+                            cs.setSoTimeout(1000 * 30); // 30 Second timeout
                             System.out.println("Connecting output stream...");
                             out = new ObjectOutputStream(cs.getOutputStream());
                             out.flush();

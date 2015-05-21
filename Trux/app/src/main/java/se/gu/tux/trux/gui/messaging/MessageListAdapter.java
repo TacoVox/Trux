@@ -1,5 +1,6 @@
 package se.gu.tux.trux.gui.messaging;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,9 +10,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Date;
 
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
@@ -30,6 +32,8 @@ public class MessageListAdapter extends BaseAdapter
     private ArrayList<Friend> friends;
     private ArrayList<Message> messages;
 
+    private DateFormat df;
+
     // to inflate each layout
     private static LayoutInflater layoutInflater;
 
@@ -44,10 +48,12 @@ public class MessageListAdapter extends BaseAdapter
      *
      * @param activity  The inflater.
      */
+    @SuppressLint("SimpleDateFormat")
     public MessageListAdapter(Activity activity)
     {
         this.activity = activity;
         layoutInflater = (LayoutInflater) activity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        df = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
     }
 
 
@@ -83,8 +89,7 @@ public class MessageListAdapter extends BaseAdapter
     @Override
     public Object getItem(int i)
     {
-        CustomObject obj = new CustomObject(friends.get(i), messages.get(i));
-        return obj;
+        return new CustomObject(friends.get(i), messages.get(i));
     }
 
 
@@ -113,6 +118,7 @@ public class MessageListAdapter extends BaseAdapter
             viewHolder.userPicture = (ImageView) newView.findViewById(R.id.message_username_picture);
             viewHolder.username = (TextView) newView.findViewById(R.id.message_username_text_view);
             viewHolder.content = (TextView) newView.findViewById(R.id.message_content_text_view);
+            viewHolder.timestamp = (TextView) newView.findViewById(R.id.timestamp);
 
             // set the holder for this view
             newView.setTag(viewHolder);
@@ -132,8 +138,12 @@ public class MessageListAdapter extends BaseAdapter
         {
             // set the data to show
             viewHolder.userPicture.setImageBitmap(SocialHandler.pictureToBitMap(friends.get(i).getProfilePic()));
-            viewHolder.username.setText(friends.get(i).getUsername());
+            viewHolder.username.setText(friends.get(i).getFirstname() + " " + friends.get(i).getLastname());
             viewHolder.content.setText((String) messages.get(i).getValue());
+
+            Date date = new Date(messages.get(i).getTimeStamp());
+
+            viewHolder.timestamp.setText("Latest Messages: " + df.format(date));
         }
 
         // return the view
@@ -149,6 +159,7 @@ public class MessageListAdapter extends BaseAdapter
         public ImageView userPicture;
         public TextView username;
         public TextView content;
+        public TextView timestamp;
     }
 
 

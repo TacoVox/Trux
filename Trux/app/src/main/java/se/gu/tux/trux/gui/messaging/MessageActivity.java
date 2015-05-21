@@ -4,7 +4,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 
 import se.gu.tux.trux.datastructure.Friend;
-import se.gu.tux.trux.datastructure.Message;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import tux.gu.se.trux.R;
 
@@ -25,6 +24,9 @@ public class MessageActivity extends BaseAppActivity
 
     private int currentFragmentId;
 
+    String action = "";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -36,12 +38,34 @@ public class MessageActivity extends BaseAppActivity
         // set current view showing
         setCurrentViewId(LAYOUT_ID);
 
-        currentFragmentId = homeFragment;
+        action = getIntent().getAction();
 
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.message_frame_container, new FriendListFragment());
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        if (action != null && action.equals("OPEN_CHAT"))
+        {
+            long id = getIntent().getLongExtra("FRIEND_ID", 0);
+            String username = getIntent().getStringExtra("FRIEND_USERNAME");
+
+            Friend friend = new Friend(id);
+            friend.setUsername(username);
+
+            customObject = new CustomObject(friend, null);
+
+            currentFragmentId = homeFragment;
+
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.message_frame_container, new ChatFragment());
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+        else
+        {
+            currentFragmentId = homeFragment;
+
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.message_frame_container, new FriendListFragment());
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
 
     }
 
@@ -55,9 +79,7 @@ public class MessageActivity extends BaseAppActivity
     }
 
 
-
     public CustomObject getCustomObject()   { return  customObject; }
-
 
 
     public void onItemClick(CustomObject object, int id)

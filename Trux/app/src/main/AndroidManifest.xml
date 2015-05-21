@@ -31,7 +31,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDIkAtIZhasjjK5Txt5HJGNDw5MBNlsKVA" />
+            android:value="AIzaSyBHp7_uKCD9Zsdk2h7jPcy7zoDcnsCreAs" />
 
 
         <!-- ACTIVITIES -->
@@ -89,14 +89,16 @@
         <activity
             android:name="se.gu.tux.trux.gui.community.FriendsWindow"
             android:label="Friends"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
         </activity>
 
         <!-- Community Profile Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.community.CommunityProfileActivity"
             android:label="Community Profile"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
         </activity>
         <!-- End Home Activity -->
 
@@ -108,7 +110,7 @@
         <!-- Message Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.messaging.MessageActivity"
-            android:label="Friends"
+            android:label="Messages"
             android:screenOrientation="portrait">
         </activity>
 

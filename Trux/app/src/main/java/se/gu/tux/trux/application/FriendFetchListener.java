@@ -12,4 +12,5 @@ public interface FriendFetchListener {
 
     public void onFriendsFetched(ArrayList<Friend> friends);
 
+    public void onFriendRequestsFetched(ArrayList<Friend> friends);
 }

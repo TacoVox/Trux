@@ -11,6 +11,7 @@ import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
+import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 
 /**
@@ -43,30 +44,32 @@ public class SocialHandler {
      * @param listener
      * @param reqUpdateMode
      */
-    public void fetchFriends(final FriendFetchListener listener, FriendsUpdateMode reqUpdateMode) {
-        final long[] friendIds = DataHandler.gI().getUser().getFriends();
-
-        // No friends / friends not set
-        if (friendIds == null) {
-            System.out.println("Users friends was null.");
-            listener.onFriendsFetched(new ArrayList<Friend>());
-        }
-
-        if (reqUpdateMode == FriendsUpdateMode.NONE) {
-            // If no forced update, still update ALL if the list doesn't have the correct objects
-            if (!allFriendsInCache() || friendsChanged) {
-                System.out.println("Forcing update of all friends.");
-                reqUpdateMode = FriendsUpdateMode.ALL;
-            }
-        }
-        final FriendsUpdateMode updateMode = reqUpdateMode;
-
-
+    public void fetchFriends(final FriendFetchListener listener, final FriendsUpdateMode reqUpdateMode) {
         new Thread(new Runnable() {
             ArrayList<Friend> friends = new ArrayList<Friend>();
 
             @Override
             public void run() {
+                // Update the list of friends this user has
+                try {
+                    Data user = DataHandler.gI().getData(DataHandler.gI().getUser());
+                    if (user instanceof User) {
+                        DataHandler.gI().setUser((User) user);
+                    }
+                } catch (NotLoggedInException e) {
+                    listener.onFriendsFetched(new ArrayList<Friend>());
+                }
+                final long[] friendIds = DataHandler.gI().getUser().getFriends();
+
+                FriendsUpdateMode updateMode = reqUpdateMode;
+                if (updateMode == FriendsUpdateMode.NONE) {
+                    // If no forced update, still update ALL if the list doesn't have the correct objects
+                    if (!allFriendsInCache() || friendsChanged) {
+                        System.out.println("Forcing update of all friends.");
+                        updateMode = FriendsUpdateMode.ALL;
+                    }
+                }
+
                 // If forced update ALL, fetch all friend objects
                 if (updateMode == FriendsUpdateMode.ALL) {
                     System.out.println("Updating all friends.");
@@ -134,7 +137,7 @@ public class SocialHandler {
      * change this boolean. It is set to true in the constructor of this class as well, to
      * make sure requests are always fetched the first time the friend window is loaded.
      */
-    public void fetchFriendRequests(final FriendRequestFetchListener listener) {
+    public void fetchFriendRequests(final FriendFetchListener listener) {
 
         new Thread(new Runnable() {
 
@@ -229,6 +232,7 @@ public class SocialHandler {
             pictureCache = new HashMap<Long, Picture>();
         }
         if (pictureId == -1) {
+            System.out.println("User doesn't have a picture");
             return null;
         }
 
@@ -261,7 +265,7 @@ public class SocialHandler {
     }
 
 
-    public void sendFriendRequest(final FriendRequestSentListener listener, final long friendId)
+    public void sendFriendRequest(final FriendActionListener listener, final long friendId)
             throws NotLoggedInException {
         if (!DataHandler.gI().isLoggedIn()) {
             throw new NotLoggedInException();
@@ -285,7 +289,31 @@ public class SocialHandler {
     }
 
 
-    public void answerFriendRequest(final FriendRequestAnswerListener listener, final long friendId,
+    public void sendFriendRemove(final FriendActionListener listener, final long friendId)
+            throws NotLoggedInException {
+        if (!DataHandler.gI().isLoggedIn()) {
+            throw new NotLoggedInException();
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ProtocolMessage friendRemove =
+                        new ProtocolMessage(ProtocolMessage.Type.FRIEND_REMOVE,
+                                Long.toString(friendId));
+                try {
+                    DataHandler.gI().getData(friendRemove);
+                } catch (NotLoggedInException e) {
+                    e.printStackTrace();
+                }
+
+                listener.onFriendRemoveSent(friendId);
+            }
+        }).start();
+    }
+
+
+    public void answerFriendRequest(final FriendActionListener listener, final long friendId,
                                     final boolean accept) throws NotLoggedInException {
         if (!DataHandler.gI().isLoggedIn()) {
             throw new NotLoggedInException();

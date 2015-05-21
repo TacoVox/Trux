@@ -2,73 +2,79 @@
 xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
 android:layout_height="match_parent" tools:context="se.gu.tux.trux.gui.community.InfoFragment">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-<Space
-    android:layout_width="match_parent"
-    android:layout_height="fill_parent"
-    android:layout_weight="2"/>
-<LinearLayout
-   android:layout_width="match_parent"
-   android:layout_height="wrap_content"
-   android:orientation="horizontal" >
-
-    <Space
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="3"/>
-
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:id="@+id/profile_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/loading"
+            android:textColor="#E0E0E0"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:padding="5dp"
+            android:textStyle="bold"
+            android:background="#61728d"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/abc_action_button_min_height_material"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <ImageButton
+                android:id="@+id/fragment_info_message_button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/loading"
-                android:id="@+id/nameTextView" />
+                android:layout_weight="1"
+                android:background="@drawable/custom_button_reversed"
+                android:src="@drawable/messageicon"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"/>
+
+            <ImageButton
+                android:id="@+id/fragment_info_remove_friend_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/custom_button_reversed"
+                android:src="@drawable/removefriendicon"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/infoPicture"/>
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:id="@+id/infoPicture"
+                android:background="@drawable/image_view"
+                android:padding="1dp"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/loading"
-                android:id="@+id/infoTextView"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/community_remove"
-                android:id="@+id/infoRemoveButton"/>
-        </LinearLayout>
+
     </LinearLayout>
-
-    <Space
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="3"/>
-
-</LinearLayout>
-
-<Space
-    android:layout_width="match_parent"
-    android:layout_height="fill_parent"
-    android:layout_weight="2"/>
-
-</LinearLayout>
 
 </FrameLayout>

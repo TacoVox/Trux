@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView
 
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -15,7 +16,8 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:orientation="vertical"
-            android:layout_height="fill_parent">
+            android:layout_height="match_parent"
+            >
 
             <TextView
                 android:id="@+id/TextViewTitle"
@@ -31,33 +33,25 @@
                 android:text="@string/contact_name"
                 android:textColor="#3D3D3D"
                 android:textStyle="bold"
-                android:id="@+id/contactuserName"
-                android:layout_weight="2"/>
+                android:id="@+id/contactSubject"
+                />
 
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/contactNameInput"
-                android:layout_weight="1"/>
+                android:id="@+id/contactName"
+                />
 
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/contact_email"
+                android:text="Select type"
+                android:layout_marginTop="5dp"
                 android:textColor="#3D3D3D"
-                android:textStyle="bold"
-                android:id="@+id/contactEmail"
-                android:layout_weight="2"/>
-
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:id="@+id/contactEmailInput"
-                android:layout_weight="1"/>
+                android:textStyle="bold"/>
 
             <Spinner
-                android:id="@+id/SpinnerFeedbackType"
+                android:id="@+id/spinnerFeedbackType"
                 android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
                 android:prompt="@string/feedbacktype"
@@ -67,29 +61,32 @@
             <TextView
                 android:id="@+id/TextFeedbackBody"
                 android:layout_height="wrap_content"
-                android:hint="@string/feedback_body"
+                android:text="Enter your message"
                 android:inputType="textMultiLine"
-                android:textSize="10pt"
-                android:lines="8"
-                android:layout_width="fill_parent"/>
+                android:textColor="#3D3D3D"
+                android:textStyle="bold"
+                android:layout_width="fill_parent"
+                android:layout_marginTop="5dp" />
 
                 <EditText
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:id="@+id/feedbackInput"
-                    android:layout_weight="1"/>
+                    android:layout_height="fill_parent"
+                    android:inputType="textMultiLine"
+                    android:id="@+id/feedbackInput" />
+
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:textColor="#E0E0E0"
                 android:background="@drawable/button_clickable_new"
-                android:id="@+id/ButtonSendFeedback"
+                android:id="@+id/sendEmail"
                 android:text="@string/feedbackbutton"
-                android:onClick="sendFeedback">
+                android:onClick="sendFeedback"
+                android:layout_gravity="bottom">
             </Button>
         </LinearLayout>
+
     </ScrollView>
 
 

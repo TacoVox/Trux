@@ -1,17 +1,24 @@
 package se.gu.tux.trux.gui.messaging;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.application.DataHandler;
@@ -34,33 +41,58 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
     private EditText userInput;
     private Button sendButton;
+    private Spinner spinnerInput;
 
     private MessageActivity act;
     private LinearLayout msgContainer;
+    private ScrollView scrollView;
 
     private CustomObject object;
 
     private Message[] messages;
+    private Message[] newMessages;
 
     private volatile boolean isRunning;
 
+    private long userId;
+
+    private DateFormat df;
 
 
+
+    @SuppressLint("SimpleDateFormat")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
         // inflate the layout for this view
         View view = inflater.inflate(R.layout.fragment_chat_head, container, false);
-        // send seen confirmation for this conversation
-        setSeenConfirmation();
 
         isRunning = true;
 
+        userId = DataHandler.getInstance().getUser().getUserId();
+
+        df = new SimpleDateFormat("MM-dd-HH:mm");
+
         // get the components
         TextView tv = (TextView) view.findViewById(R.id.chat_head_username_text_view);
-        userInput = (EditText) view.findViewById(R.id.chat_input_edit_text);
         sendButton = (Button) view.findViewById(R.id.chat_send_button);
+        userInput = (EditText) view.findViewById(R.id.chat_input_edit_text);
+        spinnerInput = (Spinner) view.findViewById(R.id.chat_input_spinner);
+        scrollView = (ScrollView) view.findViewById(R.id.chat_scrool_view);
+
+        if(isSimple())
+        {
+            spinnerInput.setVisibility(View.VISIBLE);
+            userInput.setVisibility(View.GONE);
+        }
+        else
+        {
+            spinnerInput.setVisibility(View.GONE);
+            userInput.setVisibility(View.VISIBLE);
+        }
+
+
         // set listener to button
         sendButton.setOnClickListener(this);
 
@@ -68,6 +100,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         act = (MessageActivity) getActivity();
         // get the object containing reference to the friend and messages
         object = act.getCustomObject();
+
+        // send seen confirmation for this conversation
+        setSeenConfirmation();
 
         // set username of the friend we are writing with
         tv.setText(object.getFriend().getUsername());
@@ -77,6 +112,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
         // fetch the latest messages
         fetchLatestMessages();
+
         // start a thread to check for new messages
         checkNewMessages();
 
@@ -92,6 +128,14 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         isRunning = false;
     }
 
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        isRunning = true;
+    }
+
     @Override
     public void onClick(View view)
     {
@@ -101,7 +145,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
     }
 
 
-
+    /**
+     * Checks for new messages.
+     */
     private void checkNewMessages()
     {
         new Thread(new Runnable()
@@ -111,13 +157,17 @@ public class ChatFragment extends Fragment implements View.OnClickListener
             {
                 while (isRunning)
                 {
+                    // get notification
                     Notification notification = DataHandler.getInstance().getNotificationStatus();
 
+                    // if there are new messages in general
                     if (notification.isNewMessages())
                     {
+                        // send a request to server to get unread messages for this conversation
                         ProtocolMessage request = new ProtocolMessage(ProtocolMessage.Type.GET_UNREAD_MESSAGES,
                                 Long.toString(object.getFriend().getFriendId()));
 
+                        // get the response
                         ArrayResponse response = null;
 
                         try
@@ -129,43 +179,67 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                         assert response != null;
                         Object[] array = response.getArray();
 
-                        if (array != null)
+                        // get the message objects from the response
+                        if (array != null && array.length > 0)
                         {
-                            messages = new Message[array.length];
+                            newMessages = new Message[array.length];
 
                             for (int i = 0; i < array.length; i++)
                             {
-                                messages[i] = (Message) array[i];
+                                newMessages[i] = (Message) array[i];
                             }
 
-                            // display the messages
-                            for (int i = messages.length-1; i >= 0; i--)
+                            // check if there are new unread messages
+                            if (messages.length>0 && !(newMessages[0].getValue()).equals(messages[0].getValue()))
                             {
-                                // the text view to hold the message
-                                final TextView textView = new TextView(act.getApplicationContext());
+                                // display the messages
+                                for (int i = newMessages.length - 1; i >= 0; i--)
+                                {
+                                    // the text view to hold the message
+                                    final TextView textView = getFriendTextView();
 
-                                textView.setText(messages[i].getValue() + "\n");
-                                textView.setTextColor(Color.BLACK);
+                                    Date date = new Date(messages[i].getTimeStamp());
 
-                                // add this text view to the message container
-                                act.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        msgContainer.addView(textView);
+                                    textView.setText(messages[i].getValue() + "\n\n" + df.format(date));
+
+                                    // add this text view to the message container
+                                    act.runOnUiThread(new Runnable()
+                                    {
+                                        @Override
+                                        public void run()
+                                        {
+                                            msgContainer.addView(textView);
+                                        }
+                                    });
+
+                                    msgContainer.postInvalidate();
+                                    scrollView.scrollTo(0, msgContainer.getBottom());
+
+                                    // send a new protocol message that we saw these messages
+                                    try
+                                    {
+                                        ServerConnector.getInstance().answerQuery(new ProtocolMessage(ProtocolMessage.Type.MESSAGE_SEEN,
+                                                Long.toString(object.getFriend().getFriendId())));
                                     }
-                                });
+                                    catch (NotLoggedInException e) { e.printStackTrace(); }
+                                }
+
+                                // set the pointer to the new messages for future reference
+                                messages = newMessages;
+                            }
+                            else
+                            {
+                                // set the pointer to the new messages for future reference
+                                messages = newMessages;
                             }
                         }
+                    }
 
-                    }
-                    else
+                    try
                     {
-                        try
-                        {
-                            Thread.sleep(100);
-                        }
-                        catch (InterruptedException e) { e.printStackTrace(); }
+                        Thread.sleep(2000);
                     }
+                    catch (InterruptedException e) { e.printStackTrace(); }
 
                 } // end while loop
 
@@ -211,7 +285,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                 Long.toString(object.getFriend().getFriendId()));
 
         // create new async task to fetch the messages
-        AsyncTask<ProtocolMessage, Void, ArrayResponse> conversations = new FetchMessagesTask().execute(request);
+        AsyncTask<ProtocolMessage, Void, ArrayResponse> conversations =
+                new FetchMessagesTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
 
         // the array response
         ArrayResponse response = null;
@@ -242,15 +317,34 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         // display the messages
         for (int i = messages.length-1; i >= 0; i--)
         {
-            // the text view to hold the message
-            final TextView textView = new TextView(act.getApplicationContext());
+            if (messages[i].getSenderId() == userId)
+            {
+                // the text view to hold the message
+                final TextView textView = getUserTextView();
 
-            textView.setText(messages[i].getValue() + "\n");
-            textView.setTextColor(Color.BLACK);
+                Date date = new Date(messages[i].getTimeStamp());
 
-            // add this text view to the message container
-            msgContainer.addView(textView);
+                textView.setText(messages[i].getValue() + "\n\n" + df.format(date));
+
+                // add this text view to the message container
+                msgContainer.addView(textView);
+            }
+            else
+            {
+                // the text view to hold the message
+                final TextView textView = getFriendTextView();
+
+                Date date = new Date(messages[i].getTimeStamp());
+
+                textView.setText(messages[i].getValue() + "\n\n" + df.format(date));
+
+                // add this text view to the message container
+                msgContainer.addView(textView);
+            }
         }
+
+        msgContainer.postInvalidate();
+        scrollView.scrollTo(0, msgContainer.getBottom());
 
     } // end fetchLatestMessages()
 
@@ -261,13 +355,14 @@ public class ChatFragment extends Fragment implements View.OnClickListener
      */
     private void sendMessage()
     {
+        String message;
         // get the message
-        String message = userInput.getText().toString();
+        message = userInput.getText().toString();
 
-        // create the text view to hold the message
-        final TextView textView = new TextView(act.getApplicationContext());
-        textView.setText(message);
-        textView.setTextColor(Color.BLACK);
+
+        final TextView textView = getUserTextView();
+        Date date = new Date(System.currentTimeMillis());
+        textView.setText(message + "\n\n" + df.format(date));
 
         // add to container and display
         msgContainer.addView(textView);
@@ -294,7 +389,61 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         // after message is sent, clear the message input field
         userInput.setText("");
 
+        msgContainer.postInvalidate();
+        scrollView.scrollTo(0, msgContainer.getBottom());
+
     } // end sendMessage()
+
+
+
+    private TextView getUserTextView()
+    {
+        // create the text view to hold the message
+        TextView textView = new TextView(act.getApplicationContext());
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.END;
+        params.bottomMargin = 5;
+
+        textView.setLayoutParams(params);
+        textView.setGravity(Gravity.CENTER);
+
+        textView.setTextColor(Color.parseColor("#E0E0E0"));
+        textView.setPadding(20, 20, 20, 20);
+        textView.setBackgroundColor(Color.parseColor("#61728d"));
+
+        return textView;
+    }
+
+
+
+    private TextView getFriendTextView()
+    {
+        // create the text view to hold the message
+        TextView textView = new TextView(act.getApplicationContext());
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.START;
+        params.bottomMargin = 5;
+
+        textView.setLayoutParams(params);
+        textView.setGravity(Gravity.CENTER);
+
+        textView.setTextColor(Color.parseColor("#E0E0E0"));
+        textView.setPadding(20, 20, 20, 20);
+        textView.setBackgroundColor(Color.parseColor("#ff404e68"));
+
+        return textView;
+    }
+
+
+
+    private boolean isSimple()
+    {
+        return (DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE);
+    }
 
 
 

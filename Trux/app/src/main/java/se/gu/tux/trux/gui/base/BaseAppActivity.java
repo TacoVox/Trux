@@ -134,7 +134,7 @@ public class BaseAppActivity extends ActionBarActivity
      *
      * @param message   The message to show.
      */
-    protected void showToast(String message)
+    public void showToast(String message)
     {
         // if message is empty, return
         if (message.isEmpty())
@@ -199,6 +199,16 @@ public class BaseAppActivity extends ActionBarActivity
         {
             aboutData[0] = "Main Screen";
             aboutData[1] = getResources().getString(R.string.main_screen_help);
+        }
+        else if (viewID == R.layout.activity_home)
+        {
+            aboutData[0] = "Home Screen";
+            aboutData[1] = getResources().getString(R.string.driver_home_screen_help);
+        }
+        else if (viewID == R.layout.activity_message)
+        {
+            aboutData[0] = "Message Screen";
+            aboutData[1] = getResources().getString(R.string.message_screen_help);
         }
         else
         {

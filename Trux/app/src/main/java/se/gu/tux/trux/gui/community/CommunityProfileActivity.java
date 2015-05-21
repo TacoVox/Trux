@@ -2,7 +2,6 @@ package se.gu.tux.trux.gui.community;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -14,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -208,17 +208,20 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
             // get the uri address for the picture
             Uri uri = data.getData();
 
+            // get the bitmap data
             try
             {
-                // get the bitmap data
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                // set profile picture in profile page
-                imageView.setImageBitmap(bitmap);
+                bitmap = cropImage(MediaStore.Images.Media.getBitmap(getContentResolver(), uri));
             }
-            catch (IOException e)
-            {
+            catch (IOException | OutOfMemoryError e) {
+
+                showToast("Your picture was too large. Please try with a different picture.");
+
                 e.printStackTrace();
             }
+
+            imageView.setImageBitmap(bitmap);
+
         }
 
     } // end onActivityResult()
@@ -421,6 +424,28 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
 
     } // end uploadPicture()
 
+    /**
+     * Method to crop an image to a center square.
+     *
+     * @param image Image to be cropped
+     * @return cropeed Image
+     */
+    private Bitmap cropImage(Bitmap image) {
+        Bitmap croppedImg;
+
+        if (image.getWidth() >= image.getHeight()){
+            croppedImg = Bitmap.createBitmap(
+                    image, image.getWidth()/2 - image.getHeight()/2,
+                    0, image.getHeight(), image.getHeight());
+        } else {
+            croppedImg = Bitmap.createBitmap(
+                    image, 0, image.getHeight()/2 - image.getWidth()/2,
+                    image.getWidth(), image.getWidth());
+        }
+
+        return croppedImg;
+    } //end copImage()
+
 
 
     /**
@@ -532,5 +557,9 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         }
     } // end inner class
 
-
+    @Override
+    public void onBackPressed()
+    {
+        this.finish();
+    }
 } // end class
