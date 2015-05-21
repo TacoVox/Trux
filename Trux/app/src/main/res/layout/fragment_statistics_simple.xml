@@ -21,12 +21,13 @@
             android:text="@string/collecting_data"
             android:id="@+id/collecting_data"
             android:layout_gravity="center_horizontal"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:textColor="#E0E0E0"
             android:gravity="center"
             android:background="#61728d"
             android:textStyle="bold"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:layout_marginTop="1dp"/>
 
         <ProgressBar
             android:layout_width="match_parent"

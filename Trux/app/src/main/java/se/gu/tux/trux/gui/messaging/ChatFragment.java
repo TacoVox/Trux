@@ -1,6 +1,8 @@
 package se.gu.tux.trux.gui.messaging;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,12 +11,19 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,7 +45,7 @@ import tux.gu.se.trux.R;
  *
  * Handles the chat window.
  */
-public class ChatFragment extends Fragment implements View.OnClickListener
+public class ChatFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener
 {
 
     private EditText userInput;
@@ -58,6 +67,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
     private DateFormat df;
 
+    private final int PLACE_PICKER_REQUEST = 1;
+
+    String[] spinnerTitles = { "Can't chat right now", "Call you later", "Yes",
+            "Okay", "Maybe", "No, thanks pal!", "Busy driving!", "Meet at..." };
+
+    private String placeMessage;
+    private int spinnerPosition;
 
 
     @SuppressLint("SimpleDateFormat")
@@ -91,6 +107,15 @@ public class ChatFragment extends Fragment implements View.OnClickListener
             spinnerInput.setVisibility(View.GONE);
             userInput.setVisibility(View.VISIBLE);
         }
+
+        ArrayAdapter<String> arrayAdapter =
+                new SimpleMessageSpinner(view.getContext(), R.layout.spinner_message_item, spinnerTitles);
+
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_message_item);
+
+        spinnerInput.setAdapter(arrayAdapter);
+
+        spinnerInput.setOnItemSelectedListener(this);
 
 
         // set listener to button
@@ -136,12 +161,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         isRunning = true;
     }
 
+
     @Override
     public void onClick(View view)
     {
         int id = view.getId();
 
-        if (id == sendButton.getId()) { sendMessage(); }
+        if (id == sendButton.getId()) { sendMessage(false); }
     }
 
 
@@ -203,11 +229,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                                     textView.setText(messages[i].getValue() + "\n\n" + df.format(date));
 
                                     // add this text view to the message container
-                                    act.runOnUiThread(new Runnable()
-                                    {
+                                    act.runOnUiThread(new Runnable() {
                                         @Override
-                                        public void run()
-                                        {
+                                        public void run() {
                                             msgContainer.addView(textView);
                                         }
                                     });
@@ -353,12 +377,26 @@ public class ChatFragment extends Fragment implements View.OnClickListener
     /**
      * Sends a message.
      */
-    private void sendMessage()
+    private void sendMessage(boolean isPlace)
     {
         String message;
-        // get the message
-        message = userInput.getText().toString();
 
+        // get the message
+        if (isSimple())
+        {
+            if (isPlace)
+            {
+                message = placeMessage;
+            }
+            else
+            {
+                message = spinnerTitles[spinnerPosition];
+            }
+        }
+        else
+        {
+            message = userInput.getText().toString();
+        }
 
         final TextView textView = getUserTextView();
         Date date = new Date(System.currentTimeMillis());
@@ -366,6 +404,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
         // add to container and display
         msgContainer.addView(textView);
+
+        // check if message is null, return
+        if (message == null) { return; }
 
         // the message object to send to server
         final Message msg = new Message();
@@ -443,6 +484,56 @@ public class ChatFragment extends Fragment implements View.OnClickListener
     private boolean isSimple()
     {
         return (DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE);
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
+    {
+        if (i == spinnerTitles.length-1)
+        {
+            try
+            {
+                PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+                Intent intent = intentBuilder.build(this.getActivity().getApplicationContext());
+                // Start the intent by requesting a result,
+                // identified by a request code.
+                startActivityForResult(intent, PLACE_PICKER_REQUEST);
+            }
+            catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            spinnerPosition = i;
+        }
+
+    } // end onItemSelected()
+
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {}
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode == PLACE_PICKER_REQUEST && resultCode == Activity.RESULT_OK && data != null)
+        {
+            // The user has selected a place. Extract the name and address.
+            Place place = PlacePicker.getPlace(data, this.getActivity().getApplicationContext());
+
+            String name = place.getName().toString();
+            String address = place.getAddress().toString();
+
+            placeMessage = "MEET AT\n" + name + " / " + address;
+
+            sendMessage(true);
+
+            spinnerInput.setSelection(0);
+        }
     }
 
 

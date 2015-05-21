@@ -1,6 +1,8 @@
 package se.gu.tux.trux.gui.community;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -76,14 +78,31 @@ public class InfoFragment extends Fragment implements FriendActionListener {
             removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    removeButton.setEnabled(false);
-                    messageButton.setEnabled(false);
-                    try {
-                        DataHandler.gI().getSocialHandler().sendFriendRemove(thisFragment,
-                                friend.getFriendId());
-                    } catch (NotLoggedInException e) {
-                        e.printStackTrace();
-                    }
+
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.community_remove)
+                            .setMessage(R.string.remove_dialog_message)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    removeButton.setEnabled(false);
+                                    messageButton.setEnabled(false);
+                                    try {
+                                        DataHandler.gI().getSocialHandler().sendFriendRemove(thisFragment,
+                                                friend.getFriendId());
+                                    } catch (NotLoggedInException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            })
+                            .show();
+
+
+
                 }
             });
         }

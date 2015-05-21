@@ -107,9 +107,11 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         }
         else if (id == PROFILE_BUTTON)
         {
-            if(!isDriving()) {
+            if(!isSimple()) {
                 Intent intent = new Intent(this, CommunityProfileActivity.class);
                 startActivity(intent);
+            } else {
+                showToast("DRIVING: You cannot access your profile while driving.");
             }
         }
         else if (id == MESSAGE_BUTTON)
@@ -189,6 +191,10 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_home).setTabListener(this));
         actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_community).setTabListener(this));
         actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_statistics).setTabListener(this));
+    }
+
+    private boolean isSimple() {
+        return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
     }
 
 

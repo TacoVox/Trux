@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -64,6 +65,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     private boolean hasMarker = false;
     private boolean mapLoaded = false;
 
+    private RelativeLayout loadingPanel;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +75,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        loadingPanel = (RelativeLayout) view.findViewById(R.id.loadingPanel);
 
         //Setting a Mapfragment so that it calls to the getMapAsync which is connected to onMapReady
         f = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map);
@@ -254,14 +258,19 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                             hasMarker = true;
                             if(selectedFriend == currentFriend.getFriendId()){
                                 mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(loc[0], loc[1])));
-
                             }
-
                         }
                     });
-
                 }
             }
+            ((HomeActivity) getActivity()).setSelectedFriend(new Long(-1));
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadingPanel.setVisibility(View.GONE);
+                }
+            });
         }
     }
 
@@ -301,14 +310,19 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
             t = null;
         }
     }
+
     public void onResume(){
         super.onResume();
+
+        loadingPanel.setVisibility(View.VISIBLE);
+
         if(mapLoaded && t == null) {
             t = new Timer();
             timer = new PopFriends();
             t.schedule(timer, 0, 10000);
         }
     }
+
     private boolean isDriving(){
         return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
     }
