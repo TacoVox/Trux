@@ -463,7 +463,8 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             final Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
             final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
-            final Button profileButton = (Button) view.findViewById(R.id.profileButton);
+            final Button goToFriendOnMap = (Button) view.findViewById(R.id.profileButton);
+
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -498,9 +499,22 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     startActivity(intent);
                 }
             });
-            profileButton.setOnClickListener(new View.OnClickListener() {
+            goToFriendOnMap.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Intent data = new Intent();
+                    data.putExtra("FriendID", friends.get(pos).getFriendId());
+                    setResult(RESULT_OK, data);
+                    finish();
+                }
+            });
+
+            final TextView newName = (TextView) view.findViewById(R.id.friendName);
+            newName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+
                     InfoFragment friendInfo = new InfoFragment();
                     Bundle friendBundle = new Bundle();
                     friendBundle.putSerializable("friend", friends.get(pos));
@@ -512,17 +526,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     fragmentTransaction.addToBackStack("FRIENDPROFILE");
                     fragmentTransaction.replace(R.id.friendsContainer, friendInfo);
                     fragmentTransaction.commit();
-                }
-            });
-
-            final TextView newName = (TextView) view.findViewById(R.id.friendName);
-            newName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent data = new Intent();
-                    data.putExtra("FriendID", friends.get(pos).getFriendId());
-                    setResult(RESULT_OK, data);
-                    finish();
                 }
             });
 
@@ -538,18 +541,22 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             } else if (friends.get(pos).getFriendType() == Friend.FriendType.PENDING) {
                 friendRequestButton.setVisibility(View.GONE);
                 sendMessageButton.setVisibility(View.GONE);
-                profileButton.setVisibility(View.GONE);
+                goToFriendOnMap.setVisibility(View.GONE);
             } else {
                 sendMessageButton.setVisibility(View.GONE);
                 pending.setVisibility(View.GONE);
-                profileButton.setVisibility(View.GONE);
+                goToFriendOnMap.setVisibility(View.GONE);
             }
 
             if(isSimple()) {
                 friendRequestButton.setVisibility(View.GONE);
                 pending.setVisibility(View.GONE);
-                profileButton.setVisibility(View.GONE);
+                goToFriendOnMap.setVisibility(View.GONE);
             }
+            if(friends.get(pos).getStatus() != Friend.Status.ONLINE){
+                goToFriendOnMap.setVisibility(View.GONE);
+            }
+
 
 
             // Set the picture
