@@ -42,6 +42,16 @@
         android:orientation="horizontal"
         android:paddingTop="5dp">
 
+        <Spinner
+            android:id="@+id/chat_input_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#ff404e68"
+            android:padding="10dp"
+            android:textColor="#E0E0E0"
+            android:textCursorDrawable="@drawable/custom_cursor"/>
+
         <EditText
             android:id="@+id/chat_input_edit_text"
             android:layout_width="match_parent"

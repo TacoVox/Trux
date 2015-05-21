@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -39,6 +40,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
     private EditText userInput;
     private Button sendButton;
+    private Spinner spinnerInput;
 
     private MessageActivity act;
     private LinearLayout msgContainer;
@@ -72,8 +74,18 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
         // get the components
         TextView tv = (TextView) view.findViewById(R.id.chat_head_username_text_view);
-        userInput = (EditText) view.findViewById(R.id.chat_input_edit_text);
         sendButton = (Button) view.findViewById(R.id.chat_send_button);
+        userInput = (EditText) view.findViewById(R.id.chat_input_edit_text);
+        spinnerInput = (Spinner) view.findViewById(R.id.chat_input_spinner);
+
+        if(!isSimple()) {
+            spinnerInput.setEnabled(false);
+            userInput.setEnabled(true);
+        } else {
+            userInput.setEnabled(false);
+            spinnerInput.setEnabled(true);
+        }
+
 
         // set listener to button
         sendButton.setOnClickListener(this);
@@ -324,8 +336,12 @@ public class ChatFragment extends Fragment implements View.OnClickListener
      */
     private void sendMessage()
     {
+        String message;
         // get the message
-        String message = userInput.getText().toString();
+        if(!isSimple())
+            message = userInput.getText().toString();
+        else
+            message = spinnerInput.getSelectedItem().toString();
 
         final TextView textView = getUserTextView();
         textView.setText(message);
@@ -433,6 +449,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         } // end doInBackgorund()
 
     } // end inner class
+
+    private boolean isSimple() {
+        return (DataHandler.gI().getSafetyStatus() == DataHandler.SafetyStatus.IDLE);
+    }
 
 
 } // end class
