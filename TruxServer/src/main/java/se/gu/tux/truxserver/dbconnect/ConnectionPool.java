@@ -36,9 +36,14 @@ public class ConnectionPool {
      * 
      * @return an Instance of ConnectionPool
      */
-    public synchronized static ConnectionPool getInstance() {
-        if(cp == null)
-            cp = new ConnectionPool();
+    public static ConnectionPool getInstance() {
+        if(cp == null) {
+            synchronized (ConnectionPool.class) {
+                if (cp == null) {
+                    cp = new ConnectionPool();
+                }
+            }
+        }
         return cp;
     }
     
@@ -56,7 +61,8 @@ public class ConnectionPool {
      */
     private final short MAXCONNECTIONS = Config.gI().getMaxNoDBConnections();
 
-    private LinkedBlockingQueue queue = null;
+    private volatile LinkedBlockingQueue queue = null;
+    private int motherfucker = Config.gI().getMaxNoDBConnections();
     
     /**
      * Private Constructor.
@@ -85,11 +91,25 @@ public class ConnectionPool {
      * 
      * @return a connector as soon as a connector is available.
      */
-    public synchronized DBConnector getDBC() {
+    public DBConnector getDBC() {
         try {
-            return (DBConnector)queue.take();
-        }
-        catch (Exception e) {
+            
+            DBConnector dbc = (DBConnector)queue.poll();
+            while (dbc == null) {
+                Logger.gI().addDebug("Waiting for dbc");
+                Thread.sleep(1000);
+                dbc = (DBConnector)queue.poll();
+            }
+                  
+            motherfucker--;
+            if (dbc == null) {
+                Logger.gI().addError("Queue take returned null!");
+            } else {
+                Logger.gI().addDebug("Queue take returned a dbc. Amount: " + Integer.toString(motherfucker));
+            }
+            return dbc;
+            
+        } catch (Exception e) {
             e.printStackTrace();
             Logger.gI().addError(e.getMessage());
             throw new RuntimeException(e);
@@ -101,7 +121,8 @@ public class ConnectionPool {
      * 
      * @param dbc a DBConnector to be released back to the pool
      */
-    public synchronized void releaseDBC(DBConnector dbc){
+    public void releaseDBC(DBConnector dbc){
+        motherfucker++;
         if(dbc != null)
         {
             while(!queue.offer(dbc)) {
@@ -111,6 +132,8 @@ public class ConnectionPool {
                     e.printStackTrace();
                 }
             }
+            Logger.gI().addMsg("A dbc was released. Amount: " + Integer.toString(motherfucker));
+            
         } else {
             Logger.gI().addError("Someone tried to insert a null pointer to a DBC.");
         }
