@@ -531,6 +531,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
             placeMessage = "MEET AT\n" + name + " / " + address;
 
             sendMessage(true);
+
+            spinnerInput.setSelection(0);
         }
     }
 
