@@ -217,7 +217,7 @@ public class OverallGraphWindow extends Fragment {
         distGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
         distGraph.getGridLabelRenderer().setPadding(50);
         distGraph.getViewport().setMaxX(30);
-        distGraph.getViewport().setMaxY(100);
+        distGraph.getViewport().setMaxY(1000);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);

@@ -50,6 +50,7 @@
             android:background="#ff404e68"
             android:textColor="#E0E0E0"
             android:textCursorDrawable="@drawable/custom_cursor"
+            android:layout_marginTop="-2dp"
             android:layout_weight="1"/>
 
         <EditText

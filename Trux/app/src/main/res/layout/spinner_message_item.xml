@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:background="@drawable/statistics_spinner">
+    android:background="@drawable/spinner_reversed">
 
     <TextView
         android:id="@+id/spinner_item_text_view_message"
