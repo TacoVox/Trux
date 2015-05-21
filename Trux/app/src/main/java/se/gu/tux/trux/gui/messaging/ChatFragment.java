@@ -73,6 +73,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     String[] spinnerTitles = { "Meet at...", "Can't chat right now", "Call you later", "Busy driving"};
 
     private String placeMessage;
+    private int spinnerPosition;
 
 
     @SuppressLint("SimpleDateFormat")
@@ -390,7 +391,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
             }
             else
             {
-                message = spinnerInput.getSelectedItem().toString();
+                message = spinnerTitles[spinnerPosition];
             }
         }
         else
@@ -404,6 +405,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
         // add to container and display
         msgContainer.addView(textView);
+
+        // check if message is null, return
+        if (message == null) { return; }
 
         // the message object to send to server
         final Message msg = new Message();
@@ -503,6 +507,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
             {
                 e.printStackTrace();
             }
+        }
+        else
+        {
+            spinnerPosition = i;
         }
 
     } // end onItemSelected()
