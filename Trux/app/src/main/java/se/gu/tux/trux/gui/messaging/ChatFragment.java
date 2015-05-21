@@ -62,7 +62,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     private Message[] newMessages;
 
     private volatile boolean isRunning;
-    private boolean isPlace;
 
     private long userId;
 
@@ -70,7 +69,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
     private final int PLACE_PICKER_REQUEST = 1;
 
-    String[] spinnerTitles = { "Meet at...", "Can't chat right now", "Call you later", "Busy driving"};
+    String[] spinnerTitles = { "Can't chat right now", "Call you later", "Yes",
+            "Okay", "Maybe", "No, thanks pal!", "Busy driving!", "Meet at..." };
 
     private String placeMessage;
     private int spinnerPosition;
@@ -109,9 +109,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
         }
 
         ArrayAdapter<String> arrayAdapter =
-                new SimpleMessageSpinner(view.getContext(), R.layout.spinner_item, spinnerTitles);
+                new SimpleMessageSpinner(view.getContext(), R.layout.spinner_message_item, spinnerTitles);
 
-        arrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+        arrayAdapter.setDropDownViewResource(R.layout.spinner_message_item);
 
         spinnerInput.setAdapter(arrayAdapter);
 
@@ -167,7 +167,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     {
         int id = view.getId();
 
-        if (id == sendButton.getId()) { sendMessage(); }
+        if (id == sendButton.getId()) { sendMessage(false); }
     }
 
 
@@ -377,7 +377,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     /**
      * Sends a message.
      */
-    private void sendMessage()
+    private void sendMessage(boolean isPlace)
     {
         String message;
 
@@ -387,7 +387,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
             if (isPlace)
             {
                 message = placeMessage;
-                isPlace = false;
             }
             else
             {
@@ -491,10 +490,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
     {
-        if (i == 0)
+        if (i == spinnerTitles.length-1)
         {
-            isPlace = true;
-
             try
             {
                 PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
@@ -531,7 +528,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
             String name = place.getName().toString();
             String address = place.getAddress().toString();
 
-            placeMessage = name + " / " + address;
+            placeMessage = "MEET AT\n" + name + " / " + address;
+
+            sendMessage(true);
         }
     }
 
