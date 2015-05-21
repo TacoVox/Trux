@@ -346,9 +346,13 @@ public class DataHandler
         return user;
     }
 
+    /**
+     * Used on logout to make sure no stats or social data is left in cache
+     */
     public void cleanupSessionData() {
         detailedStats = null;
         detailedStatsFetched = 0;
+        sc.clearCache();
     }
 
 
