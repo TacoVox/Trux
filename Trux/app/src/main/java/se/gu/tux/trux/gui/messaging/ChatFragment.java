@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -44,6 +45,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
     private MessageActivity act;
     private LinearLayout msgContainer;
+    private ScrollView scrollView;
 
     private CustomObject object;
 
@@ -77,13 +79,17 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         sendButton = (Button) view.findViewById(R.id.chat_send_button);
         userInput = (EditText) view.findViewById(R.id.chat_input_edit_text);
         spinnerInput = (Spinner) view.findViewById(R.id.chat_input_spinner);
+        scrollView = (ScrollView) view.findViewById(R.id.chat_scrool_view);
 
-        if(!isSimple()) {
-            spinnerInput.setEnabled(false);
-            userInput.setEnabled(true);
-        } else {
-            userInput.setEnabled(false);
-            spinnerInput.setEnabled(true);
+        if(isSimple())
+        {
+            spinnerInput.setVisibility(View.VISIBLE);
+            userInput.setVisibility(View.GONE);
+        }
+        else
+        {
+            spinnerInput.setVisibility(View.GONE);
+            userInput.setVisibility(View.VISIBLE);
         }
 
 
@@ -122,6 +128,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         isRunning = false;
     }
 
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        isRunning = true;
+    }
 
     @Override
     public void onClick(View view)
@@ -187,7 +200,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
                                     Date date = new Date(messages[i].getTimeStamp());
 
-                                    textView.setText(df.format(date) + "\n\n" + messages[i].getValue());
+                                    textView.setText(messages[i].getValue() + "\n\n" + df.format(date));
 
                                     // add this text view to the message container
                                     act.runOnUiThread(new Runnable()
@@ -198,6 +211,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
                                             msgContainer.addView(textView);
                                         }
                                     });
+
+                                    msgContainer.postInvalidate();
+                                    scrollView.scrollTo(0, msgContainer.getBottom());
 
                                     // send a new protocol message that we saw these messages
                                     try
@@ -308,7 +324,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
                 Date date = new Date(messages[i].getTimeStamp());
 
-                textView.setText(df.format(date) + "\n\n" + messages[i].getValue());
+                textView.setText(messages[i].getValue() + "\n\n" + df.format(date));
 
                 // add this text view to the message container
                 msgContainer.addView(textView);
@@ -320,12 +336,15 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
                 Date date = new Date(messages[i].getTimeStamp());
 
-                textView.setText(df.format(date) + "\n\n" + messages[i].getValue());
+                textView.setText(messages[i].getValue() + "\n\n" + df.format(date));
 
                 // add this text view to the message container
                 msgContainer.addView(textView);
             }
         }
+
+        msgContainer.postInvalidate();
+        scrollView.scrollTo(0, msgContainer.getBottom());
 
     } // end fetchLatestMessages()
 
@@ -338,13 +357,12 @@ public class ChatFragment extends Fragment implements View.OnClickListener
     {
         String message;
         // get the message
-        if(!isSimple())
-            message = userInput.getText().toString();
-        else
-            message = spinnerInput.getSelectedItem().toString();
+        message = userInput.getText().toString();
+
 
         final TextView textView = getUserTextView();
-        textView.setText(message);
+        Date date = new Date(System.currentTimeMillis());
+        textView.setText(message + "\n\n" + df.format(date));
 
         // add to container and display
         msgContainer.addView(textView);
@@ -370,6 +388,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
         // after message is sent, clear the message input field
         userInput.setText("");
+
+        msgContainer.postInvalidate();
+        scrollView.scrollTo(0, msgContainer.getBottom());
 
     } // end sendMessage()
 
@@ -419,6 +440,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener
 
 
 
+    private boolean isSimple()
+    {
+        return (DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE);
+    }
+
+
+
     /**
      * Private class. Fetches the messages for this conversation.
      */
@@ -449,10 +477,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener
         } // end doInBackgorund()
 
     } // end inner class
-
-    private boolean isSimple() {
-        return (DataHandler.gI().getSafetyStatus() == DataHandler.SafetyStatus.IDLE);
-    }
 
 
 } // end class
