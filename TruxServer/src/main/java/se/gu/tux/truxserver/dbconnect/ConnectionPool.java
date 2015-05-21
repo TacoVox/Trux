@@ -62,7 +62,7 @@ public class ConnectionPool {
     private final short MAXCONNECTIONS = Config.gI().getMaxNoDBConnections();
 
     private volatile LinkedBlockingQueue queue = null;
-    private int motherfucker = Config.gI().getMaxNoDBConnections();
+    //private int motherfucker = Config.gI().getMaxNoDBConnections();
     
     /**
      * Private Constructor.
@@ -101,12 +101,12 @@ public class ConnectionPool {
                 dbc = (DBConnector)queue.poll();
             }
                   
-            motherfucker--;
-            if (dbc == null) {
-                Logger.gI().addError("Queue take returned null!");
-            } else {
-                Logger.gI().addDebug("Queue take returned a dbc. Amount: " + Integer.toString(motherfucker));
-            }
+            //motherfucker--;
+            //if (dbc == null) {
+            //    Logger.gI().addError("Queue take returned null!");
+            //} else {
+            //    Logger.gI().addDebug("Queue take returned a dbc. Amount: " + Integer.toString(motherfucker));
+            //}
             return dbc;
             
         } catch (Exception e) {
@@ -122,7 +122,7 @@ public class ConnectionPool {
      * @param dbc a DBConnector to be released back to the pool
      */
     public void releaseDBC(DBConnector dbc){
-        motherfucker++;
+        //motherfucker++;
         if(dbc != null)
         {
             while(!queue.offer(dbc)) {
@@ -132,10 +132,10 @@ public class ConnectionPool {
                     e.printStackTrace();
                 }
             }
-            Logger.gI().addMsg("A dbc was released. Amount: " + Integer.toString(motherfucker));
+            //Logger.gI().addMsg("A dbc was released. Amount: " + Integer.toString(motherfucker));
             
-        } else {
-            Logger.gI().addError("Someone tried to insert a null pointer to a DBC.");
-        }
+        } //else {
+         //   Logger.gI().addError("Someone tried to insert a null pointer to a DBC.");
+        //}
     }
 }
