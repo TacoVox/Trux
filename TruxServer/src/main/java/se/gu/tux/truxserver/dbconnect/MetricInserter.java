@@ -100,7 +100,17 @@ public class MetricInserter implements Runnable {
      * @param md the MetricData object which shall be inserted to the DB
      */
     public synchronized void addToDB(MetricData md) {
-        queue.add(md);
+        if(md != null) {
+            while(!queue.offer(md)) {
+                try {
+                    Thread.sleep(10);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Logger.gI().addError("Someone tried to insert an empty MetricData object to the database.");
+        }
     }
     
     /**

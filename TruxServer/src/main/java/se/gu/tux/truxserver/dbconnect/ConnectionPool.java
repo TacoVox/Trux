@@ -111,6 +111,8 @@ public class ConnectionPool {
                     e.printStackTrace();
                 }
             }
+        } else {
+            Logger.gI().addError("Someone tried to insert a null pointer to a DBC.");
         }
     }
 }
