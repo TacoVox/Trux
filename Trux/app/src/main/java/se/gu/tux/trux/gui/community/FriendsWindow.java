@@ -1,8 +1,6 @@
 package se.gu.tux.trux.gui.community;
 
 import android.content.Intent;
-import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -467,7 +465,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             final Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
             final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
-            final Button goToFriendOnMap = (Button) view.findViewById(R.id.profileButton);
+            final Button goToFriendOnMap = (Button) view.findViewById(R.id.locateButton);
 
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
