@@ -31,7 +31,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDL4n8nLWhoqVqhGxi6zHUzNfrtCjmQccg" />
+            android:value="AIzaSyB7ZMHdX5BByguQKiqsLzuSzReQGxpRMDU" />
 
 
         <!-- ACTIVITIES -->
@@ -101,11 +101,6 @@
             android:windowSoftInputMode="stateHidden">
         </activity>
         <!-- End Home Activity -->
-
-        <activity
-            android:name="se.gu.tux.trux.gui.community.Community_main"
-            android:label="@string/title_activity_community_main" >
-        </activity>
 
         <!-- Message Activity -->
         <activity
