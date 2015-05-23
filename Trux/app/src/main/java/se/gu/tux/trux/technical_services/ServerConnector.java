@@ -233,6 +233,12 @@ public class ServerConnector {
                     System.out.println("Not logged in: filtering "
                             + query.getClass().getSimpleName() + ": " + query.getValue());
                     throw new NotLoggedInException();
+                } else if (!(query instanceof ProtocolMessage &&
+                            ((ProtocolMessage) query).getType() == ProtocolMessage.Type.GOODBYE)) {
+
+                    // Set user id and session id if it's not a goodbye message
+                    query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
+                    query.setUserId(DataHandler.getInstance().getUser().getUserId());
                 }
 
                 //System.out.println("Wating to send: " + query.getClass().getSimpleName());
@@ -243,13 +249,6 @@ public class ServerConnector {
 
                         // Send and receive
                         //System.out.println("Sending query...: " + query.getClass().getSimpleName());
-
-                        // Set user id and session id if it's not a goodbye message
-                        if (!(query instanceof ProtocolMessage &&
-                                ((ProtocolMessage) query).getType() == ProtocolMessage.Type.GOODBYE)) {
-                            query.setSessionId(DataHandler.getInstance().getUser().getSessionId());
-                            query.setUserId(DataHandler.getInstance().getUser().getUserId());
-                        }
 
                         out.writeObject(query);
                         out.flush();

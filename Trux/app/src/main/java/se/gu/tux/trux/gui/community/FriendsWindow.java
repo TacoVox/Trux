@@ -95,7 +95,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
         //noFriends.setVisibility(View.VISIBLE);
         if (lastFetchCall == FetchCall.FRIENDLIST) {
-            noFriends.setText("You have no friends :( Go kill yourself.");
+            noFriends.setText("You have no friends :(");
         } else {
             noFriends.setText("No people found.");
         }

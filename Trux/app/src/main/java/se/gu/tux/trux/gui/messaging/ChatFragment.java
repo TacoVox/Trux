@@ -431,6 +431,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
         userInput.setText("");
 
         msgContainer.postInvalidate();
+        msgContainer.postInvalidate();
         scrollView.scrollTo(0, msgContainer.getBottom());
 
     } // end sendMessage()

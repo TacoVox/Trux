@@ -195,6 +195,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
 
         mMap.setOnMyLocationButtonClickListener(onMyLocationButtonClickListener);
         mMap.setOnCameraChangeListener(stopFollowing);
+        mMap.setOnMyLocationChangeListener(startFollowing);
         mMap.setOnMarkerClickListener(markerClickListener);
         mMap.setOnMapClickListener(this);
 

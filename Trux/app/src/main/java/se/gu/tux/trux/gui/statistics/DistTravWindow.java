@@ -73,7 +73,7 @@ public class DistTravWindow extends Fragment {
         distanceGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
         distanceGraph.getGridLabelRenderer().setPadding(50);
         distanceGraph.getViewport().setMaxX(30);
-        distanceGraph.getViewport().setMaxY(100);
+        distanceGraph.getViewport().setMaxY(1000);
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.DistanceGraph);

@@ -29,6 +29,23 @@ import se.gu.tux.trux.technical_services.ServerConnector;
 
 /**
  * Created by ivryashkov on 2015-03-25.
+ *
+ *
+ *
+ * TODO
+ * Order conversations based on timestamp
+ * Option to start new conversation by chosing friend in conversation window **** major *****
+ * Refactor class and xml names
+ * Timer in homeactivity **** major *****
+ * Check the map follow feature
+ * Check if AGA reconnection works **** major *****
+ * Check if state needs to be saved and recreated from bundle **** major *****
+ * Friend list should update online status OR just toast This user was nog logged in anymore
+ * reduce map functionality  **** major *****
+ * new message display should be clearly visible ***** major ****
+ * report if any major changes from today until the final submission
+ * check font size and buttons
+ *
  */
 public class DataHandler
 {
@@ -145,6 +162,10 @@ public class DataHandler
                 @Override
                 public void run() {
                     try {
+                        if (detailedStats == null) {
+                            detailedStats = new HashMap<Integer, DetailedStatsBundle>();
+                        }
+
                         detailedStats.clear();
 
                         // NOTE would love to generalize this but slightly unsure on now how to
@@ -352,7 +373,7 @@ public class DataHandler
      * Used on logout to make sure no stats or social data is left in cache
      */
     public void cleanupSessionData() {
-        detailedStats = null;
+        detailedStats.clear();
         detailedStatsFetched = 0;
         sc.clearCache();
     }

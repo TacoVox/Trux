@@ -52,7 +52,12 @@ public class SocialHandler {
             public void run() {
                 // Update the list of friends this user has
                 try {
-                    Data user = DataHandler.gI().getData(DataHandler.gI().getUser());
+                    User currentUser = DataHandler.gI().getUser();
+                    // If user was logged out recently, just return
+                    if (currentUser == null) {
+                        return;
+                    }
+                    Data user = DataHandler.gI().getData(currentUser);
                     if (user instanceof User) {
                         DataHandler.gI().setUser((User) user);
                     }
