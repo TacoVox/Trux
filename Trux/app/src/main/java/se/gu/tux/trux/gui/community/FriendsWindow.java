@@ -96,6 +96,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     private void hideLoadingBar() {
         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
         //noFriends.setVisibility(View.VISIBLE);
+        if (lastFetchCall == FetchCall.FRIENDLIST) {
+            noFriends.setText("You have no friends :( Go kill yourself.");
+        } else {
+            noFriends.setText("No people found.");
+        }
     }
 
     @Override
@@ -120,10 +125,10 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             // Simplified UI- hide the search bar
             searchField.setVisibility(View.GONE);
             searchButton.setVisibility(View.GONE);
+            friendAdapter.setFriendRequests(new ArrayList<Friend>());
         } else {
             // Otherwise include the friend requests on top provided that the user is not too distracted
             DataHandler.gI().getSocialHandler().fetchFriendRequests(this);
-
             searchField.setVisibility(View.VISIBLE);
             searchButton.setVisibility(View.VISIBLE);
         }
@@ -138,7 +143,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     private void showSearchResults(final String needle) {
         showLoadingBar();
         DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.ALL);
-        noFriends.setText(R.string.loading);
         lastNeedle = needle;
         lastFetchCall = FetchCall.SEARCH;
     }
@@ -514,7 +518,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 @Override
                 public void onClick(View view) {
 
-
                     InfoFragment friendInfo = new InfoFragment();
                     Bundle friendBundle = new Bundle();
                     friendBundle.putSerializable("friend", friends.get(pos));
@@ -551,7 +554,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             if(isSimple()) {
                 friendRequestButton.setVisibility(View.GONE);
                 pending.setVisibility(View.GONE);
-                goToFriendOnMap.setVisibility(View.GONE);
             }
             if(friends.get(pos).getStatus() != Friend.Status.ONLINE){
                 goToFriendOnMap.setVisibility(View.GONE);

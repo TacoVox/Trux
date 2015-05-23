@@ -63,8 +63,8 @@ public class SimpleMessageSpinner extends ArrayAdapter<String>
     private View getSpinnerItemView(int position, View convertView, ViewGroup parent)
     {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View row = inflater.inflate(R.layout.spinner_item, parent, false);
-        TextView rowText = (TextView) row.findViewById(R.id.spinner_item_text_view);
+        View row = inflater.inflate(R.layout.spinner_message_item, parent, false);
+        TextView rowText = (TextView) row.findViewById(R.id.spinner_item_text_view_message);
 
         rowText.setText(titles[position]);
 

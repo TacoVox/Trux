@@ -137,7 +137,7 @@ public class DataHandler
      */
     public void cacheDetailedStats() {
         // Only fetch if they aren't there or aren't up to date
-        if (System.currentTimeMillis() - detailedStatsFetched > 1000 * 60 * 15) {
+        if (detailedStats == null || System.currentTimeMillis() - detailedStatsFetched > 1000 * 60 * 15) {
 
             System.out.println("Fetching detailed stats.");
 
@@ -145,7 +145,7 @@ public class DataHandler
                 @Override
                 public void run() {
                     try {
-                        HashMap<Integer, DetailedStatsBundle> detailedStatsTmp = new HashMap<Integer, DetailedStatsBundle>();
+                        detailedStats.clear();
 
                         // NOTE would love to generalize this but slightly unsure on now how to
                         // handle the casting
@@ -164,13 +164,13 @@ public class DataHandler
                                 (Speed) getData(new Speed(MetricData.FOREVER)),
                                 speedPoints);
                         // Store in hash map
-                        if (detailedStatsTmp == null) {
+                        if (detailedStats == null) {
                             System.out.println("DETAILEDSTATS IS NULL.");
                         }
                         if (speedBundle == null) {
                             System.out.println("SPEEDBUNDLE IS NULL.");
                         }
-                        detailedStatsTmp.put(speed.getSignalId(), speedBundle);
+                        detailedStats.put(speed.getSignalId(), speedBundle);
 
                         Fuel fuel = new Fuel(0);
                         fuel.setTimeStamp(System.currentTimeMillis());
@@ -184,7 +184,7 @@ public class DataHandler
                                 (Fuel) getData(new Fuel(MetricData.FOREVER)),
                                 fuelPoints);
                         // Store in hash map
-                        detailedStatsTmp.put(fuel.getSignalId(), fuelBundle);
+                        detailedStats.put(fuel.getSignalId(), fuelBundle);
 
                         Distance dist = new Distance(0);
                         dist.setTimeStamp(System.currentTimeMillis());
@@ -198,12 +198,12 @@ public class DataHandler
                                 (Distance) getData(new Distance(MetricData.FOREVER)),
                                 distPoints);
                         // Store in hash map
-                        detailedStatsTmp.put(dist.getSignalId(), distBundle);
+                        detailedStats.put(dist.getSignalId(), distBundle);
 
                         // Keep track of when we finished fetching the detailed stats
                         detailedStatsFetched = System.currentTimeMillis();
 
-                        detailedStats = detailedStatsTmp;
+                        detailedStats = detailedStats;
 
                     } catch (NotLoggedInException e) {
                         System.out.println("Not logged in in datahandler cache");
@@ -222,10 +222,9 @@ public class DataHandler
     public boolean detailedStatsReady(MetricData md) {
         // See if there is a stats object in the hashmap
         if (detailedStats != null && detailedStats.get(md.getSignalId()) != null) {
-            //System.out.println("Stats were ready: " + md.getClass().getSimpleName());
             return true;
         }
-        //System.out.println("Stats were not ready: " + md.getClass().getSimpleName());
+        System.out.println("Stats were not ready: " + md.getClass().getSimpleName());
         return false;
     }
 
@@ -255,6 +254,8 @@ public class DataHandler
      */
     public Data[] getPerDay (MetricData metricData, int days) throws NotLoggedInException {
         Data[] perDay = new Data[days];
+        System.out.println("Getting per day: " + metricData.getClass().getSimpleName() +
+                        "  // Datahandler: " + this.toString());
 
         // Use a calendar to know when days start and end.
         // Initiate based on metricData's timestamp.
@@ -320,11 +321,13 @@ public class DataHandler
 
                 } else if (md instanceof Distance ){
 
-                    // Distance are in m so divide by 1000 to get some more reasonable values
+                    // Distance are in m so divide by 1000 * 10 to get some more reasonable values
+                    // 10 kilometers, Swedish mil
                     if ((Long)data[i].getValue() == 0) {
                         dataPoints[i] = new DataPoint(i + 1, new Double(0.0));
                     } else {
-                        dataPoints[i] = new DataPoint(i + 1, new Double((Long)data[i].getValue() / 1000));
+                        dataPoints[i] = new DataPoint(i + 1,
+                                new Double((Long)data[i].getValue() / (1000 * 10)));
                     }
                 }
             }
@@ -334,7 +337,7 @@ public class DataHandler
 
     public void setUser(User user)
     {
-        if (user == null || this.user != user) {
+        if (user == null || (this.user != null && this.user.getUserId() != user.getUserId())) {
             // The user has changed or been removed due to logout, so cleanup the session data
             cleanupSessionData();
         }

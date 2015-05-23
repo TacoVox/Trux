@@ -46,11 +46,11 @@
         <Spinner
             android:id="@+id/chat_input_spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="#ff404e68"
-            android:padding="10dp"
             android:textColor="#E0E0E0"
             android:textCursorDrawable="@drawable/custom_cursor"
+            android:layout_marginTop="-2dp"
             android:layout_weight="1"/>
 
         <EditText

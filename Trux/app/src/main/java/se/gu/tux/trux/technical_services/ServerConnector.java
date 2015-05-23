@@ -357,7 +357,7 @@ public class ServerConnector {
 
                     //System.out.println("Server connector: Found object in queue.");
                     if (d != null) {
-                        System.out.println("Server connector: next up is " + d.getClass().getSimpleName());
+                        //System.out.println("Server connector: next up is " + d.getClass().getSimpleName());
 
                         // Connect if not connected at this point.
                         if (cs == null || cs.isClosed() || out == null || in == null) {
@@ -373,7 +373,7 @@ public class ServerConnector {
                             // Then stop other threads from using this object (most importantly
                             // the in and out streams) while sending and receiving data
                             // Send the data
-                            System.out.println("Server connector: sending " + d.getClass().getSimpleName());
+                            //System.out.println("Server connector: sending " + d.getClass().getSimpleName());
                             Data inD = null;
                             synchronized (this) {
                                 //try {
@@ -387,7 +387,7 @@ public class ServerConnector {
                                     queue.putFirst(d);
                                 }*/
                             }
-                            System.out.println("Server connector: received " + inD.getClass().getSimpleName());
+                            //System.out.println("Server connector: received " + inD.getClass().getSimpleName());
 
                             // If we sent a heartbeat object just now, update the notification object
                             // in DataHandler
