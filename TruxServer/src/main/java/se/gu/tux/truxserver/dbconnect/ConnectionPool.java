@@ -93,13 +93,15 @@ public class ConnectionPool {
      */
     public DBConnector getDBC() throws InterruptedException{
         try {
-            
             DBConnector dbc = (DBConnector)queue.poll();
             while (dbc == null) {
                 Logger.gI().addDebug("Waiting for dbc");
                 Thread.sleep(1000);
                 dbc = (DBConnector)queue.poll();
             }
+            
+            if(!dbc.isValid())
+                dbc.openConnection();
                   
             //motherfucker--;
             //if (dbc == null) {
