@@ -23,8 +23,6 @@ import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 /**
- * Created by ivryashkov on 2015-05-05.
- *
  * Handles the main activity and screens.
  */
 @SuppressWarnings("deprecation")

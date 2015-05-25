@@ -133,12 +133,6 @@ public class MainActivity extends BaseAppActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    /*    new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ServerConnector.gI().disconnect();
-            }
-        }).start();*/
     }
 
     public void goToRegister(View view)
