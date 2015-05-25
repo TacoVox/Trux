@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import tux.gu.se.trux.R;
 
 /**
- * Created by ivryashkov on 2015-05-05.
- *
  * Simple view to display when in driving mode.
  */
 public class StatisticsSimpleFragment extends Fragment

@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:textColor="#E0E0E0"
-                android:background="@drawable/button_clickable_new"
+                android:background="@drawable/custom_button"
                 android:id="@+id/sendEmail"
                 android:text="@string/feedbackbutton"
                 android:onClick="sendFeedback"

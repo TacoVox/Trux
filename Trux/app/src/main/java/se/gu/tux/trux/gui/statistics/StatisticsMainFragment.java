@@ -12,8 +12,6 @@ import se.gu.tux.trux.application.DataHandler;
 import tux.gu.se.trux.R;
 
 /**
- * Created by ivryashkov on 2015-05-07.
- *
  * Handles the main fragment for the statistics. Shows the appropriate
  * views depending on the driving mode -- in motion or not.
  */

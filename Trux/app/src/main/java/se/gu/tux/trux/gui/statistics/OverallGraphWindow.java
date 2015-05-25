@@ -19,6 +19,11 @@ import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Speed;
 import tux.gu.se.trux.R;
 
+/**
+ * This Fragment is responsible for displaying the monthly graphs for all
+ * metrics (speed,fuel and distance traveled).
+ */
+
 public class OverallGraphWindow extends Fragment {
     private GraphView speedGraph, fuelGraph, distGraph;
     private View myFragmentView;
@@ -32,13 +37,18 @@ public class OverallGraphWindow extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        // Initialize the view.
+
         myFragmentView = inflater.inflate(R.layout.fragment_overall_graph_window, container, false);
+
+        // Initialize the graph views.
+
         popSpeedGraph(myFragmentView);
         popFuelGraph(myFragmentView);
         popDTGraph(myFragmentView);
 
+        // Return the view.
 
-        myFragmentView.findViewById(R.id.loadingPanel).bringToFront();
         return myFragmentView;
     }
 
@@ -55,6 +65,15 @@ public class OverallGraphWindow extends Fragment {
         super.onResume();
         refresh();
     }
+
+    /**
+     * Here we have a new thread that checks if the data is fetched and ready to be
+     * displayed. The data starts fetching when the StatisticsMainFragment have been
+     * initialized (StatisticsMainFragment is initialized directly after a successful login).
+     *
+     * Until the data is ready a loadingscreen is shown, whenever the data is ready
+     * the loadingscreen is removed and the setValues method is called.
+     */
 
     public void refresh() {
         System.out.println("REFRESHING Overall....");
@@ -95,6 +114,12 @@ public class OverallGraphWindow extends Fragment {
         }).start();
     }
 
+    /**
+     * This method retrieves the data from a bundle that is sent
+     * from the DataHandler class, and changes the points in the graphs accordingly.
+     *
+     * @param stats
+     */
 
     public void setValues(DetailedStatsBundle speedBundle, DetailedStatsBundle fuelBundle,
                           DetailedStatsBundle distBundle) {
@@ -110,11 +135,20 @@ public class OverallGraphWindow extends Fragment {
             LineGraphSeries distValues = new LineGraphSeries(distBundle.getGraphPoints());
             distGraph.addSeries(distValues);
         }
+
+        // Hide the loadingscreen.
+
         if (myFragmentView != null) {
             myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
         }
     }
 
+    /**
+     * In this method we give the fuel graph some layout parameters and add it
+     * to a container.
+     *
+     * @param view
+     */
 
     private void popFuelGraph(View view) {
 
@@ -140,6 +174,13 @@ public class OverallGraphWindow extends Fragment {
         }
     }
 
+    /**
+     * In this method we give the speed graph some layout parameters and add it
+     * to a container.
+     *
+     * @param view
+     */
+
     private void popSpeedGraph(View view) {
 
         speedGraph = new GraphView(getActivity());
@@ -164,6 +205,13 @@ public class OverallGraphWindow extends Fragment {
             // something to handle the NPE.
         }
     }
+
+    /**
+     * In this method we give the distance graph some layout parameters and add it
+     * to a container.
+     *
+     * @param view
+     */
 
     private void popDTGraph(View view) {
 
