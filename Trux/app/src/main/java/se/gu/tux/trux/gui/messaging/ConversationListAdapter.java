@@ -43,10 +43,9 @@ public class ConversationListAdapter extends BaseAdapter
 
 
     /**
-     * Constructor. Takes the activity where to display items and
-     * the data to display on those items.
+     * Constructor. Takes the activity to use as context as parameter.
      *
-     * @param activity  The inflater.
+     * @param activity      The activity to use as context.
      */
     @SuppressLint("SimpleDateFormat")
     public ConversationListAdapter(Activity activity)

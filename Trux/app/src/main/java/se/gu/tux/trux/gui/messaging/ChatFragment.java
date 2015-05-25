@@ -70,7 +70,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     private final int PLACE_PICKER_REQUEST = 1;
 
     String[] spinnerTitles = { "Can't chat right now", "Call you later", "Yes",
-            "Okay", "Maybe", "No, thanks pal!", "Busy driving!", "Meet at..." };
+            "Okay", "No, thanks pal!", "Busy driving!", "Meet at..." };
 
     private String placeMessage;
     private int spinnerPosition;

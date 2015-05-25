@@ -20,8 +20,6 @@ import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
 import tux.gu.se.trux.R;
 
 /**
- * Created by ivryashkov on 2015-05-05.
- *
  * Handles the main activity and screens.
  */
 @SuppressWarnings("deprecation")
