@@ -1,6 +1,8 @@
 package se.gu.tux.trux.gui.messaging;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -31,7 +35,8 @@ import tux.gu.se.trux.R;
  *
  * Handles the conversations list with friends.
  */
-public class FriendListFragment extends Fragment implements AdapterView.OnItemClickListener, FriendFetchListener
+public class ConversationListFragment extends Fragment implements AdapterView.OnItemClickListener,
+        FriendFetchListener, View.OnClickListener
 {
 
     private ArrayList<Friend> friendsList;
@@ -39,13 +44,13 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
     private RelativeLayout loadingPanel;
 
-    SocialHandler sh;
+    private Message[] messages;
 
-    Message[] messages;
+    private ConversationListAdapter messageListAdapter;
 
-    MessageListAdapter messageListAdapter;
+    private AsyncTask<ProtocolMessage, Void, ArrayResponse> conversations;
 
-    AsyncTask<ProtocolMessage, Void, ArrayResponse> conversations;
+    private Button messageButton;
 
 
 
@@ -62,9 +67,12 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
 
         loadingPanel.setVisibility(View.VISIBLE);
 
+        messageButton = (Button) view.findViewById(R.id.new_message_button);
+        messageButton.setOnClickListener(this);
+
         initMessageService();
 
-        sh = new SocialHandler();
+        SocialHandler sh = new SocialHandler();
         sh.fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
 
         // get the list view
@@ -72,7 +80,7 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
         // set listener
         listView.setOnItemClickListener(this);
         // get the adapter
-        messageListAdapter = new MessageListAdapter(this.getActivity());
+        messageListAdapter = new ConversationListAdapter(this.getActivity());
         // set adapter
         listView.setAdapter(messageListAdapter);
 
@@ -173,9 +181,9 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
         messageListAdapter.setAdapterData(friendsList, messagesList);
 
         // hide the loading panel
-
         Activity a = getActivity();
-        if (a!= null) {
+        if (a!= null)
+        {
             a.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -187,8 +195,49 @@ public class FriendListFragment extends Fragment implements AdapterView.OnItemCl
     } // end friendsFetched()
 
 
+
     @Override
     public void onFriendRequestsFetched(ArrayList<Friend> friends) {}
+
+
+
+    @Override
+    public void onClick(View view)
+    {
+        int id = view.getId();
+
+        if (id == messageButton.getId())    { sendNewMessage(); }
+    }
+
+
+
+    private void sendNewMessage()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Choose a friend");
+
+        String[] friendsNames = new String[friendsList.size()];
+
+        for (int i = 0; i < friendsNames.length; i++)
+        {
+            String name = friendsList.get(i).getFirstname() + " " + friendsList.get(i).getLastname() +
+                    " (" + friendsList.get(i).getUsername() + ")";
+            friendsNames[i] = name;
+        }
+
+        builder.setItems(friendsNames, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                CustomObject obj = (CustomObject) messageListAdapter.getItem(i);
+
+                ((MessageActivity) getActivity()).onItemClick(obj, getId());
+            }
+        });
+        builder.show();
+    }
+
 
 
     /**

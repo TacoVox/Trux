@@ -25,7 +25,7 @@ import tux.gu.se.trux.R;
  *
  * Handles the display for the message list activity.
  */
-public class MessageListAdapter extends BaseAdapter
+public class ConversationListAdapter extends BaseAdapter
 {
 
     // the data to display
@@ -49,7 +49,7 @@ public class MessageListAdapter extends BaseAdapter
      * @param activity  The inflater.
      */
     @SuppressLint("SimpleDateFormat")
-    public MessageListAdapter(Activity activity)
+    public ConversationListAdapter(Activity activity)
     {
         this.activity = activity;
         layoutInflater = (LayoutInflater) activity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
