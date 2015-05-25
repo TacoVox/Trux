@@ -5,8 +5,6 @@ package se.gu.tux.trux.gui.community;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 
