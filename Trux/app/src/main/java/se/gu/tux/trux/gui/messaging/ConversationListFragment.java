@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.application.DataHandler;
@@ -148,6 +149,8 @@ public class ConversationListFragment extends Fragment implements AdapterView.On
                 messages[i] = (Message) array[i];
             }
         }
+
+        Arrays.sort(messages);
 
         // initiate the friend and message data to send to adapter
         assert messages != null;
