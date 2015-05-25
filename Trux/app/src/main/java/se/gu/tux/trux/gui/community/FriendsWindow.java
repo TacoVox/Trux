@@ -62,12 +62,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
-
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -319,9 +316,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         }
 
         @Override
-        public void onFriendRemoveSent(long friendId) {
-
-        }
+        public void onFriendRemoveSent(long friendId) {}
 
         @Override
         public void onFriendRequestAnswered(long friendId, final boolean accepted) {
@@ -468,18 +463,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
             final Button goToFriendOnMap = (Button) view.findViewById(R.id.locateButton);
 
-            friendRequestButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    friendRequestButton.setEnabled(false);
-                    try {
-                        DataHandler.gI().getSocialHandler().sendFriendRequest(thisAdapter,
-                                friends.get(pos).getFriendId());
-                    } catch (NotLoggedInException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
