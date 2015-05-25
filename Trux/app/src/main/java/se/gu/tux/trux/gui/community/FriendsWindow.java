@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -504,9 +505,14 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             goToFriendOnMap.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //Creats an Intent to send back results to HomeActivity
                     Intent data = new Intent();
+                    //Puts the friendID in the result
                     data.putExtra("FriendID", friends.get(pos).getFriendId());
                     setResult(RESULT_OK, data);
+                    //Shows toast for the user how to stop follow there friends.
+                    showToast("Following " + friends.get(pos).getFirstname() + "." + "\nClick Map to stop Following.");
+                    //Closes the activity
                     finish();
                 }
             });
