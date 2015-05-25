@@ -57,16 +57,16 @@
         android:layout_marginRight="10dp"/>
 
     <Button
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@drawable/locationpin"
         android:id="@+id/locateButton"
         android:layout_gravity="center_vertical|right"
         android:layout_marginRight="10dp"/>
 
     <Button
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@drawable/messageicon"
         android:id="@+id/sendMessageButton"
         android:layout_gravity="center_vertical|right"
