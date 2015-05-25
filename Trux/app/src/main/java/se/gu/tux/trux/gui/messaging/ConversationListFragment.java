@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -150,11 +149,17 @@ public class ConversationListFragment extends Fragment implements AdapterView.On
             }
         }
 
-        Arrays.sort(messages);
-
         // initiate the friend and message data to send to adapter
         assert messages != null;
-        for (Message msg : messages)
+        Arrays.sort(messages);
+
+        Message[] backMessages = new Message[messages.length];
+        for (int i = 0, j = backMessages.length-1; i < backMessages.length; i++, j--)
+        {
+            backMessages[i] = messages[j];
+        }
+
+        for (Message msg : backMessages)
         {
             if (msg.getSenderId() != userId)
             {
