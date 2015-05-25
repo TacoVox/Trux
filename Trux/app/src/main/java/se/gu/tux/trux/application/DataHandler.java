@@ -40,19 +40,14 @@ import se.gu.tux.trux.technical_services.ServerConnector;
  *
  *
  * TODO
- * Order conversations based on timestamp
- * Option to start new conversation by chosing friend in conversation window **** major *****
  * Refactor class and xml names
  * Timer in homeactivity **** major *****
- * Check the map follow feature
  * Check if AGA reconnection works **** major *****
  * Check if state needs to be saved and recreated from bundle **** major *****
- * Friend list should update online status OR just toast This user was nog logged in anymore
+ * Make a toast if a followed user goes offline
  * reduce map functionality  **** major *****
- * new message display should be clearly visible ***** major ****
  * report if any major changes from today until the final submission
  * check font size and buttons
- *
  */
 public class DataHandler
 {

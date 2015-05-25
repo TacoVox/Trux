@@ -1,11 +1,5 @@
 package se.gu.tux.trux.technical_services;
 
-/**
- * Created by ivryashkov on 2015-03-24.
- */
-
-import android.swedspot.automotiveapi.AutomotiveSignalId;
-
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
@@ -14,19 +8,22 @@ import se.gu.tux.trux.datastructure.Speed;
 
 
 /**
+ * Acts as an interface for the real time data. To get AGA values, ask getSignalData().
+ * This class also defines what goes into the queue every POLL_INTERVAL seconds by DataPoller;
+ * currently some metric data from AGA and location data from LocationService.
  *
- * @author ivryashkov
+ * Created by ivryashkov on 2015-03-24.
  */
+
 public class RealTimeDataHandler
 {
-
-    //RealTimeDataParser rtdp;
-
     AGADataParser rtdp;
     LocationService locationService;
 
+
     /**
      * Constructor.
+     * @param locationService   The locationservice object.
      */
     public RealTimeDataHandler(LocationService locationService)
     {
@@ -36,11 +33,10 @@ public class RealTimeDataHandler
 
     }
 
-
     /**
-     * Proposing this as a clean way to not have to have any logic around what metrics to use
-     * in DataPoller. Instead here we decide what we see as relevant to send to the server
-     * @return
+     * This method packages anything we want to send to the server - called by DataPoller every
+     * POLL_INTERVAL seconds.
+     * @return      An array with all the realtime data that is sent to the server regularly.
      */
     public Data[] getCurrentMetrics() {
         Data metricArray[] = new Data[4];
@@ -57,56 +53,14 @@ public class RealTimeDataHandler
     }
 
 
+    /**
+     * Returns signal data from AGA by providing a MetricData object.
+     * @param md    A MetricData object with the corresponding signal id.
+     * @return      A MetricData object with the corresponding value
+     */
     public MetricData getSignalData(MetricData md) {
         md.setValue(rtdp.getValue(md.getSignalId()));
         md.setTimeStamp(System.currentTimeMillis());
         return md;
     }
-
-
-
-
-
-
-    public Data getSignalData(int automotiveSignalId)
-    {
-        switch (automotiveSignalId)
-        {
-            // speed signal case
-            case AutomotiveSignalId.FMS_WHEEL_BASED_SPEED:
-
-                Speed speed = new Speed(0);
-                speed.setValue(rtdp.getValue(AutomotiveSignalId.FMS_WHEEL_BASED_SPEED));
-
-                System.out.println("----------------------------------------------------");
-                System.out.println("returning speed object from real-time data handler");
-                System.out.println("object is null?: " + speed.equals(null));
-                System.out.println("value: " + speed.getValue());
-                System.out.println("----------------------------------------------------");
-
-                return speed;
-            
-            // fuel signal case
-            case AutomotiveSignalId.FMS_FUEL_RATE:
-
-                Fuel fuel = new Fuel(0);
-                fuel.setValue(rtdp.getValue(AutomotiveSignalId.FMS_FUEL_RATE));
-
-                System.out.println("----------------------------------------------------");
-                System.out.println("returning fuel object from real-time data handler");
-                System.out.println("object is null?: " + fuel.equals(null));
-                System.out.println("value: " + fuel.getValue());
-                System.out.println("----------------------------------------------------");
-
-                return fuel;
-
-            default:
-                return null;
-
-        }
-
-    } // end getSignalData()
-
-
-
 } // end class RealTimeDataHandler
