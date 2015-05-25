@@ -37,6 +37,7 @@ public class OverallGraphWindow extends Fragment {
         popFuelGraph(myFragmentView);
         popDTGraph(myFragmentView);
 
+
         myFragmentView.findViewById(R.id.loadingPanel).bringToFront();
         return myFragmentView;
     }
@@ -92,49 +93,6 @@ public class OverallGraphWindow extends Fragment {
                 }
             }
         }).start();
-
-        /*
-        // Make sure values are set once they are loaded
-        AsyncTask myTask = new AsyncTask<Void, Void, Boolean>()
-        {
-            Speed s = new Speed(0);
-            Fuel f = new Fuel(0);
-            Distance d = new Distance(0);
-
-            @Override
-            protected Boolean doInBackground(Void... voids)
-            {
-                while (!(DataHandler.getInstance().detailedStatsReady(s)
-                        && DataHandler.getInstance().detailedStatsReady(f)
-                        && DataHandler.getInstance().detailedStatsReady(d))) {
-                    try {
-                        Thread.sleep(100);
-                        // Stop waiting if fragment was cancelled
-                        if (!isVisible()) {
-                            cancel(true);
-                        }
-                    } catch (InterruptedException e) {
-                        System.out.println("Wait interrupted.");
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            public void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(Boolean b)
-            {
-                super.onPostExecute(b);
-                setValues(DataHandler.getInstance().getDetailedStats(s),
-                        DataHandler.getInstance().getDetailedStats(f),
-                        DataHandler.getInstance().getDetailedStats(d));
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                 */
     }
 
 

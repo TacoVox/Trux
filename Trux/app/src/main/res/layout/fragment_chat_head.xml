@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/send"
-            android:background="@drawable/bottom_button"
+            android:background="@drawable/custom_button"
             android:textColor="#E0E0E0"
             android:layout_marginLeft="1dp"/>
 

@@ -79,7 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Register"
-                    android:background="@drawable/bottom_button"
+                    android:background="@drawable/custom_button"
                     android:textColor="#E0E0E0"
                     android:onClick="goToRegister"
                     android:id="@+id/register"
@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/login"
                     android:id="@+id/login"
-                    android:background="@drawable/bottom_button"
+                    android:background="@drawable/custom_button"
                     android:textColor="#E0E0E0"
                     android:onClick="goToHome"
                     android:layout_weight="2"/>
