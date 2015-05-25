@@ -262,8 +262,8 @@ public class ServerConnector {
                         // Server probably shut down or we lost connection. Close sockets so we are
                         // sure to try to reconnect in the next iteration of while loop (unless we
                         // timed out, in which case any other send attempt will provoke a reconnect)
-                        System.out.println("IOEXception in sendQuery: ");
-                        e.printStackTrace();
+                        System.out.println("IOEXception in sendQuery: " + e.getMessage()
+                            + " - closing connection.");
                         try {
                             cs.close();
                             in.close();
