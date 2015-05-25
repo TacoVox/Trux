@@ -1,7 +1,7 @@
 package se.gu.tux.trux.technical_services;
 
 /**
- * Created by jerker on 2015-04-23.
+ * Thrown when a not logged in user requests data that requires being logged in.
  */
 public class NotLoggedInException extends Exception {
 }

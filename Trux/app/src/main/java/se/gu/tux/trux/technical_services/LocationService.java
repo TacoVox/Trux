@@ -16,53 +16,68 @@ import com.google.android.gms.location.LocationServices;
 
 
 /**
+ * This class is a listener for location updates from the Google API.
+ * It stores the last known location so that the DataPoller can ask for it regularly like it does
+ * with all the AGA data. The location is returned as a Trux location by the method getLocation().
+ *
  * Created by Niklas on 07/05/15.
  */
 public class LocationService implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener {
 
+    // The last known location
     private Location currentLocation;
-    private Long locationTimeStamp;
-    private double latitude;
-    private double longitude;
-    private double[] latLng = new double[2];
-
+    // Google API client
     private GoogleApiClient googleApiClient;
-
+    // A reference to the activity, needed to initialize the API client
     private Activity activity;
 
+
+    /**
+     * Constructs a new LocationService.
+     * @param activity  An activity, since we need to send a context to the Google API.
+     */
     public LocationService(Activity activity) {
         System.out.println("LocationService created.");
         this.activity = activity;
-        buildGoogleApiClient();
-        googleApiClient.connect();
-    }
-
-
-
-    protected synchronized void buildGoogleApiClient() {
         googleApiClient = new GoogleApiClient.Builder(activity)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        googleApiClient.connect();
     }
 
+
+    /**
+     * Called by the API when connected.
+     * @param connectionHint
+     */
     @Override
     public void onConnected(Bundle connectionHint) {
+        // Update the currentLocation variable
         System.out.println("LocationService connected.");
         Location lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(
                 googleApiClient);
         if (lastKnownLocation != null) {
             currentLocation = lastKnownLocation;
         }
+
+        // Start receiving connection updates
         startLocationUpdates();
     }
 
+
+    /**
+     * Provided by the API, currently not used.
+     * @param i
+     */
     @Override
-    public void onConnectionSuspended(int i) {
+    public void onConnectionSuspended(int i) { }
 
-    }
 
+    /**
+     * Requests location updates from the Google API.
+     */
     protected void startLocationUpdates() {
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(6000);
@@ -72,34 +87,15 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
     }
 
 
+    /**
+     * Called by the API when the location has changed. We store the new location.
+     * @param location
+     */
     @Override
     public void onLocationChanged(Location location) {
         currentLocation = location;
-        locationTimeStamp = System.currentTimeMillis();
-        //System.out.println("New location: " + location.getLongitude());
     }
 
-    public void setLatitude(double latitude){
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(double longitude){
-        this.longitude = longitude;
-    }
-
-    public double getLatitude(){
-        return latitude;
-    }
-
-    public double getLongitude(){
-        return longitude;
-    }
-
-    public double[] getLatLng(){
-        latLng[0] = latitude;
-        latLng[1] = longitude;
-        return latLng;
-    }
 
     /**
      * Returns a Trux Location object.
@@ -109,18 +105,29 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
         double delta = 0.01;
         se.gu.tux.trux.datastructure.Location truxLocation = null;
 
+        // Check that the location is not 0, 0 - since it is a double comparison we compare with
+        // a delta
         if (currentLocation != null && Math.abs(currentLocation.getLongitude()) > delta
                 && Math.abs(currentLocation.getLatitude()) > delta) {
+
+            // The location has a reasonable value
             truxLocation = new se.gu.tux.trux.datastructure.Location(currentLocation.getLatitude(),
                     currentLocation.getLongitude());
-            //System.out.println("Returning a Location with values.");
+
         } else {
+
+            // Null or not a reasonable value - just create an empty location
             truxLocation = new se.gu.tux.trux.datastructure.Location();
-            //System.out.println("Returning a Location with no values.");
+
         }
         return truxLocation;
     }
 
+
+    /**
+     * Called by the API if the connection failed.
+     * @param connectionResult
+     */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         System.out.println("Connecting LocationService failed.");
