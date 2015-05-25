@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by ivryashkov on 2015-05-05.
- *
  * Handles the display of the fragments in main activity.
  */
 public class HomePagerAdapter extends FragmentStatePagerAdapter
