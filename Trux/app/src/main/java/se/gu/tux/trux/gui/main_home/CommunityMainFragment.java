@@ -17,8 +17,6 @@ import se.gu.tux.trux.gui.statistics.StatisticsSimpleFragment;
 import tux.gu.se.trux.R;
 
 /**
- * Created by ivryashkov on 2015-05-05.
- *
  * Handles the community fragment in the main activity.
  */
 public class CommunityMainFragment extends Fragment implements View.OnClickListener

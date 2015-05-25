@@ -12,19 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
-import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
-import se.gu.tux.trux.gui.welcome.WelcomeMainFragment;
-import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 /**
- * Created by ivryashkov on 2015-05-05.
- *
  * Handles the main activity and screens.
  */
 @SuppressWarnings("deprecation")
