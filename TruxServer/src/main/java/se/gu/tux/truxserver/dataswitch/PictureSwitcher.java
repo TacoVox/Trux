@@ -24,31 +24,35 @@ import se.gu.tux.truxserver.file.PictureIO;
  * @author jonas
  */
 public class PictureSwitcher {
+
     /**
      * Static part.
      */
     private static PictureSwitcher ps;
-    
+
     public static PictureSwitcher getInstance() {
-        if (ps == null)
+        if (ps == null) {
             ps = new PictureSwitcher();
-        
+        }
+
         return ps;
     }
-    
+
     public static PictureSwitcher gI() {
         return getInstance();
     }
-    
+
     /**
      * Non-static part.
-    */
-    private PictureSwitcher() {}
-    
+     */
+    private PictureSwitcher() {
+    }
+
     public Data handlePicture(Picture p) {
-        if (p.getImg() == null)
+        if (p.getImg() == null) {
             return PictureIO.gI().receiveProfilePicture(p);
-        else
+        } else {
             return PictureIO.gI().saveProfilePicture(p);
+        }
     }
 }

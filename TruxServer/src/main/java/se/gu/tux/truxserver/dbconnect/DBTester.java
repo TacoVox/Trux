@@ -26,42 +26,39 @@ import se.gu.tux.truxserver.logger.Logger;
  * @author jonas
  */
 public class DBTester {
-    public static void main(String args[])
-    {
+
+    public static void main(String args[]) {
         ConfigHandler.getInstance().setSettings(args);
-        
+
         Thread mi = new Thread(MetricInserter.gI());
         mi.start();
-        
+
         Logger.gI().setVerbose(true);
-        
+
         Random rand = new Random(1245);
-        
-        for(int i = 0; i < 100; i++)
-        { 
+
+        for (int i = 0; i < 100; i++) {
             Speed s = new Speed(0);
             s.setValue(rand.nextDouble());
-            s.setTimeStamp(System.currentTimeMillis());       
-            
+            s.setTimeStamp(System.currentTimeMillis());
+
             DataSwitcher.gI().handleData(s);
-            
+
             try {
                 Thread.sleep(100);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Logger.gI().addError(e.getMessage());
             }
         }
-        
+
         mi.interrupt();
-        
+
         Speed s = new Speed(60000);
         s.setTimeStamp(System.currentTimeMillis());
-        
+
         //MetricReceiver.gI().getMetric(d);
-        
-        s = (Speed)DataSwitcher.gI().handleData(s);
- 
+        s = (Speed) DataSwitcher.gI().handleData(s);
+
         System.out.println(s.getValue());
     }
 }

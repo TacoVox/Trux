@@ -26,39 +26,43 @@ import se.gu.tux.truxserver.dbconnect.SessionHandler;
  * @author jonas
  */
 public class HeartbeatHandler {
+
     /**
      * Static part.
      */
     private static HeartbeatHandler instance;
-    
+
     public static HeartbeatHandler getInstance() {
-        if(instance == null)
+        if (instance == null) {
             instance = new HeartbeatHandler();
-        
+        }
+
         return instance;
     }
-    
+
     public static HeartbeatHandler gI() {
         return getInstance();
     }
-    
+
     /**
      * Non-static part.
      */
-    private HeartbeatHandler() {}
-    
+    private HeartbeatHandler() {
+    }
+
     public Notification handleHB(Heartbeat hb) {
         SessionHandler.gI().updateActive(hb);
-        
+
         Notification n = new Notification();
-        
-        if(FriendshipHandler.gI().hasNewRequests(hb) || FriendshipHandler.gI().isReviewed(hb))
+
+        if (FriendshipHandler.gI().hasNewRequests(hb) || FriendshipHandler.gI().isReviewed(hb)) {
             n.setNewFriends(true);
-        else
+        } else {
             n.setNewFriends(false);
-        
+        }
+
         n.setNewMessages(MessageHandler.gI().hasNewMessage(hb));
-        
+
         return n;
     }
 }

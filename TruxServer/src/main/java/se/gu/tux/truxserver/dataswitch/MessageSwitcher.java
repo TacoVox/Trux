@@ -28,64 +28,65 @@ import se.gu.tux.truxserver.dbconnect.UserHandler;
  * @author jonas
  */
 public class MessageSwitcher {
+
     /**
      * Static part.
      */
     private static MessageSwitcher ms = null;
-    
-    public static MessageSwitcher getInstance()
-    {
-        if(ms == null)
+
+    public static MessageSwitcher getInstance() {
+        if (ms == null) {
             ms = new MessageSwitcher();
+        }
         return ms;
     }
-    
-    public static MessageSwitcher gI()
-    {
+
+    public static MessageSwitcher gI() {
         return getInstance();
     }
-    
+
     /**
      * Non-static part.
      */
-    private MessageSwitcher() {}
-    
-    public Data handleMessage(Data m)
-    {
-        if(m instanceof ProtocolMessage) {
+    private MessageSwitcher() {
+    }
+
+    public Data handleMessage(Data m) {
+        if (m instanceof ProtocolMessage) {
             ProtocolMessage pm = (ProtocolMessage) m;
-            if(pm.getType() == ProtocolMessage.Type.AUTO_LOGIN_REQUEST)
+            if (pm.getType() == ProtocolMessage.Type.AUTO_LOGIN_REQUEST) {
                 return UserHandler.gI().autoLogin(pm);
-            else if(pm.getType() == ProtocolMessage.Type.LOGOUT_REQUEST)
+            } else if (pm.getType() == ProtocolMessage.Type.LOGOUT_REQUEST) {
                 return SessionHandler.gI().endSession(pm);
-            else if(pm.getType() == ProtocolMessage.Type.PEOPLE_SEARCH)
+            } else if (pm.getType() == ProtocolMessage.Type.PEOPLE_SEARCH) {
                 return UserHandler.gI().findUsers(pm);
-            else if(pm.getType() == ProtocolMessage.Type.FRIEND_REQUEST)
+            } else if (pm.getType() == ProtocolMessage.Type.FRIEND_REQUEST) {
                 return FriendshipHandler.gI().sendFriendRequest(pm);
-            else if(pm.getType() == ProtocolMessage.Type.FRIEND_REMOVE)
+            } else if (pm.getType() == ProtocolMessage.Type.FRIEND_REMOVE) {
                 return FriendshipHandler.gI().unfriendUser(pm);
-            else if(pm.getType() == ProtocolMessage.Type.CAN_YOU_PLEASE_GIVE_ME_AN_ARRAY_WITH_EVERYONE_WHO_SENT_THIS_USER_A_FRIEND_REQUEST_THANK_YOU_IN_ADVANCE_DEAR_BROTHER)
+            } else if (pm.getType() == ProtocolMessage.Type.CAN_YOU_PLEASE_GIVE_ME_AN_ARRAY_WITH_EVERYONE_WHO_SENT_THIS_USER_A_FRIEND_REQUEST_THANK_YOU_IN_ADVANCE_DEAR_BROTHER) {
                 return FriendshipHandler.gI().getFriendRequests(pm);
-            else if(pm.getType() == ProtocolMessage.Type.FRIEND_REQUEST_SEEN)
+            } else if (pm.getType() == ProtocolMessage.Type.FRIEND_REQUEST_SEEN) {
                 return FriendshipHandler.gI().markAsSeen(pm);
-            else if(pm.getType() == ProtocolMessage.Type.ACCEPT_FRIEND)
+            } else if (pm.getType() == ProtocolMessage.Type.ACCEPT_FRIEND) {
                 return FriendshipHandler.gI().acceptFriend(pm);
-            else if(pm.getType() == ProtocolMessage.Type.DECLINE_FRIEND)
+            } else if (pm.getType() == ProtocolMessage.Type.DECLINE_FRIEND) {
                 return FriendshipHandler.gI().declineRequest(pm);
-            else if(pm.getType() == ProtocolMessage.Type.GET_LATEST_CONVERSATIONS)
+            } else if (pm.getType() == ProtocolMessage.Type.GET_LATEST_CONVERSATIONS) {
                 return MessageHandler.gI().getLatestConv(pm);
-            else if(pm.getType() == ProtocolMessage.Type.GET_LATEST_MESSAGES)
+            } else if (pm.getType() == ProtocolMessage.Type.GET_LATEST_MESSAGES) {
                 return MessageHandler.gI().getMessages(pm);
-            else if(pm.getType() == ProtocolMessage.Type.GET_UNREAD_MESSAGES)
+            } else if (pm.getType() == ProtocolMessage.Type.GET_UNREAD_MESSAGES) {
                 return MessageHandler.gI().getUnreadMessages(pm);
-            else if(pm.getType() == ProtocolMessage.Type.MESSAGE_SEEN)
+            } else if (pm.getType() == ProtocolMessage.Type.MESSAGE_SEEN) {
                 return MessageHandler.gI().markAsSeen(pm);
-            else if(pm.getType() == ProtocolMessage.Type.GET_ONLINE_FRIENDS)
+            } else if (pm.getType() == ProtocolMessage.Type.GET_ONLINE_FRIENDS) {
                 return UserHandler.gI().getOnlineFriends(pm);
-        } else if (m instanceof Message){
-            return MessageHandler.gI().newMessage((Message)m);
+            }
+        } else if (m instanceof Message) {
+            return MessageHandler.gI().newMessage((Message) m);
         }
-        
+
         return m;
     }
 }
