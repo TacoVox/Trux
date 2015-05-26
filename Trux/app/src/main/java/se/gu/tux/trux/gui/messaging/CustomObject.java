@@ -6,7 +6,7 @@ import se.gu.tux.trux.datastructure.Message;
 /**
  * Created by ivryashkov on 2015-05-18.
  *
- * Custom object to hold a friend and message objects when passed between fragmnets.
+ * Custom object to hold a friend and message objects when passed between fragments in the message activity.
  */
 public class CustomObject
 {

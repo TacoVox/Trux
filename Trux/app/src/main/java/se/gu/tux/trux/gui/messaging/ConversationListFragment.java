@@ -199,11 +199,10 @@ public class ConversationListFragment extends Fragment implements AdapterView.On
                 @Override
                 public void run() {
                     loadingPanel.setVisibility(View.GONE);
+                    messageButton.setEnabled(true);
                 }
             });
         }
-
-        messageButton.setEnabled(true);
 
     } // end friendsFetched()
 

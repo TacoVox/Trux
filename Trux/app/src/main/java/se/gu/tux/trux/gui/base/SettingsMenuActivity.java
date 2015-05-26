@@ -56,7 +56,7 @@ public class SettingsMenuActivity extends BaseAppActivity
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {}
         });
-        
+
         if(SettingsHandler.gI(getApplicationContext()).isNormalMap())
         {
             mapTypes.setSelection(0);
