@@ -25,42 +25,46 @@ import se.gu.tux.truxserver.dbconnect.UserHandler;
  * @author jonas
  */
 public class UserSwitcher {
-        /**
+
+    /**
      * Static part.
      */
     private static UserSwitcher us = null;
-    
+
     protected static UserSwitcher getInstance() {
-        if(us == null)
+        if (us == null) {
             us = new UserSwitcher();
+        }
         return us;
     }
-    
+
     protected static UserSwitcher gI() {
         return getInstance();
     }
-    
+
     /**
      * Non-static part.
      */
-    private UserSwitcher() {}
-    
+    private UserSwitcher() {
+    }
+
     protected Data handleUser(Data ud) {
-        if(ud instanceof User) {
+        if (ud instanceof User) {
             User u = (User) ud;
-            
-            if(u.getSessionId() == User.LOGIN_REQUEST)
+
+            if (u.getSessionId() == User.LOGIN_REQUEST) {
                 return UserHandler.gI().login(u);
-            else if(u.getSessionId() == User.REGISTER_REQUEST)
+            } else if (u.getSessionId() == User.REGISTER_REQUEST) {
                 return UserHandler.gI().register(u);
-            else if(u.isRequestProfileChange())
-                return UserHandler.gI().updateUser((User)ud);
-             else
-                return UserHandler.gI().getUser((User)ud);
-        }
-        else if (ud instanceof Friend)
-            return UserHandler.gI().getFriend((Friend)ud);
-        else
+            } else if (u.isRequestProfileChange()) {
+                return UserHandler.gI().updateUser((User) ud);
+            } else {
+                return UserHandler.gI().getUser((User) ud);
+            }
+        } else if (ud instanceof Friend) {
+            return UserHandler.gI().getFriend((Friend) ud);
+        } else {
             return null;
+        }
     }
 }

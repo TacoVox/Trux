@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package se.gu.tux.truxserver.file;
 
 import java.awt.AlphaComposite;
@@ -40,82 +39,83 @@ import se.gu.tux.truxserver.logger.Logger;
  * @author jonas
  */
 public class PictureIO {
+
     /**
      * Static part.
      */
     private static PictureIO pio;
-    
+
     public static PictureIO getInstance() {
-        if(pio == null)
+        if (pio == null) {
             pio = new PictureIO();
-        
+        }
+
         return pio;
     }
-    
+
     public static PictureIO gI() {
         return getInstance();
     }
-    
+
     /**
      * Non-static part.
      */
     private final DateFormat dateformat = new SimpleDateFormat("yyyy/MM/dd");
-    
-    private PictureIO() {}
-    
+
+    private PictureIO() {
+    }
+
     public ProtocolMessage saveProfilePicture(Picture p) {
         BufferedImage img = decodePicture(p.getImg());
-        
+
         String path = storeOnFS(img);
         //Logger.gI().addDebug("The new path :" + path);
-        
+
         p.setPictureid(PictureHandler.gI().savePicturePath(p, path));
-        
+
         //Logger.gI().addDebug("Picture ID: " + p.getPictureid());
-        
         return PictureHandler.gI().setProfilePicture(p);
     }
-    
+
     public Picture receiveProfilePicture(Picture p) {
         String path = PictureHandler.gI().getProfilePicturePath(p);
-        
-        if (path != null)
-        {
+
+        if (path != null) {
             BufferedImage img = getFromFS(path);
-            
+
             p.setImg(encodePicture(img));
         }
         p.setTimeStamp(System.currentTimeMillis());
-            
+
         return p;
     }
-    
+
     private String storeOnFS(BufferedImage img) {
         Date date = new Date();
         String imgHash;
-        
-        if(img.hashCode() < 0)
+
+        if (img.hashCode() < 0) {
             imgHash = Integer.toString(-img.hashCode());
-        else
+        } else {
             imgHash = Integer.toString(img.hashCode());
-        
-        
-        String path = System.getProperty("user.dir") + "/files/pictures/" +
-                dateformat.format(date).toString() + "/" + Long.toString(System.currentTimeMillis()) + ".png";
-        
+        }
+
+        String path = System.getProperty("user.dir") + "/files/pictures/"
+                + dateformat.format(date).toString() + "/" + Long.toString(System.currentTimeMillis()) + ".png";
+
         File pic = new File(path);
-        
+
         pic.mkdirs();
-        
+
         try {
             ImageIO.write(resizeImage(img), "png", pic);
-        } catch(IOException e) {
+        } catch (IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());
         }
-        
+
         return path;
     }
-    
+
     private BufferedImage getFromFS(String path) {
         try {
             //Logger.gI().addDebug(path);
@@ -123,7 +123,7 @@ public class PictureIO {
         } catch (IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());
         }
-        
+
         return null;
     }
 
@@ -131,71 +131,71 @@ public class PictureIO {
         try {
             InputStream in = new ByteArrayInputStream(imgData);
             return ImageIO.read(in);
-        } catch(IOException e) {
+        } catch (IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());
         }
-        
+
         return null;
     }
-    
+
     private byte[] encodePicture(BufferedImage img) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(img, "png", baos );
+            ImageIO.write(img, "png", baos);
             baos.flush();
             byte[] imgData = baos.toByteArray();
             baos.close();
-            
+
             return imgData;
- 
-        } catch(IOException e) {
+
+        } catch (IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());
         }
-        
+
         return null;
-    }	
-    
-    private static BufferedImage resizeImage(BufferedImage originalImage){
+    }
+
+    private static BufferedImage resizeImage(BufferedImage originalImage) {
         int x = originalImage.getWidth();
         int y = originalImage.getHeight();
-        
-        int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-        
-        if(x >= y) {
-            double factor = (double)500 / x;
+
+        int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+
+        if (x >= y) {
+            double factor = (double) 500 / x;
             x = 500;
             double yside = y * factor;
             y = new Double(yside).intValue();
         } else {
-            double factor = (double)500 / y;
+            double factor = (double) 500 / y;
             y = 500;
             double xside = x * factor;
             x = new Double(xside).intValue();
         }
- 
-	BufferedImage resizedImage = new BufferedImage(x, y, type);
-	Graphics2D g = resizedImage.createGraphics();
-	g.drawImage(originalImage, 0, 0, x, y, null);
-	g.dispose();	
-	g.setComposite(AlphaComposite.Src);
- 
-	g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-	RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-	g.setRenderingHint(RenderingHints.KEY_RENDERING,
-	RenderingHints.VALUE_RENDER_QUALITY);
-	g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-	RenderingHints.VALUE_ANTIALIAS_ON);
- 
-	return resizedImage;
-    }	
-    
+
+        BufferedImage resizedImage = new BufferedImage(x, y, type);
+        Graphics2D g = resizedImage.createGraphics();
+        g.drawImage(originalImage, 0, 0, x, y, null);
+        g.dispose();
+        g.setComposite(AlphaComposite.Src);
+
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+        return resizedImage;
+    }
+
     public static void main(String args[]) {
         BufferedImage a = PictureIO.gI().getFromFS("/Users/jonas/Desktop/cc.jpg");
-        
+
         byte[] b = PictureIO.gI().encodePicture(a);
-        
+
         BufferedImage c = PictureIO.gI().decodePicture(b);
-        
+
         PictureIO.gI().storeOnFS(c);
     }
 }

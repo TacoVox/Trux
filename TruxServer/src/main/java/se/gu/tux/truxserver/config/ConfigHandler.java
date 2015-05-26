@@ -27,8 +27,9 @@ public class ConfigHandler {
      * @return ConfigHandler instance
      */
     public static ConfigHandler getInstance() {
-        if (handler == null)
+        if (handler == null) {
             handler = new ConfigHandler();
+        }
         return handler;
     }
 
@@ -56,7 +57,7 @@ public class ConfigHandler {
 
     /**
      * Constructor to override the standart settings path.
-     * 
+     *
      * @param path Path to a valid .conf file
      */
     public ConfigHandler(String path) {
@@ -65,9 +66,9 @@ public class ConfigHandler {
 
     /**
      * Method which store custom settings via command line arguments.
-     * 
+     *
      * @param args Command line arguments
-     * 
+     *
      * @return boolean depending on success
      */
     public boolean setSettings(String args[]) {
@@ -95,15 +96,16 @@ public class ConfigHandler {
 
     /**
      * Method which loads the setting out of a config file.
-     * 
+     *
      * @param path Path to a valid .conf file
      */
     private void loadConfig(String path) {
         properties = ConfigIO.gI().loadConfig(path);
 
-        if(properties == null)
+        if (properties == null) {
             newFile(path);
-        
+        }
+
         parseConfiguration();
     }
 
@@ -183,13 +185,13 @@ public class ConfigHandler {
         Config.gI().setDbname(properties.getProperty("dbname"));
         Config.gI().setDbuser(properties.getProperty("user"));
         Config.gI().setDbpass(properties.getProperty("password"));
-        
+
         //Setting the settings regarding the session cleanup
         Config.gI().setCleanupInterval(Integer.parseInt(properties.getProperty("cleanupinterval")));
         Config.gI().setSessionTimeout(Integer.parseInt(properties.getProperty("sessiontimeout")));
-        
+
         Config.gI().setMaxNoDBConnections(Short.parseShort(properties.getProperty("maxdbconnections")));
-        
+
         //Setting the settings regarding the eMail
         Config.gI().setGmailUser((String) properties.getProperty("gmailuser"));
         Config.gI().setGmailPass((String) properties.getProperty("gmailpass"));

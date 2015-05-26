@@ -6,7 +6,6 @@ import se.gu.tux.truxserver.logger.Logger;
 public class CleanupRunnable implements Runnable {
 
     // Determines if the main loop should continue
-
     private boolean isRunning = true;
     private int interval = 0;
 

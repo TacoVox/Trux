@@ -12,7 +12,6 @@ import se.gu.tux.truxserver.logger.Logger;
 public class ServerHandler implements Runnable {
 
     // Determines if the main loop should continue
-
     private boolean isRunning = true;
     // Server socket waits for connections
     private ServerSocket ss;
@@ -23,12 +22,12 @@ public class ServerHandler implements Runnable {
     private int port = 0;
     private long connectionTimeout = 0;
 
-    
     /**
-     * Creates a new ServerHandler instance that listens for connections on the specified port.
-     * 
-     * @param truxServer		TruxServer object, in case we need to cancel execution
-     * @param port				Port where the server listens to requests
+     * Creates a new ServerHandler instance that listens for connections on the
+     * specified port.
+     *
+     * @param truxServer	TruxServer object, in case we need to cancel execution
+     * @param port	Port where the server listens to requests
      * @param connectionTimeout	Timeout in seconds for idle connections
      */
     public ServerHandler(TruxServer truxServer, int port, long connectionTimeout) {
@@ -37,10 +36,9 @@ public class ServerHandler implements Runnable {
         this.connectionTimeout = connectionTimeout;
     }
 
-    
     /**
-     * The main server handler runnable. Listens for connections and diverts them to
-     * threads running ServerRunnables.
+     * The main server handler runnable. Listens for connections and diverts
+     * them to threads running ServerRunnables.
      */
     @Override
     public void run() {

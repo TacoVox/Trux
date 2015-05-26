@@ -74,7 +74,7 @@ public class TruxServer {
             // interrupt it with keyboard input from the main thread.
             //sh = new ServerHandler(this, Config.gI().getServerPort(), Config.gI().getConnectionTimeout());
             sh = new ServerHandler(this, 12000, 60 * 15);
-            
+
             serverHandlerThread = new Thread(sh);
             serverHandlerThread.start();
             Logger.gI().addMsg("Trux Server started.\nq followed by enter quits.");

@@ -28,33 +28,35 @@ import se.gu.tux.truxserver.dbconnect.MetricReceiver;
  * @author jonas
  */
 public class MetricSwitcher {
+
     /**
      * Static part.
      */
     private static MetricSwitcher ms = null;
-    
+
     protected static MetricSwitcher getInstance() {
-        if(ms == null)
+        if (ms == null) {
             ms = new MetricSwitcher();
+        }
         return ms;
     }
-    
+
     protected static MetricSwitcher gI() {
         return getInstance();
     }
-    
+
     /**
      * Non-static part.
      */
-    private MetricSwitcher() {}
-    
+    private MetricSwitcher() {
+    }
+
     protected Data handleMetricData(MetricData md) {
-    	if(md.getTimeFrame() == 0) {
+        if (md.getTimeFrame() == 0) {
             MetricInserter.gI().addToDB(md);
 
             return new ProtocolMessage(ProtocolMessage.Type.DATA_RECEIVED);
-        }
-        else {
+        } else {
             return MetricReceiver.gI().getMetric(md);
         }
     }

@@ -32,51 +32,55 @@ import se.gu.tux.truxserver.dbconnect.MetricInserter;
  * @author jonas
  */
 public class DataSwitcher {
+
     /**
      * Static part.
      */
     private static DataSwitcher ds = null;
-    
+
     public static DataSwitcher getInstance() {
-        if(ds == null)
+        if (ds == null) {
             ds = new DataSwitcher();
+        }
         return ds;
     }
-    
+
     public static DataSwitcher gI() {
         return getInstance();
     }
-    
+
     /**
      * Non-static part.
      */
     private Thread mi = null;
-    
+
     private DataSwitcher() {
-        if (mi == null)
+        if (mi == null) {
             mi = new Thread(MetricInserter.gI());
+        }
     }
-    
+
     public void start() {
         mi.start();
     }
-    
+
     public void stop() {
         mi.interrupt();
     }
-    
+
     public Data handleData(Data d) {
-        if (d instanceof MetricData)
-            return MetricSwitcher.gI().handleMetricData((MetricData)d);
-        else if (d instanceof User || d instanceof Friend)
+        if (d instanceof MetricData) {
+            return MetricSwitcher.gI().handleMetricData((MetricData) d);
+        } else if (d instanceof User || d instanceof Friend) {
             return UserSwitcher.gI().handleUser(d);
-        else if (d instanceof ProtocolMessage || d instanceof Message)
+        } else if (d instanceof ProtocolMessage || d instanceof Message) {
             return MessageSwitcher.gI().handleMessage(d);
-        else if (d instanceof Picture)
+        } else if (d instanceof Picture) {
             return PictureSwitcher.gI().handlePicture((Picture) d);
-        else if (d instanceof Heartbeat)
+        } else if (d instanceof Heartbeat) {
             return HeartbeatHandler.gI().handleHB((Heartbeat) d);
-        else
+        } else {
             return null;
+        }
     }
-} 
+}
