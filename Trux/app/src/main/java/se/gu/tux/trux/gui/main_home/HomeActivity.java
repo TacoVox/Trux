@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 
@@ -210,12 +209,6 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         // when swiping between pages, select the
         // corresponding tab.
         actionBar.setSelectedNavigationItem(position);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        System.out.println("Home activity destroyed!");
     }
 
     @Override

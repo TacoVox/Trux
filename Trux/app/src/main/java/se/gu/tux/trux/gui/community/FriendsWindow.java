@@ -161,8 +161,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
      */
     @Override
     public void onFriendsFetched(final ArrayList<Friend> friends) {
-        System.out.println("\n\nAmount of friends: " + friends.size() + "\n\n");
-
         // Last user action was to show friend list
         if (lastFetchCall == FetchCall.FRIENDLIST) {
 

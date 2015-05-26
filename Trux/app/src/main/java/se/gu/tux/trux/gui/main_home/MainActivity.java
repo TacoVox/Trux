@@ -65,7 +65,6 @@ public class MainActivity extends BaseAppActivity
         // Add login form
         userField = (TextView) findViewById(R.id.username);
         passField = (TextView) findViewById(R.id.password);
-
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
         ServerConnector.gI().connect("trux.derkahler.de");
@@ -266,9 +265,9 @@ public class MainActivity extends BaseAppActivity
     {
         if (getFragmentManager().getBackStackEntryCount() == 0)
         {
-            // This is basically the only way the user can shut down the app so we are aware of it.
-            // (If the user just kills the app by swiping it off the list of running apps it's hard
-            // to distinguish from normal activity destruction)
+            // This is basically the only way the user can shut down the app cleanly so we are aware
+            // of it. (If the user just kills the app by swiping it off the list of running apps
+            // it's hard to distinguish from normal activity destruction)
             DataPoller.gI().stop();
             ServerConnector.gI().disconnect();
 
@@ -296,7 +295,6 @@ public class MainActivity extends BaseAppActivity
         @Override
         protected Boolean doInBackground(String... strings)
         {
-
             return LoginService.getInstance().login(strings[0], strings[1],
                     Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
         }
@@ -324,13 +322,11 @@ public class MainActivity extends BaseAppActivity
             try
             {
                 pMessage = (ProtocolMessage) ServerConnector.gI().answerQuery(protocolMessages[0]);
-                if (pMessage.getType() == ProtocolMessage.Type.LOGIN_SUCCESS) {
-                    System.out.println("Current user: "  + DataHandler.getInstance().getUser().getUserId());
+                if (pMessage.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
+                {
                     // Also update the user info by making a request for a User object
                     DataHandler.getInstance().setUser((User)DataHandler.getInstance().getData(
                             DataHandler.getInstance().getUser()));
-                    System.out.println("Current user: "  + DataHandler.getInstance().getUser().getUserId());
-                    System.out.println("Current friends: "  + DataHandler.getInstance().getUser().getFriends());
                 }
             }
             catch (NotLoggedInException e)
