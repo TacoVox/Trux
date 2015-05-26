@@ -24,6 +24,8 @@ import tux.gu.se.trux.R;
  */
 public class RegisterActivity extends BaseAppActivity implements View.OnClickListener
 {
+
+    // constant, the layout for this view
     private static final int LAYOUT_ID = R.layout.activity_register;
 
     // private fields for user info when registering
@@ -42,8 +44,11 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
     private String sEmail;
     private String sPassword;
 
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         setContentView(LAYOUT_ID);
@@ -63,6 +68,7 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
         // set listener to the button
         registerButton.setOnClickListener(this);
     }
+
 
 
     /**
@@ -182,7 +188,7 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
         String regex1 = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@" +
                 "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
 
-        // back-up regex to check e-mail
+        // simplified regex to check e-mail
         //String regex2 = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$";
 
         // perform check on e-mail
@@ -238,7 +244,6 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
     {
         if (view.getId() == R.id.registerButton)
         {
-            System.out.println("-------- calling onClick in RegisterWindow --------");
             registerUser();
         }
     }
@@ -246,7 +251,7 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
 
 
     /**
-     * Private class. Checks if the user register is successful.
+     * Private class to perform async task. Checks if the user register is successful.
      */
     private class RegisterCheck extends AsyncTask<User, Void, ProtocolMessage>
     {

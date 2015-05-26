@@ -39,9 +39,11 @@ public class ConversationListFragment extends Fragment implements AdapterView.On
         FriendFetchListener, View.OnClickListener
 {
 
+    // the data to pass to the adapter
     private ArrayList<Friend> friendsList;
     private ArrayList<Message> messagesList;
 
+    // the loading panel to show until we fetch all information
     private RelativeLayout loadingPanel;
 
     private Message[] messages;
@@ -69,6 +71,7 @@ public class ConversationListFragment extends Fragment implements AdapterView.On
 
         messageButton = (Button) view.findViewById(R.id.new_message_button);
         messageButton.setOnClickListener(this);
+        messageButton.setEnabled(false);
 
         initMessageService();
 
@@ -200,6 +203,8 @@ public class ConversationListFragment extends Fragment implements AdapterView.On
             });
         }
 
+        messageButton.setEnabled(true);
+
     } // end friendsFetched()
 
 
@@ -219,13 +224,20 @@ public class ConversationListFragment extends Fragment implements AdapterView.On
 
 
 
+    /**
+     * Presents the user with an option to choose a friend to send a new message.
+     * Redirects to the chat fragment.
+     */
     private void sendNewMessage()
     {
+        // we use a simple dialog box to show the friends for this user
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Choose a friend");
 
+        // the friends names to use in the dialog box
         String[] friendsNames = new String[friendsList.size()];
 
+        // get the names from the friends list already fetched
         for (int i = 0; i < friendsNames.length; i++)
         {
             String name = friendsList.get(i).getFirstname() + " " + friendsList.get(i).getLastname() +
@@ -233,6 +245,7 @@ public class ConversationListFragment extends Fragment implements AdapterView.On
             friendsNames[i] = name;
         }
 
+        // set the names to show
         builder.setItems(friendsNames, new DialogInterface.OnClickListener()
         {
             @Override
@@ -243,13 +256,15 @@ public class ConversationListFragment extends Fragment implements AdapterView.On
                 ((MessageActivity) getActivity()).onItemClick(obj, getId());
             }
         });
+
         builder.show();
-    }
+
+    } // end sendNewMessage()
 
 
 
     /**
-     * Private class. Fetches the conversations.
+     * Private class to perform async task. Fetches the conversations.
      */
     private class FetchConversationTask extends AsyncTask<ProtocolMessage, Void, ArrayResponse>
     {
