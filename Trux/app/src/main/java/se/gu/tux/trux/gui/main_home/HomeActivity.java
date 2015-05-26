@@ -51,7 +51,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         viewPager = (ViewPager) findViewById(R.id.activity_main_i_container);
 
         // Initialize pager and adapter if no saved instance state
-        if (savedInstanceState == null) {
+        //if (savedInstanceState == null) {
 
             // set adapter and view pager
             HomePagerAdapter pagerAdapter = new HomePagerAdapter(getSupportFragmentManager());
@@ -65,7 +65,10 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
             viewPager.setOnPageChangeListener(this);
             // set adapter
             viewPager.setAdapter(pagerAdapter);
-        }
+        //} else {
+            // Sets the new view to the map
+         //   viewPager.setCurrentItem(1, true);
+        //}
 
     }
 
@@ -218,4 +221,16 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
      * End override methods.                                                               *
      ***************************************************************************************/
 
+
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        outState.putInt("currentTab", viewPager.getCurrentItem());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState (Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        viewPager.setCurrentItem(savedInstanceState.getInt("currentTab"));
+    }
 } // end class

@@ -33,6 +33,11 @@ import se.gu.tux.trux.datastructure.User;
  *
  */
 public class ServerConnector {
+    // Storing address here instead of just calling a setup method from an activity since
+    // we may need to be able to recreate the instance from any activity - normally the instance
+    // should survive garbage collection anyway but let's keep things as independent as possible
+    // (However ideally both address and port should be in some config file)
+    private final static String ADDRESS = "trux.derkahler.de";
 
     // Singleton instance
     private static ServerConnector instance = null;
@@ -42,9 +47,16 @@ public class ServerConnector {
     // The queue - actually a Deque, so we can put things at both ends
     private volatile LinkedBlockingDeque<Data> queue;
 
-    // Private constructor
+
+    /**
+     * Private constructor - construct the connector, start a thread.
+     * Note that the actual connection is not made until something is being sent.
+     */
     private ServerConnector() {
         queue = new LinkedBlockingDeque<>();
+        connector = new ConnectorRunnable(ADDRESS);
+        transmitThread = new Thread(connector);
+        transmitThread.start();
     }
 
 
@@ -72,18 +84,6 @@ public class ServerConnector {
     public synchronized static ServerConnector gI()
     {
         return getInstance();
-    }
-
-
-    /**
-     * Define the address to connect to - the actual connection is not made until something
-     * needs to be sent.
-     * @param address
-     */
-    public void connect(String address) {
-        connector = new ConnectorRunnable(address);
-        transmitThread = new Thread(connector);
-        transmitThread.start();
     }
 
 

@@ -16,7 +16,11 @@ import java.util.concurrent.ExecutionException;
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.LoginService;
 
+import se.gu.tux.trux.application.SettingsHandler;
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.gui.main_home.MainActivity;
+import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 /**
@@ -298,4 +302,29 @@ public class BaseAppActivity extends ActionBarActivity
     } // end inner class
 
 
+    /**
+     * We make sure to store anything critical that we need to make sure isn't killed by
+     * garbage collector
+     * @param outState      The bundle we save to
+     */
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        //
+        outState.putSerializable("user", DataHandler.gI().getUser());
+        outState.putSerializable("settingsHandler", SettingsHandler.getInstance());
+        super.onSaveInstanceState(outState);
+    }
+
+
+    /**
+     * Restore things, see comments on onSaveInstanceState.
+     * @param savedInstanceState    The bundle we restore from
+     */
+    @Override
+    protected void onRestoreInstanceState (Bundle savedInstanceState) {
+        DataHandler.gI().setUser((User)savedInstanceState.getSerializable("user"));
+        SettingsHandler.setInstance(
+                (SettingsHandler)savedInstanceState.getSerializable("settingsHandler"));
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 } // end class

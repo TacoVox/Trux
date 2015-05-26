@@ -1,5 +1,7 @@
 package se.gu.tux.trux.technical_services;
 
+import java.io.Serializable;
+
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
@@ -15,7 +17,7 @@ import se.gu.tux.trux.datastructure.Speed;
  * Created by ivryashkov on 2015-03-24.
  */
 
-public class RealTimeDataHandler
+public class RealTimeDataHandler implements Serializable
 {
     AGADataParser rtdp;
     LocationService locationService;

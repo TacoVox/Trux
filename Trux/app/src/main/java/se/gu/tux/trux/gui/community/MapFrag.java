@@ -168,7 +168,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
 
     @Override
     public void onMapClick(LatLng point) {
-        //Close the map menu that appears when pressing a friend
+        //Close the map menu that appears when pressing a friend (if it is there)
         homeActivity.getSupportFragmentManager().popBackStackImmediate("MENU",
                 FragmentManager.POP_BACK_STACK_INCLUSIVE);
         //Set the value of the selected friend to -1 so it stops follow that person
@@ -231,6 +231,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         mMap = googleMap;
         //Makes it possible for the map to locate the device
         mMap.setMyLocationEnabled(true);
+
         //Gets the normal view of the map (not satalite)
         if(SettingsHandler.getInstance().isNormalMap()) {
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);

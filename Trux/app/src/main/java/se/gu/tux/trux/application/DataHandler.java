@@ -1,7 +1,5 @@
 package se.gu.tux.trux.application;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import com.jjoe64.graphview.series.DataPoint;
 
@@ -43,7 +41,6 @@ import se.gu.tux.trux.technical_services.ServerConnector;
  * Refactor class and xml names
  * Timer in homeactivity **** major *****
  * Check if AGA reconnection works **** major *****
- * Check if state needs to be saved and recreated from bundle **** major *****
  * Make a toast if a followed user goes offline
  * reduce map functionality  **** major *****
  * report if any major changes from today until the final submission
@@ -109,6 +106,10 @@ public class DataHandler
         return getInstance();
     }
 
+    public static void setInstance(DataHandler newInstance) {
+        instance = newInstance;
+    }
+
 
     /**
      * Returns true if a user is logged in.
@@ -118,7 +119,7 @@ public class DataHandler
         boolean isLoggedIn = false;
 
         if (user != null && user.getUserId() > 0 && user.getSessionId() > 0) {
-            return isLoggedIn = true;
+            isLoggedIn = true;
         }
 
         return isLoggedIn;

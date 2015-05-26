@@ -45,11 +45,11 @@ public class SettingsMenuActivity extends BaseAppActivity
                 // set the map type
                 if (mapTypes.getSelectedItem().toString().equals("Standard"))
                 {
-                    SettingsHandler.gI(getApplicationContext()).setNormalMap(true);
+                    SettingsHandler.gI().setNormalMap(true);
                 }
                 else
                 {
-                    SettingsHandler.gI(getApplicationContext()).setNormalMap(false);
+                    SettingsHandler.gI().setNormalMap(false);
                 }
             }
 
@@ -57,7 +57,7 @@ public class SettingsMenuActivity extends BaseAppActivity
             public void onNothingSelected(AdapterView<?> parentView) {}
         });
 
-        if(SettingsHandler.gI(getApplicationContext()).isNormalMap())
+        if(SettingsHandler.gI().isNormalMap())
         {
             mapTypes.setSelection(0);
         }
