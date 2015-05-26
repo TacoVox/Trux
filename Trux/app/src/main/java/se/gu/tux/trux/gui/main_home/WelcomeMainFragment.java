@@ -123,7 +123,7 @@ public class WelcomeMainFragment extends Fragment implements View.OnClickListene
                     notiBuilder.setLights(Color.GREEN, 3000, 3000);
                     notiBuilder.setContentIntent(pendingIntent);
                     //Pushes the notification
-                    notiMan.notify(0, notiBuilder.build());
+                    //notiMan.notify(0, notiBuilder.build());
                     hasPushed = true;
 
                 }
@@ -160,11 +160,11 @@ public class WelcomeMainFragment extends Fragment implements View.OnClickListene
                     notiBuilder.setSmallIcon(R.drawable.truxlogo);
                     notiBuilder.setContentTitle("Trux");
                     notiBuilder.setContentText("You have a new friend request!");
-                    notiBuilder.setVibrate(new long[]{1000, 1000});
+                    //notiBuilder.setVibrate(new long[]{1000, 1000});
                     notiBuilder.setLights(Color.GREEN, 3000, 3000);
                     notiBuilder.setContentIntent(pendingIntent);
                     //Pushes the notification
-                    notiMan.notify(1, notiBuilder.build());
+                    //notiMan.notify(1, notiBuilder.build());
                     hasPushed = true;
                 }
             } else {

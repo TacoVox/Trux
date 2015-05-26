@@ -17,12 +17,10 @@ import se.gu.tux.trux.gui.statistics.StatisticsSimpleFragment;
 import tux.gu.se.trux.R;
 
 /**
- * Handles the community fragment in the main activity.
+ * Handles the community fragment in the main activity. Contains a MapFrag.
  */
 public class CommunityMainFragment extends Fragment implements View.OnClickListener
 {
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,9 +34,16 @@ public class CommunityMainFragment extends Fragment implements View.OnClickListe
         ImageButton friendsButton = (ImageButton) view.findViewById(R.id.fragment_main_friend_button);
         ImageButton profileButton = (ImageButton) view.findViewById(R.id.fragment_main_profile_button);
 
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.mapContainer, new MapFrag());
-        fragmentTransaction.commit();
+        MapFrag mapFrag;
+        if (savedInstanceState != null) {
+            // Do not recreate the MapFrag if there is a saved instance bundle
+            mapFrag = (MapFrag) getActivity().getSupportFragmentManager().findFragmentById(R.id.map);
+        } else {
+            mapFrag = new MapFrag();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.mapContainer, mapFrag);
+            fragmentTransaction.commit();
+        }
 
         // set listener to components
         friendsButton.setOnClickListener(this);

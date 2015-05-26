@@ -38,6 +38,7 @@ public class SocialHandler {
     // Flags, representing if the cache is outdated
     private boolean friendsChanged, friendRequestsChanged;
 
+
     /**
      * Constructor. Initiates the hash maps and sets the friendRequestsChanged flag so we are
      * sure to fetch them the next time they are requested.
@@ -273,6 +274,7 @@ public class SocialHandler {
         return friendsMatchCache;
     }
 
+
     /**
      * Get the requested picture as a Picture object.
      * @param pictureId     The desired pictures id.
@@ -296,7 +298,6 @@ public class SocialHandler {
         // See if the image is not yet cached
         if (pictureCache.get(pictureId) == null) {
             // Try to fecth it
-            System.out.println("Fetching picture...");
             pictureCache.put(pictureId, (Picture)DataHandler.gI().getData(new Picture(pictureId)));
         }
 

@@ -8,7 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
@@ -16,7 +16,6 @@ import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
-import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
 import tux.gu.se.trux.R;
 
 /**
@@ -28,19 +27,16 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
-    //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
     private static final int FRIENDS_BUTTON_WELCOME = R.id.fragment_welcome_friend_button;
     private static final int FRIENDS_BUTTON = R.id.fragment_main_friend_button;
     private static final int PROFILE_BUTTON = R.id.fragment_main_profile_button;
     private static final int MESSAGE_BUTTON = R.id.fragment_welcome_message_button;
     private static final int CLICKED_FRIEND = 1;
-    public long selectedFriendID = (long) -1;
-    public boolean hasclicked = false;
 
+    // Holds the friend id if the user decided to follow a friends location
+    public long selectedFriendID = (long) -1;
 
     private ViewPager viewPager;
-
-    private List<Fragment> fragmentArrayList;
     private ActionBar actionBar;
 
     @Override
@@ -55,31 +51,22 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         // get the pager
         viewPager = (ViewPager) findViewById(R.id.activity_main_i_container);
 
-        // initialise array
-        fragmentArrayList = new ArrayList<>();
+        // Initialize pager and adapter if no saved instance state
+        if (savedInstanceState == null) {
 
-        // create fragments
-        Fragment welcomeFragment = new WelcomeMainFragment();
-        Fragment communityFragment = new CommunityMainFragment();
-        Fragment statsFragment = new StatisticsMainFragment();
+            // set adapter and view pager
+            HomePagerAdapter pagerAdapter = new HomePagerAdapter(getSupportFragmentManager());
 
-        // add fragments to array
-        fragmentArrayList.add(welcomeFragment);
-        fragmentArrayList.add(communityFragment);
-        fragmentArrayList.add(statsFragment);
+            // get action bar
+            actionBar = getSupportActionBar();
+            // initialise action bar
+            initActionBar(actionBar);
 
-        // set adapter and view pager
-        HomePagerAdapter pagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), fragmentArrayList);
-
-        // get action bar
-        actionBar = getSupportActionBar();
-        // initialise action bar
-        initActionBar(actionBar);
-
-        // set page listener
-        viewPager.setOnPageChangeListener(this);
-        // set adapter
-        viewPager.setAdapter(pagerAdapter);
+            // set page listener
+            viewPager.setOnPageChangeListener(this);
+            // set adapter
+            viewPager.setAdapter(pagerAdapter);
+        }
 
     }
 
@@ -149,20 +136,24 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            System.out.println("Minimizing...");
-            // Minimize
-            moveTaskToBack(true);
-        }
-        else
-        {
 
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+
+            // Minimize if no backstack
+            moveTaskToBack(true);
+
+        } else {
+
+            // Clear the backstack from any MENU or PROFILE entries - if they were present, they
+            // are removed. If not, just do a normal popBackStack()
+            // This means when the user has gone to a profile through the map and goes back, the
+            // "menu" also is hidden
             if (!getSupportFragmentManager().popBackStackImmediate("MENU",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE) &&
                 !getSupportFragmentManager().popBackStackImmediate("PROFILE",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE)) {
 
-                System.out.println("Poping back stack...");
+                // None of the above (MENU / PROFILE) was present in backstack
                 getSupportFragmentManager().popBackStack();
             }
         }
@@ -219,6 +210,12 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         // when swiping between pages, select the
         // corresponding tab.
         actionBar.setSelectedNavigationItem(position);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        System.out.println("Home activity destroyed!");
     }
 
     @Override

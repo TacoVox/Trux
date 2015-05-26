@@ -386,7 +386,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         }
 
         private RowType getRowType(int pos) {
-            System.out.println("Friends size: " + friends.size());
+
             if (friendRequests != null && friendRequests.size() > 0) {
                 if (friends != null && friends.size() > 0) {
                     // Friends and friends requests
@@ -433,8 +433,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         @Override
         public View getView(final int position, View view, ViewGroup parent) {
-            System.out.println("Rendering position " + position + ", total count is " + getCount() + "...");
-            System.out.println("Type is " + getRowType(position));
             if (getRowType(position) == RowType.REQ_LABEL) {
                 view = buildRequestLabelRow(view);
             } else if (getRowType(position) == RowType.REQ) {
@@ -449,12 +447,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         }
 
         private View buildFriendRow(int position, View view) {
-            System.out.println("Building friend row");
+
             view = inflater.inflate(R.layout.friend_row, null);
             // Offset the position by getFriendOffset - because there may be a couple of label rows
             // and friend requests - so we can get the index to work on the actual friend list
             final int pos = position - getFriendOffset();
-            System.out.println("Building friend row with pos " + pos);
+
             TextView name = (TextView) view.findViewById(R.id.friendName);
             TextView username = (TextView) view.findViewById(R.id.friendUserName);
             TextView pending = (TextView) view.findViewById(R.id.pending);
@@ -568,8 +566,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             // Offset the position by one since there is a label at row 0
             // So the elements we access at the list are at a lower position
             final int pos = position - 1;
-            System.out.println("Building friend request row");
-
 
             view = inflater.inflate(R.layout.friend_request_row, null);
             TextView name = (TextView) view.findViewById(R.id.friendRequestName);

@@ -76,8 +76,6 @@ public class OverallGraphWindow extends Fragment {
      */
 
     public void refresh() {
-        System.out.println("REFRESHING Overall....");
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -115,10 +113,11 @@ public class OverallGraphWindow extends Fragment {
     }
 
     /**
-     * This method retrieves the data from a bundle that is sent
-     * from the DataHandler class, and changes the points in the graphs accordingly.
+     * This method retrieves the data from bundles that are retrieved and cached in
+     * he DataHandler class, and changes the points in the graphs accordingly.
      *
-     * @param stats
+     * @param speedBundle The speed detailed stats
+     *
      */
 
     public void setValues(DetailedStatsBundle speedBundle, DetailedStatsBundle fuelBundle,
@@ -160,7 +159,7 @@ public class OverallGraphWindow extends Fragment {
         fuelGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
         fuelGraph.getGridLabelRenderer().setPadding(50);
         fuelGraph.getViewport().setMaxX(30);
-        fuelGraph.getViewport().setMaxY(800);
+        fuelGraph.getViewport().setMaxY(80);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);

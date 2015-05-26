@@ -21,7 +21,7 @@ import se.gu.tux.trux.technical_services.ServerConnector;
  * Created by ivryashkov on 2015-04-20.
  *
  * Handles the login and logout to the application.
- *
+ * Note that auto-login is handled in main activity right now.
  */
 public class LoginService
 {

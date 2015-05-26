@@ -149,7 +149,7 @@ public class FuelWindow extends Fragment {
         fuelGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
         fuelGraph.getGridLabelRenderer().setPadding(50);
         fuelGraph.getViewport().setMaxX(30);
-        fuelGraph.getViewport().setMaxY(800);
+        fuelGraph.getViewport().setMaxY(80);
 
         try {
             LinearLayout layout = (LinearLayout) view.findViewById(R.id.FuelGraph);
