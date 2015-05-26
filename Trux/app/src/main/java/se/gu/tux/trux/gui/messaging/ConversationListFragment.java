@@ -125,6 +125,11 @@ public class ConversationListFragment extends Fragment implements AdapterView.On
     @Override
     public void onFriendsFetched(ArrayList<Friend> friends)
     {
+        System.out.println("-------------------------------------------------------------");
+        System.out.println("friends array size in onFriendsFetched: " + friends.size());
+        System.out.println("-------------------------------------------------------------");
+
+
         long userId = DataHandler.getInstance().getUser().getUserId();
 
         ArrayResponse response = null;
