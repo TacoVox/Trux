@@ -69,11 +69,12 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
     private final int PLACE_PICKER_REQUEST = 1;
 
-    String[] spinnerTitles = { "Can't chat right now", "Call you later", "Yes",
+    private String[] spinnerTitles = { "Can't chat right now", "Call you later", "Yes",
             "Okay", "No, thanks pal!", "Busy driving!", "Meet at..." };
 
     private String placeMessage;
     private int spinnerPosition;
+
 
 
     @SuppressLint("SimpleDateFormat")
@@ -143,7 +144,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
         // return the view
         return view;
-    }
+
+    } // end onCreateView()
+
 
 
     @Override
@@ -154,12 +157,14 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     }
 
 
+
     @Override
     public void onResume()
     {
         super.onResume();
         isRunning = true;
     }
+
 
 
     @Override
@@ -169,6 +174,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
         if (id == sendButton.getId()) { sendMessage(false); }
     }
+
 
 
     /**
@@ -438,6 +444,11 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
 
 
+    /**
+     * Returns the text view holder for the user messages.
+     *
+     * @return      TextView
+     */
     private TextView getUserTextView()
     {
         // create the text view to hold the message
@@ -460,6 +471,11 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
 
 
+    /**
+     * Returns the text view holder for the friend messages.
+     *
+     * @return      TextView
+     */
     private TextView getFriendTextView()
     {
         // create the text view to hold the message
@@ -482,10 +498,16 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
 
 
+    /**
+     * Helper method. Checks the distraction level.
+     *
+     * @return  true if low level, false otherwise
+     */
     private boolean isSimple()
     {
         return (DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE);
     }
+
 
 
     @Override
@@ -514,10 +536,19 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     } // end onItemSelected()
 
 
+
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {}
 
 
+
+    /**
+     * Called after request to pick a place to meet.
+     *
+     * @param requestCode   The request code.
+     * @param resultCode    The result of the call.
+     * @param data          The data returned.
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -540,7 +571,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
 
     /**
-     * Private class. Fetches the messages for this conversation.
+     * Private class to perform async task. Fetches the messages for this conversation.
      */
     private class FetchMessagesTask extends AsyncTask<ProtocolMessage, Void, ArrayResponse>
     {

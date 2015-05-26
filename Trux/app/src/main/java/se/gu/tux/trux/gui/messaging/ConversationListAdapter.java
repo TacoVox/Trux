@@ -43,9 +43,9 @@ public class ConversationListAdapter extends BaseAdapter
 
 
     /**
-     * Constructor. Takes the activity to use as context as parameter.
+     * Constructor. Takes the activity to use as parameter.
      *
-     * @param activity      The activity to use as context.
+     * @param activity      The activity to use.
      */
     @SuppressLint("SimpleDateFormat")
     public ConversationListAdapter(Activity activity)
@@ -54,6 +54,7 @@ public class ConversationListAdapter extends BaseAdapter
         layoutInflater = (LayoutInflater) activity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         df = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
     }
+
 
 
     public void setAdapterData(ArrayList<Friend> friends, ArrayList<Message> messages)
@@ -73,6 +74,7 @@ public class ConversationListAdapter extends BaseAdapter
     }
 
 
+
     @Override
     public int getCount()
     {
@@ -85,6 +87,7 @@ public class ConversationListAdapter extends BaseAdapter
     }
 
 
+
     @Override
     public Object getItem(int i)
     {
@@ -92,11 +95,13 @@ public class ConversationListAdapter extends BaseAdapter
     }
 
 
+
     @Override
     public long getItemId(int i)
     {
         return i;
     }
+
 
 
     @Override
@@ -148,6 +153,7 @@ public class ConversationListAdapter extends BaseAdapter
         // return the view
         return newView;
     }
+
 
 
     /**
