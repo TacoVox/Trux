@@ -1,21 +1,21 @@
 package se.gu.tux.trux.gui.statistics;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import se.gu.tux.trux.application.DataHandler;
-
+import se.gu.tux.trux.datastructure.Notification;
+import se.gu.tux.trux.gui.base.TimerUpdateFragment;
 import tux.gu.se.trux.R;
 
 /**
  * Handles the main fragment for the statistics. Shows the appropriate
  * views depending on the driving mode -- in motion or not.
  */
-public class StatisticsMainFragment extends Fragment
+public class StatisticsMainFragment extends TimerUpdateFragment
 {
 
     private DataHandler.SafetyStatus status;
@@ -85,5 +85,8 @@ public class StatisticsMainFragment extends Fragment
         }
     }
 
-
+    @Override
+    public void setStatus(DataHandler.SafetyStatus safetyStatus, Notification notificationStatus) {
+        System.out.println("Statistics setting status...");
+    }
 } // end class

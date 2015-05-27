@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import se.gu.tux.trux.gui.community.CommunityMainFragment;
 import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
 
 /**
@@ -15,10 +15,6 @@ import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
  */
 public class HomePagerAdapter extends FragmentStatePagerAdapter
 {
-
-    // the fragments to display
-    private ArrayList<Fragment> fragmentArrayList;
-
 
     /**
      * Constructor.

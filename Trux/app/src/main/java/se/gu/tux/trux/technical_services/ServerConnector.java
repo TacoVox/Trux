@@ -34,8 +34,9 @@ import se.gu.tux.trux.datastructure.User;
  */
 public class ServerConnector {
     // Storing address here instead of just calling a setup method from an activity since
-    // we may need to be able to recreate the instance from any activity - normally the instance
-    // should survive garbage collection anyway but let's keep things as independent as possible
+    // we may need to be able to recreate the instance from any activity (on restoring the app after
+    // having it in the background) - normally the instance should survive garbage collection anyway
+    // but let's keep things as independent as possible
     // (However ideally both address and port should be in some config file)
     private final static String ADDRESS = "trux.derkahler.de";
 

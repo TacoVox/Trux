@@ -12,7 +12,6 @@ import android.location.Location;
 
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -35,19 +34,19 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.FriendFetchListener;
 import se.gu.tux.trux.application.SettingsHandler;
 import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Friend;
+import se.gu.tux.trux.datastructure.Notification;
+import se.gu.tux.trux.gui.base.TimerUpdateFragment;
 import se.gu.tux.trux.gui.main_home.HomeActivity;
 import tux.gu.se.trux.R;
 
-public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetchListener,
-        GoogleMap.OnMapClickListener {
+public class MapFrag extends TimerUpdateFragment implements OnMapReadyCallback, FriendFetchListener,
+        GoogleMap.OnMapClickListener  {
 
     private GoogleMap mMap;
     private LatLng loc;
@@ -58,10 +57,10 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
     private ArrayList<Friend> friends;
     private MapFrag thisMapFrag = this;
 
-    private Timer t;
-    private PopFriends timer;
     private boolean hasMarker = false;
     private boolean mapLoaded = false;
+    private boolean stopped = true;
+    private boolean followingUser = false;
 
     private RelativeLayout loadingPanel;
     private HomeActivity homeActivity = null;
@@ -98,23 +97,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         homeActivity = (HomeActivity)activity;
     }
 
-    /**
-     * This listens to if the camera position of the map is changed.
-     */
-    private GoogleMap.OnCameraChangeListener  onCameraChangeListener=
-            new GoogleMap.OnCameraChangeListener() {
-                /**
-                 * If the driver is driving then the map will not be scrollable any more.
-                 * @param cameraPosition    Where the camera is on the map.
-                 */
-                @Override
-                public void onCameraChange(CameraPosition cameraPosition) {
-                    if (isDriving())
-                        //If the user is driving lock the screen.
-                        mMap.getUiSettings().setScrollGesturesEnabled(false);
-                }
 
-            };
     /**
      * Sets a OnClickListener for the myLocation button.
      */
@@ -128,8 +111,12 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                 @Override
                 public boolean onMyLocationButtonClick(){
                     {
+                        //Set the value of the selected friend to -1 so it stops following any friend
+                        homeActivity.setSelectedFriend(new Long(-1));
+
                         //Follows the user on the map
                         mMap.setOnMyLocationChangeListener(startFollowing);
+                        followingUser = true;
                         //Makes a toast of how to stop following your loaction.
                         Toast.makeText(homeActivity.getApplication(),
                                 "Following You.\nPress Map to stop Following.", Toast.LENGTH_SHORT).show();
@@ -137,6 +124,8 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                     return false;
                 }
             };
+
+
     /**
      * A listener which listen to the location of the user
      */
@@ -165,16 +154,21 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
      *
      * @param point gets the latitude and longitude from the position you clicked.
      */
-
     @Override
     public void onMapClick(LatLng point) {
         //Close the map menu that appears when pressing a friend (if it is there)
         homeActivity.getSupportFragmentManager().popBackStackImmediate("MENU",
                 FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        //Set the value of the selected friend to -1 so it stops follow that person
-        homeActivity.setSelectedFriend(new Long(-1));
-        //Stops following the user
-        mMap.setOnMyLocationChangeListener(null);
+
+        // Stop following user or friend if currently following
+        if (homeActivity.getSelectedFriend() != -1 || followingUser) {
+
+            //Set the value of the selected friend to -1 so it stops follow that person
+            homeActivity.setSelectedFriend(new Long(-1));
+            //Stops following the user
+            mMap.setOnMyLocationChangeListener(null);
+            homeActivity.showToast("Stopped following.");
+        }
     }
 
     /**
@@ -194,14 +188,14 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
             //Gets the marker ID
             String markerID = marker.getId();
             //Creates a new fragment with the menu for chating or viewing the selected friend
-            MapCommunityWindow fragment = new MapCommunityWindow();
+            MapSocialMenu fragment = new MapSocialMenu();
             //Use the markerID to get the friend of that marker from the hashmap
             Friend friend = friendMarker.get(markerID);
             Bundle sendToInfoFragment = new Bundle();
             //Puts the friend in the bundle
             sendToInfoFragment.putSerializable("friend", friend);
             fragment.setArguments(sendToInfoFragment);
-            //Make the transaction to the MapCommunityWindow fragment
+            //Make the transaction to the MapSocialMenu fragment
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -211,7 +205,6 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
             //Adds it to the BackStack
             fragmentTransaction.addToBackStack("MENU");
             fragmentTransaction.replace(R.id.menuContainer, fragment);
-            System.out.println("Count on the popStack in mapFrag: " + getFragmentManager().getBackStackEntryCount());
             fragmentTransaction.commit();
 
             return false;
@@ -271,13 +264,10 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         //Sets the HashMap to be format String, Friend
         friendMarker = new HashMap<String, Friend>();
 
-        //Creats a timeTask that will fetch the friends.
-        t = new Timer();
-        timer = new PopFriends();
-        t.schedule(timer, 0, 10000);
-
+        // Set flag
         mapLoaded = true;
     }
+
 
     /**
      * When the friends are fetched this is executed and take the friends from the ArrayList
@@ -322,10 +312,7 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                                     .position(new LatLng(loc[0], loc[1]))
                                     .title(currentFriend.getFirstname())
                                     .icon(BitmapDescriptorFactory.fromBitmap(pic)));
-                            //Puts a text on the markerInfo that the friend is Driving (if driving)
-                            if(isDriving()){
-                                m.setSnippet("DRIVING");
-                            }
+
                             String mID = m.getId();
                             //Puts the created markers ID to the hashmap and the currentFriend
                             friendMarker.put(mID, currentFriend);
@@ -333,6 +320,9 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                             hasMarker = true;
                             //Set the position of the selected friend in the friendlist
                             if(selectedFriend == currentFriend.getFriendId()){
+                                // Make sure we are not following the user instead of the friend
+                                mMap.setOnMyLocationChangeListener(null);
+                                // Move the camera to the friend
                                 mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(loc[0], loc[1])));
                             }
                         }
@@ -354,20 +344,17 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
      * @param friends   ArrayList of FriendRequests
      */
     @Override
-    public void onFriendRequestsFetched(ArrayList<Friend> friends) {
+    public void onFriendRequestsFetched(ArrayList<Friend> friends) {}
 
-    }
 
-    /**
-     * This method will populate the map with the friend pictures and put
-     * them on the currect position.
-     */
-
-    class PopFriends extends TimerTask{
-        public void run(){
-            //Fetches the friends from the SocialHandler
+    @Override
+    public void setStatus(final DataHandler.SafetyStatus safetyStatus, Notification notificationStatus) {
+        // Update the map
+        if(mapLoaded && !stopped) {
+            //Fetch the friends from the SocialHandler - will result in calling onFriendsFetched
             DataHandler.gI().getSocialHandler().fetchFriends(thisMapFrag,
                     SocialHandler.FriendsUpdateMode.ONLINE);
+
             homeActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -377,12 +364,12 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
                     } else {
                         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                     }
+
                     //If the user is driving lock the google map screen
-                    if(mMap != null && isDriving()){
-                        mMap.setOnCameraChangeListener(onCameraChangeListener);
-                    }
-                    //If the user is not driving the map isn't locked
-                    else{
+                    if(safetyStatus != DataHandler.SafetyStatus.IDLE) {
+                        mMap.getUiSettings().setScrollGesturesEnabled(false);
+                    } else {
+                        //If the user is not driving the map isn't locked
                         mMap.getUiSettings().setScrollGesturesEnabled(true);
                     }
                 }
@@ -390,45 +377,29 @@ public class MapFrag extends Fragment implements OnMapReadyCallback, FriendFetch
         }
     }
 
-    /**
-     * If the timer is not null it will cancel and
-     * is set to null.
-     */
-    public void onStop(){
-        super.onStop();
-        if(t != null) {
-            //Cancels the Timer
-            t.cancel();
-            //Sets the timer to null
-            t = null;
-        }
-    }
+
+
 
     /**
-     * Resumes the fragment and creates a new Timer and TimerTask
-     * so that the friends will be fetched again and become markers
-     * again. It is schedule for every 10 second.
+     * Set the stop flag.
+     */
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopped = true;
+    }
+
+
+    /**
+     * Resumes the fragment. Set the stoppped flag to false.
+     * Show the loading panel until map has been refreshed.
      */
     public void onResume(){
         super.onResume();
-
         loadingPanel.setVisibility(View.VISIBLE);
+        stopped = false;
 
-        if(mapLoaded && t == null) {
-            //Creates a new TimerTask
-            t = new Timer();
-            timer = new PopFriends();
-            t.schedule(timer, 0, 10000);
-        }
-    }
-
-    /**
-     * Checks if the driver is distracted from SafetyStatus.
-     *
-     * @return  returns true if driver is distracted.
-     */
-    private boolean isDriving(){
-        //Returns the state of the driver
-        return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
+        // Manually call setStatus to force update of the map
+        setStatus(DataHandler.gI().getSafetyStatus(), DataHandler.gI().getNotificationStatus());
     }
 }

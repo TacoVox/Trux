@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -501,7 +500,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 @Override
                 public void onClick(View view) {
 
-                    InfoFragment friendInfo = new InfoFragment();
+                    FriendProfileFragment friendInfo = new FriendProfileFragment();
                     Bundle friendBundle = new Bundle();
                     friendBundle.putSerializable("friend", friends.get(pos));
                     friendInfo.setArguments(friendBundle);

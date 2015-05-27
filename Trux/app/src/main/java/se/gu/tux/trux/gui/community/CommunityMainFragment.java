@@ -1,27 +1,29 @@
 package se.gu.tux.trux.gui.community;
 
-import android.media.Image;
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
-import se.gu.tux.trux.gui.community.MapFrag;
+import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.datastructure.Notification;
+import se.gu.tux.trux.gui.base.TimerUpdateFragment;
 import se.gu.tux.trux.gui.main_home.HomeActivity;
-import se.gu.tux.trux.gui.statistics.StatisticsSimpleFragment;
 import tux.gu.se.trux.R;
 
+
 /**
- * Handles the community fragment in the main activity. Contains a MapFrag.
+ * The community fragment is the second page in the viewpager in the main activity.
+ * This fragment handles the buttons in the bottom and holds a MapFrag that takes care of the
+ * Google map.
  */
-public class CommunityMainFragment extends Fragment implements View.OnClickListener
+public class CommunityMainFragment extends TimerUpdateFragment implements View.OnClickListener
 {
+    private ImageButton friendsButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,7 +34,7 @@ public class CommunityMainFragment extends Fragment implements View.OnClickListe
 
         // get components
         FrameLayout mapContainer = (FrameLayout) view.findViewById(R.id.mapContainer);
-        ImageButton friendsButton = (ImageButton) view.findViewById(R.id.fragment_main_friend_button);
+        friendsButton = (ImageButton) view.findViewById(R.id.fragment_main_friend_button);
         ImageButton profileButton = (ImageButton) view.findViewById(R.id.fragment_main_profile_button);
 
         MapFrag mapFrag;
@@ -62,5 +64,32 @@ public class CommunityMainFragment extends Fragment implements View.OnClickListe
         ((HomeActivity) getActivity() ).onFragmentViewClick(view.getId());
     }
 
+    /**
+     * This method puts up the correct image on the message button depending on if the
+     * user has seen all messages or not.
+     */
+    private void updateIcons() {
+        Notification not = DataHandler.getInstance().getNotificationStatus();
+
+        // Update friend icon
+        if (not != null && not.isNewFriends()) {
+            friendsButton.setImageResource(R.drawable.friendsnotificationicon);
+        } else {
+            friendsButton.setImageResource(R.drawable.friendsicon);
+        }
+    }
+
+    @Override
+    public void setStatus(DataHandler.SafetyStatus safetyStatus, Notification notificationStatus) {
+        Activity a = getActivity();
+        if (a != null) {
+            a.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateIcons();
+                }
+            });
+        }
+    }
 
 } // end class

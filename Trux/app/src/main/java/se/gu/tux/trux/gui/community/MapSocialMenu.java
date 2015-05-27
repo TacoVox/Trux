@@ -16,8 +16,10 @@ import se.gu.tux.trux.gui.messaging.MessageActivity;
 import tux.gu.se.trux.R;
 
 
-
-
+/**
+ * This fragment holds the little menu that pops up when you click a friend in the map,
+ * from which you can currently go to that friends profile or go to the chat window for that friend.
+ */
 public class MapSocialMenu extends Fragment {
 
     LinearLayout menu, layout;
@@ -83,7 +85,7 @@ public class MapSocialMenu extends Fragment {
 
     public void showInfoWindow() {
 
-        InfoFragment ifragment = new InfoFragment();
+        FriendProfileFragment ifragment = new FriendProfileFragment();
 
         //Passing the arguments from MapFrag to InfoFragment
         ifragment.setArguments(this.getArguments());
