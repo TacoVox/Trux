@@ -1,7 +1,6 @@
 package se.gu.tux.trux.gui.community;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,19 +24,19 @@ import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
+
 /**
  * This class handles the friends profile page which view the friends picture, name,
  * message and remove button. The message button takes you to the conversation with
  * that friend and the remove button takes away the friend from you friends.
  */
-
-public class InfoFragment extends Fragment implements FriendActionListener {
+public class FriendProfileFragment extends Fragment implements FriendActionListener {
 
     private TextView profileTitle;
     private ImageButton removeButton, messageButton;
     private ImageView profilePic;
     private Friend friend;
-    private InfoFragment thisFragment = this;
+    private FriendProfileFragment thisFragment = this;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

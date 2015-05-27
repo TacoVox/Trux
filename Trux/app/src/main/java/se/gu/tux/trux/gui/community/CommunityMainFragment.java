@@ -1,4 +1,4 @@
-package se.gu.tux.trux.gui.main_home;
+package se.gu.tux.trux.gui.community;
 
 import android.media.Image;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import se.gu.tux.trux.gui.community.MapFrag;
+import se.gu.tux.trux.gui.main_home.HomeActivity;
 import se.gu.tux.trux.gui.statistics.StatisticsSimpleFragment;
 import tux.gu.se.trux.R;
 

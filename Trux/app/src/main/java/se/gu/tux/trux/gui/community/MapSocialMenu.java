@@ -16,7 +16,9 @@ import se.gu.tux.trux.gui.messaging.MessageActivity;
 import tux.gu.se.trux.R;
 
 
-public class MapCommunityWindow extends Fragment {
+
+
+public class MapSocialMenu extends Fragment {
 
     LinearLayout menu, layout;
     ImageButton messageButton, infoButton;
@@ -77,19 +79,7 @@ public class MapCommunityWindow extends Fragment {
         return view;
     }
 
-   /* public void removeMenu() {
 
-        Fragment mcw = this;
-
-        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-        fragmentTransaction.remove(mcw);
-        getActivity().getSupportFragmentManager().popBackStackImmediate("MENU",
-                FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        getActivity().getSupportFragmentManager().popBackStack();
-        fragmentTransaction.commit();
-    }*/
 
     public void showInfoWindow() {
 
@@ -106,7 +96,6 @@ public class MapCommunityWindow extends Fragment {
         fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
         fragmentTransaction.addToBackStack("PROFILE");
-        System.out.println("Count on the popStack in MCW: " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
         fragmentTransaction.replace(R.id.contentContainer, ifragment);
         fragmentTransaction.commit();
     }
