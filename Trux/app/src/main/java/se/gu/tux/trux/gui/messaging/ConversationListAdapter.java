@@ -25,7 +25,7 @@ import tux.gu.se.trux.R;
  *
  * Handles the display for the message list activity.
  */
-public class MessageListAdapter extends BaseAdapter
+public class ConversationListAdapter extends BaseAdapter
 {
 
     // the data to display
@@ -43,18 +43,18 @@ public class MessageListAdapter extends BaseAdapter
 
 
     /**
-     * Constructor. Takes the activity where to display items and
-     * the data to display on those items.
+     * Constructor. Takes the activity to use as parameter.
      *
-     * @param activity  The inflater.
+     * @param activity      The activity to use.
      */
     @SuppressLint("SimpleDateFormat")
-    public MessageListAdapter(Activity activity)
+    public ConversationListAdapter(Activity activity)
     {
         this.activity = activity;
         layoutInflater = (LayoutInflater) activity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         df = new SimpleDateFormat("yyyy-MM-dd-HH:mm");
     }
+
 
 
     public void setAdapterData(ArrayList<Friend> friends, ArrayList<Message> messages)
@@ -74,6 +74,7 @@ public class MessageListAdapter extends BaseAdapter
     }
 
 
+
     @Override
     public int getCount()
     {
@@ -86,6 +87,7 @@ public class MessageListAdapter extends BaseAdapter
     }
 
 
+
     @Override
     public Object getItem(int i)
     {
@@ -93,11 +95,13 @@ public class MessageListAdapter extends BaseAdapter
     }
 
 
+
     @Override
     public long getItemId(int i)
     {
         return i;
     }
+
 
 
     @Override
@@ -149,6 +153,7 @@ public class MessageListAdapter extends BaseAdapter
         // return the view
         return newView;
     }
+
 
 
     /**

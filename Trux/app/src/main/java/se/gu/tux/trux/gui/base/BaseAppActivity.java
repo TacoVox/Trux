@@ -16,7 +16,11 @@ import java.util.concurrent.ExecutionException;
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.LoginService;
 
+import se.gu.tux.trux.application.SettingsHandler;
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.gui.main_home.MainActivity;
+import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 /**
@@ -29,8 +33,10 @@ public class BaseAppActivity extends ActionBarActivity
 {
 
     // keeps track of the current view showing on the screen
-    private static int currentViewId;
+    private int currentViewId;
     private MenuItem logoutItem;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -52,18 +58,33 @@ public class BaseAppActivity extends ActionBarActivity
         return super.onCreateOptionsMenu(menu);
     }
 
-    public boolean onPrepareOptionsMenu (Menu menu) {
+
+
+    public boolean onPrepareOptionsMenu (Menu menu)
+    {
         validateOptions();
         return super.onPrepareOptionsMenu(menu);
     }
 
-    public void validateOptions() {
-        if (DataHandler.getInstance().isLoggedIn()) {
+
+
+    /**
+     * Enables and disables the logout item in the menu
+     * based on if the user is logged in or not.
+     */
+    public void validateOptions()
+    {
+        if (DataHandler.getInstance().isLoggedIn())
+        {
             logoutItem.setEnabled(true);
-        } else {
+        }
+        else
+        {
             logoutItem.setEnabled(false);
         }
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -182,7 +203,7 @@ public class BaseAppActivity extends ActionBarActivity
 
 
     /**
-     * Helper method. Gets the about information to display based
+     * Helper method. Gets the help information to display based
      * on the current view showing. Returns a String array with the
      * title at index 0 and the message at index 1.
      *
@@ -245,21 +266,22 @@ public class BaseAppActivity extends ActionBarActivity
 
         }
 
-
-
         // Make sure there is no history for the back button
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
+        if (getFragmentManager().getBackStackEntryCount() > 0)
+        {
             getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
+
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+
     } // end logout()
 
 
 
     /**
-     * Private class. Logs out the user.
+     * Private class to perform async task. Logs out the user.
      */
     private class LogoutTask extends AsyncTask<Void, Void, Boolean>
     {
@@ -279,4 +301,30 @@ public class BaseAppActivity extends ActionBarActivity
 
     } // end inner class
 
+
+    /**
+     * We make sure to store anything critical that we need to make sure isn't killed by
+     * garbage collector
+     * @param outState      The bundle we save to
+     */
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        //
+        outState.putSerializable("user", DataHandler.gI().getUser());
+        outState.putSerializable("settingsHandler", SettingsHandler.getInstance());
+        super.onSaveInstanceState(outState);
+    }
+
+
+    /**
+     * Restore things, see comments on onSaveInstanceState.
+     * @param savedInstanceState    The bundle we restore from
+     */
+    @Override
+    protected void onRestoreInstanceState (Bundle savedInstanceState) {
+        DataHandler.gI().setUser((User)savedInstanceState.getSerializable("user"));
+        SettingsHandler.setInstance(
+                (SettingsHandler)savedInstanceState.getSerializable("settingsHandler"));
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 } // end class

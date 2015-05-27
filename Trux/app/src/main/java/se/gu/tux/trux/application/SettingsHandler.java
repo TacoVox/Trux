@@ -6,13 +6,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Properties;
 
 /**
  * Class to handle and wrap settings.
  * Created by jonas on 15.05.15.
  */
-public class SettingsHandler {
+public class SettingsHandler implements Serializable {
     /*
      * Static part.
      */
@@ -26,8 +27,18 @@ public class SettingsHandler {
         return instance;
     }
 
-    public static SettingsHandler gI(Context context) {
+    public static SettingsHandler gI() {
         return getInstance();
+    }
+
+
+    /**
+     * Used by the activities' restore instance state methods, to be able to restore the settings
+     * handler instance, otherwise we have problems with it getting garbage collected
+     * @param i     The instance
+     */
+    public static void setInstance (SettingsHandler i) {
+        instance = i;
     }
 
     /*
@@ -92,7 +103,7 @@ public class SettingsHandler {
             normalMap = false;
             System.out.println("Map is hybrid.");
         } else
-            System.out.println("Map is normal motherfucker");
+            System.out.println("Map is normal");
     }
 
     public boolean isNormalMap() {

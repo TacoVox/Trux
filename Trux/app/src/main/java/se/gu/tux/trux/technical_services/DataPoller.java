@@ -4,24 +4,37 @@ import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Heartbeat;
 import se.gu.tux.trux.datastructure.Location;
 
+
 /**
- * Created by jerker on 2015-04-01.
- *
  * This will run on its own thread, with configurable intervals query the real time data
- * handler and later on any social data that should be pushed regularly... and send it to
- * the ServerConnectors queue so it is sent to the server
+ * handler and put data in the ServerConnectors queue so it is sent to the server.
  *
+ * Created by jerker on 2015-04-01.
  */
 public class DataPoller {
+
+    // Singleton instance
     private static DataPoller instance;
+
     // Seconds to sleep
     private final static int POLL_INTERVAL = 10;
+
+    // Thread and runnable.
     private Thread t;
     private PollRunnable pr;
+
+    // Last known set of metrics - stored because if metrics are unchanged between intervals they
+    // are not sent.
     private Data[] lastMetrics = null;
 
+    // Private constructor
     private DataPoller() {}
 
+
+    /**
+     * Returns the instance.
+     * @return The DataPoller instance.
+     */
     public static DataPoller getInstance()
     {
         // Double checked locking
@@ -35,13 +48,24 @@ public class DataPoller {
 
         }
         return instance;
-    } // end getInstance()
+    }
 
+
+    /**
+     * Returns the instance.
+     * @return The DataPoller instance.
+     */
     public synchronized static DataPoller gI()
     {
        return getInstance();
     }
 
+
+    /**
+     * Starts the runnable that will poll the RealTimeDataHandler for data and put in in the
+     * ServerConnector queue.
+     * @param rtdh  The RealTimeDataHandler instance.
+     */
     public void start(RealTimeDataHandler rtdh) {
         if (pr == null) {
             pr = new PollRunnable(rtdh);
@@ -50,18 +74,31 @@ public class DataPoller {
         }
     }
 
+
+    /**
+     * Stops the runnable.
+     */
     public void stop() {
         t.interrupt();
     }
 
 
+    /**
+     * This inner class defines the runnable that polls the RealTimeDataHandler for data.
+     */
     class PollRunnable implements Runnable {
         private boolean isRunning = true;
         private RealTimeDataHandler rtdh;
 
+
+        /**
+         * Creates a PollRunnable instance that will query this RealTimeDataHandler for data.
+         * @param rtdh
+         */
         public PollRunnable(RealTimeDataHandler rtdh) {
             this.rtdh = rtdh;
         }
+
 
         /**
          * Returns true if the array has any value that is not null.
@@ -79,11 +116,14 @@ public class DataPoller {
         }
 
 
+        /**
+         * Main run method.
+         */
         @Override
         public void run() {
             while (isRunning) {
-                // Main loop - every POLL_INTERVAL seconds, pull data from AGA and also provide a
-                // heartbeat to the server
+                // Main loop - every POLL_INTERVAL seconds, pull data from RealTimeDataHandler
+                // and also provide a heartbeat to the server
                 try {
                     // Make sure the queue doesn't grow to big by removing some things
                     // if it's really big
@@ -122,6 +162,11 @@ public class DataPoller {
     }
 
 
+    /**
+     * Helper method that evaluates if the metrics have changed since the last poll
+     * @param metrics   The newest set of metrics
+     * @return          A boolean representing whether data has changed
+     */
     private boolean metricsChanged(Data[] metrics) {
         // Compare with latest received metrics - yes, we compare the whole array
         // (We only transmit if some value has changed, otherwise there may be a
@@ -144,6 +189,7 @@ public class DataPoller {
         }
         return send;
     }
+
 
     /**
      * If we loose connection to the server but still get values continously, the queue may grow

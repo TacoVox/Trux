@@ -21,7 +21,7 @@
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bottom_button"
+        android:background="@drawable/custom_button"
         android:src="@drawable/friendsiconwithtext"
         android:scaleType="fitCenter"
         android:id="@+id/fragment_main_friend_button"
@@ -32,7 +32,7 @@
         android:id="@+id/fragment_main_profile_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bottom_button"
+        android:background="@drawable/custom_button"
         android:src="@drawable/profileiconwithtext"
         android:scaleType="fitCenter"
         android:layout_weight="1"/>

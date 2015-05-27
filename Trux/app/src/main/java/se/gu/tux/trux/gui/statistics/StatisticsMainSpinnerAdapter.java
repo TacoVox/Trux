@@ -10,8 +10,6 @@ import android.widget.TextView;
 import tux.gu.se.trux.R;
 
 /**
- * Created by ivryashkov on 2015-05-07.
- *
  * Custom spinner adapter. Loads a custom view for each spinner item.
  */
 public class StatisticsMainSpinnerAdapter extends ArrayAdapter<String>

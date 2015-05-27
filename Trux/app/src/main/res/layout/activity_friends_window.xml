@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/search_button_text"
                 android:id="@+id/searchButton"
-                android:background="@drawable/bottom_button"
+                android:background="@drawable/custom_button"
                 android:textColor="#E0E0E0"
                 android:layout_marginStart="1dp"/>
 

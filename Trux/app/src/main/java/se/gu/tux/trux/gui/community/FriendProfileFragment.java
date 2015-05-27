@@ -1,7 +1,6 @@
 package se.gu.tux.trux.gui.community;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,13 +25,18 @@ import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
 
-public class InfoFragment extends Fragment implements FriendActionListener {
+/**
+ * This class handles the friends profile page which view the friends picture, name,
+ * message and remove button. The message button takes you to the conversation with
+ * that friend and the remove button takes away the friend from you friends.
+ */
+public class FriendProfileFragment extends Fragment implements FriendActionListener {
 
     private TextView profileTitle;
     private ImageButton removeButton, messageButton;
     private ImageView profilePic;
     private Friend friend;
-    private InfoFragment thisFragment = this;
+    private FriendProfileFragment thisFragment = this;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,7 +47,8 @@ public class InfoFragment extends Fragment implements FriendActionListener {
         profileTitle = (TextView) view.findViewById(R.id.profile_title);
         profilePic = (ImageView) view.findViewById(R.id.infoPicture);
 
-        if(this.getArguments() != null) {
+        //These arguments are sent from MapFrag if opened MapCommunityWindow or from FriendsWindow if opened from there
+        if (this.getArguments() != null) {
             friend = (Friend) this.getArguments().getSerializable("friend");
         }
 
@@ -52,6 +57,10 @@ public class InfoFragment extends Fragment implements FriendActionListener {
         return view;
     }
 
+    /**
+     * This method handles to view the profile picture of the friend and
+     * why the name as well as the buttonClickListeners.
+     */
     private void showFriendInfo() {
         if (friend != null) {
             profileTitle.setText(friend.getFirstname() + " " + friend.getLastname()
@@ -63,7 +72,7 @@ public class InfoFragment extends Fragment implements FriendActionListener {
                         , 500, 500, false);
                 profilePic.setImageBitmap(pic);
             }
-
+            //On click it takes the user to the converstation with that friend.
             messageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -74,11 +83,11 @@ public class InfoFragment extends Fragment implements FriendActionListener {
                     startActivity(intent);
                 }
             });
-
+            //On click it removes the friend from the friendlist
             removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    //Shows a DialogBox that makes sure that the user wants to remove the friend.
                     new AlertDialog.Builder(getActivity())
                             .setTitle(R.string.community_remove)
                             .setMessage(R.string.remove_dialog_message)
@@ -100,9 +109,6 @@ public class InfoFragment extends Fragment implements FriendActionListener {
                                 }
                             })
                             .show();
-
-
-
                 }
             });
         }
@@ -110,30 +116,40 @@ public class InfoFragment extends Fragment implements FriendActionListener {
 
     public void onStop() {
         super.onStop();
-
     }
-    public void onPause(){
+
+    public void onPause() {
         super.onPause();
-
     }
-    public void onResume(){
+
+    public void onResume() {
         super.onResume();
     }
 
+    /**
+     * This is never used in this class.
+     *
+     * @param friendId
+     * @param accepted
+     */
     @Override
     public void onFriendRequestAnswered(long friendId, boolean accepted) {
-
     }
 
+    /**
+     * This is never used in this class.
+     *
+     * @param friendId
+     */
     @Override
     public void onFriendRequestSent(long friendId) {
-
     }
 
     /**
      * Called from a background thread, so we must run some things on UI thread when showing
-     * updates here
-     * @param friendId
+     * updates here.
+     *
+     * @param friendId the friends ID.
      */
     @Override
     public void onFriendRemoveSent(long friendId) {
@@ -153,23 +169,16 @@ public class InfoFragment extends Fragment implements FriendActionListener {
                 if (a instanceof FriendsWindow) {
                     ((FriendsWindow) a).refresh();
 
-                    // Go back
+                // Go back
                     a.getSupportFragmentManager().popBackStack();
-                } else if (a instanceof HomeActivity){
-                    // If not, we created this window from the map.
-                    // Then we need to clear the backstack from for example the short menu that
-                    // pops up before you choose to show the profile.
-                    // Let's pretent we did a back press
+                } else if (a instanceof HomeActivity) {
+                // If not, we created this window from the map.
+                // Then we need to clear the backstack from for example the short menu that
+                // pops up before you choose to show the profile.
+                // Let's pretent we did a back press
                     a.onBackPressed();
                 }
-
-
-
-
             }
         });
     }
 }
-
-
-

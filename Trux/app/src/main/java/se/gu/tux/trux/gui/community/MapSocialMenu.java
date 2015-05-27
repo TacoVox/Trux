@@ -1,30 +1,26 @@
 package se.gu.tux.trux.gui.community;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import java.util.HashMap;
-
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Friend;
-import se.gu.tux.trux.gui.messaging.FriendListFragment;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
 import tux.gu.se.trux.R;
 
 
-public class MapCommunityWindow extends Fragment {
+/**
+ * This fragment holds the little menu that pops up when you click a friend in the map,
+ * from which you can currently go to that friends profile or go to the chat window for that friend.
+ */
+public class MapSocialMenu extends Fragment {
 
     LinearLayout menu, layout;
     ImageButton messageButton, infoButton;
@@ -85,23 +81,11 @@ public class MapCommunityWindow extends Fragment {
         return view;
     }
 
-   /* public void removeMenu() {
 
-        Fragment mcw = this;
-
-        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-        fragmentTransaction.remove(mcw);
-        getActivity().getSupportFragmentManager().popBackStackImmediate("MENU",
-                FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        getActivity().getSupportFragmentManager().popBackStack();
-        fragmentTransaction.commit();
-    }*/
 
     public void showInfoWindow() {
 
-        InfoFragment ifragment = new InfoFragment();
+        FriendProfileFragment ifragment = new FriendProfileFragment();
 
         //Passing the arguments from MapFrag to InfoFragment
         ifragment.setArguments(this.getArguments());
@@ -114,7 +98,6 @@ public class MapCommunityWindow extends Fragment {
         fragmentTransaction.setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
         fragmentTransaction.addToBackStack("PROFILE");
-        System.out.println("Count on the popStack in MCW: " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
         fragmentTransaction.replace(R.id.contentContainer, ifragment);
         fragmentTransaction.commit();
     }

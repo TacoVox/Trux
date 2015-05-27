@@ -1,6 +1,5 @@
 package se.gu.tux.trux.gui.main_home;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -32,11 +31,13 @@ import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 
+/**
+ * Main activity - shows the login screen.
+ * Also handles auto-login right now. The other login/logout functions are in LoginService.
+ */
+
 public class MainActivity extends BaseAppActivity
 {
-    Fragment newFragment;
-    FragmentTransaction transaction;
-
     TextView userField;
     TextView passField;
     CheckBox checkBox;
@@ -64,10 +65,7 @@ public class MainActivity extends BaseAppActivity
         // Add login form
         userField = (TextView) findViewById(R.id.username);
         passField = (TextView) findViewById(R.id.password);
-
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
-
-        ServerConnector.gI().connect("trux.derkahler.de");
 
         // Create login service
         LoginService.createInstance(this.getBaseContext(), FILE_NAME);
@@ -86,9 +84,8 @@ public class MainActivity extends BaseAppActivity
         DataHandler.getInstance().setRealTimeDataHandler(rtdh);
         DataPoller.gI().start(rtdh);
 
+        // See if the user account file exists
         file = new File(getFilesDir(), FILE_NAME);
-
-        // create a file to store data
         if (!file.exists())
         {
             try
@@ -133,12 +130,6 @@ public class MainActivity extends BaseAppActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    /*    new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ServerConnector.gI().disconnect();
-            }
-        }).start();*/
     }
 
     public void goToRegister(View view)
@@ -272,6 +263,12 @@ public class MainActivity extends BaseAppActivity
     {
         if (getFragmentManager().getBackStackEntryCount() == 0)
         {
+            // This is basically the only way the user can shut down the app cleanly so we are aware
+            // of it. (If the user just kills the app by swiping it off the list of running apps
+            // it's hard to distinguish from normal activity destruction)
+            DataPoller.gI().stop();
+            ServerConnector.gI().disconnect();
+
             this.finish();
         }
         else
@@ -296,7 +293,6 @@ public class MainActivity extends BaseAppActivity
         @Override
         protected Boolean doInBackground(String... strings)
         {
-
             return LoginService.getInstance().login(strings[0], strings[1],
                     Long.parseLong(strings[2]), Long.parseLong(strings[3]), Short.parseShort(strings[4]));
         }
@@ -324,13 +320,11 @@ public class MainActivity extends BaseAppActivity
             try
             {
                 pMessage = (ProtocolMessage) ServerConnector.gI().answerQuery(protocolMessages[0]);
-                if (pMessage.getType() == ProtocolMessage.Type.LOGIN_SUCCESS) {
-                    System.out.println("Current user: "  + DataHandler.getInstance().getUser().getUserId());
+                if (pMessage.getType() == ProtocolMessage.Type.LOGIN_SUCCESS)
+                {
                     // Also update the user info by making a request for a User object
                     DataHandler.getInstance().setUser((User)DataHandler.getInstance().getData(
                             DataHandler.getInstance().getUser()));
-                    System.out.println("Current user: "  + DataHandler.getInstance().getUser().getUserId());
-                    System.out.println("Current friends: "  + DataHandler.getInstance().getUser().getFriends());
                 }
             }
             catch (NotLoggedInException e)

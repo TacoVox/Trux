@@ -21,14 +21,10 @@ import se.gu.tux.trux.technical_services.ServerConnector;
  * Created by ivryashkov on 2015-04-20.
  *
  * Handles the login and logout to the application.
- *
+ * Note that auto-login is handled in main activity right now.
  */
 public class LoginService
 {
-
-    // user object for storing user info
-    private User user;
-
     // context object, we get it from MainActivity, used for opening
     // file input and output streams
     private Context context;
@@ -48,8 +44,6 @@ public class LoginService
      */
     private LoginService(Context context, String fileName)
     {
-        // initialise user
-        user = new User();
         // get the context
         this.context = context;
         // get the file name
@@ -86,6 +80,9 @@ public class LoginService
      */
     public boolean login(String username, String password, Long sessionId, Long userId, Short keepFlag)
     {
+        // Create a new user object
+        User user = new User();
+
         // set username in user object
         user.setUsername(username);
 
