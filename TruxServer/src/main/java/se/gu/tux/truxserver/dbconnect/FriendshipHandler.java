@@ -105,6 +105,18 @@ public class FriendshipHandler {
             pst.setLong(4, pm.getUserId());
 
             dbc.execDelete(pm, pst);
+            
+            updateStmnt = "UPDATE message SET seen = ? "
+                    + "WHERE receiverid = ? AND senderid = ?";
+
+            pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+
+            pst.setBoolean(1, true);
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, pm.getUserId());
+
+            dbc.execUpdate(pm, pst);
 
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         } catch (InterruptedException ie) {
