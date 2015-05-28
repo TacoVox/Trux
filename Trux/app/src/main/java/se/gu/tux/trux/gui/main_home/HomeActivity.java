@@ -41,8 +41,14 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     // Used for identifying the result when friend window returns a friend selected for following
     private static final int CLICKED_FRIEND = 1;
 
+    // This concerns the map frag but is contained here since this is where we get the result of
+    // the chosen friend from the friendswindow activity.
     // Holds the friend id if the user decided to follow a friends location
-    public long selectedFriendID = (long) -1;
+    private long selectedFriendID = (long) -1;
+    // If a followed friend is not found in the loop through friend list, maybe the friend went
+    // offline - we need to stop following.
+    private boolean friendIsOnline = false;
+
 
     private ViewPager viewPager;
     private ActionBar actionBar;
@@ -131,12 +137,24 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     }
 
+    // These methods are used by mapfrag
     public void setSelectedFriend(Long friendID){
         this.selectedFriendID = friendID;
+        if (friendID != -1) {
+            friendIsOnline = true;
+        }
     }
 
     public long getSelectedFriend() {
         return selectedFriendID;
+    }
+
+    public boolean getFriendIsOnline() {
+        return friendIsOnline;
+    }
+
+    public void setFriendIsOnline(boolean friendIsOnline) {
+        this.friendIsOnline = friendIsOnline;
     }
 
 
@@ -234,6 +252,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     @Override
     public void onPageScrollStateChanged(int state) {}
+
 
     /***************************************************************************************
      * End override methods.                                                               *

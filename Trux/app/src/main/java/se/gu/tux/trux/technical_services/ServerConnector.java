@@ -21,12 +21,12 @@ import se.gu.tux.trux.datastructure.User;
  *  There are two modes of communication:
  *
  *      1. A background thread running and sending anything in a transmit queue to the server. This
- *      is used to send metric data as well as a HeartBeat object to the server (put in the queue
- *      by DataPoller every few seconds). Only the response to the HeartBeat is considered
+ *      is used to send metric data as well as a Heartbeat object to the server (put in the queue
+ *      by DataPoller every few seconds). Only the response to the Heartbeat is considered
  *      (it is a Notification object telling us if there are any new notifications), others are
  *      discarded. Use the method "send" to put data in the queue.
  *
- *      2. Manual requests for data. Use This class acts as an interface and for the ConnectorRunnable
+ *      2. Manual requests for data. This class acts as an interface and for the ConnectorRunnable
  *      that owns the socket and stream objects. Use the methods answerQuery or answerTimestampedQuery
  *      for this. However most data used in the GUI should be requested from the DataHandler to
  *      make sure the request is routed properly.
@@ -34,17 +34,19 @@ import se.gu.tux.trux.datastructure.User;
  */
 public class ServerConnector {
     // Storing address here instead of just calling a setup method from an activity since
-    // we may need to be able to recreate the instance from any activity (on restoring the app after
-    // having it in the background) - normally the instance should survive garbage collection anyway
-    // but let's keep things as independent as possible
-    // (However ideally both address and port should be in some config file)
+    // we may need to be able to recreate the instance from any context, possibly from the
+    // BackgroundService if the garbage collector has been aggressive with our app
+    // (However ideally both address and port should be in some config file, it would also be
+    // possible to write it to shared preferences the way we do in DataHandler)
     private final static String ADDRESS = "trux.derkahler.de";
 
     // Singleton instance
     private static ServerConnector instance = null;
+
     // The thread running the ConnectorRunnable
     private Thread transmitThread = null;
     private volatile ConnectorRunnable connector = null;
+
     // The queue - actually a Deque, so we can put things at both ends
     private volatile LinkedBlockingDeque<Data> queue;
 
@@ -448,7 +450,7 @@ public class ServerConnector {
                             // If we sent a heartbeat object just now, update the notification object
                             // in DataHandler
                             if (upNext instanceof Heartbeat && inD instanceof Notification) {
-                                System.out.println("Heartbeat.");
+                                System.out.println("Serverconnector: Heartbeat sent.");
                                 DataHandler.getInstance().setNotificationStatus((Notification)inD);
                             }
 

@@ -31,7 +31,7 @@ public class CommunityMainFragment extends TimerUpdateFragment implements View.O
                              Bundle savedInstanceState)
     {
         // inflate view
-        View view = inflater.inflate(R.layout.fragment_main_i_community, container, false);
+        View view = inflater.inflate(R.layout.fragment_main_community, container, false);
 
         // get components
         FrameLayout mapContainer = (FrameLayout) view.findViewById(R.id.mapContainer);

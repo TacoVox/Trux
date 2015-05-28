@@ -34,22 +34,13 @@ import se.gu.tux.trux.technical_services.ServerConnector;
  * available via a helper method from the instance of this class.
  * The state of the current logged in user is also stored by this class.
  *
- * TODO: The detailed stats caching could very well be put in a helper class as well.
- *
- *
- *
- *
- * TODO
- * Refactor class and xml names
- * Timer in homeactivity **** major *****
- * Check if AGA reconnection works **** major *****
- * Make a toast if a followed user goes offline
- * reduce map functionality  **** major *****
- * report if any major changes from today until the final submission
- * check font size and buttons
+ * TODO: The detailed stats caching could very well be put in a helper class as well, so this class
+ * would be concerned with only the most central data routing methods and handling the current user
+ * (maybe even those two concerns should be split into two classes)
  */
 public class DataHandler
 {
+    // Based on distraction level.
     public enum SafetyStatus {IDLE, SLOW_MOVING, MOVING, FAST_MOVING};
 
     // Singleton instance
@@ -65,7 +56,7 @@ public class DataHandler
 
     // Stores detailed stats with signal id as key
     private volatile HashMap<Integer, DetailedStatsBundle> detailedStats;
-    // Stores time stamp
+    // Stores time stamp for when the detailed stats were fetched
     private volatile long detailedStatsFetched = 0;
 
 
@@ -142,8 +133,8 @@ public class DataHandler
      * TODO: the best thing would probably be to return a new datatype like NotLoggedIn object
      * instead, and be sure to check before casting.
      *
-     * @param request
-     * @return
+     * @param request   The data to get a response for.
+     * @return          The response.
      */
     public Data getData(Data request) throws NotLoggedInException {
         if (request.isOnServerSide()) {
@@ -406,10 +397,12 @@ public class DataHandler
     }
 
 
-    public void clearPrefs(SharedPreferences prefs) {
-        prefs.edit().clear().commit();
-    }
-
+    /**
+     * Used to store the most critical things (currently the logged in user) to persistent storage
+     * to be able to restore state if garbage collection kills everything.
+     * @param prefs     A SharedPreferences object (can be obtained from the PreferenceManager
+     *                  in a context)
+     */
     public void storeToPrefs(SharedPreferences prefs) {
         System.out.println("Storing user to SharedPreferences...");
 
@@ -423,6 +416,13 @@ public class DataHandler
         edit.commit();
     }
 
+
+    /**
+     * Used to restore the most critical things (currently the logged in user) from persistent
+     * storage to be able to restore state if garbage collection kills everything.
+     * @param prefs     A SharedPreferences object (can be obtained from the PreferenceManager
+     *                  in a context)
+     */
     public void loadFromPrefs(SharedPreferences prefs) {
         // Started after being destroyed - try to recover user settings
         if (prefs.getString("username", null) != null) {
@@ -451,6 +451,18 @@ public class DataHandler
         }
     }
 
+
+    /**
+     * We use SharedPreferences to store the most critical things (currently the logged in user) to
+     * persistent storage to be able to restore state if garbage collection kills everything.
+     * We this method clears the stored preferences. Used on logout.
+     *
+     * @param prefs     A SharedPreferences object (can be obtained from the PreferenceManager
+     *                  in a context)
+     */
+    public void clearPrefs(SharedPreferences prefs) {
+        prefs.edit().clear().commit();
+    }
 
 
     /**

@@ -304,13 +304,17 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         return list;
     }
 
-    public void onStop(){
-        super.onStop();
-    }
-    public void onPause(){
-        super.onPause();
-    }
 
+    /**
+     * Adapter that shows friends in the list view. It shows search results if the user searches,
+     * the results then consist of both the filtered friend list at the top and then search results
+     * below these. In addition to this, friend requests are shown at the top of the list, if any.
+     *
+     * Because of two datalists (friend requests in it's own) and label items to distinguish
+     * between them, there is quite some logic here to determine how many rows there are in total,
+     * which type they are etc...
+     *
+     */
     class FriendAdapter extends BaseAdapter implements FriendActionListener {
 
         private Context context;
@@ -319,6 +323,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         private LayoutInflater inflater = null;
         private final FriendAdapter thisAdapter = this;
 
+
+        /**
+         * Initializes the instance with the given friend list
+         * @param context
+         * @param friends
+         */
         public FriendAdapter(Context context,  ArrayList<Friend> friends) {
             this.context = context;
             this.friends = friends;
@@ -327,6 +337,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
+
+        /**
+         * Callback method called when the friend request was successfully sent.
+         * @param friendId  The friend we sent the request to.
+         */
         @Override
         public void onFriendRequestSent(long friendId) {
             // Update the friend object to pending instead of not a friend
@@ -336,13 +351,14 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 }
             }
 
+            // Notify SocialHandler that the friends have updated
             DataHandler.gI().getSocialHandler().setFriendsChanged(true);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     showToast("The friend request was sent.");
+                    // Also notify this adapter
                     notifyDataSetChanged();
-                    //refresh();
                 }
             });
         }
@@ -350,6 +366,10 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         @Override
         public void onFriendRemoveSent(long friendId) {}
 
+        /**
+         * Callback method called when the friend request reply action was successfully sent.
+         * @param friendId  The friend that sent the request.
+         */
         @Override
         public void onFriendRequestAnswered(long friendId, final boolean accepted) {
             // Update the friend object
@@ -370,6 +390,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 }
             }
 
+            // Notify SocialHandler that things have changed
             DataHandler.gI().getSocialHandler().setFriendRequestsChanged(true);
             DataHandler.gI().getSocialHandler().setFriendsChanged(true);
             runOnUiThread(new Runnable() {
@@ -381,12 +402,19 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     } else {
                         showToast("The friend request was declined.");
                     }
+                    // Refresh the data now that we know it has changed
                     notifyDataSetChanged();
                     refresh();
                 }
             });
         }
 
+
+        /**
+         * Calculates the amount of items in the list. There are separator labels above each of the
+         * two lists as needed (where the lists are 1. friend request and 2. friends / search results)
+         * @return  The amount of items in the list.
+         */
         @Override
         public int getCount() {
             int count, friendCount = 0, friendRequestCount = 0;
@@ -406,6 +434,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             return count;
         }
 
+
+        /**
+         * Helps calculate if there are separator labels, in that case we need to offset the index
+         * when retrieving from the friend list
+         * @return  The offset that should be used when retrieving from the friend list
+         */
         private int getFriendOffset() {
             if (friendRequests != null && friendRequests.size() > 0) {
                 if (friends != null && friends.size() > 0) {
@@ -417,6 +451,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             return 0;
         }
 
+
+        /**
+         * Returns the type of the row.
+         * @param pos   The row number
+         * @return      The type of row
+         */
         private RowType getRowType(int pos) {
 
             if (friendRequests != null && friendRequests.size() > 0) {
