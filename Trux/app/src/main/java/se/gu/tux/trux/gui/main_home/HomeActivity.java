@@ -21,6 +21,7 @@ import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
+import se.gu.tux.trux.technical_services.CustomService;
 import se.gu.tux.trux.technical_services.NotificationService;
 import tux.gu.se.trux.R;
 
@@ -78,10 +79,12 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         // Start timer
         //handler.postDelayed(new StatusRunnable(), 10000);
 
-        Intent intent = new Intent(this, NotificationService.class);
-        intent.setAction("START_NOTIFICATION");
-        startService(intent);
+        //Intent intent = new Intent(this, NotificationService.class);
+        //intent.setAction("START_NOTIFICATION");
+        //startService(intent);
 
+        Intent intent = new Intent(this, CustomService.class);
+        startService(intent);
     }
 
 
