@@ -1,5 +1,9 @@
 package se.gu.tux.trux.technical_services;
 
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Heartbeat;
 import se.gu.tux.trux.datastructure.Location;
@@ -11,7 +15,7 @@ import se.gu.tux.trux.datastructure.Location;
  *
  * Created by jerker on 2015-04-01.
  */
-public class DataPoller {
+public class DataPoller extends Service {
 
     // Singleton instance
     private static DataPoller instance;
@@ -23,13 +27,25 @@ public class DataPoller {
     private Thread t;
     private PollRunnable pr;
 
+
     // Last known set of metrics - stored because if metrics are unchanged between intervals they
     // are not sent.
     private Data[] lastMetrics = null;
 
-    // Private constructor
-    private DataPoller() {}
+    // Default constructor
+    public DataPoller() {}
 
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        System.out.println("Starting DataPoller service");
+        // Keep running
+        return START_STICKY;
+    }
 
     /**
      * Returns the instance.
@@ -148,6 +164,7 @@ public class DataPoller {
                     // Also provide a heartbeat object - this keeps connection alive regardless
                     // of connection to AGA and makes sure server can send back notifications
                     ServerConnector.gI().send(new Heartbeat());
+                    System.out.println("Sending heartbeat to queue.");
 
                     // Wait POLL_INTERVAL seconds before continuing.
                     Thread.sleep(1000 * POLL_INTERVAL);

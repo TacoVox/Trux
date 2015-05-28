@@ -1,8 +1,6 @@
 package se.gu.tux.trux.gui.main_home;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,7 +22,7 @@ import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.base.RegisterActivity;
 import se.gu.tux.trux.technical_services.AGADataParser;
 import se.gu.tux.trux.technical_services.DataPoller;
-import se.gu.tux.trux.technical_services.LocationService;
+import se.gu.tux.trux.technical_services.LocationHandler;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.RealTimeDataHandler;
 import se.gu.tux.trux.technical_services.ServerConnector;
@@ -70,19 +68,20 @@ public class MainActivity extends BaseAppActivity
         // Create login service
         LoginService.createInstance(this.getBaseContext(), FILE_NAME);
 
+
         //Create instance of SettingsHandler
         SettingsHandler.createInstance(this.getBaseContext());
-
+        /*
         // Just make sure a AGA data parser is created
         AGADataParser.getInstance();
 
-        LocationService ls = new LocationService(this);
+        LocationHandler ls = new LocationHandler(this);
 
         // Start the DataPoller that will send AGA metrics and location data
         // to the server with regular interavals
         RealTimeDataHandler rtdh = new RealTimeDataHandler(ls);
         DataHandler.getInstance().setRealTimeDataHandler(rtdh);
-        DataPoller.gI().start(rtdh);
+        DataPoller.gI().start(rtdh);*/
 
         // See if the user account file exists
         file = new File(getFilesDir(), FILE_NAME);
