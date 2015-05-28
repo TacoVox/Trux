@@ -1,3 +1,9 @@
+# Trux - [Documentation Here](https://github.com/TacoVox/Tux/tree/master/DIT524_Project)
+Our Project - We will rock this course.
+
+* Jenkins [Trux App](http://derkahler.de:8080/job/Trux/) // [Trux Server](http://derkahler.de:8080/job/TruxServer/)
+* SonarQube [Trux Server](http://www.derkahler.de:9000/dashboard/index/1)
+
 # Goup members
 * amuhotmax = Aman Ghezai
 * DKarlberg = Dennis Karlberg
@@ -6,14 +12,8 @@
 * tville = Jerker Ersare
 * vryashkov = Ivo Vryashkov
 
-# General information
-This repository was created after the alpha presentation because we had problems with some files not handled by .gitignore. Therefor we don't have any commits before the 24th of march in this repo. All the things we had where added to this repo on or after the 24th of march.
-
-# Trux - [Documentation Here](https://github.com/TacoVox/Tux/tree/master/DIT524_Project)
-Our Project - We will rock this course.
-
-* Jenkins [Trux App](http://derkahler.de:8080/job/Trux/) // [Trux Server](http://derkahler.de:8080/job/TruxServer/)
-* SonarQube [Trux Server](http://www.derkahler.de:9000/dashboard/index/1)
+# General Information
+This repository was created after the alpha presentation because we had problems with some files not handled by .gitignore. Therefore we don't have any commits before the 24th of march in this repo. All the things we had where added to this repo on or after the 24th of march.
 
 ##Build - Status on devel
 * Trux App <img src="http://derkahler.de:8080/job/Trux/badge/icon">
