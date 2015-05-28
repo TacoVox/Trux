@@ -267,6 +267,8 @@ public class BaseAppActivity extends ActionBarActivity
         stopService(notification);
         showToast("Notification service stopped");
 
+        DataHandler.gI().clearPrefs(PreferenceManager.getDefaultSharedPreferences(this));
+
         // Make sure there is no history for the back button
         if (getFragmentManager().getBackStackEntryCount() > 0)
         {
