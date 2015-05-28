@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
 import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Message;
@@ -26,16 +27,19 @@ import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
- *
- * @author jonas
+ * Class for handeling all db action regarding messages.
+ * @author Jonas Kahler
  */
 public class MessageHandler {
     /*
      * Static part.
      */
-
     private static MessageHandler instance;
 
+    /**
+     * Method returning a MessageHandler instance.
+     * @return a MessageHandler instance.
+     */
     public static MessageHandler getInstance() {
         if (instance == null) {
             instance = new MessageHandler();
@@ -44,6 +48,10 @@ public class MessageHandler {
         return instance;
     }
 
+    /**
+     * Method returning a MessageHandler instance.
+     * @return a MessageHandler instance.
+     */
     public static MessageHandler gI() {
         return getInstance();
     }
@@ -51,9 +59,18 @@ public class MessageHandler {
     /*
      * Non-static part.
      */
+    
+    /**
+     * Private constructor.
+     */
     private MessageHandler() {
     }
 
+    /**
+     * Method to send a new message to a user.
+     * @param m the message to be send
+     * @return ProtocolMessage with error or success
+     */
     public ProtocolMessage newMessage(Message m) {
         DBConnector dbc = null;
 
@@ -131,6 +148,11 @@ public class MessageHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Could not insert new message!");
     }
 
+    /**
+     * Method to check if there is a new message for a user.
+     * @param d Data object including the UserID
+     * @return true or false if there is a new message
+     */
     public boolean hasNewMessage(Data d) {
         DBConnector dbc = null;
 
@@ -165,6 +187,11 @@ public class MessageHandler {
         }
     }
 
+    /**
+     * Method for getting the latest conversations for a user.
+     * @param pm ProtocolMessage including the UserID
+     * @return an ArrayResponse including the latest messages or PM Error
+     */
     public Data getLatestConv(ProtocolMessage pm) {
         List conversations = new ArrayList<Message>();
 
@@ -215,6 +242,11 @@ public class MessageHandler {
         }
     }
 
+    /**
+     * Method for getting messages for a specific conversation.
+     * @param pm ProtocolMessage including the UserIDs for that conversation
+     * @return Array with the messages
+     */
     public Data getMessages(ProtocolMessage pm) {
         List messages = new ArrayList<Message>();
 
@@ -266,6 +298,11 @@ public class MessageHandler {
         }
     }
 
+    /**
+     * Method for marking a conversation as seen.
+     * @param pm ProtocolMessage including the UserIDs for that conversation
+     * @return ProtocolMessage with success or fail
+     */
     public ProtocolMessage markAsSeen(ProtocolMessage pm) {
         DBConnector dbc = null;
 
@@ -299,6 +336,11 @@ public class MessageHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Can't mark the message as seen.");
     }
 
+    /**
+     * Method for getting unread messages for a conversation.
+     * @param pm ProtocolMessage including the UserIDs for that conversation
+     * @return Array with the unread messages
+     */
     public Data getUnreadMessages(ProtocolMessage pm) {
         List messages = new ArrayList<Message>();
 

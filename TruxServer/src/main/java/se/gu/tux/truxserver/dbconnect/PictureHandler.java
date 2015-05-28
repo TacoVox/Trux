@@ -18,39 +18,58 @@ package se.gu.tux.truxserver.dbconnect;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
-
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
- *
- * @author jonas
+ * Class handeling all Picutre concerns in the database.
+ * @author Jonas Kahler
  */
 public class PictureHandler {
-
-    /**
+    /*
      * Static part.
      */
-    private static PictureHandler ph;
+    private static PictureHandler instance;
 
+    /**
+     * Method returning a PictureHandler instance.
+     * @return a PictureHandler instance.
+     */
     public static PictureHandler getInstance() {
-        if (ph == null) {
-            ph = new PictureHandler();
+        if (instance == null) {
+            instance = new PictureHandler();
         }
 
-        return ph;
+        return instance;
     }
 
+    /**
+     * Method returning a PictureHandler instance.
+     * @return a PictureHandler instance.
+     */
     public static PictureHandler gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
+     */
+    
+    /**
+     * Private Constructor.
+     */
+    private PictureHandler() {}
+    
+    /**
+     * Method for storing a picture path in the db.
+     * @param pic the Picture wrapper object
+     * @param path the path where it is stored
+     * @return the new ID of the pic
      */
     public long savePicturePath(Picture pic, String path) {
         DBConnector dbc = null;
@@ -84,6 +103,11 @@ public class PictureHandler {
         return -1;
     }
 
+    /**
+     * Method for setting a picture as a users profile pic.
+     * @param pic the Picture object to set as the profile pic
+     * @return ProtocolMessage with error or success
+     */
     public ProtocolMessage setProfilePicture(Picture pic) {
         DBConnector dbc = null;
 
@@ -113,6 +137,11 @@ public class PictureHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR);
     }
 
+    /**
+     * Method for getting the path to the profile picture.
+     * @param p the empty Picture wrapper inlclduing the correct pictureid
+     * @return the path to the picture
+     */
     public String getProfilePicturePath(Picture p) {
         DBConnector dbc = null;
 
@@ -144,6 +173,11 @@ public class PictureHandler {
         return null;
     }
 
+    /**
+     * Method for getting the id of a profilepicture
+     * @param d a Data object inlcuding the UserID
+     * @return the ID of the profile picture
+     */
     public long getProfilePictureID(Data d) {
         DBConnector dbc = null;
 
