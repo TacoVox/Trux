@@ -20,7 +20,7 @@ import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.truxserver.file.PictureIO;
 
 /**
- *
+ * Class switching Picture.
  * @author Jonas Kahler
  */
 public class PictureSwitcher {

@@ -22,7 +22,7 @@ import se.gu.tux.truxserver.dbconnect.MetricInserter;
 import se.gu.tux.truxserver.dbconnect.MetricReceiver;
 
 /**
- *
+ * Class switching MetricData.
  * @author Jonas Kahler
  */
 public class MetricSwitcher {

@@ -24,7 +24,7 @@ import se.gu.tux.truxserver.dbconnect.SessionHandler;
 import se.gu.tux.truxserver.dbconnect.UserHandler;
 
 /**
- *
+ * Class switching Message or ProtocolMessage.
  * @author Jonas Kahler
  */
 public class MessageSwitcher {

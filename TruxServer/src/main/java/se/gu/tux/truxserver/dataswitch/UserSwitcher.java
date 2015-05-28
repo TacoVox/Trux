@@ -21,7 +21,7 @@ import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.truxserver.dbconnect.UserHandler;
 
 /**
- *
+ * Class switching User or Friend.
  * @author Jonas Kahler
  */
 public class UserSwitcher {
