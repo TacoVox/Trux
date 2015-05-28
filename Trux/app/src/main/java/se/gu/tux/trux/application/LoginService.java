@@ -2,6 +2,7 @@ package se.gu.tux.trux.application;
 
 
 import android.content.Context;
+import android.content.Intent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.technical_services.BackgroundService;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.ServerConnector;
 
@@ -212,10 +214,11 @@ public class LoginService
             // Clear the user details file
             writeToFile("LOGGED_OUT");
 
-
             DataHandler.getInstance().setUser(null);
             isLoggedOut = true;
-        } else {
+        }
+        else
+        {
             System.out.println("Received something else than sucess when trying to log out...!");
         }
 
