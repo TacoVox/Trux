@@ -42,8 +42,6 @@ public class MainActivity extends BaseAppActivity
 
     private String[] userInfo;
 
-    // file name
-    private static final String FILE_NAME = "trux_user_config";
     // layout id
     private static final int LAYOUT_ID = R.layout.activity_main;
 
@@ -66,7 +64,7 @@ public class MainActivity extends BaseAppActivity
         checkBox = (CheckBox) findViewById(R.id.autoLogin);
 
         // Create login service
-        LoginService.createInstance(this.getBaseContext(), FILE_NAME);
+        LoginService.createInstance(this.getApplicationContext());
 
 
         //Create instance of SettingsHandler
@@ -84,7 +82,7 @@ public class MainActivity extends BaseAppActivity
         DataPoller.gI().start(rtdh);*/
 
         // See if the user account file exists
-        file = new File(getFilesDir(), FILE_NAME);
+        file = new File(getFilesDir(), LoginService.FILE_NAME);
         if (!file.exists())
         {
             try

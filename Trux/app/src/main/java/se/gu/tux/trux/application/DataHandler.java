@@ -420,6 +420,7 @@ public class DataHandler
         edit.putLong("userid", u.getUserId());
         edit.putString("username", u.getUsername());
         edit.putString("passwordhash", u.getPasswordHash());
+        edit.commit();
     }
 
     public void loadFromPrefs(SharedPreferences prefs) {

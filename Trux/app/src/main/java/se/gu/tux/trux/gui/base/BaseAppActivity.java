@@ -298,6 +298,11 @@ public class BaseAppActivity extends ActionBarActivity
         @Override
         protected Boolean doInBackground(Void... voids)
         {
+            // If the instance of LoginService was lost, recreate it
+            if (LoginService.getInstance() == null) {
+                LoginService.createInstance(getApplicationContext());
+            }
+
             // return the result from logout request
             return LoginService.getInstance().logout();
         }
@@ -312,7 +317,9 @@ public class BaseAppActivity extends ActionBarActivity
      */
     @Override
     protected void onSaveInstanceState (Bundle outState) {
-        DataHandler.gI().storeToPrefs(PreferenceManager.getDefaultSharedPreferences(this));
+        if (DataHandler.gI().getUser() != null) {
+           DataHandler.gI().storeToPrefs(PreferenceManager.getDefaultSharedPreferences(this));
+        }
         outState.putSerializable("settingsHandler", SettingsHandler.getInstance());
         super.onSaveInstanceState(outState);
     }
