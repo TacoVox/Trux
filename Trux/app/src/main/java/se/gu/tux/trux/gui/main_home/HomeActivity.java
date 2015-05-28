@@ -16,13 +16,12 @@ import android.support.v7.app.ActionBar;
 
 
 import se.gu.tux.trux.application.DataHandler;
-import se.gu.tux.trux.datastructure.Notification;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
+import se.gu.tux.trux.technical_services.BackgroundService;
 import se.gu.tux.trux.technical_services.CustomService;
-import se.gu.tux.trux.technical_services.NotificationService;
 import tux.gu.se.trux.R;
 
 
@@ -46,10 +45,11 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     private ViewPager viewPager;
     private ActionBar actionBar;
+    /*
     private Handler handler = new Handler();
     private Activity thisActivity = this;
     private boolean newMessages = false, newFriends = false;
-
+    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +82,10 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         //Intent intent = new Intent(this, NotificationService.class);
         //intent.setAction("START_NOTIFICATION");
         //startService(intent);
+
+        Intent i = new Intent(this, BackgroundService.class);
+        i.setAction("START_BACKGROUND");
+        startService(i);
 
         Intent intent = new Intent(this, CustomService.class);
         startService(intent);
@@ -210,11 +214,11 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         viewPager.setCurrentItem(savedInstanceState.getInt("currentTab"));
     }
 
-
+/*
     class StatusRunnable implements Runnable {
         /**
          * Push notifications for new messages / friends
-         */
+         *//*
         @Override
         public void run() {
             System.out.println("Statusrunnable running...");
@@ -288,7 +292,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
             // Repeat
             handler.postDelayed(this, 10000);
         }
-    }
+    }*/
 
 
     /*****************************************************************************************
