@@ -21,6 +21,8 @@ import se.gu.tux.trux.application.SettingsHandler;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.gui.main_home.MainActivity;
+import se.gu.tux.trux.technical_services.BackgroundService;
+import se.gu.tux.trux.technical_services.NotificationService;
 import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
@@ -257,14 +259,13 @@ public class BaseAppActivity extends ActionBarActivity
             e.printStackTrace();
         }
 
-        if (check)
-        {
-          // TODO: react to successful or failed logout attempt?
-        }
-        else
-        {
+        Intent background = new Intent(this, BackgroundService.class);
+        stopService(background);
+        showToast("Background service stopped");
 
-        }
+        Intent notification = new Intent(this, NotificationService.class);
+        stopService(notification);
+        showToast("Notification service stopped");
 
         // Make sure there is no history for the back button
         if (getFragmentManager().getBackStackEntryCount() > 0)
