@@ -25,7 +25,6 @@
         android:theme="@style/CustomActionBarTheme">
 
         <service android:name="se.gu.tux.trux.technical_services.NotificationService"/>
-        <service android:name="se.gu.tux.trux.technical_services.CustomService"/>
 
 
         <!-- META DATA -->

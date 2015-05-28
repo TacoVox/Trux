@@ -1,14 +1,17 @@
 package se.gu.tux.trux.technical_services;
 
-import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-
 import android.graphics.Color;
-import android.os.Handler;
+import android.os.Binder;
+import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Notification;
@@ -16,52 +19,98 @@ import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
 import tux.gu.se.trux.R;
 
-/*
+/**
  * Created by ivryashkov on 2015-05-28.
  *
  * Handles the notifications pushed.
  */
-public class NotificationService extends IntentService
+public class NotificationService extends Service
 {
 
+    // the timer we use to execute thread
+    private Timer timer;
 
-    private Handler handler = new Handler();
+    // boolean flags
+    private volatile boolean timerRunning;
+    private volatile boolean newMessages = false;
+    private volatile boolean newFriends = false;
 
-    private boolean newMessages = false;
-    private boolean newFriends = false;
+    // time intervals for the timer
+    private static final long RETRY_TIME = 10000;
+    private static final long START_TIME = 1000;
+
+    // binder given to clients
+    private final IBinder binder = new CustomBinder();
 
 
 
-    /**
-     * A constructor is required, and must call the super IntentService(String)
-     * constructor with a name for the worker thread.
-     */
-    public NotificationService()
+    @Override
+    public void onCreate()
     {
-        super("NotificationService");
+        super.onCreate();
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new ServiceTask(), START_TIME, RETRY_TIME);
+        timerRunning = true;
+    }
+
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId)
+    {
+        if (!timerRunning)
+        {
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new ServiceTask(), START_TIME, RETRY_TIME);
+            timerRunning = true;
+        }
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+
+        // stop timer
+        if (timer != null)  { timer.cancel(); }
+
+        // set boolean flag
+        timerRunning = false;
+    }
+
+
+
+    @Override
+    public IBinder onBind(Intent intent)
+    {
+        return binder;
     }
 
 
 
     /**
-     * The IntentService calls this method from the default worker thread with
-     * the intent that started the service. When this method returns, IntentService
-     * stops the service, as appropriate.
+     * Class used for the client binder.
      */
-    @Override
-    protected void onHandleIntent(Intent intent)
+    public class CustomBinder extends Binder
     {
-        if (intent.getAction().equals("START_NOTIFICATION"))
+        public NotificationService getService()
         {
-            // Start timer
-            handler.postDelayed(new StatusRunnable(), 10000);
+            // return this instance of NotificationService so clients can call public methods
+            return NotificationService.this;
         }
-
-    } // end onHandleIntent()
-
+    }
 
 
-    private class StatusRunnable implements Runnable
+
+    /**
+     * Private timer task class. Checks for notifications and pushes them.
+     */
+    private class ServiceTask extends TimerTask
     {
         @Override
         public void run()
@@ -138,12 +187,9 @@ public class NotificationService extends IntentService
                 // Update status of flags
                 newMessages = notification.isNewMessages();
                 newFriends = notification.isNewFriends();
-
             }
 
-            // Repeat
-            handler.postDelayed(this, 10000);
-        }
+        } // end run()
 
     } // end inner class
 
