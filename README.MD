@@ -1,13 +1,13 @@
 # Goup members
+* amuhotmax = Aman Ghezai
+* DKarlberg = Dennis Karlberg
+* salkin91 = Niklas le Comte
+* TacoVox = Jonas Kahler
 * tville = Jerker Ersare
 * vryashkov = Ivo Vryashkov
-* salkin91 = Niklas le Comte
-* DKarlberg = Dennis Karlberg
-* amuhotmax = Aman Ghezai
-* TacoVox = Jonas Kahler
 
-#General information
-This repository was created after the alpha presentation bacause we had problems with git ignore and there for we dont have any commits before the 24th of mars in this repo. All the things we had where added to this repo the 24th of mars.
+# General information
+This repository was created after the alpha presentation because we had problems with some files not handled by .gitignore. Therefor we don't have any commits before the 24th of march in this repo. All the things we had where added to this repo on or after the 24th of march.
 
 # Trux - [Documentation Here](https://github.com/TacoVox/Tux/tree/master/DIT524_Project)
 Our Project - We will rock this course.
