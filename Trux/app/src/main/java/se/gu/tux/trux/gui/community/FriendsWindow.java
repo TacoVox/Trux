@@ -31,34 +31,55 @@ import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
+
+/**
+ * The friend window activity. Shows a list of friends. You can also search for friends in it and
+ * it shows any friend requests.
+ * Friends are cached in socialhandler. We get the friends by asking socialHandler for them, and
+ * then socialHandler calls callback methods in the interface FriendFetchListener when they are
+ * ready (which is immediately if they are cached).
+ * The same goes for friend actions, for which the list adapter (inner class) implements the
+ * listener interface.
+ */
 public class FriendsWindow extends BaseAppActivity implements View.OnClickListener,
         FriendFetchListener {
 
+    // Different row types in the adapter (not allowed to create enum in inner class)
     public enum RowType {REQ_LABEL, REQ, FRIEND_LABEL, FRIEND};
+    // We remember if the last action was to search or show friends
+    private enum FetchCall {SEARCH, FRIENDLIST};
+    private FetchCall lastFetchCall = FetchCall.FRIENDLIST;
+    private String lastNeedle;
+
+    // Visual components
     private ListView friendsList;
     private FriendAdapter friendAdapter;
     private EditText searchField;
     private TextView noFriends;
     private Button searchButton;
-    private enum FetchCall {SEARCH, FRIENDLIST};
-    private FetchCall lastFetchCall = FetchCall.FRIENDLIST;
-    private String lastNeedle;
-    public boolean isClicked = false;
-    private boolean friendIsClicked = false;
 
+
+    /**
+     * Build the friend window.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_window);
 
+        // Initiate visual components
         friendsList = (ListView) findViewById(R.id.friendsList);
-
         friendAdapter = new FriendAdapter(this, new ArrayList<Friend>());
         friendsList.setAdapter(friendAdapter);
         friendsList.setEmptyView(findViewById(R.id.noFriends));
-        searchField = (EditText) findViewById(R.id.searchField);
         searchButton = (Button) findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(this);
+        noFriends = (TextView) findViewById(R.id.noFriends);
+        searchField = (EditText) findViewById(R.id.searchField);
 
+        // Add a listener to the text field so if text is added, we search for it, if no text
+        // is left, we go back to showing the friend list
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
@@ -68,6 +89,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             @Override
             public void afterTextChanged(Editable editable) {
                 showLoadingBar();
+                // Check the text
                 if (searchField.getText().toString().equals("")) {
                     showFriends();
                 } else {
@@ -75,22 +97,28 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 }
             }
         });
-        searchButton.setOnClickListener(this);
-        noFriends = (TextView) findViewById(R.id.noFriends);
 
         // Start fetching the friends
         showFriends();
-
     }
 
+
+    /**
+     * Shows the loading bar.
+     */
     private void showLoadingBar() {
         findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
         noFriends.setText(R.string.loading);
     }
 
+
+    /**
+     * Hides the loading bar.
+     */
     private void hideLoadingBar() {
         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-        //noFriends.setVisibility(View.VISIBLE);
+
+        // The "empty message" in the list varies depending on the user action
         if (lastFetchCall == FetchCall.FRIENDLIST) {
             noFriends.setText("You have no friends :(");
         } else {
@@ -98,6 +126,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         }
     }
 
+
+    /**
+     * onCLick listener implementation. The search button is connected to this.
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         if (view == findViewById(R.id.searchButton)) {
@@ -111,11 +144,15 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     }
 
 
+    /**
+     * Show friend list - call fetchFriends on the SocialHandler.
+     */
     private void showFriends() {
         showLoadingBar();
         lastFetchCall = FetchCall.FRIENDLIST;
         DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
 
+        // Also adjust the UI depending on the distraction level
         if (isSimple()) {
             // Simplified UI- hide the search bar
             searchField.setVisibility(View.GONE);
@@ -131,8 +168,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
     /**
+     * Search results:
      * Shows friends that match needle followed by other people who also match needle.
-     *
+     * The actual filtering occurs when the callback method is called.
      * @param needle
      */
     private void showSearchResults(final String needle) {
@@ -143,6 +181,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     }
 
 
+    /**
+     * Called when we need to update what is in the list.
+     */
     public void refresh() {
         if (lastFetchCall == FetchCall.FRIENDLIST) {
             System.out.println("Refreshing friend list...");
@@ -265,15 +306,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
     public void onStop(){
         super.onStop();
-        if(friendIsClicked){
-            isClicked = true;
-        }
     }
     public void onPause(){
         super.onPause();
-        if(friendIsClicked){
-            isClicked = true;
-        }
     }
 
     class FriendAdapter extends BaseAdapter implements FriendActionListener {

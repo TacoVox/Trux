@@ -110,6 +110,7 @@
             android:screenOrientation="portrait">
         </activity>
 
+        <service android:name="se.gu.tux.trux.technical_services.DataPoller" />
 
     </application>
 

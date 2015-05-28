@@ -1,6 +1,7 @@
 package se.gu.tux.trux.technical_services;
 
 import android.app.Activity;
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -29,17 +30,17 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
     // Google API client
     private GoogleApiClient googleApiClient;
     // A reference to the activity, needed to initialize the API client
-    private Activity activity;
+    private Context context;
 
 
     /**
      * Constructs a new LocationService.
-     * @param activity  An activity, since we need to send a context to the Google API.
+     * @param context  We need to send a context to the Google API.
      */
-    public LocationService(Activity activity) {
+    public LocationService(Context context) {
         System.out.println("LocationService created.");
-        this.activity = activity;
-        googleApiClient = new GoogleApiClient.Builder(activity)
+        this.context = context;
+        googleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
