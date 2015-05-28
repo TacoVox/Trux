@@ -20,12 +20,9 @@ import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
-<<<<<<< HEAD
 import se.gu.tux.trux.technical_services.NotificationService;
-=======
 import se.gu.tux.trux.technical_services.BackgroundService;
-import se.gu.tux.trux.technical_services.CustomService;
->>>>>>> 4d69ef89497979e4fd1f90096b811799b112fb29
+
 import tux.gu.se.trux.R;
 
 
