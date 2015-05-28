@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
@@ -13,9 +14,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Notification;
@@ -46,9 +44,10 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     private ViewPager viewPager;
     private ActionBar actionBar;
-    private Timer timer;
+    private Handler handler = new Handler();
     private Activity thisActivity = this;
     private boolean newMessages = false, newFriends = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +75,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         viewPager.setAdapter(pagerAdapter);
 
         // Start timer
-        timer = new Timer();
-        timer.schedule(new StatusTimerTask(), 0, 10000);
+        handler.postDelayed(new StatusRunnable(), 10000);
     }
 
 
@@ -99,12 +97,8 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         }
         else if (id == PROFILE_BUTTON)
         {
-            if(!isSimple()) {
-                Intent intent = new Intent(this, CommunityProfileActivity.class);
-                startActivity(intent);
-            } else {
-                showToast("DRIVING: You cannot access your profile while driving.");
-            }
+            Intent intent = new Intent(this, CommunityProfileActivity.class);
+            startActivity(intent);
         }
         else if (id == MESSAGE_BUTTON)
         {
@@ -208,12 +202,14 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     }
 
 
-    class StatusTimerTask extends TimerTask {
+    class StatusRunnable implements Runnable {
         /**
          * Push notifications for new messages / friends
          */
         @Override
         public void run() {
+            System.out.println("Statusrunnable running...");
+
             //Get the notificaiton service from the phone
             NotificationManager notiMan =  (NotificationManager)
                     getSystemService(Context.NOTIFICATION_SERVICE);
@@ -279,6 +275,9 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
                 newFriends = not.isNewFriends();
 
             }
+
+            // Repeat
+            handler.postDelayed(this, 10000);
         }
     }
 

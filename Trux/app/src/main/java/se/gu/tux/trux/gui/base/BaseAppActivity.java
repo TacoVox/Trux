@@ -37,7 +37,6 @@ public class BaseAppActivity extends ActionBarActivity
     private MenuItem logoutItem;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {

@@ -231,7 +231,7 @@ public class ServerConnector {
                         if (cs == null || cs.isClosed()) {
 
                             // Connect. TODO: The port should be in the config
-                            System.out.println("Connecting to " + serverAddress + ".)");
+                            System.out.println("Connecting to " + serverAddress + ".");
                             cs = new Socket(serverAddress, 12000);
 
                             // Create socket with 30 Second timeout
@@ -448,6 +448,7 @@ public class ServerConnector {
                             // If we sent a heartbeat object just now, update the notification object
                             // in DataHandler
                             if (upNext instanceof Heartbeat && inD instanceof Notification) {
+                                System.out.println("Heartbeat.");
                                 DataHandler.getInstance().setNotificationStatus((Notification)inD);
                             }
 
