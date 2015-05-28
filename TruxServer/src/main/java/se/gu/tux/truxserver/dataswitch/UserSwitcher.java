@@ -22,32 +22,45 @@ import se.gu.tux.truxserver.dbconnect.UserHandler;
 
 /**
  *
- * @author jonas
+ * @author Jonas Kahler
  */
 public class UserSwitcher {
 
-    /**
+    /*
      * Static part.
      */
-    private static UserSwitcher us = null;
+    private static UserSwitcher instance = null;
 
+    /**
+     * Method returning a UserSwitcher instance.
+     * @return a UserSwitcher instance.
+     */
     protected static UserSwitcher getInstance() {
-        if (us == null) {
-            us = new UserSwitcher();
+        if (instance == null) {
+            instance = new UserSwitcher();
         }
-        return us;
+        return instance;
     }
 
+    /**
+     * Method returning a UserSwitcher instance.
+     * @return a UserSwitcher instance.
+     */
     protected static UserSwitcher gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
      */
     private UserSwitcher() {
     }
 
+    /**
+     * Method for handling User objects.
+     * @param ud a User OR Friend object
+     * @return some kind of Data
+     */
     protected Data handleUser(Data ud) {
         if (ud instanceof User) {
             User u = (User) ud;

@@ -17,40 +17,55 @@ package se.gu.tux.truxserver.dataswitch;
 
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.Location;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
-import se.gu.tux.truxserver.dbconnect.LocationReceiver;
 import se.gu.tux.truxserver.dbconnect.MetricInserter;
 import se.gu.tux.truxserver.dbconnect.MetricReceiver;
 
 /**
  *
- * @author jonas
+ * @author Jonas Kahler
  */
 public class MetricSwitcher {
 
-    /**
+    /*
      * Static part.
      */
-    private static MetricSwitcher ms = null;
+    private static MetricSwitcher instance = null;
 
+    /**
+     * Method returning a MetricSwitcher instance.
+     * @return a MetricSwitcher instance.
+     */
     protected static MetricSwitcher getInstance() {
-        if (ms == null) {
-            ms = new MetricSwitcher();
+        if (instance == null) {
+            instance = new MetricSwitcher();
         }
-        return ms;
+        return instance;
     }
 
+    /**
+     * Method returning a MetricSwitcher instance.
+     * @return a MetricSwitcher instance.
+     */    
     protected static MetricSwitcher gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
+     */
+    
+    /**
+     * Private Constructor.
      */
     private MetricSwitcher() {
     }
 
+    /**
+     * Method to handle MetricData 
+     * @param md a MetricData object
+     * @return some kind of Data
+     */
     protected Data handleMetricData(MetricData md) {
         if (md.getTimeFrame() == 0) {
             MetricInserter.gI().addToDB(md);

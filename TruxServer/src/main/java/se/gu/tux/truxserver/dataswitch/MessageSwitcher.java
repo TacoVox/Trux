@@ -25,32 +25,48 @@ import se.gu.tux.truxserver.dbconnect.UserHandler;
 
 /**
  *
- * @author jonas
+ * @author Jonas Kahler
  */
 public class MessageSwitcher {
-
-    /**
+    /*
      * Static part.
      */
-    private static MessageSwitcher ms = null;
+    private static MessageSwitcher instance = null;
 
+    /**
+     * Method returning a MessageSwitcher instance.
+     * @return a MessageSwitcher instance.
+     */
     public static MessageSwitcher getInstance() {
-        if (ms == null) {
-            ms = new MessageSwitcher();
+        if (instance == null) {
+            instance = new MessageSwitcher();
         }
-        return ms;
+        return instance;
     }
 
+    /**
+     * Method returning a MessageSwitcher instance.
+     * @return a MessageSwitcher instance.
+     */
     public static MessageSwitcher gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
+     */
+    
+    /**
+     * Private Constructor.
      */
     private MessageSwitcher() {
     }
 
+    /**
+     * Method to handle all kinds of Messages.
+     * @param m a ProtocolMessage OR a Message
+     * @return some kind of Data
+     */
     public Data handleMessage(Data m) {
         if (m instanceof ProtocolMessage) {
             ProtocolMessage pm = (ProtocolMessage) m;

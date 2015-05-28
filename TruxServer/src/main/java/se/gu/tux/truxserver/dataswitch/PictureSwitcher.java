@@ -21,33 +21,50 @@ import se.gu.tux.truxserver.file.PictureIO;
 
 /**
  *
- * @author jonas
+ * @author Jonas Kahler
  */
 public class PictureSwitcher {
 
-    /**
+    /*
      * Static part.
      */
-    private static PictureSwitcher ps;
+    private static PictureSwitcher instance;
 
+    /**
+     * Method returning a PictureSwitcher instance.
+     * @return a PictureSwitcher instance.
+     */
     public static PictureSwitcher getInstance() {
-        if (ps == null) {
-            ps = new PictureSwitcher();
+        if (instance == null) {
+            instance = new PictureSwitcher();
         }
 
-        return ps;
+        return instance;
     }
 
+    /**
+     * Method returning a PictureSwitcher instance.
+     * @return a PictureSwitcher instance.
+     */
     public static PictureSwitcher gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
+     */
+    
+    /**
+     * Private Constructor.
      */
     private PictureSwitcher() {
     }
 
+    /**
+     * Method to handle Pictures.
+     * @param p a Picture object
+     * @return some kind of Data
+     */
     public Data handlePicture(Picture p) {
         if (p.getImg() == null) {
             return PictureIO.gI().receiveProfilePicture(p);
