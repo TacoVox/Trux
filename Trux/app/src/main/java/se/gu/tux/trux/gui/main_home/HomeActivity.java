@@ -45,11 +45,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     private ViewPager viewPager;
     private ActionBar actionBar;
-    /*
-    private Handler handler = new Handler();
-    private Activity thisActivity = this;
-    private boolean newMessages = false, newFriends = false;
-    */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,16 +72,8 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         // set adapter
         viewPager.setAdapter(pagerAdapter);
 
-        // Start timer
-        //handler.postDelayed(new StatusRunnable(), 10000);
-
-        //Intent intent = new Intent(this, NotificationService.class);
-        //intent.setAction("START_NOTIFICATION");
-        //startService(intent);
-
-        Intent i = new Intent(this, BackgroundService.class);
-        i.setAction("START_BACKGROUND");
-        startService(i);
+        Intent backgroundIntent = new Intent(this, BackgroundService.class);
+        startService(backgroundIntent);
 
         Intent intent = new Intent(this, CustomService.class);
         startService(intent);
@@ -213,86 +201,6 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         super.onRestoreInstanceState(savedInstanceState);
         viewPager.setCurrentItem(savedInstanceState.getInt("currentTab"));
     }
-
-/*
-    class StatusRunnable implements Runnable {
-        /**
-         * Push notifications for new messages / friends
-         *//*
-        @Override
-        public void run() {
-            System.out.println("Statusrunnable running...");
-
-            //Get the notificaiton service from the phone
-            NotificationManager notiMan =  (NotificationManager)
-                    getSystemService(Context.NOTIFICATION_SERVICE);
-
-            // Get the notification status from datahandler and compare it with last known values
-            Notification not = DataHandler.getInstance().getNotificationStatus();
-
-            if (not != null) {
-                // If new messages now, but not in last known value, means the message is new
-                if (not.isNewMessages() && !newMessages) {
-
-                    //Creates a new intent - when pressing the push notification, the user will be
-                    // taken to the message activity
-                    Intent intent = new Intent(thisActivity, MessageActivity.class);
-                    //Create a PendingIntent that will get to the intent
-                    PendingIntent pendingIntent = PendingIntent.getActivity(thisActivity, 0, intent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    // Create a notificaiton builder and use it to build a notification
-                    NotificationCompat.Builder notiBuilder = new NotificationCompat.Builder(thisActivity);
-                    notiBuilder.setSmallIcon(R.drawable.truxlogo);
-                    notiBuilder.setContentTitle("Trux");
-                    notiBuilder.setContentText("You have a new message!");
-                    notiBuilder.setVibrate(new long[]{1000, 1000});
-                    notiBuilder.setLights(Color.GREEN, 3000, 3000);
-                    notiBuilder.setContentIntent(pendingIntent);
-
-                    //Pushes the notification
-                    notiMan.notify(0, notiBuilder.build());
-
-                } else if (!not.isNewMessages()) {
-                    // There are no longer undread messages.
-                    // Take any notification with id 0 away
-                    notiMan.cancel(0);
-                }
-
-                // The same for friend requests
-                if (not.isNewFriends() && !newFriends) {
-
-                    //Creates a new intent
-                    Intent intent = new Intent(thisActivity, FriendsWindow.class);
-                    // Create a PendingIntent that will get to the intent
-                    PendingIntent pendingIntent =
-                            PendingIntent.getActivity(thisActivity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    //Create a notificaiton builder
-                    NotificationCompat.Builder notiBuilder = new NotificationCompat.Builder(thisActivity);
-                    notiBuilder.setSmallIcon(R.drawable.truxlogo);
-                    notiBuilder.setContentTitle("Trux");
-                    notiBuilder.setContentText("You have a new friend request!");
-                    notiBuilder.setVibrate(new long[]{1000, 1000});
-                    notiBuilder.setLights(Color.GREEN, 3000, 3000);
-                    notiBuilder.setContentIntent(pendingIntent);
-                    //Pushes the notification
-                    notiMan.notify(1, notiBuilder.build());
-
-                } else if (!not.isNewFriends()) {
-                    notiMan.cancel(1);
-                }
-
-                // Update status of flags
-                newMessages = not.isNewMessages();
-                newFriends = not.isNewFriends();
-
-            }
-
-            // Repeat
-            handler.postDelayed(this, 10000);
-        }
-    }*/
 
 
     /*****************************************************************************************

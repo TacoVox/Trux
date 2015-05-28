@@ -11,8 +11,17 @@ import android.preference.PreferenceManager;
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.User;
 
+
 /**
- * Created by jerker on 2015-05-28.
+ * Maybe somewhat hackish way to try to keep all the background stuff alive to protect it from
+ * garbage collection, otherwise things like the AGA listener seemed to dissapear anytime after
+ * you close the app. Ideally we should probably have turned a few things in the technical services
+ * package into services, but were solving this in the last days before hand-in now just to get it
+ * working fairly stable.
+ * On really high memory usage the service may be killed temporarily by android. It is then restarted
+ * on a convenient time, usually almost immediately. Therefore we let datahandler store and restore
+ * the info about the curren logged in user from SharedPreferences because that is the only state
+ * data that is critical for the service and app to continue working.
  */
 public class BackgroundService extends Service {
     // Keep track of instances so we are sure they aren't killed
@@ -49,33 +58,14 @@ public class BackgroundService extends Service {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (intent == null) {
-            System.out.println("Trying to restore user from SharedPreferences...");
-            // Started after being destroyed - try to recover user settings
-            if (prefs.getString("username", null) != null) {
-                User u = new User();
-                u.setUsername(prefs.getString("username", null));
-                u.setPasswordHash(prefs.getString("password", null));
-                u.setSessionId(prefs.getLong("sessionid", -1));
-                u.setUserId(prefs.getLong("userid", -1));
-                System.out.println("Userid: " + u.getUserId());
-                dH.setUser(u);
-            } else {
-                System.out.println("Failed.");
-            }
-
+            // Started by android after being killed - try to recover stored user data
+            dH.loadFromPrefs(prefs);
         } else {
-            System.out.println("Storing user to SharedPreferences...");
-
-            // Started from an activity - set the user settings now
-            User u = DataHandler.gI().getUser();
-            System.out.println("Username: " + u.getUsername());
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putLong("sessionid", u.getSessionId());
-            edit.putLong("userid", u.getUserId());
-            edit.putString("username", u.getUsername());
-            edit.putString("passwordhash", u.getPasswordHash());
-            System.out.println("Storing: " + edit.commit());
+            // Started from an activity - means we can store the datahandlers logged in user right
+            // now
+            dH.storeToPrefs(prefs);
         }
+
         // Keep running
         return START_STICKY;
     }

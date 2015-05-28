@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -308,8 +309,7 @@ public class BaseAppActivity extends ActionBarActivity
      */
     @Override
     protected void onSaveInstanceState (Bundle outState) {
-        //
-        outState.putSerializable("user", DataHandler.gI().getUser());
+        DataHandler.gI().storeToPrefs(PreferenceManager.getDefaultSharedPreferences(this));
         outState.putSerializable("settingsHandler", SettingsHandler.getInstance());
         super.onSaveInstanceState(outState);
     }
@@ -321,7 +321,7 @@ public class BaseAppActivity extends ActionBarActivity
      */
     @Override
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
-        DataHandler.gI().setUser((User)savedInstanceState.getSerializable("user"));
+        DataHandler.gI().loadFromPrefs(PreferenceManager.getDefaultSharedPreferences(this));
         SettingsHandler.setInstance(
                 (SettingsHandler)savedInstanceState.getSerializable("settingsHandler"));
         super.onRestoreInstanceState(savedInstanceState);

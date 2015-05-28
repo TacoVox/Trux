@@ -1,6 +1,8 @@
 package se.gu.tux.trux.application;
 
 
+import android.content.SharedPreferences;
+
 import com.jjoe64.graphview.series.DataPoint;
 
 import java.util.Arrays;
@@ -404,56 +406,50 @@ public class DataHandler
     }
 
 
-    /**
-     * DO NOT USE
-     * TODO Remove this
-     * TODO Remove this
-     * TODO Remove this
-     * TODO Remove this
-     * TODO Remove this
-     * TODO Remove this
-     * TODO Remove this
-     * TODO Remove this
-     * TODO Remove this
-     * TODO Remove this
-     * TODO Remove this
-     *
-     * @return
-     * @throws NotLoggedInException
-     */
-
-    @Deprecated
-    public Friend[] getFriends() throws NotLoggedInException {
-
-        Friend[] friends = null;
-
-        // Make sure we are logged in so we have a user
-        if (!isLoggedIn()) {
-            throw new NotLoggedInException();
-        }
-
-        // No friends / friends not set
-        if (user.getFriends() == null) {
-            System.out.println("Users friends was null.");
-            return null;
-        }
-
-        // Copy the array so we are sure no other thread messes with it during fetch
-        long[] friendIds = Arrays.copyOf(user.getFriends(), user.getFriends().length);
-
-        friends =  new Friend[friendIds.length];
-        for (int i = 0; i < friendIds.length; i++) {
-            Friend queryFriend = new Friend(friendIds[i]);
-            Data d = getData(queryFriend);
-            if (d instanceof Friend) {
-                friends[i] = (Friend)d;
-            } else if (d instanceof ProtocolMessage) {
-                System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
-            }
-        }
-
-        return friends;
+    public void clearPrefs(SharedPreferences prefs) {
+        prefs.edit().clear().commit();
     }
+
+    public void storeToPrefs(SharedPreferences prefs) {
+        System.out.println("Storing user to SharedPreferences...");
+
+        // Started from an activity - set the user settings now
+        User u = getUser();
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putLong("sessionid", u.getSessionId());
+        edit.putLong("userid", u.getUserId());
+        edit.putString("username", u.getUsername());
+        edit.putString("passwordhash", u.getPasswordHash());
+    }
+
+    public void loadFromPrefs(SharedPreferences prefs) {
+        // Started after being destroyed - try to recover user settings
+        if (prefs.getString("username", null) != null) {
+            final User recoveredUser = new User();
+            recoveredUser.setUsername(prefs.getString("username", null));
+            recoveredUser.setPasswordHash(prefs.getString("password", null));
+            recoveredUser.setSessionId(prefs.getLong("sessionid", -1));
+            recoveredUser.setUserId(prefs.getLong("userid", -1));
+            setUser(recoveredUser);
+
+            // After restoring the session-critical data, fetch full user details from server
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Data d = getData(recoveredUser);
+                        setUser((User) d);
+                    } catch (NotLoggedInException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+        } else {
+            System.out.println("Failed to restore from shared preferences.");
+        }
+    }
+
 
 
     /**
