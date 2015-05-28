@@ -20,17 +20,17 @@ import se.gu.tux.trux.datastructure.Speed;
 public class RealTimeDataHandler implements Serializable
 {
     AGADataParser rtdp;
-    LocationService locationService;
+    LocationHandler locationHandler;
 
 
     /**
      * Constructor.
-     * @param locationService   The locationservice object.
+     * @param locationHandler   The locationservice object.
      */
-    public RealTimeDataHandler(LocationService locationService)
+    public RealTimeDataHandler(LocationHandler locationHandler)
     {
         //rtdp = RealTimeDataParser.getInstance();
-        this.locationService = locationService;
+        this.locationHandler = locationHandler;
         rtdp = AGADataParser.getInstance();
 
     }
@@ -45,7 +45,7 @@ public class RealTimeDataHandler implements Serializable
         metricArray[0] = getSignalData(new Fuel(0));
         metricArray[1] = getSignalData(new Speed(0));
         metricArray[2] = getSignalData(new Distance(0));
-        metricArray[3] = locationService.getLocation();
+        metricArray[3] = locationHandler.getLocation();
 
         // Set timestamp for all data
         for (Data d : metricArray) {

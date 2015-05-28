@@ -23,7 +23,7 @@ import com.google.android.gms.location.LocationServices;
  *
  * Created by Niklas on 07/05/15.
  */
-public class LocationService implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener {
+public class LocationHandler implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener {
 
     // The last known location
     private Location currentLocation;
@@ -34,11 +34,11 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
 
 
     /**
-     * Constructs a new LocationService.
+     * Constructs a new LocationHandler.
      * @param context  We need to send a context to the Google API.
      */
-    public LocationService(Context context) {
-        System.out.println("LocationService created.");
+    public LocationHandler(Context context) {
+        System.out.println("LocationHandler created.");
         this.context = context;
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
@@ -56,7 +56,7 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
     @Override
     public void onConnected(Bundle connectionHint) {
         // Update the currentLocation variable
-        System.out.println("LocationService connected.");
+        System.out.println("LocationHandler connected.");
         Location lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(
                 googleApiClient);
         if (lastKnownLocation != null) {
@@ -131,6 +131,6 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
      */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        System.out.println("Connecting LocationService failed.");
+        System.out.println("Connecting LocationHandler failed.");
     }
 }

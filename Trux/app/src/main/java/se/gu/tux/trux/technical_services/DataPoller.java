@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Heartbeat;
 import se.gu.tux.trux.datastructure.Location;
@@ -20,11 +19,6 @@ public class DataPoller extends Service {
 
     // Singleton instance
     private static DataPoller instance;
-    private RealTimeDataHandler rtdh;
-    private ServerConnector s;
-    private DataHandler d;
-    private AGADataParser a;
-    private LocationService ls;
 
     // Seconds to sleep
     private final static int POLL_INTERVAL = 10;
@@ -49,11 +43,6 @@ public class DataPoller extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         System.out.println("Starting DataPoller service");
-        ls = new LocationService(getApplicationContext());
-        a = AGADataParser.getInstance();
-        rtdh = new RealTimeDataHandler(ls);
-        d = DataHandler.getInstance();
-        s = ServerConnector.getInstance();
         // Keep running
         return START_STICKY;
     }

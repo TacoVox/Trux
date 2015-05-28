@@ -21,6 +21,8 @@ import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
+import se.gu.tux.trux.technical_services.BackgroundService;
+import se.gu.tux.trux.technical_services.DataPoller;
 import se.gu.tux.trux.technical_services.NotificationService;
 import tux.gu.se.trux.R;
 
@@ -45,10 +47,11 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     private ViewPager viewPager;
     private ActionBar actionBar;
+    /*
     private Handler handler = new Handler();
     private Activity thisActivity = this;
     private boolean newMessages = false, newFriends = false;
-
+    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +85,9 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         intent.setAction("START_NOTIFICATION");
         startService(intent);
 
+        Intent i = new Intent(this, BackgroundService.class);
+        i.setAction("START_BACKGROUND");
+        startService(i);
     }
 
 
@@ -207,11 +213,11 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         viewPager.setCurrentItem(savedInstanceState.getInt("currentTab"));
     }
 
-
+/*
     class StatusRunnable implements Runnable {
         /**
          * Push notifications for new messages / friends
-         */
+         *//*
         @Override
         public void run() {
             System.out.println("Statusrunnable running...");
@@ -285,7 +291,7 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
             // Repeat
             handler.postDelayed(this, 10000);
         }
-    }
+    }*/
 
 
     /*****************************************************************************************
