@@ -14,6 +14,6 @@ It is also very important to create a symlink in the TruxServer source folder po
 To start the server simply run java -jar TruxServer-2-0-jar-with-dependencies.jar.
 The server will start to execute and will create - if not available yet - a folder in the same directory where your executable .jar is running - `/config` - including a `server.conf` file. The application will create it with asking you questions about the database configuration, the GMail account you want to send the eMails from as well as different interval times. 
 <b>If you want to run the server locally without setting up your own database server</b>, just take the config file provided in our GitHub repository and put it in the `/config` folder (`TruxServer/config/server.conf`). It will then connect to our MariaDB server and use our GMail account. <b>Please note that the server address is currently hard-coded in the client application.</b>
-To have a look at our database tables have a look at http://trux.derkahler.de/phpmyadmin with the credentials found in the mentioned config file.
+To have a look at our database tables go to http://trux.derkahler.de/phpmyadmin and log in with the credentials found in the mentioned config file.
 
 It is possible to run the server with some extra commands. Try to add a command line argument like -h to the execute command. To stop the server simply type q followed by enter into the command line. The server will shut down. To run the server in a longer session we recommend using screen to be able to put it in the background and resume it from any terminal.
