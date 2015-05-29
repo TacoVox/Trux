@@ -11,11 +11,11 @@
 ##Last Week Changes (After final presentation)
 ### Map
 * Scroling on the map is not possible while distracted
-* Profile button disappears
-* Toasts for telling the user if he follows himself/friends and how to quit, and when it has interrupted
+* Profile button disappears while distracted
+* Toasts for telling the user if he follows himself/friends and how to quit, and when the user has clicked to stop following.
 
 ### General system changes
-* Push notifications added
+* Push notifications added for messages and new friends
 * Application handles the android garbage collection better and doesn't crash after being in the background for a while
 
 ## General information
