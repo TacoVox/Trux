@@ -47,7 +47,7 @@ In the friends page a user can search for people and send friend request and acc
 User can send a friend request by clicking the friend icon. 
 User can accept or reject a friend request by clicking the green icon or the red icon.
 
-<img src="images/image08.jpg" alt="Friend Requests" width="250" height="100" />
+<img src="images/image08.jpg" alt="Friend Requests" width="250" height="150" />
 
 #### Community Page  
 The second tab is the community tab and it has a map, where users can see where their friends are and it contains a Profile button that takes the user to their profile as well as a Friends button that is a shortcut to the Friends list. 
