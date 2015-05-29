@@ -35,16 +35,16 @@ Trux is a tabbed application, that consists of three main tabs. The first tab is
 
 #### Home Page 
 
-<img src="../master/Docs/images/image13.png" alt="Home Page" width="250" height="400" />
+<img src="images/image13.png" alt="Home Page" width="250" height="400" />
 
 #### Message page 
 In the normal state the user is able to chat and type messages freely.
 
-<img src="../master/Docs/images/image09.png" alt="Conversation Page" width="250" height="400" />
+<img src="images/image09.png" alt="Conversation Page" width="250" height="400" />
 
 In the driving mode the user can only choose from predefined messages.
 
-<img src="../master/Docs/images/image02.jpg" alt="Simple Messages" width="250" height="400" />
+<img src="images/image02.jpg" alt="Simple Messages" width="250" height="400" />
 
 #### Friends  page
 In the friends page a user can search for people and send friend request and accept or reject any received friend request. The search and friend request features are not available while driving.
