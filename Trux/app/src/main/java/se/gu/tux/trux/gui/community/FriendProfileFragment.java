@@ -41,7 +41,7 @@ public class FriendProfileFragment extends Fragment implements FriendActionListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_info, container, false);
+        View view = inflater.inflate(R.layout.fragment_friend_profile, container, false);
         removeButton = (ImageButton) view.findViewById(R.id.fragment_info_remove_friend_button);
         messageButton = (ImageButton) view.findViewById(R.id.fragment_info_message_button);
         profileTitle = (TextView) view.findViewById(R.id.profile_title);

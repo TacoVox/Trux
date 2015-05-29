@@ -24,18 +24,19 @@ import tux.gu.se.trux.R;
 public class CommunityMainFragment extends TimerUpdateFragment implements View.OnClickListener
 {
     private ImageButton friendsButton;
+    private ImageButton profileButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
         // inflate view
-        View view = inflater.inflate(R.layout.fragment_main_i_community, container, false);
+        View view = inflater.inflate(R.layout.fragment_main_community, container, false);
 
         // get components
         FrameLayout mapContainer = (FrameLayout) view.findViewById(R.id.mapContainer);
         friendsButton = (ImageButton) view.findViewById(R.id.fragment_main_friend_button);
-        ImageButton profileButton = (ImageButton) view.findViewById(R.id.fragment_main_profile_button);
+        profileButton = (ImageButton) view.findViewById(R.id.fragment_main_profile_button);
 
         MapFrag mapFrag;
         if (savedInstanceState != null) {
@@ -68,25 +69,34 @@ public class CommunityMainFragment extends TimerUpdateFragment implements View.O
      * This method puts up the correct image on the message button depending on if the
      * user has seen all messages or not.
      */
-    private void updateIcons() {
-        Notification not = DataHandler.getInstance().getNotificationStatus();
+    private void updateButtons(DataHandler.SafetyStatus status, Notification not) {
 
         // Update friend icon
         if (not != null && not.isNewFriends()) {
             friendsButton.setImageResource(R.drawable.friendsnotificationicon);
         } else {
-            friendsButton.setImageResource(R.drawable.friendsicon);
+            friendsButton.setImageResource(R.drawable.friendsiconwithtext);
+        }
+
+        if (status == DataHandler.SafetyStatus.IDLE || status == null) {
+            // Show both buttons
+            profileButton.setVisibility(View.VISIBLE);
+        } else {
+            // Driving - show only the friend button - hide the profile button
+            profileButton.setVisibility(View.GONE);
         }
     }
 
+
     @Override
-    public void setStatus(DataHandler.SafetyStatus safetyStatus, Notification notificationStatus) {
+    public void setStatus(final DataHandler.SafetyStatus safetyStatus,
+                          final Notification notificationStatus) {
         Activity a = getActivity();
         if (a != null) {
             a.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    updateIcons();
+                    updateButtons(safetyStatus, notificationStatus);
                 }
             });
         }

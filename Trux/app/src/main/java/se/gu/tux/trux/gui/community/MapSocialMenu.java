@@ -35,7 +35,7 @@ public class MapSocialMenu extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View view = inflater.inflate(R.layout.fragment_map_community_window, container, false);
+        final View view = inflater.inflate(R.layout.fragment_map_social_menu, container, false);
 
         layout = (LinearLayout) view.findViewById(R.id.backLayout);
         menu = (LinearLayout) view.findViewById(R.id.menu);

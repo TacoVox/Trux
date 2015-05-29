@@ -1,5 +1,7 @@
 package se.gu.tux.trux.gui.base;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -116,10 +118,25 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
             assert message != null;
             if (message.getType() == ProtocolMessage.Type.SUCCESS)
             {
-                showDialogBox("Registration successful!",
-                        "You have now been registered. To confirm registration, " +
-                                "please go to the e-mail you provided and click on the link. To enjoy our services, " +
-                                "login with your username and password.");
+                // create a dialog
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+                // build the dialog, set title, set message, etc.
+                dialogBuilder.setTitle("Registration successful!");
+                dialogBuilder.setMessage("You have now been registered. To confirm registration, " +
+                        "please go to the e-mail you provided and click on the link. To enjoy our services, " +
+                        "login with your username and password.");
+                dialogBuilder.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i)
+                            {
+                                dialogInterface.dismiss();
+                                finish();
+                            }
+                        }).create();
+
+                // show dialog
+                dialogBuilder.show();
             }
             else
             {

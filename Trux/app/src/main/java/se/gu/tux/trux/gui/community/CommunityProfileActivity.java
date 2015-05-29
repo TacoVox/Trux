@@ -521,7 +521,7 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         @Override
         protected void onPreExecute()
         {
-            showToast("Fetching image for profile picture...");
+            //showToast("Fetching image for profile picture...");
         }
 
         @Override

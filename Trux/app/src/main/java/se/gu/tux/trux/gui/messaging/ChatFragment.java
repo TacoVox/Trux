@@ -243,7 +243,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
                                     });
 
                                     msgContainer.postInvalidate();
-                                    scrollView.scrollTo(0, msgContainer.getBottom());
+                                    // scroll down to the latest message
+                                    scrollView.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                                        }
+                                    });
 
                                     // send a new protocol message that we saw these messages
                                     try
@@ -374,7 +380,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
         }
 
         msgContainer.postInvalidate();
-        scrollView.scrollTo(0, msgContainer.getBottom());
+        // scroll down to the latest message
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
 
     } // end fetchLatestMessages()
 
@@ -404,15 +416,15 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
             message = userInput.getText().toString();
         }
 
+        // check if message is null, return
+        if (message == null || message.isEmpty()) { return; }
+
         final TextView textView = getUserTextView();
         Date date = new Date(System.currentTimeMillis());
         textView.setText(message + "\n\n" + df.format(date));
 
         // add to container and display
         msgContainer.addView(textView);
-
-        // check if message is null, return
-        if (message == null) { return; }
 
         // the message object to send to server
         final Message msg = new Message();
@@ -437,8 +449,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
         userInput.setText("");
 
         msgContainer.postInvalidate();
-        msgContainer.postInvalidate();
-        scrollView.scrollTo(0, msgContainer.getBottom());
+        // scroll down to the latest message
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
 
     } // end sendMessage()
 
@@ -501,7 +518,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
     /**
      * Helper method. Checks the distraction level.
      *
-     * @return  true if low level, false otherwise
+     * @return  true if distracted, false otherwise
      */
     private boolean isSimple()
     {

@@ -117,6 +117,8 @@ public class OverallGraphWindow extends Fragment {
      * he DataHandler class, and changes the points in the graphs accordingly.
      *
      * @param speedBundle The speed detailed stats
+     * @param fuelBundle The fuel detailed stats
+     * @param distBundle The distance detailed stats
      *
      */
 

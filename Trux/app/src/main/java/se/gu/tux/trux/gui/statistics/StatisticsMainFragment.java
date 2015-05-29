@@ -18,9 +18,8 @@ import tux.gu.se.trux.R;
 public class StatisticsMainFragment extends TimerUpdateFragment
 {
 
-    private DataHandler.SafetyStatus status;
-
-
+    private DataHandler.SafetyStatus lastKnownStatus;
+    private boolean stopped = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,24 +27,7 @@ public class StatisticsMainFragment extends TimerUpdateFragment
     {
         // get the view
         View view = inflater.inflate(R.layout.fragment_statistics_main, container, false);
-
-        DataHandler.getInstance().cacheDetailedStats();
-
-        status = DataHandler.getInstance().getSafetyStatus();
-
-        // check if driving or not and add fragments
-        if (status == DataHandler.SafetyStatus.MOVING || status == DataHandler.SafetyStatus.FAST_MOVING)
-        {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.statistics_main_container, new StatisticsSimpleFragment());
-            fragmentTransaction.commitAllowingStateLoss();
-        }
-        else
-        {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.statistics_main_container, new StatisticsDetailedFragment());
-            fragmentTransaction.commitAllowingStateLoss();
-        }
+        chooseFragment(DataHandler.gI().getSafetyStatus());
 
         // return the view
         return view;
@@ -57,7 +39,7 @@ public class StatisticsMainFragment extends TimerUpdateFragment
     public void onStop()
     {
         super.onStop();
-        status = null;
+        stopped = true;
     }
 
 
@@ -66,27 +48,34 @@ public class StatisticsMainFragment extends TimerUpdateFragment
     public void onResume()
     {
         super.onResume();
+        stopped = false;
+        // Tell datahandler to fetch detailed stats in the background if not already cached
+        DataHandler.getInstance().cacheDetailedStats();
 
-        status = DataHandler.getInstance().getSafetyStatus();
+        // Choose which fragment to show
+        chooseFragment(DataHandler.gI().getSafetyStatus());
+    }
 
-        // when we resume from previous state
-        // check if driving or not to display right fragments
-        if (status == DataHandler.SafetyStatus.MOVING || status == DataHandler.SafetyStatus.FAST_MOVING)
-        {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.statistics_main_container, new StatisticsSimpleFragment());
-            fragmentTransaction.commit();
-        }
-        else
-        {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.statistics_main_container, new StatisticsDetailedFragment());
-            fragmentTransaction.commit();
+    private void chooseFragment(DataHandler.SafetyStatus status) {
+        // Check if status has changed
+        if (!stopped && status != null && status != lastKnownStatus) {
+            // check if driving or not to display right fragments
+            if (status == DataHandler.SafetyStatus.MOVING || status == DataHandler.SafetyStatus.FAST_MOVING) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.statistics_main_container, new StatisticsSimpleFragment());
+                fragmentTransaction.commit();
+            } else {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.statistics_main_container, new StatisticsDetailedFragment());
+                fragmentTransaction.commit();
+            }
+            lastKnownStatus = status;
         }
     }
 
+
     @Override
     public void setStatus(DataHandler.SafetyStatus safetyStatus, Notification notificationStatus) {
-        System.out.println("Statistics setting status...");
+        chooseFragment(safetyStatus);
     }
 } // end class
