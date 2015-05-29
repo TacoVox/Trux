@@ -38,11 +38,11 @@ Trux is a tabbed application, that consists of three main tabs. The first tab is
 #### Message page 
 In the normal state the user is able to chat and type messages freely.
 
-![MessagePage](https://github.com/TacoVox/Trux/blob/master/Docs/images/image09.png "Message Page")
+<img src="https://github.com/TacoVox/Trux/blob/master/Docs/images/image09.png" alt="Conversation Page" width="250" height="400" />
 
 In the driving mode the user can only choose from predefined messages.
 
-![MessagePageSimple](https://github.com/TacoVox/Trux/blob/master/Docs/images/image02.png "Simple Message Page")
+<img src="https://github.com/TacoVox/Trux/blob/master/Docs/images/image02.png" alt="Simple Messages" width="250" height="400" />
 
 #### Friends  page
 In the friends page a user can search for people and send friend request and accept or reject any received friend request. The search and friend request features are not available while driving.
@@ -62,7 +62,7 @@ The map view can be changed between Hybrid and Standard in the settings.
 
 #### Driving mode map view 
 
-![MapViewSimple](https://github.com/TacoVox/Trux/blob/master/Docs/images/image04.png "Simple Map View")
+<img src="https://github.com/TacoVox/Trux/blob/master/Docs/images/image04.png" alt="Simple Map View" width="250" height="400" />
 
 #### Profile Page  
 The profile page is where the user can change his/her profile picture and also can edit their credentials and save the changes. 
@@ -71,19 +71,19 @@ The profile feature is only available in the normal mode, in the driving mode th
 #### Statistics Page  
 The third tab is the statistics tab (Figure 2) and it contains all the statistics in a graph format. The page also contains a tab with four options where the user can choose to open an overview page of statistics or a single view of different variables, like for fuel, distance and speed. These are only available while not driving.
 
-![OverallStatsPage](https://github.com/TacoVox/Trux/blob/master/Docs/images/image03.png "Overall Statistics Page")
+<img src="https://github.com/TacoVox/Trux/blob/master/Docs/images/image03.png" alt="Overall Page" width="250" height="400" />
 
 #### Fuel Graph Page
 
-![FuelPage](https://github.com/TacoVox/Trux/blob/master/Docs/images/image01.png "Fuel Page")
+<img src="https://github.com/TacoVox/Trux/blob/master/Docs/images/image01.png" alt="Fuel Page" width="250" height="400" />
 
 #### Speed Graph Page 
 
-![FuelPage](https://github.com/TacoVox/Trux/blob/master/Docs/images/image01.png "Fuel Page")
+<img src="https://github.com/TacoVox/Trux/blob/master/Docs/images/image14.png" alt="Speed Page" width="250" height="400" />
 
 #### Distance Traveled Page 
 
-![FuelPage](https://github.com/TacoVox/Trux/blob/master/Docs/images/image01.png "Fuel Page")
+<img src="https://github.com/TacoVox/Trux/blob/master/Docs/images/image05.png" alt="Distance Page" width="250" height="400" />
 
 #### Changing Password and Reporting system issues 
 The password can only be changed by contacting the developers through the Contact us page. In the contact us page the user also has an option to send feedback and report system issues. 
