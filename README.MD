@@ -16,8 +16,8 @@ This repository was created after the alpha presentation bacause we had problems
 
 ## [Documentation](../master/Docs)
 * [Trux - Report](../master/Docs/TruxReport.MD)
-* [Trux - User Manual](../master/Docs/UserManual.MD)
 * [Trux - Developer's Manual](../master/Docs/DeveloperManual.MD)
+* [Trux - Client Manual](../master/Docs/UserManual.MD)
 * [Trux - Server Manual](../master/Docs/ServerManual.MD)
 * [Trux - JavaDoc](http://derkahler.de/trux/appjdoc/)
 * [TruxServer - JavaDoc](http://derkahler.de/trux/srvjdoc/)
