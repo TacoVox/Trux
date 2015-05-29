@@ -209,7 +209,7 @@ public class UserHandler {
 
     /**
      * Method for getting user data from the DB.
-     * @param u a scaletton user object -> will be filled in
+     * @param u a scaletton user object - will be filled in
      * @return either a filled in user object on success or a ProtocolMessage
      * indicating an ERROR
      */

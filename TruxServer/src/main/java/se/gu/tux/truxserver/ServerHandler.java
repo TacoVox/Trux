@@ -9,6 +9,11 @@ import java.util.concurrent.Executors;
 
 import se.gu.tux.truxserver.logger.Logger;
 
+
+/**
+ * The main server listener. Listens for server connections on the selected port.
+ * Has a ThreadPool with ServerRunnables handling the individual connections.
+ */
 public class ServerHandler implements Runnable {
 
     // Determines if the main loop should continue
@@ -22,6 +27,7 @@ public class ServerHandler implements Runnable {
     private int port = 0;
     private long connectionTimeout = 0;
 
+    
     /**
      * Creates a new ServerHandler instance that listens for connections on the
      * specified port.
@@ -35,6 +41,7 @@ public class ServerHandler implements Runnable {
         this.port = port;
         this.connectionTimeout = connectionTimeout;
     }
+    
 
     /**
      * The main server handler runnable. Listens for connections and diverts
@@ -86,6 +93,11 @@ public class ServerHandler implements Runnable {
         }
     }
 
+    
+    /**
+     * Used to stop listening for connection. Does this by closing the socket,
+     * which will end the ServerHandler thread.
+     */
     public synchronized void stopServer() {
         // Switch flag so loop exits next time
         isRunning = false;
@@ -104,6 +116,11 @@ public class ServerHandler implements Runnable {
         Logger.gI().addDebug("Server Handler shut down.");
     }
 
+    
+    /**
+     * Returns the state of the main loop.
+     * @return	True if running.
+     */
     public synchronized boolean isRunning() {
         return isRunning;
     }
