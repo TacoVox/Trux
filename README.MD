@@ -8,16 +8,16 @@
 * le Comte, Niklas - <niklas.lecomte@hotmail.com> - salkin91
 * Vryashkov, Ivo - <ivo.vryashkov@gmail.com> - vryashkov
 
-##Last week changes
+##Last week changes (After final presentation)
 ### Map
 * Scroling on the map is not possible while distracted
-* Profile button disappears.
-* Toasts for telling the user if he follows himself/friends and how to quit, and when it has interrupted.
+* Profile button disappears
+* Toasts for telling the user if he follows himself/friends and how to quit, and when it has interrupted
 
 ### General system changes
 
-* Push notifications added.
-* Application handles the android garbage collection better and dont crash in the background.
+* Push notifications added
+* Application handles the android garbage collection better and don't crash in the background
 
 ## General information
 This repository was created after the alpha presentation bacause we had problems with .gitignore and for that reason we dont have any commits before the 24th of march in this repo. All the things we had were added to this repo the 24th of march or later.
