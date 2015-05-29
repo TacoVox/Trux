@@ -18,8 +18,8 @@ This repository was created after the alpha presentation bacause we had problems
 * [Trux - Report](../master/Docs/TruxReport.MD)
 * [Trux - Developer's Manual](../master/Docs/DeveloperManual.MD)
 * [Trux - Client/User Manual](../master/Docs/UserManual.MD)
-* [Trux - Server/Setup Manual](../master/Docs/ServerManual.MD)
 * [Trux - JavaDoc](http://derkahler.de/trux/appjdoc/)
+* [TruxServer - Setup Manual](../master/Docs/ServerManual.MD)
 * [TruxServer - JavaDoc](http://derkahler.de/trux/srvjdoc/)
 * [Semester 2 - General Documentation + Files](https://github.com/TacoVox/Tux)
 
