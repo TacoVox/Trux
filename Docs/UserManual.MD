@@ -1,4 +1,6 @@
-### User manual 
+#USER MANUAL
+
+***
 
 ##GENERAL INFORMATION
 Trux is a community based android application for truck drivers. Trux has various features, like data collection, driver monitoring and online truck drivers community features.
