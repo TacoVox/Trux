@@ -1,31 +1,26 @@
-# Goup members
-* tville = Jerker Ersare
-* vryashkov = Ivo Vryashkov
-* salkin91 = Niklas le Comte
-* DKarlberg = Dennis Karlberg
-* amuhotmax = Aman Ghezai
-* TacoVox = Jonas Kahler
-
-#General information
-This repository was created after the alpha presentation bacause we had problems with git ignore and for that reason we dont have any commits before the 24th of mars in this repo. All the things we had were added to this repo the 24th of mars.
-
-# Trux - [Documentation Here](https://github.com/TacoVox/Trux/tree/master/Docs)
-Our Project - We will rock this course.
-
-* Jenkins [Trux App](http://derkahler.de:8080/job/Trux/) // [Trux Server](http://derkahler.de:8080/job/TruxServer/)
-* SonarQube [Trux Server](http://www.derkahler.de:9000/dashboard/index/1)
+![Trux](https://github.com/TacoVox/Trux/blob/master/Docs/images/image00.png "Trux")<br>
 
 ## Goup members
-* amuhotmax = Aman Ghezai
-* DKarlberg = Dennis Karlberg
-* salkin91 = Niklas le Comte
-* TacoVox = Jonas Kahler
-* tville = Jerker Ersare
-* vryashkov = Ivo Vryashkov
+* tville - Jerker Ersare
+* vryashkov - Ivo Vryashkov
+* salkin91 - Niklas le Comte
+* DKarlberg - Dennis Karlberg
+* amuhotmax - Aman Ghezai
+* TacoVox - Jonas Kahler
 
-## Build - Status on devel
-* Trux App <img src="http://derkahler.de:8080/job/Trux/badge/icon">
-* TruxServer <img src="http://derkahler.de:8080/job/TruxServer/1/badge/icon">
+## General information
+This repository was created after the alpha presentation bacause we had problems with git ignore and for that reason we dont have any commits before the 24th of mars in this repo. All the things we had were added to this repo the 24th of mars.
+
+## Download
+[Latest Stable - v1.0](https://github.com/TacoVox/Trux/blob/master/Trux/app/app-release.apk)
+
+## Documentation
+[Trux Documentation](https://github.com/TacoVox/Trux/tree/master/Docs)
+[Semester 2 Documentation](https://github.com/TacoVox/Tux)
+
+## Automatic Build + Technical Debt
+* Jenkins [Trux App](http://derkahler.de:8080/job/Trux/) // [Trux Server](http://derkahler.de:8080/job/TruxServer/)
+* SonarQube [Trux Server](http://www.derkahler.de:9000/dashboard/index/1)
 
 ## Short description how this repository works.
 We are working in three different main branches:
