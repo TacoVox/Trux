@@ -12,10 +12,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file('trux_store_key.jks')
-            storePassword 'trux123'
-            keyAlias 'trux'
-            keyPassword 'trux123'
+            storeFile file("/Users/Niklas/git/repos/Trux/Trux/app/trux_release_key.jks")
+            storePassword "trux123"
+            keyAlias "TruxRelease"
+            keyPassword "trux123"
         }
     }
     buildTypes {
