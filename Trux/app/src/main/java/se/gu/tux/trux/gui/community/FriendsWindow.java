@@ -194,10 +194,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     }
 
     /**
+     * Callback method for when the SocialHandler has fetched the friends.
      * This is run in a background thread created by SocialHandler, so we are using this background
      * thread to fetch more stuff if relevant (the search results). By looking what request was last
      * issued by the user (to show list or search), we know what to render here
-     * @param friends
+     * @param friends   The friends of the logged in user
      */
     @Override
     public void onFriendsFetched(final ArrayList<Friend> friends) {
@@ -252,6 +253,10 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     }
 
 
+    /**
+     * Callback method for when the friend requests are fetched by SocialHandler.
+     * @param friendRequests    Friend requests to the current user
+     */
     @Override
     public void onFriendRequestsFetched(final ArrayList<Friend> friendRequests) {
         runOnUiThread(new Runnable() {
@@ -265,8 +270,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
     /**
-     * Returns an array with all elements that contain the needle
+     * Returns an arraylist with all friends that contain the needle
      * (in username, firstname or lastname)
+     * @param haystack  A list of friends to search from
+     * @param needle    A search term
+     * @return  Arraylist of friends
      */
     public ArrayList<Friend> matchFriendSearch(ArrayList<Friend> haystack, String needle) {
         if (haystack == null || haystack.size() == 0) {
@@ -287,10 +295,13 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
     /**
-     * Appends the second array to the list - and fetches images for these people
-     * @param list
-     * @param friendArray
-     * @return
+     * Casts and appends the second array to the list - and fetches images for these people. The
+     * images will be cached by socialhandler. (The picture field in friend is transient, so we
+     * don't have to send it from the server each time we fetch a friend)
+     * @param list          The first list of friends
+     * @param friendArray   The Object[] of friends we want to cast and append
+     * @return              The Object[] appended to the list, with the new objects having their
+     *                      pictures added
      */
     private ArrayList<Friend> appendSearchResults(ArrayList<Friend> list, Object[] friendArray)
             throws NotLoggedInException {
