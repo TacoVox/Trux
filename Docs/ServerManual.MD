@@ -5,7 +5,7 @@ The Trux Server application is command line based. That means that there is no G
 
 ## Compilation
 To compile the server it is necessary to have a working maven as well as a JDK in version 8 installation (a standard Netbeans or Eclipse installation includes this).
-It is also very important to create a symlink from the TruxServer project folder to the datastructure folder in the Trux application. This is necessary because Trux and TruxServer are sharing these files as their “protocol”. A sample command for Linux and Unix machines to create the symlink (with the ln command): 
+It is also very important to create a symlink in the TruxServer source folder pointing to the datastructure folder in the Trux application. This is necessary because Trux and TruxServer are sharing these files as their “protocol”. A sample command for Linux and Unix machines to create the symlink (with the ln command): 
 <br>`ln -s /home/jonas/Repos/Trux/Trux/app/src/main/java/se/gu/tux/trux/datastructure/ /home/jonas/Repos/Trux/TruxServer/src/main/java/se/gu/tux/trux/datastructure`
 <br>After performing a clean build you will have most likely two executable .jar files in a `/target` directory. One without dependencies and one with them included. The latter file is the file you want to use.
 
