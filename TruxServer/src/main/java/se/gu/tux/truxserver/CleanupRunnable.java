@@ -13,17 +13,21 @@ public class CleanupRunnable implements Runnable {
     private boolean isRunning = true;
     private int interval = 0;
 
+    
     /**
      * Construct a cleanupthread with the given interval in minutes between
      * cleanup cycles.
      *
-     * @param interval
+     * @param intervalMinutes The interval in minutes
      */
     public CleanupRunnable(int intervalMinutes) {
         this.interval = 1000 * 60 * intervalMinutes;
     }
 
-    //Overriding Thread's run()
+    
+	/**
+	 * Main run method
+	 */
     @Override
     public void run() {
         Logger.gI().addMsg("Cleanup thread starting...");
