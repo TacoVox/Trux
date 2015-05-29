@@ -21,7 +21,7 @@ This repository was created after the alpha presentation bacause we had problems
 * [Trux - Server Manual](../master/Docs/ServerManual.MD)
 * [Trux - JavaDoc](http://derkahler.de/trux/appjdoc/)
 * [TruxServer - JavaDoc](http://derkahler.de/trux/srvjdoc/)
-* [Semester 2 Documentation](https://github.com/TacoVox/Tux)
+* [Semester 2 - General Documentation + Files](https://github.com/TacoVox/Tux)
 
 ## Automatic Build + Technical Debt
 * Jenkins [Trux App](http://derkahler.de:8080/job/Trux/) // [Trux Server](http://derkahler.de:8080/job/TruxServer/)
