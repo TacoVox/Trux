@@ -1,4 +1,4 @@
-# Trux - [Documentation Here](https://github.com/TacoVox/Tux/tree/master/DIT524_Project)
+# Trux - [Documentation Here](https://github.com/TacoVox/Trux/tree/master/Docs)
 Our Project - We will rock this course.
 
 * Jenkins [Trux App](http://derkahler.de:8080/job/Trux/) // [Trux Server](http://derkahler.de:8080/job/TruxServer/)
