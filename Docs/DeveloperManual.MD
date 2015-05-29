@@ -1,11 +1,4 @@
 # Developer’s Manual - Trux Application
-## Developed by:
-* Ersare, Jerker - <jerker@soundandvision.se>
-* Ghezai, Aman - <gusghezam@student.gu.se>
-* Kahler, Jonas - <jonas.kahler@icloud.com>
-* Karlberg, Dennis - <realdkk@gmail.com>
-* le Comte, Niklas - <niklas.lecomte@hotmail.com>
-* Vryashkov, Ivo - <ivo.vryashkov@gmail.com>
 
 ## Structure
 Trux application was developed using a client-server architecture. The client side is responsible for the interaction with the user. It manages user interface, user input and output, application logic, business and safety rules, and communication with the server. The server side is responsible for taking requests from the application, connecting to the database, retrieving/storing data from/to the database and sending the data back to the application.
@@ -39,13 +32,14 @@ The application is split into packages separating the different layers of the sy
 
 ## Protocol
 ### Server  
-Threads management - we use a thread pool to track and manage the server connections. Each time a request is received by the server, a new thread is created to process that request. This allows for multiple actions to perform at the same time by not blocking the main thread. Once the request is received it is channeled to the appropriate classes that are responsible for taking care of the kind of request. To clean up the environment we have a thread running in fixed time-intervals to purge sessions that are not active. 
+Threads management - we use a thread pool to track and manage the server connections. Each time a request is received by the server, a new thread is created to process that request. Once the request is received it is channeled to the appropriate classes that are responsible for taking care of the kind of request. To clean up the environment we have a thread running in fixed time-intervals to purge sessions that are not active. 
 
 ### Client
-Requests are routed in two ways in the application. We have a class DataHandler that takes care of routing those requests based on if there are on the server side or not. For this we have multiple data structures like ProtocolMessage, Notification, MetricData and User. Each data object knows if it is on the server side or not.<br>
+Requests are routed in two ways in the application. We have a class DataHandler that takes care of routing requests (for example when the GUI needs data) based on if they are on the server side or not. For this we have multiple data structures like ProtocolMessage, Notification, MetricData and User. Each data object knows if their data resides on the server side or not, by their implementation of a boolean method. Example: for the metric data, any object with a timeframe of 0 is current data, so the data is fetched from AGA on the phone. For a longer timeframe, the average or total is calculated on the server.<br>
 <b>Login procedure</b> - when a user wants to login, a User object is created that contains the information needed to login such as username and password. This object is then send to the server for authentication. The server sends back a ProtocolMessage as a reply if this user is allowed to login or not. The ProtocolMessage also contains a session id and a user id for managing the current session the user is in.<br>
 <b>Auto-login procedure</b> - upon auto-login, a ProtocolMessage is sent to the server with the required information. The information is read from a config file where we keep the username, hashed password, session id and user id.<br>
-<b>Heartbeats</b> - a heartbeat is sent to the server every 10 seconds to keep monitoring if the connection is alive and for checking if there are any notifications we should take care of.<br>
+<b>Heartbeats</b> - a heartbeat is sent to the server every 10 seconds to keep the connection is alive. The server replies with a notification object making us aware of any new messages or friends.<br>
 
 ## New Features and Maintainability
 Components work independently of each other in the Trux app. Therefore, it is fairly straight forward to remove and add a new feature. For a consistent look and feel across the application a new Activity class should extend BaseAppActivity. For new data objects the Data class should be extended which provides an implementation of the Serializable interface needed to send object through the ObjectInputStream and ObjectOutputStream for communication. Any additional classes needed for providing services or logic to the system should be put in the corresponding packages and make use of the already provided interfaces if possible.
+To add a new feature or handling of a new datatype to the server, the DataSwitcher class that handles the main routing of data would need to be updated to know what to do with the data.
