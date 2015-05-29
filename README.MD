@@ -15,7 +15,9 @@ This repository was created after the alpha presentation bacause we had problems
 * [Latest Stable - v1.0](https://github.com/TacoVox/Trux/blob/master/Trux/app/app-release.apk)
 
 ## Documentation
-* [Trux Documentation](https://github.com/TacoVox/Trux/tree/master/Docs)
+* [Trux - General Documentation](https://github.com/TacoVox/Trux/tree/master/Docs)
+* [Trux - JavaDoc](http://derkahler.de/trux/appjdoc/)
+* [TruxServer - JavaDoc](http://derkahler.de/trux/srvjdoc/)
 * [Semester 2 Documentation](https://github.com/TacoVox/Tux)
 
 ## Automatic Build + Technical Debt
