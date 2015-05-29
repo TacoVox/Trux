@@ -1,21 +1,24 @@
-![Trux](https://github.com/TacoVox/Trux/blob/master/Docs/images/image00.png "Trux")<br>
+![Trux](../master/Docs/images/image00.png "Trux")<br>
 
 ## Goup members
-* tville - Jerker Ersare
-* vryashkov - Ivo Vryashkov
-* salkin91 - Niklas le Comte
-* DKarlberg - Dennis Karlberg
-* amuhotmax - Aman Ghezai
-* TacoVox - Jonas Kahler
+* Ersare, Jerker - <jerker@soundandvision.se> - tville
+* Ghezai, Aman - <gusghezam@student.gu.se> - amuhotmax
+* Kahler, Jonas - <jonas.kahler@icloud.com> - TacoVox
+* Karlberg, Dennis - <realdkk@gmail.com> - DKarlberg
+* le Comte, Niklas - <niklas.lecomte@hotmail.com> - salkin91
+* Vryashkov, Ivo - <ivo.vryashkov@gmail.com> - vryashkov
 
 ## General information
 This repository was created after the alpha presentation bacause we had problems with git ignore and for that reason we dont have any commits before the 24th of mars in this repo. All the things we had were added to this repo the 24th of mars.
 
 ## Download
-* [Latest Stable - v1.0](https://github.com/TacoVox/Trux/blob/master/Trux/app/app-release.apk)
+* [Latest Stable - v1.0](../master/Trux/app/app-trux.apk)
 
-## Documentation
-* [Trux - General Documentation](https://github.com/TacoVox/Trux/tree/master/Docs)
+## [Documentation](../master/Docs)
+* [Trux - Report](../master/Docs/TruxReport.MD)
+* [Trux - User Manual](../master/Docs/UserManual.MD)
+* [Trux - Developer's Manual](../master/Docs/DeveloperManual.MD)
+* [Trux - Server Manual](../master/Docs/ServerManual.MD)
 * [Trux - JavaDoc](http://derkahler.de/trux/appjdoc/)
 * [TruxServer - JavaDoc](http://derkahler.de/trux/srvjdoc/)
 * [Semester 2 Documentation](https://github.com/TacoVox/Tux)
