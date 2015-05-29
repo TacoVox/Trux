@@ -16,7 +16,7 @@ This repository was created after the alpha presentation bacause we had problems
 
 ## [Documentation](../master/Docs)
 * [Trux - Report](../master/Docs/TruxReport.MD)
-* [Trux - Backlog - Not 100%](../master/Docs/Backlog.xlsx)
+* [Trux - Backlog](../master/Docs/Backlog.xlsx) (Not 100% accurate but provided for reference)
 * [Trux - Developer's Manual](../master/Docs/DeveloperManual.MD)
 * [Trux - Client/User Manual](../master/Docs/UserManual.MD)
 * [Trux - JavaDoc](http://derkahler.de/trux/appjdoc/)
