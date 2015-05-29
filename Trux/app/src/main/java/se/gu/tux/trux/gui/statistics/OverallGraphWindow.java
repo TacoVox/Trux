@@ -19,6 +19,11 @@ import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Speed;
 import tux.gu.se.trux.R;
 
+/**
+ * This Fragment is responsible for displaying the monthly graphs for all
+ * metrics (speed,fuel and distance traveled).
+ */
+
 public class OverallGraphWindow extends Fragment {
     private GraphView speedGraph, fuelGraph, distGraph;
     private View myFragmentView;
@@ -32,12 +37,18 @@ public class OverallGraphWindow extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        // Initialize the view.
+
         myFragmentView = inflater.inflate(R.layout.fragment_overall_graph_window, container, false);
+
+        // Initialize the graph views.
+
         popSpeedGraph(myFragmentView);
         popFuelGraph(myFragmentView);
         popDTGraph(myFragmentView);
 
-        myFragmentView.findViewById(R.id.loadingPanel).bringToFront();
+        // Return the view.
+
         return myFragmentView;
     }
 
@@ -55,9 +66,16 @@ public class OverallGraphWindow extends Fragment {
         refresh();
     }
 
-    public void refresh() {
-        System.out.println("REFRESHING Overall....");
+    /**
+     * Here we have a new thread that checks if the data is fetched and ready to be
+     * displayed. The data starts fetching when the StatisticsMainFragment have been
+     * initialized (StatisticsMainFragment is initialized directly after a successful login).
+     *
+     * Until the data is ready a loadingscreen is shown, whenever the data is ready
+     * the loadingscreen is removed and the setValues method is called.
+     */
 
+    public void refresh() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -92,51 +110,17 @@ public class OverallGraphWindow extends Fragment {
                 }
             }
         }).start();
-
-        /*
-        // Make sure values are set once they are loaded
-        AsyncTask myTask = new AsyncTask<Void, Void, Boolean>()
-        {
-            Speed s = new Speed(0);
-            Fuel f = new Fuel(0);
-            Distance d = new Distance(0);
-
-            @Override
-            protected Boolean doInBackground(Void... voids)
-            {
-                while (!(DataHandler.getInstance().detailedStatsReady(s)
-                        && DataHandler.getInstance().detailedStatsReady(f)
-                        && DataHandler.getInstance().detailedStatsReady(d))) {
-                    try {
-                        Thread.sleep(100);
-                        // Stop waiting if fragment was cancelled
-                        if (!isVisible()) {
-                            cancel(true);
-                        }
-                    } catch (InterruptedException e) {
-                        System.out.println("Wait interrupted.");
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            public void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(Boolean b)
-            {
-                super.onPostExecute(b);
-                setValues(DataHandler.getInstance().getDetailedStats(s),
-                        DataHandler.getInstance().getDetailedStats(f),
-                        DataHandler.getInstance().getDetailedStats(d));
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                 */
     }
 
+    /**
+     * This method retrieves the data from bundles that are retrieved and cached in
+     * he DataHandler class, and changes the points in the graphs accordingly.
+     *
+     * @param speedBundle The speed detailed stats
+     * @param fuelBundle The fuel detailed stats
+     * @param distBundle The distance detailed stats
+     *
+     */
 
     public void setValues(DetailedStatsBundle speedBundle, DetailedStatsBundle fuelBundle,
                           DetailedStatsBundle distBundle) {
@@ -152,11 +136,20 @@ public class OverallGraphWindow extends Fragment {
             LineGraphSeries distValues = new LineGraphSeries(distBundle.getGraphPoints());
             distGraph.addSeries(distValues);
         }
+
+        // Hide the loadingscreen.
+
         if (myFragmentView != null) {
             myFragmentView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
         }
     }
 
+    /**
+     * In this method we give the fuel graph some layout parameters and add it
+     * to a container.
+     *
+     * @param view
+     */
 
     private void popFuelGraph(View view) {
 
@@ -168,7 +161,7 @@ public class OverallGraphWindow extends Fragment {
         fuelGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
         fuelGraph.getGridLabelRenderer().setPadding(50);
         fuelGraph.getViewport().setMaxX(30);
-        fuelGraph.getViewport().setMaxY(800);
+        fuelGraph.getViewport().setMaxY(80);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -181,6 +174,13 @@ public class OverallGraphWindow extends Fragment {
             // something to handle the NPE.
         }
     }
+
+    /**
+     * In this method we give the speed graph some layout parameters and add it
+     * to a container.
+     *
+     * @param view
+     */
 
     private void popSpeedGraph(View view) {
 
@@ -206,6 +206,13 @@ public class OverallGraphWindow extends Fragment {
             // something to handle the NPE.
         }
     }
+
+    /**
+     * In this method we give the distance graph some layout parameters and add it
+     * to a container.
+     *
+     * @param view
+     */
 
     private void popDTGraph(View view) {
 

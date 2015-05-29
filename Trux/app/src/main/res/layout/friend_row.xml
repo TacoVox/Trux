@@ -8,8 +8,7 @@
     <ImageView
         android:layout_width="60sp"
         android:layout_height="60sp"
-        android:id="@+id/friendPicture"
-        android:layout_gravity="center_vertical" />
+        android:id="@+id/friendPicture" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -50,18 +49,18 @@
         android:textSize="15sp"/>
 
     <Button
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:background="@drawable/addfriendicon"
         android:id="@+id/friendRequestButton"
         android:layout_gravity="center_vertical|right"
         android:layout_marginRight="10dp"/>
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:background="@drawable/profileicon"
-        android:id="@+id/profileButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/locationpin"
+        android:id="@+id/locateButton"
         android:layout_gravity="center_vertical|right"
         android:layout_marginRight="10dp"/>
 

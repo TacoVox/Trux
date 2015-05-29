@@ -10,6 +10,7 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
 
     <uses-feature
@@ -23,6 +24,9 @@
         android:label="@string/app_name"
         android:theme="@style/CustomActionBarTheme">
 
+        <service android:name="se.gu.tux.trux.technical_services.NotificationService"/>
+        <service android:name="se.gu.tux.trux.technical_services.BackgroundService" />
+
 
         <!-- META DATA -->
         <meta-data
@@ -31,7 +35,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDL4n8nLWhoqVqhGxi6zHUzNfrtCjmQccg" />
+            android:value="AIzaSyB7ZMHdX5BByguQKiqsLzuSzReQGxpRMDU" />
 
 
         <!-- ACTIVITIES -->
@@ -102,18 +106,12 @@
         </activity>
         <!-- End Home Activity -->
 
-        <activity
-            android:name="se.gu.tux.trux.gui.community.Community_main"
-            android:label="@string/title_activity_community_main" >
-        </activity>
-
         <!-- Message Activity -->
         <activity
             android:name="se.gu.tux.trux.gui.messaging.MessageActivity"
             android:label="Messages"
             android:screenOrientation="portrait">
         </activity>
-
 
     </application>
 

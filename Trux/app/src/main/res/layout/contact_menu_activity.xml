@@ -79,10 +79,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:textColor="#E0E0E0"
-                android:background="@drawable/button_clickable_new"
-                android:id="@+id/sendEmail"
+                android:background="@drawable/custom_button"
+                android:id="@+id/send_email_button"
                 android:text="@string/feedbackbutton"
-                android:onClick="sendFeedback"
                 android:layout_gravity="bottom">
             </Button>
         </LinearLayout>

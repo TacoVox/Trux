@@ -32,7 +32,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/userNameInput"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:inputType="text"/>
     </LinearLayout>
 
     <LinearLayout
@@ -57,7 +58,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/firstNameInput"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:inputType="text"/>
     </LinearLayout>
 
     <LinearLayout
@@ -82,7 +84,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/lastNameInput"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:inputType="text"/>
     </LinearLayout>
 
     <LinearLayout
@@ -191,7 +194,7 @@
             android:layout_height="wrap_content"
             android:text="@string/register_button_title"
             android:textColor="#E0E0E0"
-            android:background="@drawable/bottom_button"
+            android:background="@drawable/custom_button"
             android:layout_gravity="bottom"
             android:id="@+id/registerButton"/>
 

@@ -135,7 +135,10 @@ public class AGADataParser
     }
 
 
+    /**
+     * Returns the distraction level from AGA.
+     * @return  The distraction level.
+     */
     public int getDistLevel()   { return distLevel; }
-
 
 } // end class

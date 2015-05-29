@@ -16,8 +16,6 @@ import java.util.List;
 import tux.gu.se.trux.R;
 
 /**
- * Created by ivryashkov on 2015-05-06.
- *
  * Handles the main statistics fragment. Holds a spinner
  */
 public class StatisticsDetailedFragment extends Fragment implements AdapterView.OnItemSelectedListener

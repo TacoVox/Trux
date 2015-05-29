@@ -21,46 +21,63 @@ import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.truxserver.dbconnect.UserHandler;
 
 /**
- *
- * @author jonas
+ * Class switching User or Friend.
+ * @author Jonas Kahler
  */
 public class UserSwitcher {
-        /**
+
+    /*
      * Static part.
      */
-    private static UserSwitcher us = null;
-    
+    private static UserSwitcher instance = null;
+
+    /**
+     * Method returning a UserSwitcher instance.
+     * @return a UserSwitcher instance.
+     */
     protected static UserSwitcher getInstance() {
-        if(us == null)
-            us = new UserSwitcher();
-        return us;
+        if (instance == null) {
+            instance = new UserSwitcher();
+        }
+        return instance;
     }
-    
+
+    /**
+     * Method returning a UserSwitcher instance.
+     * @return a UserSwitcher instance.
+     */
     protected static UserSwitcher gI() {
         return getInstance();
     }
-    
-    /**
+
+    /*
      * Non-static part.
      */
-    private UserSwitcher() {}
-    
+    private UserSwitcher() {
+    }
+
+    /**
+     * Method for handling User objects.
+     * @param ud a User OR Friend object
+     * @return some kind of Data
+     */
     protected Data handleUser(Data ud) {
-        if(ud instanceof User) {
+        if (ud instanceof User) {
             User u = (User) ud;
-            
-            if(u.getSessionId() == User.LOGIN_REQUEST)
+
+            if (u.getSessionId() == User.LOGIN_REQUEST) {
                 return UserHandler.gI().login(u);
-            else if(u.getSessionId() == User.REGISTER_REQUEST)
+            } else if (u.getSessionId() == User.REGISTER_REQUEST) {
                 return UserHandler.gI().register(u);
-            else if(u.isRequestProfileChange())
-                return UserHandler.gI().updateUser((User)ud);
-             else
-                return UserHandler.gI().getUser((User)ud);
-        }
-        else if (ud instanceof Friend)
-            return UserHandler.gI().getFriend((Friend)ud);
-        else
+            } else if (u.isRequestProfileChange()) {
+                return UserHandler.gI().updateUser((User) ud);
+            } else {
+                return UserHandler.gI().getUser((User) ud);
+            }
+        } else if (ud instanceof Friend) {
+            return UserHandler.gI().getFriend((Friend) ud);
+        } else {
             return null;
+        }
     }
 }

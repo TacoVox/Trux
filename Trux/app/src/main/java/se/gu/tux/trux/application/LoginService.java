@@ -2,18 +2,21 @@ package se.gu.tux.trux.application;
 
 
 import android.content.Context;
+import android.content.Intent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
+import se.gu.tux.trux.technical_services.BackgroundService;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import se.gu.tux.trux.technical_services.ServerConnector;
 
@@ -21,20 +24,16 @@ import se.gu.tux.trux.technical_services.ServerConnector;
  * Created by ivryashkov on 2015-04-20.
  *
  * Handles the login and logout to the application.
- *
+ * Note that auto-login is handled in main activity right now.
  */
-public class LoginService
+public class LoginService implements Serializable
 {
-
-    // user object for storing user info
-    private User user;
+    // file name
+    public static final String FILE_NAME = "trux_user_config";
 
     // context object, we get it from MainActivity, used for opening
     // file input and output streams
     private Context context;
-
-    // reference to the file name for storing user info
-    private String fileName = "";
 
     // login service instance
     private static LoginService ls;
@@ -46,22 +45,18 @@ public class LoginService
      *
      * @param context   The Context object to be used.
      */
-    private LoginService(Context context, String fileName)
+    private LoginService(Context context)
     {
-        // initialise user
-        user = new User();
         // get the context
         this.context = context;
-        // get the file name
-        this.fileName = fileName;
     }
 
 
-    public static void createInstance(Context context, String fileName)
+    public static void createInstance(Context context)
     {
         if (ls == null)
         {
-            ls = new LoginService(context, fileName);
+            ls = new LoginService(context);
         }
     }
 
@@ -69,6 +64,11 @@ public class LoginService
     public static LoginService getInstance()
     {
         return ls;
+    }
+
+
+    public static void setInstance(LoginService newInstance) {
+        ls = newInstance;
     }
 
 
@@ -86,6 +86,9 @@ public class LoginService
      */
     public boolean login(String username, String password, Long sessionId, Long userId, Short keepFlag)
     {
+        // Create a new user object
+        User user = new User();
+
         // set username in user object
         user.setUsername(username);
 
@@ -215,10 +218,11 @@ public class LoginService
             // Clear the user details file
             writeToFile("LOGGED_OUT");
 
-
             DataHandler.getInstance().setUser(null);
             isLoggedOut = true;
-        } else {
+        }
+        else
+        {
             System.out.println("Received something else than sucess when trying to log out...!");
         }
 
@@ -281,7 +285,7 @@ public class LoginService
         {
             // open output stream
             OutputStreamWriter outputStreamWriter =
-                    new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
+                    new OutputStreamWriter(context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE));
 
             System.out.println("-------- writing to file ----------");
 
@@ -313,7 +317,7 @@ public class LoginService
         try
         {
             // open input stream
-            InputStream inputStream = context.openFileInput(fileName);
+            InputStream inputStream = context.openFileInput(FILE_NAME);
 
             if ( inputStream != null )
             {

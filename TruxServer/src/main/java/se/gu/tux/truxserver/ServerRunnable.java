@@ -11,14 +11,16 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import se.gu.tux.trux.datastructure.Data;
-import se.gu.tux.trux.datastructure.Heartbeat;
-import se.gu.tux.trux.datastructure.MetricData;
-import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.ProtocolMessage.Type;
 import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
+
+/**
+ * Instances of this class handle the individual connections with clients.
+ * ServerHandler manages the ServerRunnable objects in a thread pool.
+ */
 public class ServerRunnable implements Runnable {
 
     private boolean isRunning = true;
@@ -30,12 +32,22 @@ public class ServerRunnable implements Runnable {
     private long idleTime = 0;
     private long maxIdleTime = 0;
 
+    /**
+     * Constructor.
+     * @param cs			The socket with the connection.
+     * @param connectionId	The connection ID, used to mark debug output
+     * @param maxIdleTime	A connection timeout
+     */
     public ServerRunnable(Socket cs, long connectionId, long maxIdleTime) {
         this.cs = cs;
         this.connectionId = connectionId;
         this.maxIdleTime = maxIdleTime;
     }
 
+    
+    /**
+     * The main loop. 
+     */
     @Override
     public void run() {
 
@@ -79,22 +91,22 @@ public class ServerRunnable implements Runnable {
                     } catch (ClassCastException e) {
                         Logger.gI().addError(connectionId + ": Classcast:" + e.getLocalizedMessage());
                     } catch (SocketTimeoutException e) {
-                    	idleTime++;
-                    	if (idleTime > maxIdleTime) {
-                    		Logger.gI().addMsg(connectionId + ": Timed out!");
-                    		timedOut = true;
-                    	}
+                        idleTime++;
+                        if (idleTime > maxIdleTime) {
+                            Logger.gI().addMsg(connectionId + ": Timed out!");
+                            timedOut = true;
+                        }
                     }
                 }
 
                 // If thread was interrupted while waiting for input, just shut down.
                 // The same goes for if connection timeout was reached or the client said goodbye.
-                if (currentThread.isInterrupted() || timedOut || 
-                		(d instanceof ProtocolMessage && ((ProtocolMessage)d).getType() == 
-                		ProtocolMessage.Type.GOODBYE) ) {
+                if (currentThread.isInterrupted() || timedOut
+                        || (d instanceof ProtocolMessage && ((ProtocolMessage) d).getType()
+                        == ProtocolMessage.Type.GOODBYE)) {
                     throw new InterruptedException();
                 }
-                
+
                 // Send data to DataSwitcher
                 d = DataSwitcher.gI().handleData(d);
 
@@ -103,19 +115,19 @@ public class ServerRunnable implements Runnable {
                 // here to avoid casting errors on the client. The client will try to  reconnect 
                 // eventually when it notices the connection went stale, and then it's up to the
                 // server to be up and running...                
-                if (d instanceof ProtocolMessage && ((ProtocolMessage) d).getType() ==
-                		Type.GOODBYE) {
-                	Logger.gI().addMsg(connectionId + ": Received GOODBYE from DataSwitcher...");
-                	throw new InterruptedException();
+                if (d instanceof ProtocolMessage && ((ProtocolMessage) d).getType()
+                        == Type.GOODBYE) {
+                    Logger.gI().addMsg(connectionId + ": Received GOODBYE from DataSwitcher...");
+                    throw new InterruptedException();
                 }
-                
+
                 // Send data back to respond to the request or acknowledge.
                 out.writeObject(d);
-                out.flush();		
+                out.flush();
 
                 // Repeating the shutDown() call intentionally where needed below.
             } catch (InterruptedException e) {
-            	Logger.gI().addMsg(connectionId + ": Thread interrupted, shutting down...");
+                Logger.gI().addMsg(connectionId + ": Thread interrupted, shutting down...");
                 shutDown();
             } catch (ClassNotFoundException e) {
                 Logger.gI().addError(connectionId + ": Class not found! Exiting.");
@@ -125,21 +137,22 @@ public class ServerRunnable implements Runnable {
             } catch (EOFException e) {
                 Logger.gI().addDebug(connectionId + ": Client disconnected.");
                 shutDown();
-            } catch (StreamCorruptedException e) {    
-            	Logger.gI().addError(connectionId + " Stream corrupted: " + e.getLocalizedMessage());
-            	shutDown();
+            } catch (StreamCorruptedException e) {
+                Logger.gI().addError(connectionId + " Stream corrupted: " + e.getLocalizedMessage());
+                shutDown();
             } catch (SocketException e) {
-            	Logger.gI().addDebug(connectionId + ": Socket exception - assuming server is "
-            			+ "shutting down or client disconnected.");
-            	shutDown();
+                Logger.gI().addDebug(connectionId + ": Socket exception - assuming server is "
+                        + "shutting down or client disconnected.");
+                shutDown();
             } catch (IOException e) {
-                Logger.gI().addMsg(connectionId + ": Closing ServerRunnable socket... (" 
-                		+ e.getClass() + ")");   
+                Logger.gI().addMsg(connectionId + ": Closing ServerRunnable socket... ("
+                        + e.getClass() + ")");
                 shutDown();
             }
         }
     }
 
+    
     /**
      * Cleanly shut down this server runnable
      */
@@ -157,6 +170,11 @@ public class ServerRunnable implements Runnable {
         isRunning = false;
     }
 
+    
+    /**
+     * Returns the socket with the client connection.
+     * @return	The socket.
+     */
     public Socket getCs() {
         return cs;
     }

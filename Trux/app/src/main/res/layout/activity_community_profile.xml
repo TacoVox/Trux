@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="5dp"
-                    android:background="@drawable/bottom_button"
+                    android:background="@drawable/custom_button"
                     android:text="@string/change_profile_pic"
                     android:textColor="#E0E0E0"/>
 
@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/profile_username_edit_button"
                     android:text="@string/edit"
-                    android:background="@drawable/bottom_button"
+                    android:background="@drawable/custom_button"
                     android:textColor="#E0E0E0"/>
 
             </LinearLayout>
@@ -98,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/profile_lastname_edit_button"
                     android:text="@string/edit"
-                    android:background="@drawable/bottom_button"
+                    android:background="@drawable/custom_button"
                     android:textColor="#E0E0E0"/>
 
             </LinearLayout>
@@ -129,7 +129,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/profile_firstname_edit_button"
                     android:text="@string/edit"
-                    android:background="@drawable/bottom_button"
+                    android:background="@drawable/custom_button"
                     android:textColor="#E0E0E0"/>
 
             </LinearLayout>
@@ -160,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/profile_email_edit_button"
                     android:text="@string/edit"
-                    android:background="@drawable/bottom_button"
+                    android:background="@drawable/custom_button"
                     android:textColor="#E0E0E0"/>
 
             </LinearLayout>
@@ -177,7 +177,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:background="@drawable/bottom_button"
+                    android:background="@drawable/custom_button"
                     android:text="@string/cancel"
                     android:textColor="#E0E0E0"
                     android:layout_marginRight="1dp"/>
@@ -187,7 +187,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/bottom_button"
+                    android:background="@drawable/custom_button"
                     android:text="@string/save"
                     android:textColor="#E0E0E0"/>
 

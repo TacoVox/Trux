@@ -6,47 +6,58 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import se.gu.tux.trux.gui.community.CommunityMainFragment;
+import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
 
 /**
- * Created by ivryashkov on 2015-05-05.
- *
- * Handles the display of the fragments in main activity.
+ * Handles the fragments in HomeActivity.
  */
 public class HomePagerAdapter extends FragmentStatePagerAdapter
 {
 
-    // the fragments to display
-    private ArrayList<Fragment> fragmentArrayList;
-
-
     /**
-     * Constructor. Takes the fragment manager to use and a list with
-     * the fragments to display.
+     * Constructor.
      *
      * @param fm            The fragment manager.
-     * @param arrayList     The fragments to display.
      */
-    public HomePagerAdapter(FragmentManager fm, List<Fragment> arrayList)
+    public HomePagerAdapter(FragmentManager fm)
     {
         // call super
         super(fm);
-        // get the fragments to display
-        fragmentArrayList = (ArrayList<Fragment>) arrayList;
     }
 
 
+    /**
+     * The fragments are initialized once for each item and then the viewPager will manage the
+     * already created fragments.
+     *
+     * @param position  The position of the requested fragment
+     * @return          The fragment at the selected position
+     */
     @Override
     public Fragment getItem(int position)
     {
-        return fragmentArrayList.get(position);
+        switch (position) {
+            case 0:
+                // Welcome screen
+                return new WelcomeMainFragment();
+            case 1:
+                // Map
+                return new CommunityMainFragment();
+            case 2:
+                // Statistics
+                return new StatisticsMainFragment();
+        }
+        // Should never happen
+        return null;
     }
 
 
     @Override
     public int getCount()
     {
-        return fragmentArrayList.size();
+        return 3;
     }
 
 

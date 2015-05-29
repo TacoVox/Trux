@@ -17,38 +17,35 @@ package se.gu.tux.truxserver.config;
 
 /**
  * Wrapper class for the system configuration.
- *
- * @author jonas
+ * @author Jonas Kahler
  */
 public class Config {
 
-    /**
+    /*
      * Static part.
      */
-    private static Config config = null;
+    private static Config instance = null;
 
     /**
      * Method returning an instance of the Config wrapper.
-     *
      * @return Config instance
      */
     public static Config getInstance() {
-        if (config == null) {
-            config = new Config();
+        if (instance == null) {
+            instance = new Config();
         }
-        return config;
+        return instance;
     }
 
     /**
      * Method returning an instance of the Config wrapper.
-     *
      * @return Config instance
      */
     public static Config gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
      */
     //Verbose console output flag
@@ -76,6 +73,9 @@ public class Config {
     private Config() {
     }
 
+    /**********************
+    * Getters and Setters *
+    **********************/
     public String getDbaddress() {
         return dbaddress;
     }

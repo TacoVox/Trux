@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import se.gu.tux.trux.application.DataHandler;
+import se.gu.tux.trux.application.SocialHandler;
 import se.gu.tux.trux.datastructure.Picture;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
@@ -520,17 +521,19 @@ public class CommunityProfileActivity extends BaseAppActivity implements View.On
         @Override
         protected void onPreExecute()
         {
-            showToast("Fetching image for profile picture...");
+            //showToast("Fetching image for profile picture...");
         }
 
         @Override
         protected Bitmap doInBackground(Void... voids)
         {
+            Picture picture = null;
             Bitmap image = null;
 
             try
             {
-                image = DataHandler.getInstance().getPicture(DataHandler.getInstance().getUser().getProfilePicId());
+                picture = DataHandler.getInstance().getSocialHandler().getPicture(DataHandler.getInstance().getUser().getProfilePicId());
+                image = SocialHandler.pictureToBitMap(picture);
             }
             catch (NotLoggedInException e)
             {

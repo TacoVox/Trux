@@ -1,7 +1,7 @@
 package se.gu.tux.trux.datastructure;
 
 
-public class Message extends Data
+public class Message extends Data implements Comparable<Message>
 {
     // fields
     private long senderId;
@@ -58,5 +58,15 @@ public class Message extends Data
     public void setConversationId(long conversationId) {
         this.conversationId = conversationId;
     }
+
+
+    @Override
+    public int compareTo(Message message)
+    {
+        if (getTimeStamp() > message.getTimeStamp()) return 1;
+        else if (getTimeStamp() == message.getTimeStamp()) return 0;
+        else    return -1;
+    }
+
 
 } // end class

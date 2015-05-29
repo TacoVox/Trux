@@ -1,8 +1,6 @@
 package se.gu.tux.trux.gui.community;
 
 import android.content.Intent;
-import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -33,46 +31,65 @@ import se.gu.tux.trux.gui.messaging.MessageActivity;
 import se.gu.tux.trux.technical_services.NotLoggedInException;
 import tux.gu.se.trux.R;
 
+
+/**
+ * The friend window activity. Shows a list of friends. You can also search for friends in it and
+ * it shows any friend requests.
+ * Friends are cached in socialhandler. We get the friends by asking socialHandler for them, and
+ * then socialHandler calls callback methods in the interface FriendFetchListener when they are
+ * ready (which is immediately if they are cached).
+ * The same goes for friend actions, for which the list adapter (inner class) implements the
+ * listener interface.
+ */
 public class FriendsWindow extends BaseAppActivity implements View.OnClickListener,
         FriendFetchListener {
 
+    // Different row types in the adapter (not allowed to create enum in inner class)
     public enum RowType {REQ_LABEL, REQ, FRIEND_LABEL, FRIEND};
+    // We remember if the last action was to search or show friends
+    private enum FetchCall {SEARCH, FRIENDLIST};
+    private FetchCall lastFetchCall = FetchCall.FRIENDLIST;
+    private String lastNeedle;
+
+    // Visual components
     private ListView friendsList;
     private FriendAdapter friendAdapter;
     private EditText searchField;
     private TextView noFriends;
     private Button searchButton;
-    private enum FetchCall {SEARCH, FRIENDLIST};
-    private FetchCall lastFetchCall = FetchCall.FRIENDLIST;
-    private String lastNeedle;
-    public boolean isClicked = false;
-    private boolean friendIsClicked = false;
 
+
+    /**
+     * Build the friend window.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_window);
 
+        // Initiate visual components
         friendsList = (ListView) findViewById(R.id.friendsList);
-
         friendAdapter = new FriendAdapter(this, new ArrayList<Friend>());
         friendsList.setAdapter(friendAdapter);
         friendsList.setEmptyView(findViewById(R.id.noFriends));
-        searchField = (EditText) findViewById(R.id.searchField);
         searchButton = (Button) findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(this);
+        noFriends = (TextView) findViewById(R.id.noFriends);
+        searchField = (EditText) findViewById(R.id.searchField);
 
+        // Add a listener to the text field so if text is added, we search for it, if no text
+        // is left, we go back to showing the friend list
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
-
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
 
             @Override
             public void afterTextChanged(Editable editable) {
                 showLoadingBar();
+                // Check the text
                 if (searchField.getText().toString().equals("")) {
                     showFriends();
                 } else {
@@ -80,29 +97,40 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 }
             }
         });
-        searchButton.setOnClickListener(this);
-        noFriends = (TextView) findViewById(R.id.noFriends);
 
         // Start fetching the friends
         showFriends();
-
     }
 
+
+    /**
+     * Shows the loading bar.
+     */
     private void showLoadingBar() {
         findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
         noFriends.setText(R.string.loading);
     }
 
+
+    /**
+     * Hides the loading bar.
+     */
     private void hideLoadingBar() {
         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-        //noFriends.setVisibility(View.VISIBLE);
+
+        // The "empty message" in the list varies depending on the user action
         if (lastFetchCall == FetchCall.FRIENDLIST) {
-            noFriends.setText("You have no friends :( Go kill yourself.");
+            noFriends.setText("You have no friends :(");
         } else {
             noFriends.setText("No people found.");
         }
     }
 
+
+    /**
+     * onCLick listener implementation. The search button is connected to this.
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         if (view == findViewById(R.id.searchButton)) {
@@ -116,11 +144,15 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     }
 
 
+    /**
+     * Show friend list - call fetchFriends on the SocialHandler.
+     */
     private void showFriends() {
         showLoadingBar();
         lastFetchCall = FetchCall.FRIENDLIST;
         DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
 
+        // Also adjust the UI depending on the distraction level
         if (isSimple()) {
             // Simplified UI- hide the search bar
             searchField.setVisibility(View.GONE);
@@ -136,8 +168,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
     /**
+     * Search results:
      * Shows friends that match needle followed by other people who also match needle.
-     *
+     * The actual filtering occurs when the callback method is called.
      * @param needle
      */
     private void showSearchResults(final String needle) {
@@ -148,6 +181,9 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     }
 
 
+    /**
+     * Called when we need to update what is in the list.
+     */
     public void refresh() {
         if (lastFetchCall == FetchCall.FRIENDLIST) {
             System.out.println("Refreshing friend list...");
@@ -158,15 +194,14 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     }
 
     /**
+     * Callback method for when the SocialHandler has fetched the friends.
      * This is run in a background thread created by SocialHandler, so we are using this background
      * thread to fetch more stuff if relevant (the search results). By looking what request was last
      * issued by the user (to show list or search), we know what to render here
-     * @param friends
+     * @param friends   The friends of the logged in user
      */
     @Override
     public void onFriendsFetched(final ArrayList<Friend> friends) {
-        System.out.println("\n\nAmount of friends: " + friends.size() + "\n\n");
-
         // Last user action was to show friend list
         if (lastFetchCall == FetchCall.FRIENDLIST) {
 
@@ -218,6 +253,10 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
     }
 
 
+    /**
+     * Callback method for when the friend requests are fetched by SocialHandler.
+     * @param friendRequests    Friend requests to the current user
+     */
     @Override
     public void onFriendRequestsFetched(final ArrayList<Friend> friendRequests) {
         runOnUiThread(new Runnable() {
@@ -231,8 +270,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
     /**
-     * Returns an array with all elements that contain the needle
+     * Returns an arraylist with all friends that contain the needle
      * (in username, firstname or lastname)
+     * @param haystack  A list of friends to search from
+     * @param needle    A search term
+     * @return  Arraylist of friends
      */
     public ArrayList<Friend> matchFriendSearch(ArrayList<Friend> haystack, String needle) {
         if (haystack == null || haystack.size() == 0) {
@@ -253,10 +295,13 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
 
     /**
-     * Appends the second array to the list - and fetches images for these people
-     * @param list
-     * @param friendArray
-     * @return
+     * Casts and appends the second array to the list - and fetches images for these people. The
+     * images will be cached by socialhandler. (The picture field in friend is transient, so we
+     * don't have to send it from the server each time we fetch a friend)
+     * @param list          The first list of friends
+     * @param friendArray   The Object[] of friends we want to cast and append
+     * @return              The Object[] appended to the list, with the new objects having their
+     *                      pictures added
      */
     private ArrayList<Friend> appendSearchResults(ArrayList<Friend> list, Object[] friendArray)
             throws NotLoggedInException {
@@ -270,19 +315,17 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         return list;
     }
 
-    public void onStop(){
-        super.onStop();
-        if(friendIsClicked){
-            isClicked = true;
-        }
-    }
-    public void onPause(){
-        super.onPause();
-        if(friendIsClicked){
-            isClicked = true;
-        }
-    }
 
+    /**
+     * Adapter that shows friends in the list view. It shows search results if the user searches,
+     * the results then consist of both the filtered friend list at the top and then search results
+     * below these. In addition to this, friend requests are shown at the top of the list, if any.
+     *
+     * Because of two datalists (friend requests in it's own) and label items to distinguish
+     * between them, there is quite some logic here to determine how many rows there are in total,
+     * which type they are etc...
+     *
+     */
     class FriendAdapter extends BaseAdapter implements FriendActionListener {
 
         private Context context;
@@ -291,6 +334,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         private LayoutInflater inflater = null;
         private final FriendAdapter thisAdapter = this;
 
+
+        /**
+         * Initializes the instance with the given friend list
+         * @param context
+         * @param friends
+         */
         public FriendAdapter(Context context,  ArrayList<Friend> friends) {
             this.context = context;
             this.friends = friends;
@@ -299,6 +348,11 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
+
+        /**
+         * Callback method called when the friend request was successfully sent.
+         * @param friendId  The friend we sent the request to.
+         */
         @Override
         public void onFriendRequestSent(long friendId) {
             // Update the friend object to pending instead of not a friend
@@ -308,22 +362,25 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 }
             }
 
+            // Notify SocialHandler that the friends have updated
             DataHandler.gI().getSocialHandler().setFriendsChanged(true);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     showToast("The friend request was sent.");
+                    // Also notify this adapter
                     notifyDataSetChanged();
-                    //refresh();
                 }
             });
         }
 
         @Override
-        public void onFriendRemoveSent(long friendId) {
+        public void onFriendRemoveSent(long friendId) {}
 
-        }
-
+        /**
+         * Callback method called when the friend request reply action was successfully sent.
+         * @param friendId  The friend that sent the request.
+         */
         @Override
         public void onFriendRequestAnswered(long friendId, final boolean accepted) {
             // Update the friend object
@@ -344,6 +401,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 }
             }
 
+            // Notify SocialHandler that things have changed
             DataHandler.gI().getSocialHandler().setFriendRequestsChanged(true);
             DataHandler.gI().getSocialHandler().setFriendsChanged(true);
             runOnUiThread(new Runnable() {
@@ -355,12 +413,19 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                     } else {
                         showToast("The friend request was declined.");
                     }
+                    // Refresh the data now that we know it has changed
                     notifyDataSetChanged();
                     refresh();
                 }
             });
         }
 
+
+        /**
+         * Calculates the amount of items in the list. There are separator labels above each of the
+         * two lists as needed (where the lists are 1. friend request and 2. friends / search results)
+         * @return  The amount of items in the list.
+         */
         @Override
         public int getCount() {
             int count, friendCount = 0, friendRequestCount = 0;
@@ -380,6 +445,12 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             return count;
         }
 
+
+        /**
+         * Helps calculate if there are separator labels, in that case we need to offset the index
+         * when retrieving from the friend list
+         * @return  The offset that should be used when retrieving from the friend list
+         */
         private int getFriendOffset() {
             if (friendRequests != null && friendRequests.size() > 0) {
                 if (friends != null && friends.size() > 0) {
@@ -391,8 +462,14 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             return 0;
         }
 
+
+        /**
+         * Returns the type of the row.
+         * @param pos   The row number
+         * @return      The type of row
+         */
         private RowType getRowType(int pos) {
-            System.out.println("Friends size: " + friends.size());
+
             if (friendRequests != null && friendRequests.size() > 0) {
                 if (friends != null && friends.size() > 0) {
                     // Friends and friends requests
@@ -439,8 +516,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
 
         @Override
         public View getView(final int position, View view, ViewGroup parent) {
-            System.out.println("Rendering position " + position + ", total count is " + getCount() + "...");
-            System.out.println("Type is " + getRowType(position));
             if (getRowType(position) == RowType.REQ_LABEL) {
                 view = buildRequestLabelRow(view);
             } else if (getRowType(position) == RowType.REQ) {
@@ -455,32 +530,20 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
         }
 
         private View buildFriendRow(int position, View view) {
-            System.out.println("Building friend row");
+
             view = inflater.inflate(R.layout.friend_row, null);
             // Offset the position by getFriendOffset - because there may be a couple of label rows
             // and friend requests - so we can get the index to work on the actual friend list
             final int pos = position - getFriendOffset();
-            System.out.println("Building friend row with pos " + pos);
+
             TextView name = (TextView) view.findViewById(R.id.friendName);
             TextView username = (TextView) view.findViewById(R.id.friendUserName);
             TextView pending = (TextView) view.findViewById(R.id.pending);
             ImageView image = (ImageView) view.findViewById(R.id.friendPicture);
             final Button friendRequestButton = (Button) view.findViewById(R.id.friendRequestButton);
             final Button sendMessageButton = (Button) view.findViewById(R.id.sendMessageButton);
-            final Button goToFriendOnMap = (Button) view.findViewById(R.id.profileButton);
+            final Button goToFriendOnMap = (Button) view.findViewById(R.id.locateButton);
 
-            friendRequestButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    friendRequestButton.setEnabled(false);
-                    try {
-                        DataHandler.gI().getSocialHandler().sendFriendRequest(thisAdapter,
-                                friends.get(pos).getFriendId());
-                    } catch (NotLoggedInException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
             friendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -506,9 +569,14 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             goToFriendOnMap.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //Creats an Intent to send back results to HomeActivity
                     Intent data = new Intent();
+                    //Puts the friendID in the result
                     data.putExtra("FriendID", friends.get(pos).getFriendId());
                     setResult(RESULT_OK, data);
+                    //Shows toast for the user how to stop follow there friends.
+                    showToast("Following " + friends.get(pos).getFirstname() + "." + "\nClick Map to stop Following.");
+                    //Closes the activity
                     finish();
                 }
             });
@@ -518,7 +586,7 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
                 @Override
                 public void onClick(View view) {
 
-                    InfoFragment friendInfo = new InfoFragment();
+                    FriendProfileFragment friendInfo = new FriendProfileFragment();
                     Bundle friendBundle = new Bundle();
                     friendBundle.putSerializable("friend", friends.get(pos));
                     friendInfo.setArguments(friendBundle);
@@ -581,8 +649,6 @@ public class FriendsWindow extends BaseAppActivity implements View.OnClickListen
             // Offset the position by one since there is a label at row 0
             // So the elements we access at the list are at a lower position
             final int pos = position - 1;
-            System.out.println("Building friend request row");
-
 
             view = inflater.inflate(R.layout.friend_request_row, null);
             TextView name = (TextView) view.findViewById(R.id.friendRequestName);

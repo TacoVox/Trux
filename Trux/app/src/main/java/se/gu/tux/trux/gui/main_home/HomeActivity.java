@@ -1,52 +1,58 @@
 package se.gu.tux.trux.gui.main_home;
 
+import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import se.gu.tux.trux.application.DataHandler;
-import se.gu.tux.trux.datastructure.Speed;
 import se.gu.tux.trux.gui.base.BaseAppActivity;
 import se.gu.tux.trux.gui.community.CommunityProfileActivity;
 import se.gu.tux.trux.gui.community.FriendsWindow;
 import se.gu.tux.trux.gui.messaging.MessageActivity;
-import se.gu.tux.trux.gui.statistics.StatisticsMainFragment;
-import se.gu.tux.trux.gui.welcome.WelcomeMainFragment;
-import se.gu.tux.trux.technical_services.NotLoggedInException;
+import se.gu.tux.trux.technical_services.NotificationService;
+import se.gu.tux.trux.technical_services.BackgroundService;
+
 import tux.gu.se.trux.R;
 
+
 /**
- * Created by ivryashkov on 2015-05-05.
- *
  * Handles the main activity and screens.
  */
 @SuppressWarnings("deprecation")
 public class HomeActivity extends BaseAppActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
-
     // constants
     private static final int LAYOUT_ID = R.layout.activity_home;
-    //private static final int STATS_BUTTON = R.id.fm_i_statistics_check_stats_button;
     private static final int FRIENDS_BUTTON_WELCOME = R.id.fragment_welcome_friend_button;
     private static final int FRIENDS_BUTTON = R.id.fragment_main_friend_button;
     private static final int PROFILE_BUTTON = R.id.fragment_main_profile_button;
     private static final int MESSAGE_BUTTON = R.id.fragment_welcome_message_button;
+    // Used for identifying the result when friend window returns a friend selected for following
     private static final int CLICKED_FRIEND = 1;
-    public long selectedFriendID = (long) -1;
-    public boolean hasclicked = false;
+
+    // This concerns the map frag but is contained here since this is where we get the result of
+    // the chosen friend from the friendswindow activity.
+    // Holds the friend id if the user decided to follow a friends location
+    private long selectedFriendID = (long) -1;
+    // If a followed friend is not found in the loop through friend list, maybe the friend went
+    // offline - we need to stop following.
+    private boolean friendIsOnline = false;
 
 
     private ViewPager viewPager;
-
-    private List<Fragment> fragmentArrayList;
     private ActionBar actionBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,21 +66,8 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         // get the pager
         viewPager = (ViewPager) findViewById(R.id.activity_main_i_container);
 
-        // initialise array
-        fragmentArrayList = new ArrayList<>();
-
-        // create fragments
-        Fragment welcomeFragment = new WelcomeMainFragment();
-        Fragment communityFragment = new CommunityMainFragment();
-        Fragment statsFragment = new StatisticsMainFragment();
-
-        // add fragments to array
-        fragmentArrayList.add(welcomeFragment);
-        fragmentArrayList.add(communityFragment);
-        fragmentArrayList.add(statsFragment);
-
         // set adapter and view pager
-        HomePagerAdapter pagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), fragmentArrayList);
+        HomePagerAdapter pagerAdapter = new HomePagerAdapter(getSupportFragmentManager());
 
         // get action bar
         actionBar = getSupportActionBar();
@@ -86,6 +79,11 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         // set adapter
         viewPager.setAdapter(pagerAdapter);
 
+        Intent backgroundIntent = new Intent(this, BackgroundService.class);
+        startService(backgroundIntent);
+
+        Intent intent = new Intent(this, NotificationService.class);
+        startService(intent);
     }
 
 
@@ -107,12 +105,8 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         }
         else if (id == PROFILE_BUTTON)
         {
-            if(!isSimple()) {
-                Intent intent = new Intent(this, CommunityProfileActivity.class);
-                startActivity(intent);
-            } else {
-                showToast("DRIVING: You cannot access your profile while driving.");
-            }
+            Intent intent = new Intent(this, CommunityProfileActivity.class);
+            startActivity(intent);
         }
         else if (id == MESSAGE_BUTTON)
         {
@@ -143,31 +137,47 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
 
     }
 
+    // These methods are used by mapfrag
     public void setSelectedFriend(Long friendID){
         this.selectedFriendID = friendID;
+        if (friendID != -1) {
+            friendIsOnline = true;
+        }
     }
 
     public long getSelectedFriend() {
         return selectedFriendID;
     }
 
+    public boolean getFriendIsOnline() {
+        return friendIsOnline;
+    }
+
+    public void setFriendIsOnline(boolean friendIsOnline) {
+        this.friendIsOnline = friendIsOnline;
+    }
+
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            System.out.println("Minimizing...");
-            // Minimize
-            moveTaskToBack(true);
-        }
-        else
-        {
 
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+
+            // Minimize if no backstack
+            moveTaskToBack(true);
+
+        } else {
+
+            // Clear the backstack from any MENU or PROFILE entries - if they were present, they
+            // are removed. If not, just do a normal popBackStack()
+            // This means when the user has gone to a profile through the map and goes back, the
+            // "menu" also is hidden
             if (!getSupportFragmentManager().popBackStackImmediate("MENU",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE) &&
                 !getSupportFragmentManager().popBackStackImmediate("PROFILE",
                     FragmentManager.POP_BACK_STACK_INCLUSIVE)) {
 
-                System.out.println("Poping back stack...");
+                // None of the above (MENU / PROFILE) was present in backstack
                 getSupportFragmentManager().popBackStack();
             }
         }
@@ -193,8 +203,22 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
         actionBar.addTab(actionBar.newTab().setCustomView(R.layout.tab_statistics).setTabListener(this));
     }
 
+
     private boolean isSimple() {
         return DataHandler.gI().getSafetyStatus() != DataHandler.SafetyStatus.IDLE;
+    }
+
+
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        outState.putInt("currentTab", viewPager.getCurrentItem());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState (Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        viewPager.setCurrentItem(savedInstanceState.getInt("currentTab"));
     }
 
 
@@ -229,8 +253,8 @@ public class HomeActivity extends BaseAppActivity implements ActionBar.TabListen
     @Override
     public void onPageScrollStateChanged(int state) {}
 
+
     /***************************************************************************************
      * End override methods.                                                               *
      ***************************************************************************************/
-
 } // end class

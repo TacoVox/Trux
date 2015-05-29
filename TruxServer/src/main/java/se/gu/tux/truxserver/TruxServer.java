@@ -1,13 +1,6 @@
 package se.gu.tux.truxserver;
 
-/*
- * TODO:
- *  - Add config file and argument parsing
- *  - Add database connection
- *  
- *  - Later: add user and session handling
- *  - Later: multiple server threads rotated by ServerHandler
- **/
+
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -16,9 +9,14 @@ import se.gu.tux.truxserver.config.ConfigHandler;
 import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
+
 /**
- *
- * @author tville
+ * The main class.
+ * Owns a ServerHandler in a thread that handles incoming requests and starts
+ * and manages ServerRunnables. 
+ * Parses the config file.
+ * Starts a cleanup thread. 
+ * Listens for keyboard input (to terminate the server, write q followed by enter).
  */
 public class TruxServer {
 
@@ -74,7 +72,7 @@ public class TruxServer {
             // interrupt it with keyboard input from the main thread.
             //sh = new ServerHandler(this, Config.gI().getServerPort(), Config.gI().getConnectionTimeout());
             sh = new ServerHandler(this, 12000, 60 * 15);
-            
+
             serverHandlerThread = new Thread(sh);
             serverHandlerThread.start();
             Logger.gI().addMsg("Trux Server started.\nq followed by enter quits.");
@@ -104,6 +102,7 @@ public class TruxServer {
         }
     }
 
+    
     /**
      * Need a way to be able to interrupt the thread waiting for keyboard input
      * if the server startup should be aborted.

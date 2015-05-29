@@ -12,10 +12,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file('trux_store_key.jks')
-            storePassword 'trux123'
-            keyAlias 'trux'
-            keyPassword 'trux123'
+            storeFile file("/Users/Niklas/git/repos/Trux/Trux/app/trux_release_key.jks")
+            storePassword "trux123"
+            keyAlias "TruxRelease"
+            keyPassword "trux123"
         }
     }
     buildTypes {
@@ -23,20 +23,28 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def date = new Date();
+                    output.outputFile = new File(output.outputFile.parent,
+                            output.outputFile.name.replace("-release", "-" + "Trux"))
+                }
+            }
+        }
+        productFlavors {
         }
     }
-    productFlavors {
-    }
-}
 
-dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:22.0.0'
-    compile files('libs/Automotive-API-1.1.jar')
-    compile files('libs/lib.jar')
-    compile files('libs/SDP-1.1.jar')
-    compile files('libs/VIL-1.1.jar')
-    compile files('libs/GraphView-4.0.0.jar')
-    compile 'org.slf4j:slf4j-android:1.7.10'
-    compile 'com.google.android.gms:play-services:7.3.0'
+    dependencies {
+        compile fileTree(include: ['*.jar'], dir: 'libs')
+        compile 'com.android.support:appcompat-v7:22.0.0'
+        compile files('libs/Automotive-API-1.1.jar')
+        compile files('libs/lib.jar')
+        compile files('libs/SDP-1.1.jar')
+        compile files('libs/VIL-1.1.jar')
+        compile files('libs/GraphView-4.0.0.jar')
+        compile 'org.slf4j:slf4j-android:1.7.10'
+        compile 'com.google.android.gms:play-services:7.3.0'
+    }
 }

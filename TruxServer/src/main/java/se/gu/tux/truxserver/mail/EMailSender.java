@@ -16,86 +16,109 @@
 package se.gu.tux.truxserver.mail;
 
 import java.util.Properties;
+
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
 import se.gu.tux.truxserver.config.Config;
 import se.gu.tux.truxserver.config.ConfigHandler;
 
 /**
  *
- * @author jonas
+ * @author Jonas Kahler
  */
 public class EMailSender {
-    /**
+
+    /*
      * Static part.
      */
     private static EMailSender es;
-    
-    public static EMailSender getInstance()
-    {
-        if(es == null)
+
+    /**
+     * Method to get the singelton instance.
+     * @return an instance of EMail ender 
+     */
+    public static EMailSender getInstance() {
+        if (es == null) {
             es = new EMailSender();
-        
+        }
+
         return es;
     }
-    
-    public static EMailSender gI()
-    {
+
+    /**
+     * Method to get the singelton instance.
+     * @return an instance of EMail ender 
+     */
+    public static EMailSender gI() {
         return getInstance();
     }
-    
-    /**
+
+    /*
      * Non-static part.
      */
-    private EMailSender() {}
     
-    public void sendConfirmationMail(String receiver, String accesscode)
-    {
+    /**
+     * Private constructor.
+     */
+    private EMailSender() {
+    }
+
+    /**
+     * Method to send a confirmation mail.
+     * @param receiver the eMail adress of the receiver
+     * @param accesscode the accesscode assigned
+     */
+    public void sendConfirmationMail(String receiver, String accesscode) {
         Properties mailServerProperties;
-	Session getMailSession;
-	MimeMessage generateMailMessage;
-        
+        Session getMailSession;
+        MimeMessage generateMailMessage;
+
         mailServerProperties = System.getProperties();
         mailServerProperties.put("mail.smtp.port", "587");
         mailServerProperties.put("mail.smtp.auth", "true");
         mailServerProperties.put("mail.smtp.starttls.enable", "true");
- 
+
         getMailSession = Session.getDefaultInstance(mailServerProperties, null);
-        
+
         try {
-        generateMailMessage = new MimeMessage(getMailSession);
-        generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(receiver));
+            generateMailMessage = new MimeMessage(getMailSession);
+            generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(receiver));
 
-        generateMailMessage.setSubject("Confirm that you registered."
-                + "");
-        String emailBody = "Welcome to Trux - the trucker community.<br>"
-                + "<a href=\"www.derkahler.de/trux/validate.php?id=" + accesscode +
-                "\">Click here to confirm eMail and account.</a><br><br>Cheers, <br>Jonas";
-        
-        generateMailMessage.setContent(emailBody, "text/html");
+            generateMailMessage.setSubject("Confirm that you registered."
+                    + "");
+            String emailBody = "Welcome to Trux - the trucker community.<br>"
+                    + "This is your accesslink: www.derkahler.de/trux/validate.php?id=" + accesscode
+                    + "<br><br>Cheers, <br>Jonas";
 
-        Transport transport = getMailSession.getTransport("smtp");
-        
-        ConfigHandler.gI();
-        System.out.println(Config.gI().getDbaddress());
-        System.out.println(Config.gI().getGmailPass());
-        System.out.println(Config.gI().getGmailUser());
-        
-        transport.connect("smtp.gmail.com", Config.gI().getGmailUser(), Config.gI().getGmailPass());
-        
-        transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
-        transport.close();
+            generateMailMessage.setContent(emailBody, "text/html");
+
+            Transport transport = getMailSession.getTransport("smtp");
+
+            ConfigHandler.gI();
+            System.out.println(Config.gI().getDbaddress());
+            System.out.println(Config.gI().getGmailPass());
+            System.out.println(Config.gI().getGmailUser());
+
+            transport.connect("smtp.gmail.com", Config.gI().getGmailUser(), Config.gI().getGmailPass());
+
+            transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
+            transport.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
-    public static void main(String args[])
-    {
+
+    /**
+     * Test main mothod.
+     * Tests the EMailSender class.
+     * @param args command line arguments.
+     */
+    public static void main(String args[]) {
         EMailSender.gI().sendConfirmationMail("tacovox@icloud.com", "asd");
         System.out.println("eMail sent.");
-    } 
+    }
 }

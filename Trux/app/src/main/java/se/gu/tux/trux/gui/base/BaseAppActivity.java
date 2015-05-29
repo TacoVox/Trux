@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +17,13 @@ import java.util.concurrent.ExecutionException;
 import se.gu.tux.trux.application.DataHandler;
 import se.gu.tux.trux.application.LoginService;
 
+import se.gu.tux.trux.application.SettingsHandler;
+import se.gu.tux.trux.datastructure.Data;
+import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.gui.main_home.MainActivity;
+import se.gu.tux.trux.technical_services.BackgroundService;
+import se.gu.tux.trux.technical_services.NotificationService;
+import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
 /**
@@ -29,8 +36,9 @@ public class BaseAppActivity extends ActionBarActivity
 {
 
     // keeps track of the current view showing on the screen
-    private static int currentViewId;
+    private int currentViewId;
     private MenuItem logoutItem;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -52,18 +60,33 @@ public class BaseAppActivity extends ActionBarActivity
         return super.onCreateOptionsMenu(menu);
     }
 
-    public boolean onPrepareOptionsMenu (Menu menu) {
+
+
+    public boolean onPrepareOptionsMenu (Menu menu)
+    {
         validateOptions();
         return super.onPrepareOptionsMenu(menu);
     }
 
-    public void validateOptions() {
-        if (DataHandler.getInstance().isLoggedIn()) {
+
+
+    /**
+     * Enables and disables the logout item in the menu
+     * based on if the user is logged in or not.
+     */
+    public void validateOptions()
+    {
+        if (DataHandler.getInstance().isLoggedIn())
+        {
             logoutItem.setEnabled(true);
-        } else {
+        }
+        else
+        {
             logoutItem.setEnabled(false);
         }
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -182,7 +205,7 @@ public class BaseAppActivity extends ActionBarActivity
 
 
     /**
-     * Helper method. Gets the about information to display based
+     * Helper method. Gets the help information to display based
      * on the current view showing. Returns a String array with the
      * title at index 0 and the message at index 1.
      *
@@ -236,30 +259,32 @@ public class BaseAppActivity extends ActionBarActivity
             e.printStackTrace();
         }
 
-        if (check)
-        {
-          // TODO: react to successful or failed logout attempt?
-        }
-        else
-        {
+        Intent background = new Intent(this, BackgroundService.class);
+        stopService(background);
+        showToast("Background service stopped");
 
-        }
+        Intent notification = new Intent(this, NotificationService.class);
+        stopService(notification);
+        showToast("Notification service stopped");
 
-
+        DataHandler.gI().clearPrefs(PreferenceManager.getDefaultSharedPreferences(this));
 
         // Make sure there is no history for the back button
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
+        if (getFragmentManager().getBackStackEntryCount() > 0)
+        {
             getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
+
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+
     } // end logout()
 
 
 
     /**
-     * Private class. Logs out the user.
+     * Private class to perform async task. Logs out the user.
      */
     private class LogoutTask extends AsyncTask<Void, Void, Boolean>
     {
@@ -273,10 +298,42 @@ public class BaseAppActivity extends ActionBarActivity
         @Override
         protected Boolean doInBackground(Void... voids)
         {
+            // If the instance of LoginService was lost, recreate it
+            if (LoginService.getInstance() == null) {
+                LoginService.createInstance(getApplicationContext());
+            }
+
             // return the result from logout request
             return LoginService.getInstance().logout();
         }
 
     } // end inner class
 
+
+    /**
+     * We make sure to store anything critical that we need to make sure isn't killed by
+     * garbage collector
+     * @param outState      The bundle we save to
+     */
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        if (DataHandler.gI().getUser() != null) {
+           DataHandler.gI().storeToPrefs(PreferenceManager.getDefaultSharedPreferences(this));
+        }
+        outState.putSerializable("settingsHandler", SettingsHandler.getInstance());
+        super.onSaveInstanceState(outState);
+    }
+
+
+    /**
+     * Restore things, see comments on onSaveInstanceState.
+     * @param savedInstanceState    The bundle we restore from
+     */
+    @Override
+    protected void onRestoreInstanceState (Bundle savedInstanceState) {
+        DataHandler.gI().loadFromPrefs(PreferenceManager.getDefaultSharedPreferences(this));
+        SettingsHandler.setInstance(
+                (SettingsHandler)savedInstanceState.getSerializable("settingsHandler"));
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 } // end class

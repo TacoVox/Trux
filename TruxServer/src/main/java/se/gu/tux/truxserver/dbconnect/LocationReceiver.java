@@ -24,70 +24,81 @@ import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
- *
- * @author jonas
+ * Class responsilbe for fetching location from the db.
+ * @author Jonas Kahler
  */
 public class LocationReceiver {
     /*
-    * Static part.
-    */
+     * Static part.
+     */
     private static LocationReceiver instance;
-    
+
+    /**
+     * Method returning a LocationReceiver instance.
+     * @return a LocationReceiver instance.
+     */
     public static LocationReceiver getInstance() {
-        if(instance == null)
+        if (instance == null) {
             instance = new LocationReceiver();
-        
+        }
+
         return instance;
     }
-    
+
+    /**
+     * Method returning a LocationReceiver instance.
+     * @return a LocationReceiver instance.
+     */
     public static LocationReceiver gI() {
         return getInstance();
     }
-    
+
     /*
-    * Non-static part.
-    */
-    private LocationReceiver() {}
+     * Non-static part.
+     */
     
-    public Location getLocation() {
-        return null;
+    /**
+     * Private constructor.
+     */
+    private LocationReceiver() {
     }
-    
+
+    /**
+     * Method for fetching the current location of a user.
+     * @param userid id of the user to fetch the location from
+     * @return a filled in Location object or ProtocolMessage on error
+     */
     public Data getCurrent(long userid) {
         Location l = null;
-        
+
         DBConnector dbc = null;
-        
-        try
-        {   
+
+        try {
             dbc = ConnectionPool.gI().getDBC();
-            
-            String selectStmnt = "SELECT latitude, longitude " +
-                    "FROM location WHERE userid = ? ORDER BY timestamp DESC LIMIT 1";
-            
+
+            String selectStmnt = "SELECT latitude, longitude "
+                    + "FROM location WHERE userid = ? ORDER BY timestamp DESC LIMIT 1";
+
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
-	    
+
             pst.setLong(1, userid);
-            
-	    ResultSet rs = pst.executeQuery();
-	    
-	    while (rs.next())
-	    {
+
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
                 l = new Location(rs.getDouble("latitude"), rs.getDouble("longitude"));
-                
-		break;
-	    }           
-	} catch (InterruptedException ie) {
+
+                break;
+            }
+        } catch (InterruptedException ie) {
             Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
             return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
-        } catch (Exception e)
-	{
+        } catch (Exception e) {
             e.printStackTrace();
-            
-	    Logger.gI().addError(e.getLocalizedMessage());
-	}
-        finally {
+
+            Logger.gI().addError(e.getLocalizedMessage());
+        } finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
 

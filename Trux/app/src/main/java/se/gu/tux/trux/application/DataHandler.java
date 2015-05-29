@@ -1,7 +1,7 @@
 package se.gu.tux.trux.application;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
+import android.content.SharedPreferences;
 
 import com.jjoe64.graphview.series.DataPoint;
 
@@ -28,90 +28,113 @@ import se.gu.tux.trux.technical_services.ServerConnector;
 
 
 /**
- * Created by ivryashkov on 2015-03-25.
+ * This singleton class routes data requests betweeen the GUI and the technical services.
+ * The getData method is central for this.
+ * The class also handles caching of detailed stats. Caching of friends is handled by a SocialHandler
+ * available via a helper method from the instance of this class.
+ * The state of the current logged in user is also stored by this class.
+ *
+ * TODO: The detailed stats caching could very well be put in a helper class as well, so this class
+ * would be concerned with only the most central data routing methods and handling the current user
+ * (maybe even those two concerns should be split into two classes)
  */
 public class DataHandler
 {
+    // Based on distraction level.
     public enum SafetyStatus {IDLE, SLOW_MOVING, MOVING, FAST_MOVING};
 
-    private static DataHandler dataHandler;
+    // Singleton instance
+    private static DataHandler instance;
 
+    // Helper handlers
     private RealTimeDataHandler realTimeDataHandler;
-    private SocialHandler sc;
+    private SocialHandler socialHandler;
 
+    // The logged in user and current notification status
     private volatile User user;
     private volatile Notification notificationStatus;
 
     // Stores detailed stats with signal id as key
     private volatile HashMap<Integer, DetailedStatsBundle> detailedStats;
-    // Stores detailed stats with signal id as key
-    private volatile HashMap<Long, Picture> imageCache;
-    // Stores time stamp
+    // Stores time stamp for when the detailed stats were fetched
     private volatile long detailedStatsFetched = 0;
 
 
     /**
-     * Constructor. Declared private and not instantiated. We keep an
-     * instance of DataHandler instead.
+     * Private constructor. Only called once from getInstance().
      */
     private DataHandler()    {
         detailedStats = new HashMap<Integer, DetailedStatsBundle>();
-        sc = new SocialHandler();
+        socialHandler = new SocialHandler();
     }
 
 
     /**
      * Returns an instance of the DataHandler object.
-     * Note, removed synchronized on this while debugging stats data fetching.
-     * Later realized that maybe we can use double check locking just for the instantiation
      *
-     * @return      instance of DataHandler
+     * @return      The instance of DataHandler.
      */
     public static DataHandler getInstance()
     {
-        // YES, there should be two if checks
-        if (dataHandler == null)
+        // Double checked locking
+        if (instance == null)
         {
             synchronized (DataHandler.class) {
-                if (dataHandler == null) {
-                    dataHandler = new DataHandler();
+                if (instance == null) {
+                    instance = new DataHandler();
                 }
             }
 
         }
-        return dataHandler;
-    } // end getInstance()
-
-    public static DataHandler gI() {
-        return getInstance();
-    }
-
-
-    public void setRealTimeDataHandler(RealTimeDataHandler rtdh) {
-        realTimeDataHandler = rtdh;
+        return instance;
     }
 
 
     /**
-     * Returns true if the user is logged in.
+     * Shorter method name, calls getInstance().
+     *
+     * @return  The instance of DataHandler.
+     */
+    public static DataHandler gI() {
+        return getInstance();
+    }
+
+    public static void setInstance(DataHandler newInstance) {
+        instance = newInstance;
+    }
+
+
+    /**
+     * Returns true if a user is logged in.
      * @return
      */
     public boolean isLoggedIn() {
         boolean isLoggedIn = false;
 
         if (user != null && user.getUserId() > 0 && user.getSessionId() > 0) {
-            return isLoggedIn = true;
+            isLoggedIn = true;
         }
 
         return isLoggedIn;
     }
 
+
     /**
-     * Each metric datatype knows about their own signal id.
-     * Using class can just do Data d = [...].getData(new Speed(0)); for example.'
-     * I think this is a neat way for the GUI to get data
-     * @param request
-     * @return
+     * Main routing method for requesting and sending data. For social data, sending an empty object
+     * with just the id set will generally return an object with full data from the server.
+     * For metric data, each metric datatype knows about their own signal id.
+     * getData(new Speed(0)) where 0 is the timesframe ill return the CURRENT speeed, setting a
+     * longer timeframe will send the request to the server to calculate average or total depending
+     * on the datatype.
+     *
+     * Make sure to call this in a background thread if it will forward anything to the server.
+     *
+     * Also be sure to handle the NotLoggedInException - which is hard if you're in a runnable so
+     * TODO: the best thing would probably be to return a new datatype like NotLoggedIn object
+     * instead, and be sure to check before casting.
+     *
+     * @param request   The data to get a response for.
+     * @return          The response.
      */
     public Data getData(Data request) throws NotLoggedInException {
         if (request.isOnServerSide()) {
@@ -132,23 +155,27 @@ public class DataHandler
 
 
     /**
-     * Start fetching the stats - this method creates its own background thread for this.
-     * Keep them cached for 15 minutes (hard-coding this for now)
+     * Starts fetching the detailed stats - this method creates its own background thread for this.
+     * Keep them cached for 15 minutes (currently hard-coded)
      */
     public void cacheDetailedStats() {
         // Only fetch if they aren't there or aren't up to date
-        if (detailedStats == null || System.currentTimeMillis() - detailedStatsFetched > 1000 * 60 * 15) {
-
-            System.out.println("Fetching detailed stats.");
+        if (detailedStats == null || System.currentTimeMillis() - detailedStatsFetched >
+                1000 * 60 * 15) {
 
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        detailedStats.clear();
-
                         // NOTE would love to generalize this but slightly unsure on now how to
-                        // handle the casting
+                        // handle the casting.
+
+                        // Initialize hash map if necessary, else clear it
+                        if (detailedStats == null) {
+                            detailedStats = new HashMap<Integer, DetailedStatsBundle>();
+                        } else {
+                            detailedStats.clear();
+                        }
 
                         // Create speed object and mark it with current time.
                         // Then request an array of speed average values for last 30 days.
@@ -164,12 +191,6 @@ public class DataHandler
                                 (Speed) getData(new Speed(MetricData.FOREVER)),
                                 speedPoints);
                         // Store in hash map
-                        if (detailedStats == null) {
-                            System.out.println("DETAILEDSTATS IS NULL.");
-                        }
-                        if (speedBundle == null) {
-                            System.out.println("SPEEDBUNDLE IS NULL.");
-                        }
                         detailedStats.put(speed.getSignalId(), speedBundle);
 
                         Fuel fuel = new Fuel(0);
@@ -203,8 +224,6 @@ public class DataHandler
                         // Keep track of when we finished fetching the detailed stats
                         detailedStatsFetched = System.currentTimeMillis();
 
-                        detailedStats = detailedStats;
-
                     } catch (NotLoggedInException e) {
                         System.out.println("Not logged in in datahandler cache");
                     }
@@ -215,24 +234,24 @@ public class DataHandler
 
 
     /**
-     * Returns true if there are cached detailed stats of the same type as md.
-     * @param md
-     * @return  boolean representing if there are cached stats or not.
+     * Returns true if there are cached detailed stats cached of the same type as md.
+     *
+     * @param md    A MetricData object of the type the query concerns
+     * @return      A boolean representing if there are cached stats available or not.
      */
     public boolean detailedStatsReady(MetricData md) {
         // See if there is a stats object in the hashmap
         if (detailedStats != null && detailedStats.get(md.getSignalId()) != null) {
             return true;
         }
-        System.out.println("Stats were not ready: " + md.getClass().getSimpleName());
         return false;
     }
 
 
     /**
      * Returns detailed stats with the same type as md.
-     * @param md
-     * @return Detailed stats packed into a DetailedStatsBundle object.
+     * @param md    A MetricData object of the type the query concerns
+     * @return      Detailed stats packed into a DetailedStatsBundle object.
      */
     public DetailedStatsBundle getDetailedStats(MetricData md) {
         DetailedStatsBundle dStats = null;
@@ -249,13 +268,13 @@ public class DataHandler
 
 
     /**
-     * Please provide a metric object of the right class and with the current timestamp
-     * set.
+     * Returns stats per day for the requested amount of days - for Distance this will be the total
+     * per day, for others it will be the average per day.
+     * @param metricData    A MetricData object of the type the query concerns
+     * @param days          The amount of days from now and backwards.
      */
     public Data[] getPerDay (MetricData metricData, int days) throws NotLoggedInException {
         Data[] perDay = new Data[days];
-        System.out.println("Getting per day: " + metricData.getClass().getSimpleName() +
-                        "  // Datahandler: " + this.toString());
 
         // Use a calendar to know when days start and end.
         // Initiate based on metricData's timestamp.
@@ -295,8 +314,8 @@ public class DataHandler
             // Move forward one day
             cal.add(Calendar.DATE, +1);
 
-            // Let this thread sleep for a slight while just to make other threads able to
-            // use the ServerConnector inbetween - since this is background prefetching
+            // Let this thread sleep for a slight while just to make it very clear that this is
+            // a low-priority thread compared to other features needing to use the ServerConnector
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
@@ -308,6 +327,13 @@ public class DataHandler
     }
 
 
+    /**
+     * Converts an array of Data[] into an array of DataPoints, intended for using when filling the
+     * diagrams showing the detailed stats.
+     * @param data  An array of Data (that we assume is MetricData).
+     * @param md    A MetricData object of the type the query concerns.
+     * @return      An array of DataPoints that can be used to initialize a diagram.
+     */
     public DataPoint[] getDataPoints(Data[] data, MetricData md) {
 
         DataPoint[] dataPoints = new DataPoint[30];
@@ -334,6 +360,12 @@ public class DataHandler
         return dataPoints;
     }
 
+
+    /**
+     * Set the currently logged in user. If the user id changes, we make sure to clear the session
+     * data.
+     * @param user  The currently logged in user.
+     */
     public void setUser(User user)
     {
         if (user == null || (this.user != null && this.user.getUserId() != user.getUserId())) {
@@ -343,97 +375,111 @@ public class DataHandler
         this.user = user;
     }
 
+
+    /**
+     * Returns the currently logged in user (or null, if noone is logged in - however,
+     * please use the isLoggedIn method instead if you are checking for that fact)
+     * @return  The currently logged in user, or null.
+     */
     public User getUser()
     {
         return user;
     }
 
+
     /**
-     * Used on logout to make sure no stats or social data is left in cache
+     * Used on logout to make sure no stats or social data is left in cache.
      */
-    public void cleanupSessionData() {
-        detailedStats = null;
+    private void cleanupSessionData() {
+        detailedStats.clear();
         detailedStatsFetched = 0;
-        sc.clearCache();
-    }
-
-
-
-    public Friend[] getFriends() throws NotLoggedInException {
-        Friend[] friends = null;
-
-        // Make sure we are logged in so we have a user
-        if (!isLoggedIn()) {
-            throw new NotLoggedInException();
-        }
-
-        // No friends / friends not set
-        if (user.getFriends() == null) {
-            System.out.println("Users friends was null.");
-            return null;
-        }
-
-        // Copy the array so we are sure no other thread messes with it during fetch
-        long[] friendIds = Arrays.copyOf(user.getFriends(), user.getFriends().length);
-
-        friends =  new Friend[friendIds.length];
-        for (int i = 0; i < friendIds.length; i++) {
-            Friend queryFriend = new Friend(friendIds[i]);
-            Data d = getData(queryFriend);
-            if (d instanceof Friend) {
-                friends[i] = (Friend)d;
-            } else if (d instanceof ProtocolMessage) {
-                System.out.println("Friend fetch: " + ((ProtocolMessage)d).getMessage());
-            }
-        }
-
-        return friends;
+        socialHandler.clearCache();
     }
 
 
     /**
-     * Get the requested picture as a Bitmap object.
-     * @param pictureId
-     * @return
-     * @throws NotLoggedInException
+     * Used to store the most critical things (currently the logged in user) to persistent storage
+     * to be able to restore state if garbage collection kills everything.
+     * @param prefs     A SharedPreferences object (can be obtained from the PreferenceManager
+     *                  in a context)
      */
-    public Bitmap getPicture(Long pictureId) throws NotLoggedInException {
-        if (imageCache == null) {
-            imageCache = new HashMap<Long, Picture>();
-        }
-        if (pictureId == -1) {
-            return null;
-        }
+    public void storeToPrefs(SharedPreferences prefs) {
+        System.out.println("Storing user to SharedPreferences...");
 
-        // Empty cache if it is really big
-        if (imageCache.size() > 500) {
-            imageCache.clear();
-        }
-
-        // See if the image is not yet cached
-        if (imageCache.get(pictureId) == null) {
-            // Try to fecth it
-            imageCache.put(pictureId, (Picture) getData(new Picture(pictureId)));
-        }
-
-        Picture p = imageCache.get(pictureId);
-
-        // Now we have the picture - convert it to a bitmap so it can be used in the app
-        Bitmap bmp = null;
-        if (p != null && p.getImg() != null) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inMutable = true;
-            bmp = BitmapFactory.decodeByteArray(p.getImg(), 0,
-                    p.getImg().length, options);
-        }
-
-        return bmp;
+        // Started from an activity - set the user settings now
+        User u = getUser();
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putLong("sessionid", u.getSessionId());
+        edit.putLong("userid", u.getUserId());
+        edit.putString("username", u.getUsername());
+        edit.putString("passwordhash", u.getPasswordHash());
+        edit.commit();
     }
 
+
+    /**
+     * Used to restore the most critical things (currently the logged in user) from persistent
+     * storage to be able to restore state if garbage collection kills everything.
+     * @param prefs     A SharedPreferences object (can be obtained from the PreferenceManager
+     *                  in a context)
+     */
+    public void loadFromPrefs(SharedPreferences prefs) {
+        // Started after being destroyed - try to recover user settings
+        if (prefs.getString("username", null) != null) {
+            final User recoveredUser = new User();
+            recoveredUser.setUsername(prefs.getString("username", null));
+            recoveredUser.setPasswordHash(prefs.getString("password", null));
+            recoveredUser.setSessionId(prefs.getLong("sessionid", -1));
+            recoveredUser.setUserId(prefs.getLong("userid", -1));
+            setUser(recoveredUser);
+
+            // After restoring the session-critical data, fetch full user details from server
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Data d = getData(recoveredUser);
+                        setUser((User) d);
+                    } catch (NotLoggedInException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+        } else {
+            System.out.println("Failed to restore from shared preferences.");
+        }
+    }
+
+
+    /**
+     * We use SharedPreferences to store the most critical things (currently the logged in user) to
+     * persistent storage to be able to restore state if garbage collection kills everything.
+     * We this method clears the stored preferences. Used on logout.
+     *
+     * @param prefs     A SharedPreferences object (can be obtained from the PreferenceManager
+     *                  in a context)
+     */
+    public void clearPrefs(SharedPreferences prefs) {
+        prefs.edit().clear().commit();
+    }
+
+
+    /**
+     * Returns a notification object with the current status - if there are new messages or friend
+     * requests.
+     * @return A notification object with the current notification status.
+     */
     public Notification getNotificationStatus() {
         return notificationStatus;
     }
 
+
+    /**
+     * Set the notification object to the current status - if there are new messages or friend
+     * requests.
+     * @param notificationStatus    A notification object with the current notification status.
+     */
     public void setNotificationStatus(Notification notificationStatus) {
         this.notificationStatus = notificationStatus;
 
@@ -442,20 +488,33 @@ public class DataHandler
         if (!this.notificationStatus.isNewFriends()
                 && notificationStatus.isNewFriends()) {
 
-            // This could either be a friend request or a friend request was accepted (?)
+            // This could either be a friend request or a friend request was accepted,
             // so both list should be updated next time they're used
-            sc.setFriendsChanged(true);
-            sc.setFriendRequestsChanged(true);
+            socialHandler.setFriendsChanged(true);
+            socialHandler.setFriendRequestsChanged(true);
         }
 
         // The messaging feature is an activity right now so it will query the status of
         // the new message notification boolean instead
     }
 
+
+    /**
+     * Gets the instance of the SocialHandler object that fetches and caches friend data.
+     * @return  An instantiated SocialHandler instance.
+     */
     public SocialHandler getSocialHandler() {
-        return sc;
+        return socialHandler;
     }
 
+
+    /**
+     * Returns the last known safety status from AGA. TODO: we should check the timestamp of this
+     * or otherwise be sure to know if AGA was disconnected, to make sure not to lock the app
+     * in the wrong state
+     *
+     * @return The last known safety status from AGA.
+     */
     public SafetyStatus getSafetyStatus() {
         if(AGADataParser.getInstance().getDistLevel() >= 3)
             return SafetyStatus.FAST_MOVING;
@@ -468,4 +527,11 @@ public class DataHandler
     }
 
 
-} // end class DataHandler
+    /**
+     * Set the RealTimeDataHandler instance.
+     * @param rtdh  The new RealTimeDataHandler instance.
+     */
+    public void setRealTimeDataHandler(RealTimeDataHandler rtdh) {
+        realTimeDataHandler = rtdh;
+    }
+}

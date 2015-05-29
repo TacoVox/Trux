@@ -1,5 +1,7 @@
 package se.gu.tux.trux.gui.base;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +26,8 @@ import tux.gu.se.trux.R;
  */
 public class RegisterActivity extends BaseAppActivity implements View.OnClickListener
 {
+
+    // constant, the layout for this view
     private static final int LAYOUT_ID = R.layout.activity_register;
 
     // private fields for user info when registering
@@ -42,8 +46,11 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
     private String sEmail;
     private String sPassword;
 
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         setContentView(LAYOUT_ID);
@@ -63,6 +70,7 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
         // set listener to the button
         registerButton.setOnClickListener(this);
     }
+
 
 
     /**
@@ -110,10 +118,25 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
             assert message != null;
             if (message.getType() == ProtocolMessage.Type.SUCCESS)
             {
-                showDialogBox("Registration successful!",
-                        "You have now been registered. To confirm registration, " +
-                                "please go to the e-mail you provided and click on the link. To enjoy our services, " +
-                                "login with your username and password.");
+                // create a dialog
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+                // build the dialog, set title, set message, etc.
+                dialogBuilder.setTitle("Registration successful!");
+                dialogBuilder.setMessage("You have now been registered. To confirm registration, " +
+                        "please go to the e-mail you provided and click on the link. To enjoy our services, " +
+                        "login with your username and password.");
+                dialogBuilder.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i)
+                            {
+                                dialogInterface.dismiss();
+                                finish();
+                            }
+                        }).create();
+
+                // show dialog
+                dialogBuilder.show();
             }
             else
             {
@@ -182,7 +205,7 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
         String regex1 = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@" +
                 "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
 
-        // back-up regex to check e-mail
+        // simplified regex to check e-mail
         //String regex2 = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$";
 
         // perform check on e-mail
@@ -238,7 +261,6 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
     {
         if (view.getId() == R.id.registerButton)
         {
-            System.out.println("-------- calling onClick in RegisterWindow --------");
             registerUser();
         }
     }
@@ -246,7 +268,7 @@ public class RegisterActivity extends BaseAppActivity implements View.OnClickLis
 
 
     /**
-     * Private class. Checks if the user register is successful.
+     * Private class to perform async task. Checks if the user register is successful.
      */
     private class RegisterCheck extends AsyncTask<User, Void, ProtocolMessage>
     {

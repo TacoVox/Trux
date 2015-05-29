@@ -9,10 +9,14 @@ import java.util.concurrent.Executors;
 
 import se.gu.tux.truxserver.logger.Logger;
 
+
+/**
+ * The main server listener. Listens for server connections on the selected port.
+ * Has a ThreadPool with ServerRunnables handling the individual connections.
+ */
 public class ServerHandler implements Runnable {
 
     // Determines if the main loop should continue
-
     private boolean isRunning = true;
     // Server socket waits for connections
     private ServerSocket ss;
@@ -25,10 +29,11 @@ public class ServerHandler implements Runnable {
 
     
     /**
-     * Creates a new ServerHandler instance that listens for connections on the specified port.
-     * 
-     * @param truxServer		TruxServer object, in case we need to cancel execution
-     * @param port				Port where the server listens to requests
+     * Creates a new ServerHandler instance that listens for connections on the
+     * specified port.
+     *
+     * @param truxServer	TruxServer object, in case we need to cancel execution
+     * @param port	Port where the server listens to requests
      * @param connectionTimeout	Timeout in seconds for idle connections
      */
     public ServerHandler(TruxServer truxServer, int port, long connectionTimeout) {
@@ -36,11 +41,11 @@ public class ServerHandler implements Runnable {
         this.port = port;
         this.connectionTimeout = connectionTimeout;
     }
-
     
+
     /**
-     * The main server handler runnable. Listens for connections and diverts them to
-     * threads running ServerRunnables.
+     * The main server handler runnable. Listens for connections and diverts
+     * them to threads running ServerRunnables.
      */
     @Override
     public void run() {
@@ -88,6 +93,11 @@ public class ServerHandler implements Runnable {
         }
     }
 
+    
+    /**
+     * Used to stop listening for connection. Does this by closing the socket,
+     * which will end the ServerHandler thread.
+     */
     public synchronized void stopServer() {
         // Switch flag so loop exits next time
         isRunning = false;
@@ -106,6 +116,11 @@ public class ServerHandler implements Runnable {
         Logger.gI().addDebug("Server Handler shut down.");
     }
 
+    
+    /**
+     * Returns the state of the main loop.
+     * @return	True if running.
+     */
     public synchronized boolean isRunning() {
         return isRunning;
     }

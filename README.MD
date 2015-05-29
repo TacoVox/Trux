@@ -1,26 +1,50 @@
-# Trux - [Documentation Here](https://github.com/TacoVox/Tux/tree/master/DIT524_Project)
-Our Project - We will rock this course.
+![Trux](../master/Docs/images/image00.png "Trux")<br>
 
+## Group members
+* Ersare, Jerker - <jerker@soundandvision.se> - tville
+* Ghezai, Aman - <gusghezam@student.gu.se> - amuhotmax
+* Kahler, Jonas - <jonas.kahler@icloud.com> - TacoVox
+* Karlberg, Dennis - <realdkk@gmail.com> - DKarlberg
+* le Comte, Niklas - <niklas.lecomte@hotmail.com> - salkin91
+* Vryashkov, Ivo - <ivo.vryashkov@gmail.com> - vryashkov
+
+##Last Week Changes (After final presentation)
+### Map
+* Scroling on the map is not possible while distracted
+* Profile button disappears while distracted
+* Toasts for telling the user if he follows himself/friends and how to quit, and when the user has clicked to stop following.
+
+### General system changes
+* Push notifications added for messages and new friends
+* Application handles the android garbage collection better and doesn't crash after being in the background for a while
+
+## General information
+This repository was created after the alpha presentation bacause we had problems with .gitignore and for that reason we dont have any commits before the 24th of march in this repo. All the things we had were added to this repo the 24th of march or later.
+
+## Download
+* [Latest Stable - v1.0](../master/Trux/app/app-Trux.apk)
+
+### A Sample User for Trux
+* Username: alfons
+* Password: 1234
+
+## [Documentation](../master/Docs)
+* [Trux - Report](../master/Docs/TruxReport.MD)
+* [Trux - Backlog](../master/Docs/Backlog.xlsx) (Not 100% accurate but provided for reference)
+* [Trux - Developer's Manual](../master/Docs/DeveloperManual.MD)
+* [Trux - Client/User Manual](../master/Docs/UserManual.MD)
+* [Trux - JavaDoc](http://derkahler.de/trux/appjdoc/)
+* [TruxServer - Setup Manual](../master/Docs/ServerManual.MD)
+* [TruxServer - JavaDoc](http://derkahler.de/trux/srvjdoc/)
+* [Semester 2 - General Documentation + Files](https://github.com/TacoVox/Tux)
+
+## Automatic Build + Technical Debt
 * Jenkins [Trux App](http://derkahler.de:8080/job/Trux/) // [Trux Server](http://derkahler.de:8080/job/TruxServer/)
 * SonarQube [Trux Server](http://www.derkahler.de:9000/dashboard/index/1)
 
-##Build - Status on devel
-* Trux App <img src="http://derkahler.de:8080/job/Trux/badge/icon">
-* TruxServer <img src="http://derkahler.de:8080/job/TruxServer/1/badge/icon">
-
-## TODO - Client
-* Serverconnector should ignore null objects OR DataPoller should not send them. We need to know if connection to AGA is interrupted. Worst-case solution just let DataPoller check if current set of metrics is identical to last set, then don't send it.
-* Fragments for speed, distance, fuel
-* A way to determine if moving (display simple interface) or not
-* Client should reconnect if for example server is restarted or connection temporarily interrupted
-
-## TODO - Server
-* Main server thread pool
-* Different tables for different metrics since for example distance is long, not double
-
 ## Short description how this repository works.
 We are working in three different main branches:
-* Master --> NO CHANGES IN THIS BRANCH
+* Master --> NO CHANGES IN THIS BRANCH (Edit: only when handing in...)
 * Release --> We will merge down in this just as soon as we will release a version (for example BETA)
 * Devel --> This is our main development branch. This branch is there to merge down each features - it will help us to synchronize the work.
 * Feature --> For each feature we need to create a new feature. After the work is done we need to merge this branch down to devel.
