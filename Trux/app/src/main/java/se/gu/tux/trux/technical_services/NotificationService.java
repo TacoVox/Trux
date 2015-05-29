@@ -55,7 +55,9 @@ public class NotificationService extends Service
     }
 
 
-
+    /**
+     * Called when the service is started.
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
