@@ -30,7 +30,8 @@ Trux requires internet connection and in case of internet disconnection trux can
 Trux currently can be installed to a device by connecting the device to a computer with a USB cable and running it through Android Studio.  
 
 #### Installation and Logging In
-Since Trux is not officially launched in the Google Play store the only way of installing it in a phone is by using Android Studio to run it to a phone connected to a computer by a USB cable. Once the application is installed on the device, the user can use Trux. As mentioned above the user is required supply their username and password when logging in has the option to enable auto-login for future sessions.   
+Since Trux is not officially launched in the Google Play store the best way of installing it on your phone is to retrieve the link from the main README and redirect to the link from your phone and the application will be installed. However, do note that you need to turn on the "Unknown Sources" setting in the security settings of your android device or the installation will be blocked.
+Once the application is installed on the device, the user can use Trux. As mentioned above the user is required supply their username and password when logging in has the option to enable auto-login for future sessions.   
 Trux is a tabbed application, that consists of three main tabs. The first tab is the home tab (Figure 1) and it includes two buttons, one for messages and the other for friends. The message button opens the conversation list. The friends button opens the friends list, where user can search for friends as well as follow a friend in the map if they are online. A friend who is online is indicated by a location icon which is clickable. The user can stop following a friend by clicking the map.  If the user is currently driving some, features are not accessible. To distinguish this two states the system is divided into two views, normal state and driving state. 
 
 #### Home Page 
@@ -51,12 +52,12 @@ In the friends page a user can search for people and send friend request and acc
 
 <img src="images/image07.png" alt="Friends Page" width="250" height="400" />
 
-<img src="images/image10.png" alt="Search Friends" width="250" height="400" />
+<img src="images/image10.jpg" alt="Search Friends" width="250" height="400" />
 
 User can send a friend request by clicking the friend icon. 
 User can accept or reject a friend request by clicking the green icon or the red icon.
 
-<img src="images/image08.png" alt="Friend Requests" width="250" height="100" />
+<img src="images/image08.jpg" alt="Friend Requests" width="250" height="100" />
 
 #### Community Page  
 The second tab is the community tab and it has a map, where users can see where their friends are and it contains a Profile button that takes the user to their profile as well as a Friends button that is a shortcut to the Friends list. 
