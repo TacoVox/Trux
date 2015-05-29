@@ -1,6 +1,7 @@
 package se.gu.tux.trux.technical_services;
 
 import android.app.Activity;
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -22,24 +23,24 @@ import com.google.android.gms.location.LocationServices;
  *
  * Created by Niklas on 07/05/15.
  */
-public class LocationService implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener {
+public class LocationHandler implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener {
 
     // The last known location
     private Location currentLocation;
     // Google API client
     private GoogleApiClient googleApiClient;
     // A reference to the activity, needed to initialize the API client
-    private Activity activity;
+    private Context context;
 
 
     /**
-     * Constructs a new LocationService.
-     * @param activity  An activity, since we need to send a context to the Google API.
+     * Constructs a new LocationHandler.
+     * @param context  We need to send a context to the Google API.
      */
-    public LocationService(Activity activity) {
-        System.out.println("LocationService created.");
-        this.activity = activity;
-        googleApiClient = new GoogleApiClient.Builder(activity)
+    public LocationHandler(Context context) {
+        System.out.println("LocationHandler created.");
+        this.context = context;
+        googleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
@@ -55,7 +56,7 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
     @Override
     public void onConnected(Bundle connectionHint) {
         // Update the currentLocation variable
-        System.out.println("LocationService connected.");
+        System.out.println("LocationHandler connected.");
         Location lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(
                 googleApiClient);
         if (lastKnownLocation != null) {
@@ -130,6 +131,6 @@ public class LocationService implements LocationListener, ConnectionCallbacks, O
      */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        System.out.println("Connecting LocationService failed.");
+        System.out.println("Connecting LocationHandler failed.");
     }
 }

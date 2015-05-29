@@ -15,10 +15,24 @@ import se.gu.tux.trux.datastructure.Notification;
 public abstract class TimerUpdateFragment extends Fragment {
     private Timer timer;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         timer = new Timer();
         timer.schedule(new StatusTimerTask(), 0, 10000);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (timer != null) {
+            timer.cancel();
+        }
     }
 
     public abstract void setStatus(DataHandler.SafetyStatus safetyStatus,

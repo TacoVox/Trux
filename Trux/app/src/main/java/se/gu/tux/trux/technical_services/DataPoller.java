@@ -1,5 +1,9 @@
 package se.gu.tux.trux.technical_services;
 
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Heartbeat;
 import se.gu.tux.trux.datastructure.Location;
@@ -148,6 +152,7 @@ public class DataPoller {
                     // Also provide a heartbeat object - this keeps connection alive regardless
                     // of connection to AGA and makes sure server can send back notifications
                     ServerConnector.gI().send(new Heartbeat());
+                    System.out.println("Datapoller: adding heartbeat to queue.");
 
                     // Wait POLL_INTERVAL seconds before continuing.
                     Thread.sleep(1000 * POLL_INTERVAL);

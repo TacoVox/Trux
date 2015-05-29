@@ -65,6 +65,8 @@ public class MapFrag extends TimerUpdateFragment implements OnMapReadyCallback, 
     private RelativeLayout loadingPanel;
     private HomeActivity homeActivity = null;
 
+
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -290,8 +292,19 @@ public class MapFrag extends TimerUpdateFragment implements OnMapReadyCallback, 
                     hasMarker = false;
                 }
             }});
-        if (friends != null) {
 
+        // If following a friend, we need to perform a check if the friend is online.
+        // We do this by setting the variable to false, and if it is true the next time (we can't
+        // check directly below in the code because the loop is in another thread!) the friend
+        // is still online. Otherwise the friend is offline, and we set selected friend to -1.
+        if (selectedFriend != -1 && homeActivity.getFriendIsOnline() == true) {
+            // Assume friend is offline until proven otherwise in the loop below
+            homeActivity.setFriendIsOnline(false);
+        } else {
+            homeActivity.setSelectedFriend(-1L);
+        }
+
+        if (friends != null) {
             for (final Friend currentFriend : friends) {
 
                 if (currentFriend != null && currentFriend.getProfilePic() != null &&
@@ -324,6 +337,8 @@ public class MapFrag extends TimerUpdateFragment implements OnMapReadyCallback, 
                                 mMap.setOnMyLocationChangeListener(null);
                                 // Move the camera to the friend
                                 mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(loc[0], loc[1])));
+                                // The friend is still online!
+                                homeActivity.setFriendIsOnline(true);
                             }
                         }
                     });

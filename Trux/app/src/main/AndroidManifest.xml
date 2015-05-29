@@ -24,6 +24,9 @@
         android:label="@string/app_name"
         android:theme="@style/CustomActionBarTheme">
 
+        <service android:name="se.gu.tux.trux.technical_services.NotificationService"/>
+        <service android:name="se.gu.tux.trux.technical_services.BackgroundService" />
+
 
         <!-- META DATA -->
         <meta-data
@@ -109,7 +112,6 @@
             android:label="Messages"
             android:screenOrientation="portrait">
         </activity>
-
 
     </application>
 

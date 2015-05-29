@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +21,8 @@ import se.gu.tux.trux.application.SettingsHandler;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.gui.main_home.MainActivity;
+import se.gu.tux.trux.technical_services.BackgroundService;
+import se.gu.tux.trux.technical_services.NotificationService;
 import se.gu.tux.trux.technical_services.ServerConnector;
 import tux.gu.se.trux.R;
 
@@ -35,7 +38,6 @@ public class BaseAppActivity extends ActionBarActivity
     // keeps track of the current view showing on the screen
     private int currentViewId;
     private MenuItem logoutItem;
-
 
 
     @Override
@@ -257,14 +259,15 @@ public class BaseAppActivity extends ActionBarActivity
             e.printStackTrace();
         }
 
-        if (check)
-        {
-          // TODO: react to successful or failed logout attempt?
-        }
-        else
-        {
+        Intent background = new Intent(this, BackgroundService.class);
+        stopService(background);
+        showToast("Background service stopped");
 
-        }
+        Intent notification = new Intent(this, NotificationService.class);
+        stopService(notification);
+        showToast("Notification service stopped");
+
+        DataHandler.gI().clearPrefs(PreferenceManager.getDefaultSharedPreferences(this));
 
         // Make sure there is no history for the back button
         if (getFragmentManager().getBackStackEntryCount() > 0)
@@ -295,6 +298,11 @@ public class BaseAppActivity extends ActionBarActivity
         @Override
         protected Boolean doInBackground(Void... voids)
         {
+            // If the instance of LoginService was lost, recreate it
+            if (LoginService.getInstance() == null) {
+                LoginService.createInstance(getApplicationContext());
+            }
+
             // return the result from logout request
             return LoginService.getInstance().logout();
         }
@@ -309,8 +317,9 @@ public class BaseAppActivity extends ActionBarActivity
      */
     @Override
     protected void onSaveInstanceState (Bundle outState) {
-        //
-        outState.putSerializable("user", DataHandler.gI().getUser());
+        if (DataHandler.gI().getUser() != null) {
+           DataHandler.gI().storeToPrefs(PreferenceManager.getDefaultSharedPreferences(this));
+        }
         outState.putSerializable("settingsHandler", SettingsHandler.getInstance());
         super.onSaveInstanceState(outState);
     }
@@ -322,7 +331,7 @@ public class BaseAppActivity extends ActionBarActivity
      */
     @Override
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
-        DataHandler.gI().setUser((User)savedInstanceState.getSerializable("user"));
+        DataHandler.gI().loadFromPrefs(PreferenceManager.getDefaultSharedPreferences(this));
         SettingsHandler.setInstance(
                 (SettingsHandler)savedInstanceState.getSerializable("settingsHandler"));
         super.onRestoreInstanceState(savedInstanceState);

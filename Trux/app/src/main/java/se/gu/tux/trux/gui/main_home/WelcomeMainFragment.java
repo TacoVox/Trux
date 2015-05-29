@@ -79,7 +79,6 @@ public class WelcomeMainFragment extends TimerUpdateFragment implements View.OnC
 
     @Override
     public void setStatus(DataHandler.SafetyStatus safetyStatus, Notification notificationStatus) {
-        System.out.println("Welcome setting status...");
         Activity a = getActivity();
         if (a != null) {
             a.runOnUiThread(new Runnable() {

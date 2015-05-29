@@ -75,8 +75,7 @@ public class ConversationListFragment extends Fragment implements AdapterView.On
 
         initMessageService();
 
-        SocialHandler sh = new SocialHandler();
-        sh.fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
+        DataHandler.gI().getSocialHandler().fetchFriends(this, SocialHandler.FriendsUpdateMode.NONE);
 
         // get the list view
         ListView listView = (ListView) view.findViewById(R.id.list);
