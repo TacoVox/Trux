@@ -12,11 +12,11 @@
 This repository was created after the alpha presentation bacause we had problems with git ignore and for that reason we dont have any commits before the 24th of mars in this repo. All the things we had were added to this repo the 24th of mars.
 
 ## Download
-[Latest Stable - v1.0](https://github.com/TacoVox/Trux/blob/master/Trux/app/app-release.apk)
+* [Latest Stable - v1.0](https://github.com/TacoVox/Trux/blob/master/Trux/app/app-release.apk)
 
 ## Documentation
-[Trux Documentation](https://github.com/TacoVox/Trux/tree/master/Docs)<br>
-[Semester 2 Documentation](https://github.com/TacoVox/Tux)
+* [Trux Documentation](https://github.com/TacoVox/Trux/tree/master/Docs)
+* [Semester 2 Documentation](https://github.com/TacoVox/Tux)
 
 ## Automatic Build + Technical Debt
 * Jenkins [Trux App](http://derkahler.de:8080/job/Trux/) // [Trux Server](http://derkahler.de:8080/job/TruxServer/)
