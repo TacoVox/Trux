@@ -49,14 +49,14 @@ In the driving mode the user can only choose from predefined messages.
 #### Friends  page
 In the friends page a user can search for people and send friend request and accept or reject any received friend request. The search and friend request features are not available while driving.
 
-<img src="../master/Docs/images/image07.png" alt="Friends Page" width="250" height="400" />
+<img src="images/image07.png" alt="Friends Page" width="250" height="400" />
 
-<img src="../master/Docs/images/image10.png" alt="Search Friends" width="250" height="400" />
+<img src="images/image10.png" alt="Search Friends" width="250" height="400" />
 
 User can send a friend request by clicking the friend icon. 
 User can accept or reject a friend request by clicking the green icon or the red icon.
 
-<img src="../master/Docs/images/image08.png" alt="Friend Requests" width="250" height="100" />
+<img src="images/image08.png" alt="Friend Requests" width="250" height="100" />
 
 #### Community Page  
 The second tab is the community tab and it has a map, where users can see where their friends are and it contains a Profile button that takes the user to their profile as well as a Friends button that is a shortcut to the Friends list. 
@@ -69,34 +69,34 @@ The map view can be changed between Hybrid and Standard in the settings.
 
 #### Normal Map View
 
-<img src="../master/Docs/images/image12.jpg" alt="Map View" width="250" height="400" />
+<img src="images/image12.jpg" alt="Map View" width="250" height="400" />
 
 #### Driving mode map view 
 
-<img src="../master/Docs/images/image04.jpg" alt="Simple Map View" width="250" height="400" />
+<img src="images/image04.jpg" alt="Simple Map View" width="250" height="400" />
 
 #### Profile Page  
 The profile page is where the user can change his/her profile picture and also can edit their credentials and save the changes. 
 The profile feature is only available in the normal mode, in the driving mode the user does not have access to this page. 
 
-<img src="../master/Docs/images/image06.png" alt="Profile Page" width="250" height="400" />
+<img src="images/image06.png" alt="Profile Page" width="250" height="400" />
 
 #### Statistics Page  
 The third tab is the statistics tab (Figure 2) and it contains all the statistics in a graph format. The page also contains a tab with four options where the user can choose to open an overview page of statistics or a single view of different variables, like for fuel, distance and speed. These are only available while not driving.
 
-<img src="../master/Docs/images/image03.png" alt="Overall Page" width="250" height="400" />
+<img src="images/image03.png" alt="Overall Page" width="250" height="400" />
 
 #### Fuel Graph Page
 
-<img src="../master/Docs/images/image01.png" alt="Fuel Page" width="250" height="400" />
+<img src="images/image01.png" alt="Fuel Page" width="250" height="400" />
 
 #### Speed Graph Page 
 
-<img src="../master/Docs/images/image14.png" alt="Speed Page" width="250" height="400" />
+<img src="images/image14.png" alt="Speed Page" width="250" height="400" />
 
 #### Distance Traveled Page 
 
-<img src="../master/Docs/images/image05.png" alt="Distance Page" width="250" height="400" />
+<img src="images/image05.png" alt="Distance Page" width="250" height="400" />
 
 #### Changing Password and Reporting system issues 
 The password can only be changed by contacting the developers through the Contact us page. In the contact us page the user also has an option to send feedback and report system issues. 
@@ -104,4 +104,4 @@ The password can only be changed by contacting the developers through the Contac
 #### Contact Us
 User can choose from a dropdown list the issue they what to address.
 
-<img src="../master/Docs/images/image11.png" alt="Contact Page" width="250" height="400" />
+<img src="images/image11.png" alt="Contact Page" width="250" height="400" />
