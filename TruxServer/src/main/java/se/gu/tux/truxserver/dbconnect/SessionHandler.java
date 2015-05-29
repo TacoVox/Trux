@@ -18,50 +18,47 @@ package se.gu.tux.truxserver.dbconnect;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import se.gu.tux.trux.datastructure.Data;
 
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.User;
-
 import se.gu.tux.truxserver.config.Config;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
  * Class taking care of all Session DB operations.
- *
  * @author Jonas Kahler
  */
 public class SessionHandler {
 
-    /**
+    /*
      * Static part.
      */
-    private static SessionHandler sh = null;
+    private static SessionHandler instance = null;
 
     /**
      * Method for getting the instance of the SessionHandler.
-     *
      * @return an Instance of SessionHandler
      */
     public static SessionHandler getInstance() {
-        if (sh == null) {
-            sh = new SessionHandler();
+        if (instance == null) {
+            instance = new SessionHandler();
         }
-        return sh;
+        return instance;
     }
 
     /**
      * Method for getting the instance of the SessionHandler.
-     *
      * @return an Instance of SessionHandler
      */
     public static SessionHandler gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
      */
+    
     /**
      * Private Constructor. Not acessable.
      */
@@ -70,8 +67,7 @@ public class SessionHandler {
 
     /**
      * Method for updating the session of a user.
-     *
-     * @param u the user which session shall be updated
+     * @param d Data object including the UserID
      */
     public void updateActive(Data d) {
         DBConnector dbc = null;
@@ -98,15 +94,11 @@ public class SessionHandler {
         } finally {
             ConnectionPool.gI().releaseDBC(dbc);
         }
-
-        //return null;
     }
 
     /**
      * Method to start a new session.
-     *
      * @param u the user who will start the session
-     *
      * @return the session id.
      */
     public long startSession(User u) {
@@ -126,11 +118,8 @@ public class SessionHandler {
             pst.setLong(3, System.currentTimeMillis());
             pst.setBoolean(4, u.getStayLoggedIn());
 
-            //Logger.gI().addDebug(Boolean.toString(u.getStayLoggedIn()));
-            //No check for active session here!
             pst.executeUpdate();
 
-            //Logger.gI().addDebug(pst.toString());
             ResultSet keys = pst.getGeneratedKeys();
 
             while (keys.next()) {
@@ -138,7 +127,6 @@ public class SessionHandler {
             }
 
             return - 1;
-
         } catch (InterruptedException ie) {
             Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
             return -1;
@@ -154,9 +142,7 @@ public class SessionHandler {
 
     /**
      * Method to end a user's session.
-     *
      * @param pm a ProtocolMessage with a end session request.
-     *
      * @return a ProtocolMessage responding if the action was successful.
      */
     public ProtocolMessage endSession(ProtocolMessage pm) {
@@ -193,7 +179,6 @@ public class SessionHandler {
 
     /**
      * Method for getting all active sessions from the DB.
-     *
      * @return a ResultSet containing all active sessions
      */
     public ResultSet getCurrentSessions() {
@@ -227,7 +212,6 @@ public class SessionHandler {
 
     /**
      * Metod for closing all sessions which shall expire.
-     *
      * @return a ProtocolMessage indicating the success
      */
     public ProtocolMessage purgeSessions() {

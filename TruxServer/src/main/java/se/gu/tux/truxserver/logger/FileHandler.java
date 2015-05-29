@@ -18,15 +18,16 @@ package se.gu.tux.truxserver.logger;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.OutputStreamWriter;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 
 /**
- *
- * @author jonas
+ * Class writing logfiles.
+ * @author Jonas Kahler
  */
 public class FileHandler {
 
@@ -35,6 +36,10 @@ public class FileHandler {
     private File file;
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
+    /**
+     * Constructor.
+     * Creates the directories and files if not existing.
+     */
     public FileHandler() {
         execPath = System.getProperty("user.dir");
 
@@ -60,6 +65,10 @@ public class FileHandler {
         }
     }
 
+    /**
+     * Method to append text to an existing file.
+     * @param text the text to append.
+     */
     public void appendText(String text) {
         try {
             OutputStreamWriter writer = new OutputStreamWriter(

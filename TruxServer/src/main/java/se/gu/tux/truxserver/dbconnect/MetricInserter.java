@@ -17,52 +17,48 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.util.concurrent.LinkedBlockingQueue;
+
 import se.gu.tux.trux.datastructure.Location;
-
 import se.gu.tux.trux.datastructure.MetricData;
-
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
  * Class taking care of all MetricData inserts to the DB.
- *
  * @author Jonas Kahler
  */
 public class MetricInserter implements Runnable {
 
-    /**
+    /*
      * Static part.
      */
-    private static MetricInserter mi;
+    private static MetricInserter instance;
 
     /**
      * Method for getting the instance of the MetricInserter.
-     *
      * @return an Instance of MetricInserter
      */
     public static MetricInserter getInstance() {
-        if (mi == null) {
-            mi = new MetricInserter();
+        if (instance == null) {
+            instance = new MetricInserter();
         }
-        return mi;
+        return instance;
     }
 
     /**
      * Method for getting the instance of the MetricInserter.
-     *
      * @return an Instance of MetricInserter
      */
     public static MetricInserter gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
      */
     private LinkedBlockingQueue queue;
 
     /**
-     * Constructor.
+     * Private Constructor.
      */
     private MetricInserter() {
         queue = new LinkedBlockingQueue();
@@ -82,7 +78,6 @@ public class MetricInserter implements Runnable {
                 insertMetric((MetricData) queue.take());
             } catch (InterruptedException e) {
                 Logger.gI().addMsg("Server shutting down. Goodbye. Har det bra!");
-                // Received interrupt() call from managing thread
                 running = false;
             } catch (Exception e) {
                 Logger.gI().addError(e.getLocalizedMessage());
@@ -94,7 +89,6 @@ public class MetricInserter implements Runnable {
     /**
      * Method to add MetricData to the queue. This will add the MetricData to a
      * Queue which will take care of all jobs.
-     *
      * @param md the MetricData object which shall be inserted to the DB
      */
     public void addToDB(MetricData md) {
@@ -113,9 +107,7 @@ public class MetricInserter implements Runnable {
 
     /**
      * Method which inserts the Metric to the DB.
-     *
      * @param md a MetricData object
-     *
      * @return success or notl
      */
     private boolean insertMetric(MetricData md) {
@@ -135,9 +127,6 @@ public class MetricInserter implements Runnable {
             PreparedStatement pst;
 
             if (md instanceof Location) {
-                //Logger.gI().addDebug(Double.toString(((double[])md.getValue())[0]));
-                //Logger.gI().addDebug(Double.toString(((double[])md.getValue())[1]));
-
                 pst = dbc.getConnection().prepareStatement(
                         "INSERT INTO location (latitude, longitude, timestamp, userid, sessionid) "
                         + "SELECT * FROM (SELECT ?, ?, ?, ?, ?) AS tmp");

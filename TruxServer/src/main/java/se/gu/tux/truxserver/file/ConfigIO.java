@@ -27,37 +27,50 @@ import se.gu.tux.truxserver.logger.Logger;
 
 /**
  * Class responsible for reading and writing to a .conf file.
- *
- * @author jonas
+ * @author Jonas Kahler
  */
 public class ConfigIO {
 
-    /**
+    /*
      * Static part.
      */
-    private static ConfigIO cio;
+    private static ConfigIO instance;
 
+    /**
+     * Method returning a ConfigIO instance.
+     * @return a ConfigIO instance.
+     */
     public static ConfigIO getInstance() {
-        if (cio == null) {
-            cio = new ConfigIO();
+        if (instance == null) {
+            instance = new ConfigIO();
         }
 
-        return cio;
+        return instance;
     }
 
+    /**
+     * Method returning a ConfigIO instance.
+     * @return a ConfigIO instance.
+     */
     public static ConfigIO gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
      */
+    
     /**
-     * Constructor.
+     * Private Constructor.
      */
     private ConfigIO() {
     }
 
+    /**
+     * Method loading a configuration from a file.
+     * @param path path to the config file
+     * @return a filled in Properties object
+     */
     public Properties loadConfig(String path) {
         Properties p = new Properties();
 
@@ -73,6 +86,10 @@ public class ConfigIO {
         return p;
     }
 
+    /**
+     * Method for saving a Properties object to a file.
+     * @param p the Properties object to be saved
+     */
     public void createConfig(Properties p) {
         String path = System.getProperty("user.dir") + "/config";
 

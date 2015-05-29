@@ -22,16 +22,20 @@ import se.gu.tux.truxserver.dbconnect.MessageHandler;
 import se.gu.tux.truxserver.dbconnect.SessionHandler;
 
 /**
- *
- * @author jonas
+ * Class Handeling Heartbeats and sending Notifications.
+ * @author Jonas Kahler
  */
 public class HeartbeatHandler {
 
-    /**
+    /*
      * Static part.
      */
     private static HeartbeatHandler instance;
 
+    /**
+     * Method returning an instance of the HeartbeatHandler.
+     * @return HeartbeatHandler instance
+     */
     public static HeartbeatHandler getInstance() {
         if (instance == null) {
             instance = new HeartbeatHandler();
@@ -40,16 +44,25 @@ public class HeartbeatHandler {
         return instance;
     }
 
+    /**
+     * Method returning an instance of the HeartbeatHandler.
+     * @return HeartbeatHandler instance
+     */
     public static HeartbeatHandler gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
      */
     private HeartbeatHandler() {
     }
 
+    /**
+     * Method for handeling a Heartbeat
+     * @param hb a Heartbeat object
+     * @return a Notification if necessary
+     */
     public Notification handleHB(Heartbeat hb) {
         SessionHandler.gI().updateActive(hb);
 
