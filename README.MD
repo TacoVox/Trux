@@ -15,7 +15,7 @@ This repository was created after the alpha presentation bacause we had problems
 [Latest Stable - v1.0](https://github.com/TacoVox/Trux/blob/master/Trux/app/app-release.apk)
 
 ## Documentation
-[Trux Documentation](https://github.com/TacoVox/Trux/tree/master/Docs)
+[Trux Documentation](https://github.com/TacoVox/Trux/tree/master/Docs)<br>
 [Semester 2 Documentation](https://github.com/TacoVox/Tux)
 
 ## Automatic Build + Technical Debt
