@@ -22,9 +22,9 @@
 ## General information
 This repository was created after the alpha presentation bacause we had problems with .gitignore and for that reason we dont have any commits before the 24th of march in this repo. All the things we had were added to this repo the 24th of march or later.
 
-A sample user:
-Username: alfons
-Password: 1234
+### A sample user:
+* Username: alfons
+* Password: 1234
 
 ## Download
 * [Latest Stable - v1.0](../master/Trux/app/app-Trux.apk)
