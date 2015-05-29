@@ -11,7 +11,7 @@
 Trux application was developed using a client-server architecture. The client side is responsible for the interaction with the user. It manages user interface, user input and output, application logic, business and safety rules, and communication with the server. The server side is responsible for taking requests from the application, connecting to the database, retrieving/storing data from/to the database and sending the data back to the application.
 
 ### Database
-We used MariaDB which is a relational database. It is, due to the fact that it’s a MySQL fork, interchangeable with MySQL itself.
+We use MariaDB which is a relational database. It's a MySQL fork, interchangeable with MySQL, so our server application should work with either one.
 
 ### Server
 The server is made out of a set of different classes which are ordered by responsibilities in packages: <br>
