@@ -16,7 +16,7 @@ We use MariaDB which is a relational database. It's a MySQL fork, interchangeabl
 ### Server
 The server is made out of a set of different classes which are ordered by responsibilities in packages: <br>
 <b>datastructure</b> - package including our protocol. Shared with the client/app.<br>
-<b>truxserver</b> - package including all main classes necessary running the server and establishing a connection to a client. Includes also a CleanupRunnable which takes care of removing invalid sessions as well as a HeartbeatHandler which sets sessions and users to active/online and returns notifications if something new happens (like a new message).<br>
+<b>truxserver</b> - package including all main classes necessary running the server and establishing a connection to a client. TruxServer is the main class, it creates a ServerHandler that listens for incoming connections. They are then handled by instances of ServerRunnable managed in a thread pool. Includes also a CleanupRunnable which takes care of removing invalid sessions as well as a HeartbeatHandler which sets sessions and users to active/online and returns notifications if something new happens (like a new message).<br>
 <b>config</b> - package containing two classes responsible for the server configuration. The Config class is a wrapper with getters and setters which allows the others classes to get config values for the server.<br>
 <b>dataswitch</b> - package containing a set of switcher classes which decide what method to call.<br>
 <b>dbconnect</b> - package containing all classes which handle database stuff. This includes a class representing a DBConnection, a ConnectionPool as well as classes which handle inserts, selects, etc.<br>
