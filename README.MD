@@ -12,7 +12,7 @@
 This repository was created after the alpha presentation bacause we had problems with .gitignore and for that reason we dont have any commits before the 24th of march in this repo. All the things we had were added to this repo the 24th of march or later.
 
 ## Download
-* [Latest Stable - v1.0](../master/Trux/app/app-trux.apk)
+* [Latest Stable - v1.0](../master/Trux/app/app-Trux.apk)
 
 ## [Documentation](../master/Docs)
 * [Trux - Report](../master/Docs/TruxReport.MD)
