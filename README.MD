@@ -7,7 +7,7 @@
 * TacoVox = Jonas Kahler
 
 #General information
-This repository was created after the alpha presentation bacause we had problems with git ignore and there for we dont have any commits before the 24th of mars in this repo. All the things we had were added to this repo the 24th of mars.
+This repository was created after the alpha presentation bacause we had problems with git ignore and for that reason we dont have any commits before the 24th of mars in this repo. All the things we had were added to this repo the 24th of mars.
 
 # Trux - [Documentation Here](https://github.com/TacoVox/Trux/tree/master/Docs)
 Our Project - We will rock this course.
