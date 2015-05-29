@@ -89,10 +89,10 @@ The third tab is the statistics tab (Figure 2) and it contains all the statistic
 
 <img src="images/image05.png" alt="Distance Page" width="250" height="400" />
 
-#### Changing Password and Reporting system issues 
+#### Changing Password and Reporting System Issues 
 The password can only be changed by contacting the developers through the Contact us page. In the contact us page the user also has an option to send feedback and report system issues. 
 
-#### Contact Us
-User can choose from a dropdown list the issue they what to address. The issue reported is then emailed to the developers. 
+#### Contact Us and Logout 
+User can choose from a dropdown list the issue they what to address. The issue reported is then emailed to the developers. To logout the user just needs to click the logout button from the dropdown list in the menu.  
 
 <img src="images/image11.png" alt="Contact Page" width="250" height="400" />
