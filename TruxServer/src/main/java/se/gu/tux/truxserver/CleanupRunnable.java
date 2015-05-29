@@ -3,6 +3,10 @@ package se.gu.tux.truxserver;
 import se.gu.tux.truxserver.dbconnect.SessionHandler;
 import se.gu.tux.truxserver.logger.Logger;
 
+
+/**
+ * Performs cleanup tasks in its own thread on a configurable interval.
+ */
 public class CleanupRunnable implements Runnable {
 
     // Determines if the main loop should continue
