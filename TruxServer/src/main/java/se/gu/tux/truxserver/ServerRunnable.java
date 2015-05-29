@@ -16,6 +16,11 @@ import se.gu.tux.trux.datastructure.ProtocolMessage.Type;
 import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
+
+/**
+ * Instances of this class handle the individual connections with clients.
+ * ServerHandler manages the ServerRunnable objects in a thread pool.
+ */
 public class ServerRunnable implements Runnable {
 
     private boolean isRunning = true;
@@ -27,12 +32,22 @@ public class ServerRunnable implements Runnable {
     private long idleTime = 0;
     private long maxIdleTime = 0;
 
+    /**
+     * Constructor.
+     * @param cs			The socket with the connection.
+     * @param connectionId	The connection ID, used to mark debug output
+     * @param maxIdleTime	A connection timeout
+     */
     public ServerRunnable(Socket cs, long connectionId, long maxIdleTime) {
         this.cs = cs;
         this.connectionId = connectionId;
         this.maxIdleTime = maxIdleTime;
     }
 
+    
+    /**
+     * The main loop. 
+     */
     @Override
     public void run() {
 
@@ -137,6 +152,7 @@ public class ServerRunnable implements Runnable {
         }
     }
 
+    
     /**
      * Cleanly shut down this server runnable
      */
@@ -154,6 +170,11 @@ public class ServerRunnable implements Runnable {
         isRunning = false;
     }
 
+    
+    /**
+     * Returns the socket with the client connection.
+     * @return	The socket.
+     */
     public Socket getCs() {
         return cs;
     }
