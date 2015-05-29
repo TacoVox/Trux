@@ -15,4 +15,4 @@ The server will start to execute and will create - if not available yet - a fold
 To prevent this behaviour simply take the config file provided in our GitHub repository and put it in the `/config` folder (`TruxServer/config/server.conf`).
 It is even possible to run the server with some extra commands. Try to add a command line argument like -h to the execute command.
 To stop the server simply type q followed by enter into the command line. The server will shut down.
-For a long time server session it is necessary to install screen on your Unix server and run a TruxServer instance in a screen.
+To run the server in a longer session we recommend using screen to be able to put it in the background and resume it from any terminal.
