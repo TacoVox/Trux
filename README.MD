@@ -8,26 +8,24 @@
 * le Comte, Niklas - <niklas.lecomte@hotmail.com> - salkin91
 * Vryashkov, Ivo - <ivo.vryashkov@gmail.com> - vryashkov
 
-##Last week changes (After final presentation)
+##Last Week Changes (After final presentation)
 ### Map
 * Scroling on the map is not possible while distracted
 * Profile button disappears
 * Toasts for telling the user if he follows himself/friends and how to quit, and when it has interrupted
-
 ### General system changes
-
 * Push notifications added
 * Application handles the android garbage collection better and doesn't crash after being in the background for a while
 
 ## General information
 This repository was created after the alpha presentation bacause we had problems with .gitignore and for that reason we dont have any commits before the 24th of march in this repo. All the things we had were added to this repo the 24th of march or later.
 
-### A sample user:
-* Username: alfons
-* Password: 1234
-
 ## Download
 * [Latest Stable - v1.0](../master/Trux/app/app-Trux.apk)
+
+### A Sample User for Trux
+* Username: alfons
+* Password: 1234
 
 ## [Documentation](../master/Docs)
 * [Trux - Report](../master/Docs/TruxReport.MD)
