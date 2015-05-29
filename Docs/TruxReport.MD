@@ -94,7 +94,7 @@ Sometimes when we had discussions people could get a little mad at each other wh
 Things we have learned from and would try to do differently the next time:
  - Try not to overestimate our capabilities in terms of how much we can accomplish. Maybe easier said than done.
  - Do some more research and practice before implementing on the main project.
- - Try to stick more to the decisions from the sprint meetings, and if we're deviating too much we should probably discuss the reasons for it and what we can do to correct the course.
+ - Try to stick more to the decisions from the sprint meetings, and if we're deviating too much we should probably discuss the reasons for it and what we can do to correct the course.<br><br>
 ### General Discussion
 When we were starting with the product vision and the user stories, we included a lot of features. We underestimated the amount of time it would take us to create the features we planned and mentioned in the vision document. That is one thing we need to consider in future projects - to really think about what we are able to do within the given time limit and do not underestimate the time the other courses will take.<br><br>
 Now we left out some features that we would have wanted to have in the app, e.g. the community groups and statistics for a manager. It was not only the time limit that changed the application for us, it was also the direction we took and the learning curve of Android development.<br><br>
