@@ -1,6 +1,6 @@
 ![Trux](../master/Docs/images/image00.png "Trux")<br>
 
-## Goup members
+## Group members
 * Ersare, Jerker - <jerker@soundandvision.se> - tville
 * Ghezai, Aman - <gusghezam@student.gu.se> - amuhotmax
 * Kahler, Jonas - <jonas.kahler@icloud.com> - TacoVox
