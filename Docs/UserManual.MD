@@ -1,6 +1,6 @@
-# User manual 
+### User manual 
 
-### GENERAL INFORMATION
+##GENERAL INFORMATION
 Trux is a community based android application for truck drivers. Trux has various features, like data collection, driver monitoring and online truck drivers community features.
 
 #### System Overview
@@ -72,7 +72,7 @@ The profile feature is only available in the normal mode, in the driving mode th
 <img src="images/image06.png" alt="Profile Page" width="250" height="400" />
 
 #### Statistics Page  
-The third tab is the statistics tab (Figure 2) and it contains all the statistics in a graph format. The page also contains a tab with four options where the user can choose to open an overview page of statistics or a single view of different variables, like for fuel, distance and speed. These are only available while not driving.
+The third tab is the statistics tab (Figure 2) and it contains all the statistics in a graph format. The page also contains a tab with four options where the user can choose to open an overview page of statistics or a single view of different variables, like for fuel, distance and speed. The variables are visualized using graphs with the data collected with in the last 30 days. These are only available while not driving.
 
 <img src="images/image03.png" alt="Overall Page" width="250" height="400" />
 
@@ -92,6 +92,6 @@ The third tab is the statistics tab (Figure 2) and it contains all the statistic
 The password can only be changed by contacting the developers through the Contact us page. In the contact us page the user also has an option to send feedback and report system issues. 
 
 #### Contact Us
-User can choose from a dropdown list the issue they what to address.
+User can choose from a dropdown list the issue they what to address. The issue reported is then emailed to the developers. 
 
 <img src="images/image11.png" alt="Contact Page" width="250" height="400" />
