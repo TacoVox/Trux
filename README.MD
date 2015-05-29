@@ -1,22 +1,31 @@
+# Goup members
+* tville = Jerker Ersare
+* vryashkov = Ivo Vryashkov
+* salkin91 = Niklas le Comte
+* DKarlberg = Dennis Karlberg
+* amuhotmax = Aman Ghezai
+* TacoVox = Jonas Kahler
+
+#General information
+This repository was created after the alpha presentation bacause we had problems with git ignore and there for we dont have any commits before the 24th of mars in this repo. All the things we had were added to this repo the 24th of mars.
+
 # Trux - [Documentation Here](https://github.com/TacoVox/Trux/tree/master/Docs)
 Our Project - We will rock this course.
 
 * Jenkins [Trux App](http://derkahler.de:8080/job/Trux/) // [Trux Server](http://derkahler.de:8080/job/TruxServer/)
 * SonarQube [Trux Server](http://www.derkahler.de:9000/dashboard/index/1)
 
-##Build - Status on devel
+## Goup members
+* amuhotmax = Aman Ghezai
+* DKarlberg = Dennis Karlberg
+* salkin91 = Niklas le Comte
+* TacoVox = Jonas Kahler
+* tville = Jerker Ersare
+* vryashkov = Ivo Vryashkov
+
+## Build - Status on devel
 * Trux App <img src="http://derkahler.de:8080/job/Trux/badge/icon">
 * TruxServer <img src="http://derkahler.de:8080/job/TruxServer/1/badge/icon">
-
-## TODO - Client
-* Serverconnector should ignore null objects OR DataPoller should not send them. We need to know if connection to AGA is interrupted. Worst-case solution just let DataPoller check if current set of metrics is identical to last set, then don't send it.
-* Fragments for speed, distance, fuel
-* A way to determine if moving (display simple interface) or not
-* Client should reconnect if for example server is restarted or connection temporarily interrupted
-
-## TODO - Server
-* Main server thread pool
-* Different tables for different metrics since for example distance is long, not double
 
 ## Short description how this repository works.
 We are working in three different main branches:

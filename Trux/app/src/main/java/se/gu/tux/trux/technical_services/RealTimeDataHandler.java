@@ -19,40 +19,48 @@ import se.gu.tux.trux.datastructure.Speed;
 
 public class RealTimeDataHandler implements Serializable
 {
-    AGADataParser rtdp;
-    LocationService locationService;
+
+    private AGADataParser agaDataParser;
+    private LocationHandler locationHandler;
+
 
 
     /**
      * Constructor.
-     * @param locationService   The locationservice object.
+     *
+     * @param locationHandler   The locationhandler object.
      */
-    public RealTimeDataHandler(LocationService locationService)
+    public RealTimeDataHandler(LocationHandler locationHandler)
     {
-        //rtdp = RealTimeDataParser.getInstance();
-        this.locationService = locationService;
-        rtdp = AGADataParser.getInstance();
-
+        this.locationHandler = locationHandler;
+        agaDataParser = AGADataParser.getInstance();
     }
+
+
 
     /**
      * This method packages anything we want to send to the server - called by DataPoller every
      * POLL_INTERVAL seconds.
+     *
      * @return      An array with all the realtime data that is sent to the server regularly.
      */
-    public Data[] getCurrentMetrics() {
+    public Data[] getCurrentMetrics()
+    {
         Data metricArray[] = new Data[4];
         metricArray[0] = getSignalData(new Fuel(0));
         metricArray[1] = getSignalData(new Speed(0));
         metricArray[2] = getSignalData(new Distance(0));
-        metricArray[3] = locationService.getLocation();
+        metricArray[3] = locationHandler.getLocation();
 
         // Set timestamp for all data
-        for (Data d : metricArray) {
+        for (Data d : metricArray)
+        {
             d.setTimeStamp(System.currentTimeMillis());
         }
+
         return metricArray;
     }
+
 
 
     /**
@@ -60,9 +68,12 @@ public class RealTimeDataHandler implements Serializable
      * @param md    A MetricData object with the corresponding signal id.
      * @return      A MetricData object with the corresponding value
      */
-    public MetricData getSignalData(MetricData md) {
-        md.setValue(rtdp.getValue(md.getSignalId()));
+    public MetricData getSignalData(MetricData md)
+    {
+        md.setValue(agaDataParser.getValue(md.getSignalId()));
         md.setTimeStamp(System.currentTimeMillis());
         return md;
     }
+
+
 } // end class RealTimeDataHandler
