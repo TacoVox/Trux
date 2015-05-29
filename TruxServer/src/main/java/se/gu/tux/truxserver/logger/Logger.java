@@ -18,41 +18,50 @@ package se.gu.tux.truxserver.logger;
 import se.gu.tux.truxserver.file.LogIO;
 
 /**
- *
- * @author jonas
+ * Singelton-class for handeling logs.
+ * @author Jonas Kahler
  */
 public final class Logger {
-
-    private boolean isVerbose = false;
+    /*
+     * Static part.
+     */
+    private static Logger instance = null;
 
     /**
-     * Static parts of this class
+     * Method returning a Logger instance.
+     * @return a logger instance.
      */
-    private static Logger logger = null;
-
-    static {
-        if (logger == null) {
-            logger = new Logger();
-        }
-    }
-
     public static Logger getInstance() {
-        return logger;
-    }
-
-    public static Logger gI() {
-        return logger;
+        if(instance == null)
+            instance = new Logger();
+        return instance;
     }
 
     /**
-     * Non-static parts of this class
+     * Method returning a Logger instance.
+     * @return a logger instance.
      */
+    public static Logger gI() {
+        return getInstance();
+    }
+
+    /*
+     * Non-static part.
+     */
+    private boolean isVerbose = false;
     private LogIO lio;
 
+    /**
+     * Private constructor.
+     */
     private Logger() {
         lio = new LogIO();
     }
 
+    /**
+     * Method for adding an error to the logfile.
+     * @param descr description of the error
+     */
     public void addError(String descr) {
         if (isVerbose) {
             System.err.println(descr);
@@ -60,6 +69,10 @@ public final class Logger {
         lio.appendText("ERROR: " + descr);
     }
 
+    /**
+     * Method for adding debug output to the logfile.
+     * @param message debug output
+     */
     public void addDebug(String message) {
         if (isVerbose) {
             System.out.println(message);
@@ -67,6 +80,10 @@ public final class Logger {
         lio.appendText("DEBUG: " + message);
     }
 
+    /**
+     * Method for adding a message to the logfile.
+     * @param message the message
+     */
     public void addMsg(String message) {
         if (isVerbose) {
             System.out.println(message);
@@ -74,17 +91,28 @@ public final class Logger {
         lio.appendText(message);
     }
 
-    //Test purpose main method!
+    /**
+     * Test purpose main method.
+     * @param args command line arguments.
+     */
     public static void main(String[] args) {
         Logger.getInstance().addError("HILFE");
         Logger.getInstance().addError("Suck my balls");
         Logger.gI().addDebug("Testing the debugging.");
     }
 
+    /**
+     * Method to check if the server runs in verbose output mode.
+     * @return boolean if the server runs in verbose.
+     */
     public boolean isVerbose() {
         return isVerbose;
     }
 
+    /**
+     * Method for setting the verbose mode.
+     * @param isVerbose new setting.
+     */
     public void setVerbose(boolean isVerbose) {
         this.isVerbose = isVerbose;
     }

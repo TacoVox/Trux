@@ -17,53 +17,50 @@ package se.gu.tux.truxserver.dbconnect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import se.gu.tux.trux.datastructure.Data;
 
+import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Distance;
 import se.gu.tux.trux.datastructure.Fuel;
 import se.gu.tux.trux.datastructure.Location;
 import se.gu.tux.trux.datastructure.MetricData;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.trux.datastructure.Speed;
-
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
  * Method taking care of all MetricData receives from the DB.
- *
  * @author Jonas Kahler
  */
 public class MetricReceiver {
 
-    /**
+    /*
      * Static part.
      */
-    private static MetricReceiver mr = null;
+    private static MetricReceiver instance = null;
 
     /**
      * Method for getting the instance of the MetricReceiver.
-     *
      * @return an Instance of MetricReceiver
      */
     public static MetricReceiver getInstance() {
-        if (mr == null) {
-            mr = new MetricReceiver();
+        if (instance == null) {
+            instance = new MetricReceiver();
         }
-        return mr;
+        return instance;
     }
 
     /**
      * Method for getting the instance of the MetricReceiver.
-     *
      * @return an Instance of MetricReceiver
      */
     public static MetricReceiver gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
      */
+    
     /**
      * Private Constructor. Not acessable.
      */
@@ -72,9 +69,7 @@ public class MetricReceiver {
 
     /**
      * Method figuring with what method to fetch MetricData from the DB.
-     *
      * @param md the scaletton of the MetricData to fetch.
-     *
      * @return a filled MetricData object.
      */
     public Data getMetric(MetricData md) {
@@ -97,9 +92,7 @@ public class MetricReceiver {
 
     /**
      * Method to fetch Metric Data from the DB with the AVG.
-     *
      * @param md the scaletton of the MetricData to fetch.
-     *
      * @return a filled MetricData object.
      */
     private Data getAverage(MetricData md) {
@@ -116,8 +109,6 @@ public class MetricReceiver {
             PreparedStatement pst = dbc.getConnection().prepareStatement(
                     selectStmnt);
 
-            //Logger.gI().addDebug("Timestamp: " + Long.toString(md.getTimeStamp()));
-            //Logger.gI().addDebug("Timeframe: " + Long.toString(md.getTimeFrame()));
             pst.setLong(1, md.getUserId());
 
             if (md.getTimeFrame() == MetricData.FOREVER) {
@@ -134,8 +125,6 @@ public class MetricReceiver {
                 md.setValue((Double) rs.getDouble("avg"));
                 break;
             }
-
-            //Logger.gI().addDebug("After query: " + Double.toString((Double)md.getValue()));
         } catch (InterruptedException ie) {
             Logger.gI().addMsg("Received Interrupt. Server Shuttin' down.");
             return new ProtocolMessage(ProtocolMessage.Type.GOODBYE, "Server shutting down.");
@@ -151,9 +140,7 @@ public class MetricReceiver {
 
     /**
      * Method to fetch Metric Data from the DB with the SUM.
-     *
      * @param md the scaletton of the MetricData to fetch.
-     *
      * @return a filled MetricData object.
      */
     private Data getSum(MetricData md) {
@@ -191,9 +178,7 @@ public class MetricReceiver {
 
     /**
      * Method to fetch Metric Data from the DB with the DIFF.
-     *
      * @param md the scaletton of the MetricData to fetch.
-     *
      * @return a filled MetricData object.
      */
     private Data getDiff(MetricData md) {
@@ -251,6 +236,11 @@ public class MetricReceiver {
         return md;
     }
 
+    /**
+     * Method to fetch a location from the database.
+     * @param loc an empty Location object
+     * @return a filled in Location object
+     */
     private Data getLocation(Location loc) {
         DBConnector dbc = null;
 

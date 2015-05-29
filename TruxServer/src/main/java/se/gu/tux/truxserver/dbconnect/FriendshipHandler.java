@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
 import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
@@ -26,16 +27,19 @@ import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
- *
- * @author jonas
+ * Class handeling all friendship concerns in the db.
+ * @author Jonas Kahler
  */
 public class FriendshipHandler {
     /*
      * Static part.
      */
-
     private static FriendshipHandler instance;
 
+    /**
+     * Method returning a FriendshipHandler instance.
+     * @return a FriendshipHandler instance.
+     */
     public static FriendshipHandler getInstance() {
         if (instance == null) {
             instance = new FriendshipHandler();
@@ -44,6 +48,10 @@ public class FriendshipHandler {
         return instance;
     }
 
+    /**
+     * Method returning a FriendshipHandler instance.
+     * @return a FriendshipHandler instance.
+     */
     public static FriendshipHandler gI() {
         return getInstance();
     }
@@ -51,9 +59,18 @@ public class FriendshipHandler {
     /*
      * Non-static part.
      */
+    
+    /**
+     * Private Constructor.
+     */
     private FriendshipHandler() {
     }
 
+    /**
+     * Method for sending a friend request.
+     * @param pm ProtocolMessage including the id of the friend
+     * @return response on success or fail
+     */
     public ProtocolMessage sendFriendRequest(ProtocolMessage pm) {
         DBConnector dbc = null;
 
@@ -87,6 +104,11 @@ public class FriendshipHandler {
         }
     }
 
+    /**
+     * Method for removing a user from a friendlist.
+     * @param pm ProtocolMessage including the id of the friend
+     * @return response on success or fail
+     */
     public ProtocolMessage unfriendUser(ProtocolMessage pm) {
         DBConnector dbc = null;
 
@@ -105,6 +127,18 @@ public class FriendshipHandler {
             pst.setLong(4, pm.getUserId());
 
             dbc.execDelete(pm, pst);
+            
+            updateStmnt = "UPDATE message SET seen = ? "
+                    + "WHERE receiverid = ? AND senderid = ?";
+
+            pst = dbc.getConnection().prepareStatement(
+                    updateStmnt);
+
+            pst.setBoolean(1, true);
+            pst.setLong(2, Long.parseLong(pm.getMessage()));
+            pst.setLong(3, pm.getUserId());
+
+            dbc.execUpdate(pm, pst);
 
             return new ProtocolMessage(ProtocolMessage.Type.SUCCESS);
         } catch (InterruptedException ie) {
@@ -121,6 +155,11 @@ public class FriendshipHandler {
         }
     }
 
+    /**
+     * Method to check if a user has new friendrequests.
+     * @param d Data object including the UserID
+     * @return true or false if there are new reqs
+     */
     public boolean hasNewRequests(Data d) {
         DBConnector dbc = null;
 
@@ -155,6 +194,11 @@ public class FriendshipHandler {
         }
     }
 
+    /**
+     * Method to accept a friend request.
+     * @param pm ProtocolMessage including the id of the friend
+     * @return response on success or fail
+     */
     public ProtocolMessage acceptFriend(ProtocolMessage pm) {
         DBConnector dbc = null;
 
@@ -211,7 +255,12 @@ public class FriendshipHandler {
         }
     }
 
-    public Data declineRequest(ProtocolMessage pm) {
+    /**
+     * Method to decline friend requests.
+     * @param pm ProtocolMessage including the id of the friend
+     * @return response on success or fail
+     */
+    public ProtocolMessage declineRequest(ProtocolMessage pm) {
         DBConnector dbc = null;
 
         try {
@@ -242,6 +291,11 @@ public class FriendshipHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Can't mark the request as not accepted.");
     }
 
+    /**
+     * Method for getting all friend requests for a user from the db.
+     * @param pm ProtocolMessage including the id of the friend
+     * @return information about the people who send the reqs or error message
+     */
     public Data getFriendRequests(ProtocolMessage pm) {
         List friendreqs = new ArrayList<Friend>();
 
@@ -288,6 +342,11 @@ public class FriendshipHandler {
         }
     }
 
+    /**
+     * Methiod to check if there is a pending friendreq for a user.
+     * @param pm ProtocolMessage including the id of the friend
+     * @return true or fail depending on if there is such a pending req
+     */
     public boolean isPending(ProtocolMessage pm) {
         DBConnector dbc = null;
 
@@ -324,6 +383,11 @@ public class FriendshipHandler {
         }
     }
 
+    /**
+     * Method to mark a friendreq as seen.
+     * @param pm ProtocolMessage including the id of the friend
+     * @return response on success or fail
+     */
     public ProtocolMessage markAsSeen(ProtocolMessage pm) {
         DBConnector dbc = null;
 
@@ -352,6 +416,11 @@ public class FriendshipHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Can't mark the friendrequest as seen.");
     }
 
+    /**
+     * Method to check if a friendreq is reviewed - sets it to completet.
+     * @param d data including UserID
+     * @return true or false depending on if the req is pending or not
+     */
     public boolean isReviewed(Data d) {
         DBConnector dbc = null;
 

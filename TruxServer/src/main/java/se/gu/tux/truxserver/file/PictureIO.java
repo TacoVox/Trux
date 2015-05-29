@@ -35,61 +35,84 @@ import se.gu.tux.truxserver.dbconnect.PictureHandler;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
- *
- * @author jonas
+ * Class responsible for writing to a .png file on HDD/SSD.
+ * @author Jonas Kahler
  */
 public class PictureIO {
 
-    /**
+    /*
      * Static part.
      */
-    private static PictureIO pio;
+    private static PictureIO instance;
 
+    /**
+     * Method returning a PictureIO instance.
+     * @return a PictureIO instance.
+     */
     public static PictureIO getInstance() {
-        if (pio == null) {
-            pio = new PictureIO();
+        if (instance == null) {
+            instance = new PictureIO();
         }
 
-        return pio;
+        return instance;
     }
 
+    /**
+     * Method returning a PictureIO instance.
+     * @return a PictureIO instance.
+     */
     public static PictureIO gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
      */
     private final DateFormat dateformat = new SimpleDateFormat("yyyy/MM/dd");
 
+    /**
+     * Private Constructor.
+     */
     private PictureIO() {
     }
 
+    /**
+     * Method for saving a Picture Object as a profile picture.
+     * @param p a Picture Object - See our protocol -
+     * @return a ProtocolMessage with success or error message
+     */
     public ProtocolMessage saveProfilePicture(Picture p) {
         BufferedImage img = decodePicture(p.getImg());
 
         String path = storeOnFS(img);
-        //Logger.gI().addDebug("The new path :" + path);
 
         p.setPictureid(PictureHandler.gI().savePicturePath(p, path));
 
-        //Logger.gI().addDebug("Picture ID: " + p.getPictureid());
         return PictureHandler.gI().setProfilePicture(p);
     }
 
+    /**
+     * Method to get a profile picture from the server.
+     * @param p an empty Picture object to be filled in
+     * @return a filled in Picture object
+     */
     public Picture receiveProfilePicture(Picture p) {
         String path = PictureHandler.gI().getProfilePicturePath(p);
 
         if (path != null) {
             BufferedImage img = getFromFS(path);
-
             p.setImg(encodePicture(img));
         }
+        
         p.setTimeStamp(System.currentTimeMillis());
-
         return p;
     }
 
+    /**
+     * Private method to store a BufferedImage on disk.
+     * @param img the BI to be stored
+     * @return the absolute file path
+     */
     private String storeOnFS(BufferedImage img) {
         Date date = new Date();
         String imgHash;
@@ -116,9 +139,13 @@ public class PictureIO {
         return path;
     }
 
+    /**
+     * Private method to get an image from disk.
+     * @param path the absolute path to the image file
+     * @return the image wrapped
+     */
     private BufferedImage getFromFS(String path) {
         try {
-            //Logger.gI().addDebug(path);
             return ImageIO.read(new File(path));
         } catch (IOException e) {
             Logger.gI().addError(e.getLocalizedMessage());
@@ -127,6 +154,11 @@ public class PictureIO {
         return null;
     }
 
+    /**
+     * Private method to decode an image stored in a byte array.
+     * @param imgData a byte array storing the image
+     * @return BufferedImage containing the data from the image
+     */
     private BufferedImage decodePicture(byte[] imgData) {
         try {
             InputStream in = new ByteArrayInputStream(imgData);
@@ -138,6 +170,11 @@ public class PictureIO {
         return null;
     }
 
+    /**
+     * Private method to encode an image from BufferedImage to a byte array.
+     * @param img the image to be encoded
+     * @return the image stored in a byte array
+     */
     private byte[] encodePicture(BufferedImage img) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -155,6 +192,11 @@ public class PictureIO {
         return null;
     }
 
+    /**
+     * Method to resize too large images in max 500x500.
+     * @param originalImage the image to be resized
+     * @return resized image
+     */
     private static BufferedImage resizeImage(BufferedImage originalImage) {
         int x = originalImage.getWidth();
         int y = originalImage.getHeight();
@@ -189,6 +231,10 @@ public class PictureIO {
         return resizedImage;
     }
 
+    /**
+     * Test method.
+     * @param args command line arguments
+     */
     public static void main(String args[]) {
         BufferedImage a = PictureIO.gI().getFromFS("/Users/jonas/Desktop/cc.jpg");
 

@@ -24,8 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- *
- * @author jonas
+ * Class responsible for writing to log files.
+ * @author Jonas Kahler
  */
 public class LogIO {
 
@@ -34,6 +34,10 @@ public class LogIO {
     private File file;
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
+    /**
+     * Constructor.
+     * Creates a new file for each new session.
+     */
     public LogIO() {
         execPath = System.getProperty("user.dir");
 
@@ -59,6 +63,10 @@ public class LogIO {
         }
     }
 
+    /**
+     * Method appending text to the file.
+     * @param text the text to append.
+     */
     public void appendText(String text) {
         try {
             OutputStreamWriter writer = new OutputStreamWriter(
