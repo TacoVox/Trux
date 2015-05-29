@@ -417,7 +417,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
         }
 
         // check if message is null, return
-        if (message == null) { return; }
+        if (message == null || message.isEmpty()) { return; }
 
         final TextView textView = getUserTextView();
         Date date = new Date(System.currentTimeMillis());
@@ -425,7 +425,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
 
         // add to container and display
         msgContainer.addView(textView);
-        
+
         // the message object to send to server
         final Message msg = new Message();
         // set required fields
