@@ -1,15 +1,4 @@
-# Trux
-### A community based android application for truck drivers
-![Trux](https://github.com/TacoVox/Trux/blob/master/Docs/images/image00.png "Trux")
-## User manual 
-
-Created by group Tux:
-* Jerker Ersare
-* Aman Ghezai
-* Jonas Kahler
-* Dennis Karlberg
-* Niklas le Comte
-* Ivo Vryashkov
+### User manual 
 
 ### GENERAL INFORMATION
 Trux is a community based android application for truck drivers. Trux has various features, like data collection, driver monitoring and online truck drivers community features.
