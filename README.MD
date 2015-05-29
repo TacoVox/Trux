@@ -17,7 +17,7 @@
 ### General system changes
 
 * Push notifications added
-* Application handles the android garbage collection better and don't crash in the background
+* Application handles the android garbage collection better and doesn't crash after being in the background for a while
 
 ## General information
 This repository was created after the alpha presentation bacause we had problems with .gitignore and for that reason we dont have any commits before the 24th of march in this repo. All the things we had were added to this repo the 24th of march or later.
