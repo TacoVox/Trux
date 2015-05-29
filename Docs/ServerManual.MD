@@ -1,7 +1,7 @@
 # Manual: Trux Server v2.0 [14-05-29]
 
 ## General
-The Trux Server application is command line based. That means that there is no GUI for the administrator managing it. Due to the fact that this application is written in Java it is possible to run it on every operating system capable of running a Java virtual machine (JVM/JRE). When porting a running environment to another environment it is necessary to modify the database (file paths) - changing this is on the agenda for the next server version (v3.0).
+The Trux Server application is command line based. That means that there is no GUI for the administrator managing it. Due to the fact that this application is written in Java it is possible to run it on every operating system capable of running a Java virtual machine (JVM/JRE). If moving a running installation to another environment it is necessary to modify the database contents (file paths) - changing this is on the agenda for the next server version (v3.0).
 
 ## Compilation
 To compile the server it is necessary to have a working maven as well as a JDK in version 8 installation (a standard Netbeans or Eclipse installation includes this).
