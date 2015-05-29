@@ -22,11 +22,14 @@ import se.gu.tux.truxserver.dataswitch.DataSwitcher;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
- *
- * @author jonas
+ * Class responsible for testing the dbconnect package.
+ * @author Jonas Kahler
  */
 public class DBTester {
-
+    /**
+     * Test main method.
+     * @param args Command line arguments.
+     */
     public static void main(String args[]) {
         ConfigHandler.getInstance().setSettings(args);
 
@@ -56,7 +59,6 @@ public class DBTester {
         Speed s = new Speed(60000);
         s.setTimeStamp(System.currentTimeMillis());
 
-        //MetricReceiver.gI().getMetric(d);
         s = (Speed) DataSwitcher.gI().handleData(s);
 
         System.out.println(s.getValue());

@@ -19,52 +19,49 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import se.gu.tux.trux.datastructure.ArrayResponse;
 
+import se.gu.tux.trux.datastructure.ArrayResponse;
 import se.gu.tux.trux.datastructure.Data;
 import se.gu.tux.trux.datastructure.Friend;
 import se.gu.tux.trux.datastructure.Location;
 import se.gu.tux.trux.datastructure.User;
 import se.gu.tux.trux.datastructure.ProtocolMessage;
-
 import se.gu.tux.truxserver.logger.Logger;
 import se.gu.tux.truxserver.mail.EMailSender;
 
 /**
- *
- * @author jonas
+ * @author Jonas Kahler
  */
 public class UserHandler {
 
-    /**
+    /*
      * Static part.
      */
-    private static UserHandler uh = null;
+    private static UserHandler instance = null;
 
     /**
      * Method for getting the instance of the MetricInserter.
-     *
      * @return an Instance of MetricInserter
      */
     public static UserHandler getInstance() {
-        if (uh == null) {
-            uh = new UserHandler();
+        if (instance == null) {
+            instance = new UserHandler();
         }
-        return uh;
+        return instance;
     }
 
     /**
      * Method for getting the instance of the MetricInserter.
-     *
      * @return an Instance of MetricInserter
      */
     public static UserHandler gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
      */
+    
     /**
      * Private Constructor. Not acessable.
      */
@@ -73,9 +70,7 @@ public class UserHandler {
 
     /**
      * Method to login a user to the system.
-     *
      * @param u the user who wants to login
-     *
      * @return either a filled in user object on success or a ProtocolMessage
      * indicating an ERROR
      */
@@ -128,11 +123,10 @@ public class UserHandler {
 
     /**
      * Auto-login method.
-     *
-     * @param u
-     * @return
+     * @param pm a ProtocolMessage including the User and SessionID
+     * @return ProtocolMessage if the login was successful or not
      */
-    public Data autoLogin(ProtocolMessage pm) {
+    public ProtocolMessage autoLogin(ProtocolMessage pm) {
         long userid = -1;
         String passwd = null;
         long sessionid = -1;
@@ -185,6 +179,10 @@ public class UserHandler {
         }
     }
 
+    /**
+     * Method to store a failed login attempt in the database.
+     * @param userid the user who tried to login
+     */
     private void failedLogin(long userid) {
         DBConnector dbc = null;
 
@@ -211,9 +209,7 @@ public class UserHandler {
 
     /**
      * Method for getting user data from the DB.
-     *
      * @param u a scaletton user object -> will be filled in
-     *
      * @return either a filled in user object on success or a ProtocolMessage
      * indicating an ERROR
      */
@@ -287,9 +283,7 @@ public class UserHandler {
 
     /**
      * Method to register a user to our system.
-     *
      * @param u a filled in user object which will be stored
-     *
      * @return a ProtocolMessage indicating the success
      */
     public ProtocolMessage register(User u) {
@@ -327,6 +321,11 @@ public class UserHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Username is already taken. Please select another one.");
     }
 
+    /**
+     * Method to update a users profile.
+     * @param u a User object with updated information.
+     * @return ProtolMessage on success or fail
+     */
     public ProtocolMessage updateUser(User u) {
         DBConnector dbc = null;
 
@@ -356,6 +355,11 @@ public class UserHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Update failed.");
     }
 
+    /**
+     * Method for getting information about a friend.
+     * @param f and empty Friend object
+     * @return a filled in Friend object or a ProtocolMessage
+     */
     public Data getFriend(Friend f) {
         long lastActive = Long.MAX_VALUE;
 
@@ -426,6 +430,11 @@ public class UserHandler {
         return new ProtocolMessage(ProtocolMessage.Type.ERROR, "Something went wrong while fetching information for your friend - plase contact Jerker");
     }
 
+    /**
+     * Message to find Users.
+     * @param pm ProtocolMessage including the search term.
+     * @return Array with matching users.
+     */
     public Data findUsers(ProtocolMessage pm) {
         ArrayResponse reqs = (ArrayResponse) FriendshipHandler.gI().getFriendRequests(pm);
 
@@ -500,6 +509,11 @@ public class UserHandler {
         }
     }
 
+    /**
+     * Method to get all friends which are currently online.
+     * @param pm ProtocolMessage including the UserID
+     * @return Array with online friends
+     */
     public Data getOnlineFriends(ProtocolMessage pm) {
         List onlineFriends = new ArrayList<Friend>();
 

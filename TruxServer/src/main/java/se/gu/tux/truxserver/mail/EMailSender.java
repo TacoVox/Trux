@@ -16,25 +16,31 @@
 package se.gu.tux.truxserver.mail;
 
 import java.util.Properties;
+
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
 import se.gu.tux.truxserver.config.Config;
 import se.gu.tux.truxserver.config.ConfigHandler;
 
 /**
  *
- * @author jonas
+ * @author Jonas Kahler
  */
 public class EMailSender {
 
-    /**
+    /*
      * Static part.
      */
     private static EMailSender es;
 
+    /**
+     * Method to get the singelton instance.
+     * @return an instance of EMail ender 
+     */
     public static EMailSender getInstance() {
         if (es == null) {
             es = new EMailSender();
@@ -43,16 +49,29 @@ public class EMailSender {
         return es;
     }
 
+    /**
+     * Method to get the singelton instance.
+     * @return an instance of EMail ender 
+     */
     public static EMailSender gI() {
         return getInstance();
     }
 
-    /**
+    /*
      * Non-static part.
+     */
+    
+    /**
+     * Private constructor.
      */
     private EMailSender() {
     }
 
+    /**
+     * Method to send a confirmation mail.
+     * @param receiver the eMail adress of the receiver
+     * @param accesscode the accesscode assigned
+     */
     public void sendConfirmationMail(String receiver, String accesscode) {
         Properties mailServerProperties;
         Session getMailSession;
@@ -93,6 +112,11 @@ public class EMailSender {
         }
     }
 
+    /**
+     * Test main mothod.
+     * Tests the EMailSender class.
+     * @param args command line arguments.
+     */
     public static void main(String args[]) {
         EMailSender.gI().sendConfirmationMail("tacovox@icloud.com", "asd");
         System.out.println("eMail sent.");

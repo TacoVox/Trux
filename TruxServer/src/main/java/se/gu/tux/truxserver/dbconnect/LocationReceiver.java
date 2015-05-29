@@ -24,16 +24,19 @@ import se.gu.tux.trux.datastructure.ProtocolMessage;
 import se.gu.tux.truxserver.logger.Logger;
 
 /**
- *
- * @author jonas
+ * Class responsilbe for fetching location from the db.
+ * @author Jonas Kahler
  */
 public class LocationReceiver {
     /*
      * Static part.
      */
-
     private static LocationReceiver instance;
 
+    /**
+     * Method returning a LocationReceiver instance.
+     * @return a LocationReceiver instance.
+     */
     public static LocationReceiver getInstance() {
         if (instance == null) {
             instance = new LocationReceiver();
@@ -42,6 +45,10 @@ public class LocationReceiver {
         return instance;
     }
 
+    /**
+     * Method returning a LocationReceiver instance.
+     * @return a LocationReceiver instance.
+     */
     public static LocationReceiver gI() {
         return getInstance();
     }
@@ -49,13 +56,18 @@ public class LocationReceiver {
     /*
      * Non-static part.
      */
+    
+    /**
+     * Private constructor.
+     */
     private LocationReceiver() {
     }
 
-    public Location getLocation() {
-        return null;
-    }
-
+    /**
+     * Method for fetching the current location of a user.
+     * @param userid id of the user to fetch the location from
+     * @return a filled in Location object or ProtocolMessage on error
+     */
     public Data getCurrent(long userid) {
         Location l = null;
 
