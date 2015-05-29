@@ -416,16 +416,16 @@ public class ChatFragment extends Fragment implements View.OnClickListener, Adap
             message = userInput.getText().toString();
         }
 
+        // check if message is null, return
+        if (message == null) { return; }
+
         final TextView textView = getUserTextView();
         Date date = new Date(System.currentTimeMillis());
         textView.setText(message + "\n\n" + df.format(date));
 
         // add to container and display
         msgContainer.addView(textView);
-
-        // check if message is null, return
-        if (message == null) { return; }
-
+        
         // the message object to send to server
         final Message msg = new Message();
         // set required fields
