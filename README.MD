@@ -13,6 +13,7 @@
 * Scroling on the map is not possible while distracted
 * Profile button disappears
 * Toasts for telling the user if he follows himself/friends and how to quit, and when it has interrupted
+
 ### General system changes
 * Push notifications added
 * Application handles the android garbage collection better and doesn't crash after being in the background for a while
