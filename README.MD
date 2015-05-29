@@ -44,7 +44,7 @@ This repository was created after the alpha presentation bacause we had problems
 
 ## Short description how this repository works.
 We are working in three different main branches:
-* Master --> NO CHANGES IN THIS BRANCH
+* Master --> NO CHANGES IN THIS BRANCH (Edit: only when handing in...)
 * Release --> We will merge down in this just as soon as we will release a version (for example BETA)
 * Devel --> This is our main development branch. This branch is there to merge down each features - it will help us to synchronize the work.
 * Feature --> For each feature we need to create a new feature. After the work is done we need to merge this branch down to devel.
